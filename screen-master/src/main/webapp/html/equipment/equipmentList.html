@@ -1,0 +1,296 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#facilities_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add,del',
+        editMode: {
+            dialog: {
+                width: '450',
+                height: '680',
+                mask: true,
+                title: "添加设备",
+                id: 'dialog_addEquipment',
+                maxable: false,
+                resizable: false
+            }
+        },
+        editUrl: 'html/equipment/equipment/addEquipment.html',
+        dataUrl: path + '/web/patrol/v1/findAllEquipmentList',
+        delUrl: path + '/web/patrol/v1/deleteEquipment',
+        delPK: 'equipmentId',
+        delPKKey: 'equipmentIds',
+        delConfirm: '确定要删除选中的设备吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#facilities_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {name: 'equipmentNo', label: '设备编号',width: 170, align: 'center', nowrap: 'true'},
+            {name: 'equipmentName', label: '设备名称', width: 170,align: 'center', nowrap: 'true'},
+            {name: 'typeName', label: '设备类型', width: 170, align: 'center', nowrap: 'true'},
+            {name: 'equipmentLocation', label: '所在位置',width: 170, align: 'center', nowrap: 'true'},
+            {
+                name: 'isCheck', label: '是否需要巡检', width: 80,align: 'center', nowrap: 'true', render: function (value, data) {
+                var html = "";
+                if (value == "1") {
+                    html = "是";
+                } else if (value == "2") {
+                    html = "否";
+                }
+                return html;
+            }
+            },
+            {
+                name: 'createTime',
+                label: '创建时间',
+                width: 100,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value, data) {
+                    return value.substring(0, 10);
+                }
+            },
+            {
+                name: 'repairNumber', label: '维修次数',width: 90, align: 'center', nowrap: 'true', render: function (value, data) {
+                var num = "";
+                if (value == "" || value == null || value == undefined) {
+                    num = "0";
+                } else {
+                    num = value;
+                }
+                return num;
+            }
+            },
+            {
+                name: 'equipmentId', label: '操作', align: 'center', width: 350, render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick=editEquipment(\"' + value + '\")>编辑</button>'
+                        + '<button type="button" class="btn-blue" onclick=seeEquipment("' + value + '")>查看</button>'
+                        + '<button type="button" class="btn-blue" onclick=repairRecord(\"' + value + '\")>维保记录</button>'
+//                                +'</br>'
+                        + '<button type="button" class="btn-blue" onclick=printEquipment("' + value + '")>打印二维码</button>'
+                        + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                return html;
+            }
+            }
+        ]
+    });
+
+    //维保记录
+    function repairRecord(e) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/patrol/v1/findEquipmentDetail',
+            data: {'equipmentId': e},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    var recordListData = json.data;
+                    $.CurrentNavtab.data('recordId', e);
+                    $.CurrentNavtab.data('recordListData', recordListData);
+                    BJUI.dialog({
+                        id: 'dialog_repairRecord',
+                        url: 'html/equipment/equipment/recordList.html',
+                        title: '设备维保记录',
+                        width: '1000',
+                        height: '600',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //编辑
+    function editEquipment(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/patrol/v1/findEquipmentDetail',
+            data: {'equipmentId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findEquipmentDetail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_editEquipment',
+                        url: 'html/equipment/equipment/editEquipment.html',
+                        title: '编辑巡检设备',
+                        width: '450',
+                        height: '680',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //查看
+    function seeEquipment(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/patrol/v1/findEquipmentDetail',
+            data: {'equipmentId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findEquipmentDetail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeEquipment',
+                        url: 'html/equipment/equipment/seeEquipment.html',
+                        title: '查看设备',
+                        width: '800',
+                        height: '440',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //打印二维码
+    function printEquipment(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/patrol/v1/findQrcode',
+            data: {'equipmentId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findQrcode", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_printQR',
+                        url: 'html/equipment/equipment/printQR.html',
+                        title: '打印二维码',
+                        width: '600',
+                        height: '600',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+
+    }
+
+    //搜索类型
+    BJUI.ajax('doajax', {
+        url: path + '/web/patrol/v1/findTypeList',
+        data: {'equipmentType': ""},
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                var data = json.data;
+                for (var i = 0; i < data.length; i++) {
+                    var html = '<option value="' + data[i].typeId + '">' + data[i].typeName + '</option>'
+                    $.CurrentNavtab.find('#equipmentType').append(html);
+                }
+                $.CurrentNavtab.find('#equipmentType').selectpicker('refresh');
+            } else {
+                successBack(json)
+            }
+        }
+    });
+
+    $.CurrentNavtab.find('#resetBtn').click(function () {
+        $.CurrentNavtab.find('#equipmentType').val("").selectpicker('refresh');
+        $.CurrentNavtab.find('#status').val("").selectpicker('refresh');
+    })
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#facilities_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">设备类型:</label>
+                <div class="row-input">
+                    <select id="equipmentType" name="typeId" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <label class="row-label">是否需要巡检:</label>
+                <div class="row-input" style="display: inline-block">
+                    <select data-toggle="selectpicker" data-width="100%" id="status"
+                            name="isCheck">
+                        <option value="" selected="">全部</option>
+                        <option value="1">是</option>
+                        <option value="2">否</option>
+                    </select>
+                </div>
+
+                <label class="row-label">设备编号:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">设备名称:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentName" name="equipmentName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">所在位置:</label>
+                <div class="row-input">
+                    <input type="text" id="location" name="equipmentLocation" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+
+
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <table id="facilities_datagrid" class="table table-bordered">
+    </table>
+</div>

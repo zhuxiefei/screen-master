@@ -1,0 +1,69 @@
+<div class="bjui-pageContent"  >
+    <form class="datagrid-edit-form"  data-toggle="ajaxform">
+        <div class="bjui-row col-1 divActivity">
+            <label class="row-label" style=" width: 13%;">资料名称 : </label>
+            <div class="row-input required" style=" width: 40.5%;">
+                <input type="text" value="" id="editDoc_search" SIZE="30" name="docName"data-rule="required,special,length(~30)" >
+            </div>
+            <br>
+            <label class="row-label" style=" width: 13%;">资料类别 : </label>
+            <div class="row-input " style=" width: 40.5%;">
+                <!--<input type="text" value="" id="type_name" SIZE="30" name="docName"data-rule="required,special,length(~30)" >-->
+                <span id="type_name" SIZE="30" ></span>
+            </div>
+            <br>
+            <label class="row-label" style=" width: 13%;">内容 : </label>
+            <div class="row-input required " style=" width: 87%;">
+                <textarea name="docContent" id="y_form_content" class="j-content" style="width:100%;" data-toggle="kindeditor" data-picType="1" data-minheight="200" ></textarea>
+            </div>
+            <input type="text" id="typeId" name="typeId" style="display: none">
+            <input type="text" id="docId" name="docId" style="display: none">
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="editDoc_ok" class="btn-default" data-icon="save">保存</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var data= $.CurrentNavtab.data('docInf')
+    var typeId=$.CurrentNavtab.data('typeId');
+    var docId=$.CurrentNavtab.data('docId');
+    $.CurrentDialog.find("#editDoc_search").val(data.docName);
+    $.CurrentDialog.find("#y_form_content").val(data.docContent);
+    $.CurrentDialog.find("#typeId").val(typeId);
+    $.CurrentDialog.find("#docId").val(docId);
+    $.CurrentDialog.find('#type_name').text(data.typeName)
+    $.CurrentDialog.find("#editDoc_ok").click(function () {
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/document/v1/updateDoc',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.alertmsg('ok', '修改成功！');
+                    BJUI.dialog('closeCurrent');
+                    var treeObj = $.fn.zTree.getZTreeObj("ztreeDocument");
+                    var nodes = treeObj.getNodes();
+                    var selectedType =  $.CurrentNavtab.data('typeName');
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (selectedType == nodes[i].typeName) {
+                            treeObj.expandNode(nodes[i], true, true);
+                            return
+                        }
+                    }
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    });
+
+</script>

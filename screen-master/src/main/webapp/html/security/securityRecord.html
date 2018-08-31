@@ -1,0 +1,333 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#securityRecord_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: '',
+        dataUrl: path + '/web/securityRecord/v1/findRecordList',
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {pageSize: 10},
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {name: 'contentNo', label: '巡逻编号', align: 'center', width: '220', nowrap: 'true', render: function (value) {
+                if (value == undefined || value == null || value == "") {
+                    var html = '<i>已被删除</i>'
+                } else {
+                    var html = value
+                }
+                return html;
+            }
+            },
+            {name: 'areaName',label: '巡逻区域', align: 'center', width: '100', nowrap: 'true', render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {name: 'signinAddress', label: '签到地点', align: 'center', width: '100', nowrap: 'true', render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {name: 'isPatrol', label: '完成状态', align: 'center', width: '150',nowrap: 'true', render: function (value) {
+                if (value == 1) {
+                    var html = '待巡逻';
+                } else if(value == 2) {
+                    var html = '已巡逻';
+                } else if(value == 3) {
+                    var html = '逾期未巡逻';
+                }
+                    return html;
+                }
+            },
+            {name: 'createTime', label: '创建时间', width: '170', align: 'center', nowrap: 'true'},
+            {name: 'recordId', label: '操作', width: '100', align: 'center', render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick=seeSecurityRecordDetail(\"' + value + '\")>查看</button>';
+                     html += '<button type="button" class="btn-green" onclick=exportSecurityRecord(\"' + value + '\")>导出</button>';
+                return html;
+            }
+            }
+        ]
+    });
+
+    //开始搜索事件
+    var exportData_securityRecord = {};
+    $.CurrentNavtab.find('#btn-search').click(function () {
+//        $.CurrentNavtab.find('#datagrid-payment').datagrid('reload', {
+//            'paging':true
+//        });
+        $.CurrentNavtab.find('.paging-pagesize').show();
+
+        /*$.CurrentNavtab.find("#datagrid-payment").data('selectedDatas', "");
+        $.CurrentNavtab.data('preDataID', false);*/
+        exportData_securityRecord.isPatrol = $.CurrentNavtab.find("#isPatrol").val();
+        exportData_securityRecord.contentNo = $.CurrentNavtab.find("#contentNo").val().trim();
+        exportData_securityRecord.startTime = $.CurrentNavtab.find("#startTime").val();
+        exportData_securityRecord.endTime = $.CurrentNavtab.find("#endTime").val();
+    })
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#isPatrol").selectpicker('val', "");
+        exportData_securityRecord = {};
+    });
+
+    //查看
+    function seeSecurityRecordDetail(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/securityRecord/v1/findRecord',
+            data: {'recordId': val},
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findSecurityRecord", json.data);
+                    var dialogHeight = "";   //弹窗的高度
+                    if(json.data.isPatrol == 2){  //完成的状态：2 已完成
+                        dialogHeight = '560';
+                    }else{
+                        dialogHeight = '330';
+                    }
+                    BJUI.dialog({
+                        id: 'dialog_seeRecordDetail',
+                        url: 'html/security/securityRecord/seeSecurityRecordDetail.html',
+                        title: '查看巡逻记录',
+                        width: '700',
+                        height: dialogHeight,
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    var option={
+        "parentUrl": "/web/securityArea/v1/findAreaList",
+        "childUrl": "/web/securityArea/v1/findSignList",
+        "parentParam": "",
+        "childParam": 'areaId',
+        "parentName": "areaName",
+        "childName": "signinAddress",
+        "id": "zdTree_securityRecord",
+        "parentID": "areaId",
+        "childID": "signinId",
+        "depth": 2,
+        "checkbox": true,
+        "checkCallBack":function (value) {
+            /*var startTime=$.CurrentNavtab.find('#startTime').val();
+            var endTime=$.CurrentNavtab.find('#endTime').val();
+            var contentNo=$.CurrentNavtab.find('#contentNo').val();
+            var isPatrol=$.CurrentNavtab.find('#isPatrol').val();*/
+            if(value.areaId){
+                var areaId=value.areaId;
+                //导出条件
+                exportData_securityRecord.areaId = value.areaId;
+            }else{
+                var areaId=null;
+                //导出条件
+                exportData_securityRecord.areaId = "";
+            }
+            if(value.signinId){
+                var signinId=value.signinId;
+                //导出条件
+                exportData_securityRecord.signinId = value.signinId;
+            }else{
+                var signinId=null;
+                //导出条件
+                exportData_securityRecord.signinId = "";
+            }
+            /*if(value.isPatrol){
+                var isPatrol=value.isPatrol;
+                //导出条件
+                exportData_securityRecord.isPatrol = value.isPatrol;
+            }else{
+                var isPatrol=null;
+                //导出条件
+                exportData_securityRecord.isPatrol = "";
+            }*/
+            if(!exportData_securityRecord.contentNo){
+                exportData_securityRecord.contentNo = "";
+            }
+            if(!exportData_securityRecord.isPatrol){
+                exportData_securityRecord.isPatrol = "";
+            }
+            if(!exportData_securityRecord.startTime){
+                exportData_securityRecord.startTime = "";
+            }
+            if(!exportData_securityRecord.endTime){
+                exportData_securityRecord.endTime = "";
+            }
+            var data={
+                'startTime':exportData_securityRecord.startTime,
+                'endTime':exportData_securityRecord.endTime,
+                'contentNo':exportData_securityRecord.contentNo,
+                'areaId':areaId,
+                'signinId':signinId,
+                'isPatrol':exportData_securityRecord.isPatrol
+            }
+            $.CurrentNavtab.find('#securityRecord_datagrid').datagrid('filter',data);
+        }
+    };
+
+    zdTree(option);
+
+    changeDivHeight();
+
+    //导出按钮
+    function exportSecurityRecord(id) {
+        var securityRecordlist = $.CurrentNavtab.find("#securityRecord_datagrid").data('selectedDatas');
+        if (securityRecordlist && securityRecordlist.length > 0) {  //批量
+            var securityRecordIds = [];
+            $.each(securityRecordlist, function (s, v) {
+                securityRecordIds.push(v.recordId);
+            });
+            exportData_securityRecord.recordId = securityRecordIds.toString();
+        } else {
+            exportData_securityRecord.recordId = "";
+        }
+
+        if(id && id != ""){   //单个导出
+            exportData_securityRecord = {"recordId":id};
+        }
+
+        BJUI.alertmsg('confirm', '确定要导出数据吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/securityRecord/v1/exportList',
+                    loadingmask: false,
+                    data: exportData_securityRecord,
+                    okCallback: function (json) {
+                        $.CurrentNavtab.find("#securityRecord_datagrid").data('selectedDatas',"");
+                        $.CurrentNavtab.find("#securityRecord_datagrid").datagrid('refresh');
+
+                        //画出表格
+                        var html = '';
+                        var infos = json;
+                        for (var i = 0; i < infos.length; i++) {
+
+                            if (!infos[i].contentNo) {
+                                infos[i].contentNo = ""
+                            }
+                            if (!infos[i].areaName) {
+                                infos[i].areaName = ""
+                            }
+                            if (!infos[i].signinAddress) {
+                                infos[i].signinAddress = ""
+                            }
+
+                            if (infos[i].isPatrol == 1) {
+                                infos[i].isPatrol = "待巡逻";
+                            } else if (infos[i].isPatrol == 2) {
+                                infos[i].isPatrol = "已巡逻";
+                            } else if (infos[i].isPatrol == 3) {
+                                infos[i].isPatrol = "逾期未巡逻";
+                            }
+
+                            if (!infos[i].createTime) {
+                                infos[i].createTime = ""
+                            }
+
+                            html += '<tr><td>' + infos[i].contentNo + '</td><td>' + infos[i].areaName + '</td><td>'
+                                    + infos[i].signinAddress + '</td><td>' + infos[i].isPatrol +
+                                    '</td><td style="mso-number-format:\'\@\';"><span>&nbsp;</span>' + infos[i].createTime + '</td></tr>';
+                        }
+                        $.CurrentNavtab.find("#securityRecords").html(html);
+                        exportExcel('securityRecordList', '巡逻记录信息表');
+
+                    }
+                });
+
+            }
+        })
+    }
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#securityRecord_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">完成状态:</label>
+                <div class="row-input">
+                    <select id="isPatrol" name="isPatrol" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">待巡逻</option>
+                        <option value="2">已巡逻</option>
+                        <option value="3">逾期未巡逻</option>
+                    </select>
+                </div>
+                <label class="row-label">巡逻编号:</label>
+                <div class="row-input">
+                    <input type="text" id="contentNo" name="contentNo" value=""
+                           data-rule="special,length(~19)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+                <div style=" text-align: center; margin-bottom: 8px; padding-top: 4px;">
+                    <div class="btn-group">
+                        <button type="submit" class="btn-green" id="btn-search" data-icon="search" style="line-height: 18px;">开始搜索！</button>
+                        <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn" style="line-height: 18px;">重置</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto">
+    <ul class="ztree zdTree" id="zdTree_securityRecord"></ul>
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <button type="button" class="btn-green btn-prohibit" onclick="exportSecurityRecord()" data-icon="sign-in"
+            style=" left: 5px;">导出
+    </button>
+</div>
+<a id="dlink" href="" style="display: none ;">下载</a>
+<div id="ieExport_securityRecord">
+    <table id="securityRecordList" style="display:none;">
+        <tr>
+            <th>巡逻编号</th>
+            <th>巡逻区域</th>
+            <th>签到地点</th>
+            <th>完成状态</th>
+            <th>创建时间</th>
+        </tr>
+        <tbody id="securityRecords">
+
+        </tbody>
+    </table>
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <table id="securityRecord_datagrid" class="table table-bordered">
+    </table>
+</div>

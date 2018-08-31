@@ -1,0 +1,129 @@
+<div class="bjui-pageContent" style="overflow: auto;">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <input type="hidden" id="recordId" name="recordId" data-rule="required">
+            <label class="row-label" style="width: 25%;">房屋信息: </label>
+            <div class="row-input" style="width: 75%;" id="houseInfo">
+            </div>
+            <label class="row-label" style="width: 25%;">装修公司: </label>
+            <div class="row-input"  style="width: 75%;" id="decorationCompany">
+            </div>
+            <label class="row-label" style="width: 25%;">申请时间: </label>
+            <div class="row-input"  style="width: 75%;" id="createTime">
+            </div>
+            <label class="row-label" style="width: 25%;">装修开始时间: </label>
+            <div class="row-input"  style="width: 75%;" id="startTime">
+            </div>
+            <label class="row-label" style="width: 25%;">装修周期: </label>
+            <div class="row-input"  style="width: 75%;" id="decorationCycle">
+            </div>
+            <label class="row-label" style="width: 25%;">装修备注: </label>
+            <div class="row-input"  style="width: 75%;" id="decorationDesc">
+            </div>
+            <label class="row-label" style="width: 25%;">装修审核: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <select id="decorationCheck" name="status" data-toggle="selectpicker"  data-width="100%" data-rule="required" onchange="decorationChange(this.value)">
+                    <option value="">请选择</option>
+                    <option value="2">同意</option>
+                    <option value="3">拒绝</option>
+                </select>
+            </div>
+            <div class="divReject" style=" display: none;">
+                <label class="row-label" style="width: 25%;">拒绝原因: </label>
+                <div class="row-input required"  style="width: 75%;">
+                    <textarea style="resize: none; height: 120px; " placeholder="请输入拒绝的原因(最多500个字)" id="reason"></textarea>
+                </div>
+            </div>
+            <label class="row-label" style="width: 25%;">物业备注: </label>
+            <div class="row-input"  style="width: 75%;">
+                <textarea style="resize: none; height: 120px; " placeholder="可输入物业备注(最多500个字)" data-rule="length(~500)"
+                          id="description" name="description"></textarea>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addAccount" class="btn-default" data-icon="save">确认提交</button></li>
+    </ul>
+</div>
+<script>
+    var checkDecorationInfo = $.CurrentNavtab.data("disposeDecorationInfo");
+    //装修申请记录id
+    $.CurrentDialog.find('#recordId').val(checkDecorationInfo.recordId);
+    //房屋编号
+    if(checkDecorationInfo.buildingName == "" || checkDecorationInfo.buildingName == null || checkDecorationInfo.buildingName == undefined){
+        checkDecorationInfo.buildingName = ""
+    }
+    if(checkDecorationInfo.unitName == "" || checkDecorationInfo.unitName == null || checkDecorationInfo.unitName == undefined){
+        checkDecorationInfo.unitName = ""
+    }
+    $.CurrentDialog.find('#houseInfo').text(checkDecorationInfo.buildingName+checkDecorationInfo.unitName+checkDecorationInfo.houseName);
+    //装修公司
+    $.CurrentDialog.find('#decorationCompany').text(checkDecorationInfo.decorationCompany);
+    //装修周期
+    var cycleData = checkDecorationInfo.decorationCycle;
+    var cycleText = "";
+    if(cycleData == 1){
+        cycleText = "1个月";
+    }else if(cycleData == 2){
+        cycleText = "2个月";
+    }else if(cycleData == 3){
+        cycleText = "3个月";
+    }else if(cycleData == 4){
+        cycleText = "4个月";
+    }else if(cycleData == 5){
+        cycleText = "5个月";
+    }else if(cycleData == 6){
+        cycleText = "6个月";
+    }else if(cycleData == 7){
+        cycleText = "7个月";
+    }else if(cycleData == 8){
+        cycleText = "8个月";
+    }else if(cycleData == 9){
+        cycleText = "9个月";
+    }else if(cycleData == 10){
+        cycleText = "10个月";
+    }else if(cycleData == 11){
+        cycleText = "11个月";
+    }else if(cycleData == 12){
+        cycleText = "12个月";
+    }
+    $.CurrentDialog.find("#decorationCycle").text(cycleText);
+    //申请时间
+    $.CurrentDialog.find("#createTime").text(checkDecorationInfo.createTime);
+    //装修开始时间
+    $.CurrentDialog.find("#startTime").text(checkDecorationInfo.startTime.substring(0,10));
+    //装修备注
+    $.CurrentDialog.find("#decorationDesc").text(checkDecorationInfo.decorationDesc);
+
+
+function decorationChange(obj){
+    if(obj == 3){   //拒绝
+        $.CurrentDialog.find(".divReject textarea").attr("name","reason");
+        $.CurrentDialog.find(".divReject textarea").attr("data-rule","required,length(~500)");
+        $.CurrentDialog.find(".divReject").show();
+    }else{
+        $.CurrentDialog.find(".divReject textarea").removeAttr("name");
+        $.CurrentDialog.find(".divReject").hide();
+    }
+}
+
+$.CurrentDialog.find('button#addAccount').bind("click", function(){
+    BJUI.ajax('ajaxform', {
+        url: path + '/web/decoration/v1/doDecoration',
+        form: $.CurrentDialog.find('form'),
+        validate: true,
+        loadingmask: true,
+        okCallback: function (data) {
+            BJUI.alertmsg('ok','操作成功');
+            BJUI.dialog('closeCurrent');
+            $.CurrentNavtab.find("#j_datagrid_decoration").datagrid('filter');
+        }
+    })
+})
+
+
+</script>

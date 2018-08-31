@@ -1,0 +1,401 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;" data-toggle="ajaxform">
+        <div style="text-align: center; font-size: 16px; font-weight: bold;">
+            <input type="hidden" name="houseId" id="houseId" />
+            <span id="houseDetailTitle"></span>
+        </div>
+        <div class="bjui-row col-2" style=" padding-bottom: 0;">
+            <label class="row-label">房屋状态: </label>
+            <div class="row-input">
+                <select id="houseStatus" name="houseStatus" data-toggle="selectpicker"  data-width="100%" data-rule="required"  onchange="show_sub(this.options[this.options.selectedIndex].value)" >
+                    <option value="2">空置</option>
+                    <option value="1">自住</option>
+                    <option value="3">出租</option>
+                </select>
+            </div>
+            <label class="row-label" >是否饲养宠物: </label>
+            <div class="row-input">
+                <select id="petStatus" name="petStatus" data-toggle="selectpicker"  data-width="100%" data-rule="required" >
+                    <option value="0">否</option>
+                    <option value="1">是</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" class="btn-blue" data-icon="plus" id="addHouseholder" style=" margin-bottom: 10px;">添加户主</button>
+        <table class="table table-bordered" id="datagrid-householder-list">
+        </table>
+
+        <button type="button" class="btn-blue" data-icon="plus" id="addMember" style=" margin-bottom: 10px; margin-top: 20px;">添加成员</button>
+        <table class="table table-bordered" id="datagrid-member-list">
+        </table>
+
+        <div id="divLeaseholder">
+            <button type="button" class="btn-blue" data-icon="plus" id="addLeaseholder"  style=" margin-bottom: 10px; margin-top: 20px;">添加租客</button>
+            <table class="table table-bordered" id="datagrid-leaseholder-list">
+            </table>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addHouseInfo" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+
+<script>
+    //初始化信息
+    var findHouseDetail = $.CurrentNavtab.data('findHouseDetail');
+    //楼宇
+    var buildingName = '';
+    if(findHouseDetail.buildingName != undefined){
+        buildingName = findHouseDetail.buildingName;
+    }else{
+        buildingName = '';
+    }
+    //单元
+    var unitName = '';
+    if(findHouseDetail.unitName != undefined){
+        unitName = findHouseDetail.unitName;
+    }else{
+        unitName = '';
+    }
+    //房号
+    var houseNum = '';
+    if(findHouseDetail.houseNum != undefined){
+        houseNum = findHouseDetail.houseNum;
+    }else{
+        houseNum = '';
+    }
+    $.CurrentDialog.find("#houseId").val(findHouseDetail.houseId);
+    $.CurrentDialog.find("#houseDetailTitle").html(buildingName+unitName+houseNum);
+    $.CurrentDialog.find("#houseStatus").val(findHouseDetail.houseStatus);
+    show_sub(findHouseDetail.houseStatus);  //
+    $.CurrentDialog.find("#petStatus").val(findHouseDetail.petStatus);
+
+    //确认房屋信息
+    $.CurrentDialog.find('button#addHouseInfo').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/houseStatus/v1/updateHouseStatus',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','保存成功！');
+                    BJUI.dialog('closeCurrent');
+                    //$('#datagrid-leaseholder-list').datagrid("reload");  //重新加载户主表格
+                    var buildingId = $.CurrentNavtab.data('buildingId');
+                    unitLeftId = $.CurrentNavtab.data('unitId');
+                    loadHouseList(buildingId);
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+
+    //添加户主
+    $.CurrentDialog.find("#addHouseholder").click(function(){
+        BJUI.dialog({
+            id:'addHouseholder',
+            title: "添加户主<span spanId='"+findHouseDetail.houseId+"'></span>",
+            width: '500',
+            height: '280',
+            mask: true,
+            url: 'html/house/houseStatus/addHouseholder.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+
+    //添加成员
+    $.CurrentDialog.find("#addMember").click(function(){
+        BJUI.dialog({
+            id:'addHouseholder',
+            title: "添加成员<span spanId='"+findHouseDetail.houseId+"'></span>",
+            width: '500',
+            height: '280',
+            mask: true,
+            url: 'html/house/houseStatus/addMember.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+
+    //添加租客
+    $.CurrentDialog.find("#addLeaseholder").click(function(){
+        BJUI.dialog({
+            id:'addHouseholder',
+            title: "添加租客<span spanId='"+findHouseDetail.houseId+"' statusId = '"+$.CurrentDialog.find("#houseStatus").val()+"'></span>",
+            width: '500',
+            height: '280',
+            mask: true,
+            url: 'html/house/houseStatus/addLeaseholder.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+
+    //户主
+    $.CurrentDialog.find("#datagrid-householder-list").datagrid({
+        height: '120',
+        tableWidth: "100%",
+        showToolbar: false,
+        toolbarItem: '',   //显示工具条按钮  all显示所有按钮
+        dataUrl: path + '/web/houseStatus/v1/findHouseStatusOwner',
+        postData:{"houseId":findHouseDetail.houseId},
+        paging:false,
+        showCheckboxcol: false,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: false,
+        columnResize: false,
+        linenumberAll: false,
+        columns: [
+            {name: 'ownerName', label: '户主名称', nowrap: true, align: 'center'},
+            {name: 'ownerPhoneNum', label: '手机号', align: 'center'},
+            {name: 'ownerResidency', label: '籍贯', nowrap: true, align: 'center', render: function (value, data) {
+                    var text = '';
+                    if (value == "") {
+                        text = '<i>暂无信息</i>';
+                    }else{
+                        text = value;
+                    }
+                    return text;
+                }
+            },
+            {name: 'ownerEthnic', label: '民族', nowrap: true, align: 'center', render: function (value, data) {
+                var text = '';
+                if (value == "") {
+                    text = '<i>暂无信息</i>';
+                }else{
+                    text = value;
+                }
+                return text;
+            }},
+            {name: 'ownerReligion', label: '宗教信仰', align: 'center', render: function (value, data) {
+                var text = ''
+                if(value == ""){
+                    text = '<i>暂无信息</i>';
+                }else if(value == "1"){
+                    text = '无';
+                }else if(value == "2"){
+                    text = '佛教';
+                }else if(value == "3"){
+                    text = '基督教';
+                }else if(value == "4"){
+                    text = '伊斯兰教';
+                }else if(value == "5"){
+                    text = '其他';
+                }
+                return text;
+            }},
+            {name: 'ownerStatus', label: '状态', align: 'center', render: function (value, data) {
+                var text = ''
+                if(value == "1"){
+                    text = '待激活';
+                }else if(value == "2"){
+                    text = '已激活';
+                }else if(value == "3"){
+                    text = '已失效';
+                }
+                return text;
+            }
+            }
+        ]
+    });
+
+    //成员
+    $.CurrentDialog.find("#datagrid-member-list").datagrid({
+        height: '120',
+        tableWidth: "100%",
+        showToolbar: false,
+        toolbarItem: '',   //显示工具条按钮  all显示所有按钮
+        dataUrl: path + '/web/houseStatus/v1/findHouseMember',
+        postData:{"houseId":findHouseDetail.houseId},
+        paging:false,
+        showCheckboxcol: false,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: false,
+        columnResize: false,
+        linenumberAll: false,
+        columns: [
+            {name: 'memberName', label: '成员名称', nowrap: true, align: 'center'},
+            {name: 'memberPhoneNum', label: '手机号', align: 'center'},
+            {name: 'memberResidency', label: '籍贯', nowrap: true, align: 'center', render: function (value, data) {
+                var text = ''
+                if (value == "") {
+                    text = '<i>暂无信息</i>';
+                }else{
+                    text = value;
+                }
+                return text;
+            }
+            },
+            {name: 'memberEthnic', label: '民族', nowrap: true, align: 'center', render: function (value, data) {
+                var text = ''
+                if (value == "") {
+                    text = '<i>暂无信息</i>';
+                }else{
+                    text = value;
+                }
+                return text;
+            }},
+            {name: 'memberReligion', label: '宗教信仰', align: 'center', render: function (value, data) {
+                var text = ''
+                if(value == ""){
+                    text = '<i>暂无信息</i>';
+                }else if(value == "1"){
+                    text = '无';
+                }else if(value == "2"){
+                    text = '佛教';
+                }else if(value == "3"){
+                    text = '基督教';
+                }else if(value == "4"){
+                    text = '伊斯兰教';
+                }else if(value == "5"){
+                    text = '其他';
+                }
+                return text;
+            }},
+            {name: 'memberStatus', label: '状态', align: 'center', render: function (value, data) {
+                var text = ''
+                if(value == "1"){
+                    text = '待认证';
+                }else if(value == "2"){
+                    text = '已认证';
+                }else if(value == "3"){
+                    text = '已失效';
+                }
+                return text;
+            }
+            }
+        ]
+    });
+
+
+    //房屋状态的下拉选择，以及添加租客的显示否与
+    function show_sub(v){
+        if(v == 3){   //出租
+            $.CurrentDialog.find("#divLeaseholder").show();
+            //租客
+            $.CurrentDialog.find("#datagrid-leaseholder-list").datagrid({
+                height: '120',
+                tableWidth: "100%",
+                showToolbar: false,
+                toolbarItem: '',   //显示工具条按钮  all显示所有按钮
+                dataUrl: path + '/web/houseStatus/v1/findHouseTenant',
+                postData:{"houseId":findHouseDetail.houseId},
+                paging:false,
+                showCheckboxcol: false,
+                fieldSortable: false,
+                filterThead: false,
+                showLinenumber: true,
+                columnMenu: false,
+                columnShowhide: false,
+                columnFilter: false,
+                columnLock: false,
+                contextMenuH: false,
+                loadingmask: false,
+                columnResize: false,
+                linenumberAll: false,
+                columns: [
+                    {name: 'tenantName', label: '租客名称', nowrap: true, align: 'center'},
+                    {name: 'phoneNum', label: '手机号', align: 'center'},
+                    {name: 'tenantResidency', label: '籍贯', nowrap: true, align: 'center', render: function (value, data) {
+                        var text = ''
+                        if (value == "") {
+                            text = '<i>暂无信息</i>';
+                        }else{
+                            text = value;
+                        }
+                        return text;
+                    }
+                    },
+                    {name: 'tenantEthnic', label: '民族', nowrap: true, align: 'center', render: function (value, data) {
+                        var text = ''
+                        if (value == "") {
+                            text = '<i>暂无信息</i>';
+                        }else{
+                            text = value;
+                        }
+                        return text;
+                    }},
+                    {name: 'tenantReligion', label: '宗教信仰', align: 'center', render: function (value, data) {
+                        var text = ''
+                        if(value == ""){
+                            text = '<i>暂无信息</i>';
+                        }else if(value == "1"){
+                            text = '无';
+                        }else if(value == "2"){
+                            text = '佛教';
+                        }else if(value == "3"){
+                            text = '基督教';
+                        }else if(value == "4"){
+                            text = '伊斯兰教';
+                        }else if(value == "5"){
+                            text = '其他';
+                        }
+                        return text;
+                    }},
+                    {name: 'tenantId', label: '操作', align: 'center', render: function (value, data) {
+                        var html = '<button type="button" class="btn-red" onclick="deleteTenant(\'' + value + '\')">删除</button>'
+                        return html;
+                    }
+                    }
+                ]
+            });
+
+        }else{
+            var Leaseholder = 0;
+            BJUI.ajax('doajax', {
+                url: path + '/web/houseStatus/v1/findHouseTenant',
+                loadingmask: false,
+                data: JSON.stringify({"houseId":findHouseDetail.houseId}),
+                okCallback: function (json) {
+                    Leaseholder = json.length;
+                    if(Leaseholder == 0){   //没有租客
+                        $.CurrentDialog.find("#divLeaseholder").hide();
+                    }else{
+                        BJUI.alertmsg('error',"还有租客信息没有删除，不能切换状态！");
+                        $.CurrentDialog.find("#houseStatus").val(3);
+                        $.CurrentDialog.find("#houseStatus").selectpicker('refresh');
+                    }
+                }
+            });
+
+        }
+    }
+
+
+    //删除租客
+    function deleteTenant(id){
+        BJUI.alertmsg('confirm', '确定要删除选中的租客吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/houseStatus/v1/deleteHouseStatusTenant',
+                    loadingmask: false,
+                    data: JSON.stringify({"tenantId": id}),
+                    okCallback: function (json) {
+                        BJUI.alertmsg('ok',"删除成功！");
+                        $.CurrentDialog.find("#datagrid-leaseholder-list").datagrid('reload');
+                    }
+                });
+            }
+        });
+    }
+</script>

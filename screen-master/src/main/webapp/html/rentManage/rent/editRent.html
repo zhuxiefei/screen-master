@@ -1,0 +1,306 @@
+<div class="bjui-pageContent" style="overflow: visible">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 30%;">租赁编号: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="rentNo"  readonly name="rentNo" data-rule="required,special,length(~50)">
+            </div>
+            <label class="row-label" style="width: 30%;">合同状态: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="hidden" id="isInvalid" name="isInvalid" />
+                <input type="text" id="isInvalidText"  readonly data-rule="required,special,length(~50)">
+            </div>
+            <label class="row-label" style="width: 30%;">是否上传合同: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="hidden" id="isUpload" name="isUpload" />
+                <input type="text" id="isUploadText"  readonly  data-rule="required,special,length(~50)">
+            </div>
+            <label class="row-label" style="width: 30%;">招租状态: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <select id="houseStatus" name="houseStatus" data-toggle="selectpicker"  disabled data-rule="required" data-width="100%">
+                    <option value="">--请选择--</option>
+                    <option value="1">招商中</option>
+                    <option value="2">空置中</option>
+                    <option value="3">出租中</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 30%;">房屋: </label>
+            <div class="row-input required" style="width: 70%;">
+                <select id="buildingSelect" data-toggle="selectpicker"  data-width="30%" onchange="getUnit(this.value)">
+                    <option value="">--楼宇--</option>
+                </select>
+                <select id="unitSelect" data-toggle="selectpicker"  data-width="30%" onchange="getHouse(this.value)">
+                    <option value="">--单元--</option>
+                </select>
+                <select id="houseSelect" name="address" data-toggle="selectpicker"  data-width="35%" data-rule="required" onchange="getAreaData(this.value)">
+                    <option value="">--房号--</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 30%;">租赁公司名称: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="companyName"  name="companyName" data-rule="required,special,length(~50)">
+            </div>
+            <label class="row-label" style="width: 30%;">租客对接人: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="tenant"  name="tenant" data-rule="required,special,length(~20)">
+            </div>
+            <label class="row-label" style="width: 30%;">对接人电话: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="tenantPhone"  name="tenantPhone" data-rule="required,phoneNum,length(~20)">
+            </div>
+            <!--<label class="row-label" style="width: 30%;">租赁地址: </label>-->
+            <!--<div class="row-input required"  style="width: 70%;">-->
+            <!--<input type="text" id="address"  name="address" data-rule="required,special,length(~50)">-->
+            <!--</div>-->
+            <label class="row-label" style="width: 30%;">租赁面积: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="acreage"  style="width: 94%;" name="acreage" data-rule="required,numberOnly1" readonly >㎡
+            </div>
+            <label class="row-label" style="width: 30%;">租赁单价: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text"  id="rentUnitPrice"  style="width: 86%;" name="rentUnitPrice" data-rule="required,range(0~1000000),dotNum">元/月
+            </div>
+            <label class="row-label" style="width: 30%;">合同签订时间: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="signTime" placeholder=""  readonly data-rule="合同签订时间: matchE[lte, startTimeStr, datetime]，required"data-toggle="datepicker"
+                       data-pattern="yyyy-MM-dd" name="signTimeStr">
+            </div>
+            <label class="row-label" style="width: 30%;">合同计租时间: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="startTime" placeholder=""  readonly data-rule="合同计租时间: matchE[gte, signTimeStr, datetime]，required"data-toggle="datepicker"
+                       data-pattern="yyyy-MM-dd" name="startTimeStr" onchange="triggerEndTime()">
+            </div>
+            <label class="row-label" style="width: 30%;">合同周期: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="rentCycle" placeholder=""data-rule="required,number1000"style="width: 94%;" name="rentCycle" onfocus="focusCheck(this.value)" onblur="getEndTime(this.value)">月
+            </div>
+            <label class="row-label" style="width: 30%;">合同结束时间: </label>
+            <div class="row-input"  style="width: 70%;">
+                <input type="text" id="endTime" readonly placeholder="" name="endTimeStr">
+            </div>
+            <label class="row-label" style="width: 30%;">物业公司: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text"  id="propertyCompany"  name="propertyCompany" data-rule="required,special,length(~30)">
+            </div>
+            <label class="row-label" style="width: 30%;">物业费单价: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text"  id="propertyUnitPrice"   style="width: 79%;" name="propertyUnitPrice" data-rule="required,range(0~1000),dotNum">元/㎡/月
+            </div>
+            <label class="row-label" style="width: 30%;">物业电话: </label>
+            <div class="row-input required"  style="width: 70%;">
+                <input type="text" id="propertyPhone"  name="propertyPhone" data-rule="required,phoneNum,length(~20)">
+            </div>
+            <input type="hidden" id="rentId"  name="rentId" >
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addRent" class="btn-default" data-icon="save">修改</button></li>
+    </ul>
+</div>
+<script>
+    var editRentData=$.CurrentNavtab.data("editRentData");
+    var rentId=$.CurrentNavtab.data("rentId");
+    $.CurrentDialog.find('#rentId').val(rentId);
+    var isInvalidText = '';
+    if (editRentData.isInvalid == 1) {
+        isInvalidText = "有效";
+    }else if(editRentData.isInvalid == 2){
+        isInvalidText = "无效";
+    }else{
+        isInvalidText = "待生效";
+    }
+    var isUploadText = "";
+    if (editRentData.isUpload == 1) {
+        isUploadText = "已上传";
+    }else{
+        isUploadText = "未上传";
+    }
+//    if (editRentData.houseStatus == 1) {
+//        editRentData.houseStatus = "招商中";
+//    }else if(editRentData.houseStatus==2){
+//        editRentData.houseStatus = "空置中";
+//    }else if(editRentData.houseStatus==3){
+//        editRentData.houseStatus = "出租中";
+//    }else{
+//        $.CurrentDialog.find('#houseStatus').hide();
+//    }
+    $.CurrentDialog.find('#houseStatus').val(editRentData.houseStatus).selectpicker('refresh');
+    $.CurrentDialog.find('#rentNo').val(editRentData.rentNo);
+    $.CurrentDialog.find('#companyName').val(editRentData.companyName);
+    $.CurrentDialog.find('#endTime').val(editRentData.endTime.substr(0,10));
+    $.CurrentDialog.find('#isInvalid').val(editRentData.isInvalid);
+    $.CurrentDialog.find('#isInvalidText').val(isInvalidText);
+    $.CurrentDialog.find('#isUpload').val(editRentData.isUpload);
+    $.CurrentDialog.find('#isUploadText').val(isUploadText);
+    $.CurrentDialog.find('#propertyCompany').val(editRentData.propertyCompany);
+    $.CurrentDialog.find('#propertyPhone').val(editRentData.propertyPhone);
+    $.CurrentDialog.find('#propertyUnitPrice').val(editRentData.propertyUnitPrice);
+    $.CurrentDialog.find('#rentCycle').val(editRentData.rentCycle);
+    $.CurrentDialog.find('#rentUnitPrice').val(editRentData.rentUnitPrice);
+    $.CurrentDialog.find('#signTime').val(editRentData.signTime.substr(0,10));
+    $.CurrentDialog.find('#startTime').val(editRentData.startTime.substr(0,10));
+    $.CurrentDialog.find('#tenant').val(editRentData.tenant);
+    $.CurrentDialog.find('#tenantPhone').val(editRentData.tenantPhone);
+    $.CurrentDialog.find('#acreage').val(editRentData.acreage);
+    $.CurrentDialog.find('#buildingSelect').val(editRentData.buildingId);
+
+    getEndTime(editRentData.rentCycle)
+    getBuilding();
+    var rentHouseData = {
+        'buildingId': '',
+        'unitId': '',
+    }
+
+    function triggerEndTime() {
+        $.CurrentDialog.find('#rentCycle').blur();
+    }
+    function getAreaData(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/lease/v1/findAreaByHouseId',
+            loadingmask: false,
+            data:{
+                'houseId':val
+            },
+            okCallback: function (data) {
+                $.CurrentDialog.find("#acreage").val(data.interFloorArea );
+            }
+        });
+    }
+    //加载楼宇
+    function getBuilding() {
+        BJUI.ajax('doajax', {
+            url: path + '/web/lease/v1/findBuildingList',
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (data) {
+                if(data.length > 0){
+                    $.each(data, function (i, n) {
+                        $.CurrentDialog.find("#buildingSelect").append('<option value="' + n.buildingId + '">' + n.buildingName + '</option>');
+                    })
+                }
+                $.CurrentDialog.find("#buildingSelect").append('<option value="' + "" + '">' + "其它" + '</option>');
+            }
+        });
+    }
+
+    function getUnit(buildingId) {
+        var buildingIds = {"buildingId": buildingId};
+        if (buildingId == "") {
+            rentHouseData.unitId = "";
+            $.CurrentDialog.find('#unitSelect option').not(':eq(0)').remove();
+            rentHouseData.buildingId = "";
+            getHouse();
+            return;
+        }
+        rentHouseData.buildingId = buildingId;
+        //查询单元列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/lease/v1/findUnitList',
+            data: JSON.stringify(buildingIds),
+            loadingmask: false,
+            async:false,
+            okCallback: function (data) {
+                $.CurrentDialog.find('#unitSelect option').not(':eq(0)').remove();
+                var html = '';
+                if(data.length > 0){
+                    $.each(data, function (i, n) {
+                        html += '<option value="' + n.unitId + '">' + n.unitName + '</option>';
+                    });
+                }
+                $.CurrentDialog.find('#unitSelect').append(html);
+                $.CurrentDialog.find('#unitSelect').selectpicker('refresh');
+                $.CurrentDialog.find("#acreage").val("");
+                getHouse();
+            }
+        })
+    }
+    function getHouse(unitId) {
+        rentHouseData.unitId = unitId;
+        //查询房屋列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/lease/v1/findHouses',
+            data: JSON.stringify(rentHouseData),
+            loadingmask: false,
+            async:false,
+            okCallback: function (data) {
+                $.CurrentDialog.find('#houseSelect option').not(':eq(0)').remove();
+                var html = '';
+                if(data.length > 0){
+                    $.each(data, function (i, n) {
+                        html += '<option value="' + n.houseId + '">' + n.houseNum + '</option>';
+                    });
+                }
+                $.CurrentDialog.find('#houseSelect').append(html);
+                $.CurrentDialog.find('#houseSelect').selectpicker('refresh');
+                $.CurrentDialog.find("#acreage").val("");
+                //findHouse()
+            }
+        })
+    }
+
+    function triggerGetTime() {
+//        setTimeout(function () {
+//            $.CurrentDialog.find('#rentCycle').blur();
+//        },800)
+    }
+    function focusCheck(val) {
+        var time=$.CurrentDialog.find('#startTime').val()
+        if(time==""||time==undefined){
+            BJUI.alertmsg('info','请先填写合同计租时间');
+            $.CurrentDialog.find('#rentCycle').blur();
+        }
+    }
+
+    function getEndTime(val) {
+        if(val==""){
+            return
+        }
+        var time=$.CurrentDialog.find('#startTime').val()
+        if(time==""||time==undefined){
+            BJUI.alertmsg('info','请先填写合同计租时间');
+            $.CurrentDialog.find('#startTime').foucus();
+        }else{
+            var startTime= new Date(time);
+            startTime.setMonth(startTime.getMonth() + parseFloat(val));
+            var yy1 = startTime.getFullYear();
+            var mm1 = startTime.getMonth()+1;
+            var dd1 = startTime.getDate();
+            if (mm1 < 10 ) {
+                mm1 = '0'+ mm1;
+            }
+            if (dd1 < 10) {
+                dd1 = '0' + dd1;
+            }
+            var deadLineDate=yy1 + '-' + mm1 + '-' + dd1
+//            startTime.setMonth(startTime.getMonth()+val);
+            $.CurrentDialog.find('#endTime').val(deadLineDate);
+        }
+    }
+
+    $.CurrentDialog.find('button#addRent').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/lease/v1/modifyLease ',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.dialog('close','dialog_editRent');
+                    BJUI.alertmsg('ok','修改成功');
+                    $.CurrentNavtab.find("#rentContent_datagrid").datagrid('filter');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+    $.CurrentDialog.find('#buildingSelect').val(editRentData.buildingId).selectpicker('refresh');
+    getUnit(editRentData.buildingId);
+    $.CurrentDialog.find('#unitSelect').val(editRentData.unitId).selectpicker('refresh');
+    getHouse(editRentData.unitId)
+    $.CurrentDialog.find('#houseSelect').val(editRentData.houseId).selectpicker('refresh');
+    getAreaData(editRentData.houseId)
+</script>

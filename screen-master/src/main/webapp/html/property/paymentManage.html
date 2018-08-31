@@ -1,0 +1,783 @@
+<style>
+    .bjui-datagrid .datagrid-box-b {
+        overflow-x: auto;
+    }
+</style>
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#datagrid-payment')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">缴费状态:</label>
+                <div class="row-input">
+                    <select id="billStatus" name="billStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="2">已缴费</option>
+                        <option value="1">欠缴费</option>
+                        <option value="3">预缴费</option>
+                        <option value="4">未缴费</option>
+                    </select>
+                </div>
+                <label class="row-label">缴费途径:</label>
+                <div class="row-input">
+                    <select id="isOnline" name="isOnline" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="0">线上缴费</option>
+                        <option value="1">线下缴费</option>
+                    </select>
+                </div>
+
+                <label class="row-label">收费项目:</label>
+                <div class="row-input">
+                    <select id="itemType" name="itemType" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">物业费</option>
+                        <option value="2">公摊水电费</option>
+                        <option value="3">停车费(购买)</option>
+                        <option value="4">停车费(租赁)</option>
+                        <option value="5">能耗费</option>
+
+                    </select>
+                </div>
+
+                <label class="row-label">收据状态:</label>
+                <div class="row-input">
+                    <select id="demandBillStatus" name="demandBillStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">未索要</option>
+                        <option value="2">已索要</option>
+                        <option value="3">已提供</option>
+                    </select>
+                </div>
+
+                <label class="row-label">房间编号:</label>
+                <div class="row-input">
+                    <input type="text" id="houseNum" name="houseNum" value="" data-rule="special,length(~6)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">户主名称:</label>
+                <div class="row-input">
+                    <input type="text" id="houseMaster" name="houseMaster" value="" data-rule="special,length(~10)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">出账开始时间:</label>
+                <div class="row-input" style=" padding-right: 0;">
+                    <input type="text" id="exportBillStartTime" name="exportBillStartTime"
+                           data-rule="出账开始时间: matchE[lte, exportBillEndTime, datetime]" value=""
+                           data-toggle="datepicker" data-pattern="yyyy-MM-dd" placeholder=""
+                           readonly="readonly">
+                </div>
+                <!--<label class="row-label" style=" padding: 0; width: 16px; text-align: center;">-</label>-->
+                <label class="row-label">出账结束时间:</label>
+                <div class="row-input">
+                    <input type="text" id="exportBillEndTime" name="exportBillEndTime"
+                           data-rule="出账结束时间: matchE[gte, exportBillStartTime, datetime]" value=""
+                           data-toggle="datepicker" data-pattern="yyyy-MM-dd" placeholder=""
+                           readonly="readonly">
+                </div>
+
+                <div style=" text-align: center; margin-bottom: 8px; padding-top: 4px;">
+                    <div class="btn-group">
+                        <button class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                        <button type="reset" class="btn-orange btnReset" data-icon="times">重置</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto">
+    <ul id="ztreeHouseList_payment" style="" class="ztree" data-toggle="ztree"
+        data-options="{nodes:ztree_returnjson,async:true,url:path+'/web/building/v1/findUnitList',contentType:'application/json; charset=UTF-8',dataType:'json',checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck_pay,onClick:zTreeOnClick,showIcon: false,idKey:'buildingId',keyName:'buildingName',autoParam:['buildingId=buildingId'],filter:filterS}"></ul>
+
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <button type="button" class="btn-red btn btn-prohibit" onclick="askPayment()" data-icon="fa-bell-o"
+            style=" left: 5px;">催缴
+    </button>
+    <button type="button" class="btn-blue btn-prohibit" onclick="payment()" data-icon="fa-rmb" style=" left: 69px;">缴费
+    </button>
+    <button type="button" class="btn-blue btn-prohibit" onclick="prePayment()" data-icon="fa-rmb" style=" left: 127px;">
+        预缴
+    </button>
+    <button type="button" class="btn-orange btn-prohibit" onclick="printPayment()" data-icon="fa-print"
+            style=" left: 186px;">打印
+    </button>
+    <button type="button" class="btn-green btn-prohibit" onclick="exportPayment()" data-icon="sign-in"
+            style=" left: 250px;">导出
+    </button>
+    <button type="button" class="btn-blue btn-prohibit" onclick="refreshPayment()" data-icon="refresh"
+            style=" left: 313px;">展示全部
+    </button>
+    <table class="table table-bordered" id="datagrid-payment">
+    </table>
+</div>
+<a id="dlink" href="" style="display: none ;">下载</a>
+<div id="ieExport_paymentmanage">
+    <table id="paymentList" style="display:none;">
+        <tr>
+            <th>房屋信息</th>
+            <th>户主名称</th>
+            <th>手机号码</th>
+            <th>计费起始时间</th>
+            <th>计费截止时间</th>
+            <th>收费项</th>
+            <th>应收金额</th>
+            <th>滞纳金</th>
+            <th>应收合计</th>
+            <th>出账时间</th>
+            <th>缴费状态</th>
+            <th>缴费途径</th>
+            <th>缴费时间</th>
+            <th>收据状态</th>
+        </tr>
+        <tbody id="paymentInfos">
+
+        </tbody>
+    </table>
+</div>
+<script>
+    //展示页面
+    var sendReceipt = "";
+    if ($("body").data("sendReceipt") != undefined) {
+        sendReceipt = $("body").data("sendReceipt");
+        $.CurrentNavtab.find("#demandBillStatus").val(sendReceipt);
+        $("body").data("sendReceipt", "");
+    }
+    //    var isUrge=0;
+    $.CurrentNavtab.find("#datagrid-payment").datagrid({
+        tableWidth: '100%',
+        height: '100%',
+        showToolbar: true,
+        postData: {"demandBillStatus": sendReceipt},
+        toolbarItem: '',   //显示工具条按钮  all显示所有按钮
+        paging: {pageSize: 10, selectPageSize: '10,30,60,90',},
+        dataUrl: path + '/web/expenses/v1/findAllExpenses',
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        aysnc: false,
+        showLinenumber: true,
+        hScrollbar: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        dialogFilterW: 0,
+        columns: [
+            {
+                name: 'houseInfo',
+                label: '房屋信息',
+                nowrap: true,
+                align: 'center',
+                width: 130,
+                render: function (value, data) {
+                    var stateName = null;
+                    if (value == "") {
+                        stateName = "<i>暂无信息</i>";
+                    } else {
+                        stateName = value;
+                    }
+                    return stateName;
+                }
+            },
+            {
+                name: 'houseMaster',
+                label: '户主名称',
+                width: 100,
+                nowrap: true,
+                align: 'center',
+                render: function (value, data) {
+                    var stateName = null;
+                    if (value == "") {
+                        stateName = "<i>暂无信息</i>";
+                    } else {
+                        stateName = value;
+                    }
+                    return stateName;
+                }
+            },
+            {
+                name: 'phone', label: '手机号码', width: 110, align: 'center', render: function (value, data) {
+                var stateName = null;
+                if (value == "") {
+                    stateName = "<i>暂无信息</i>";
+                } else {
+                    stateName = value;
+                }
+                return stateName;
+            }
+            },
+            {name: 'billingStartTime', label: '计费起始时间', align: 'center', width: 100},
+            {name: 'billingEndTime', label: '计费截止时间', align: 'center', width: 100},
+            {
+                name: 'itemType', label: '收费项目', align: 'center', width: 100, render: function (value, data) {
+                var stateName = null;
+                if (value == 1) {
+                    stateName = "物业费";
+                } else if (value == 2) {
+                    stateName = "公摊水电费";
+                } else if (value == 3) {
+                    stateName = "停车费(购买)";
+                } else if (value == 4) {
+                    stateName = "停车费(租赁)";
+                } else if (value == 5) {
+                    stateName = "能耗费";
+                }
+                return stateName;
+            }
+            },
+            {name: 'billAmount', label: '应收金额', width: 100, align: 'center'},
+            {
+                name: 'overduefinePrice', label: '滞纳金', width: 100, align: 'center', render: function (value, data) {
+                var stateName = null;
+                if (value == "" || data.billStatus == 1) {
+                    stateName = "<i>暂无信息</i>";
+                } else {
+                    stateName = value;
+                }
+                return stateName;
+            }
+            },
+            {name: 'totalAmount', label: '应收合计', width: 100, align: 'center'},
+            {name: 'createTime', label: '出账时间', align: 'center', width: 100},
+            {
+                name: 'billStatus', label: '缴费状态', align: 'center', width: 70, render: function (value, data) {
+                var stateName = null;
+                if (value == 1) {
+                    //var myDate = new Date();
+                    //var today = myDate.getFullYear() + "-" + (myDate.getMonth()+1) + "-" + myDate.getDate();
+                    //console.log(today + " "+ data.billingStartTime + " "+ data.deadLine)
+                    var myDate = new Date(data.serverTime);
+                    if( (myDate < new Date(data.deadLine) || myDate == new Date(data.deadLine)) && (myDate > new Date(data.billingStartTime) || myDate == new Date(data.billingStartTime))){
+                        stateName = "未缴费";
+                    }else if(myDate > new Date(data.deadLine)){
+                        stateName = "欠缴费";
+                    }else{
+                        stateName = "预缴费";
+                    }
+
+                } else if (value == 2) {
+                    stateName = "已缴费";
+                }/* else if (value == 3) {
+                    stateName = "预缴费";
+                } else if (value == 4) {
+                    stateName = "未缴费";
+                }*/
+                return stateName;
+            }
+            },
+            {
+                name: 'isOnline', label: '缴费途径', align: 'center', width: 70, render: function (value, data) {
+                var stateName = null;
+                if (value === "" || value === undefined ) {
+                    stateName = "<i>暂无信息</i>";
+                } else if (value == 0) {
+                    stateName = "线上缴费";
+                } else if (value == 1) {
+                    stateName = "线下缴费";
+                }
+                return stateName;
+            }
+            },
+            {name: 'payTime', label: '缴费时间', align: 'center', width: 100, render: function (value, data) {
+                var stateName = null;
+                if (value == "" || value == undefined ) {
+                    stateName = "<i>暂无信息</i>";
+                } else {
+                    stateName = value;
+                }
+                return stateName;
+            }},
+            {name: 'urgeCount', label: '催缴次数', align: 'center', width: 70},
+            {
+                name: 'demandBillStatus', label: '收据状态', align: 'center', width: 70, render: function (value, data) {
+                var stateName = null;
+                if (value == 1) {
+                    stateName = "未索要";
+                } else if (value == 2) {
+                    stateName = "已索要";
+                } else if (value == 3) {
+                    stateName = "已提供";
+                }
+                return stateName;
+            }
+            },
+            {
+                name: 'billNo', label: '操作', align: 'center', width: 100, render: function (value, data) {
+                var html = '';
+                if (data.billStatus == 1) {
+                    if (data.houseMaster == "" || data.houseMaster == undefined) {
+                        html += '<button type="button" class="btn-red" disabled>催缴</button>';
+                    } else {
+                        html += '<button type="button" class="btn-red" onclick="askPayment(\'' + value + '\')">催缴</button>';
+                    }
+                    html += '<button type="button" class="btn-blue" onclick="payment(\'' + value + '\')">缴费</button>';
+                    html += '<button type="button" class="btn-blue" disabled>提供收据</button>';
+                } else {
+                    html += '<button type="button" class="btn-red" disabled>催缴</button>';
+                    html += '<button type="button" class="btn-blue" disabled>缴费</button>';
+
+                    if (data.demandBillStatus == "2" || data.demandBillStatus == "3") {
+                        html += '<button type="button" class="btn-blue" disabled>提供收据</button>';
+                    } else {
+                        html += '<button type="button" class="btn-blue"  onclick="affordPayment(\'' + value + '\')">提供收据</button>';
+                    }
+                }
+                return html
+            }
+            }
+        ]
+    })
+
+    //开始搜索事件
+    $.CurrentNavtab.find('#btn-search').click(function () {
+//        $.CurrentNavtab.find('#datagrid-payment').datagrid('reload', {
+//            'paging':true
+//        });
+        $.CurrentNavtab.find('.paging-pagesize').show();
+
+        $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas', "");
+        $.CurrentNavtab.data('preDataID', false);
+        exportData_pay.houseNum = $.CurrentNavtab.find("#houseNum").val().trim();
+        exportData_pay.houseMaster = $.CurrentNavtab.find("#houseMaster").val().trim();
+        exportData_pay.billingStartTime = $.CurrentNavtab.find("#billingEndTime").val();
+        exportData_pay.billingEndTime = $.CurrentNavtab.find("#billingEndTime").val();
+        exportData_pay.itemType = $.CurrentNavtab.find("#itemType").val();
+        exportData_pay.billStatus = $.CurrentNavtab.find("#billStatus").val();
+        exportData_pay.isOnline = $.CurrentNavtab.find("#isOnline").val();
+        exportData_pay.demandBillStatus = $.CurrentNavtab.find("#demandBillStatus").val();
+    })
+
+    //催缴
+    function askPayment(value) {
+        if (value == "" || value == undefined) {
+            var paymentlist = $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas');
+            if (paymentlist && paymentlist.length > 0) {  //批量
+                var paymentIds = [];
+                var billStatusArray = [];   //缴费状态数组
+                $.each(paymentlist, function (s, v) {
+                    billStatusArray.push(v.billStatus);
+                    paymentIds.push(v.billNo);
+                });
+                if (unique(billStatusArray).length > 1 || unique(billStatusArray).length == 1 && billStatusArray[0] == 2) {
+                    BJUI.alertmsg('error', '请选择欠缴费的账单！');
+                    return;
+                }
+                askPaymentAjax(paymentIds.toString());
+            } else {
+                BJUI.alertmsg('info', '请先选择需要催缴的账单！');
+                return;
+            }
+        } else {
+            askPaymentAjax(value);
+        }
+    }
+    function askPaymentAjax(billNos) {
+        BJUI.alertmsg('confirm', '确定要发送催缴短信吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/expenses/v1/sendReminderMessage',
+                    loadingmask: false,
+                    data: JSON.stringify({"billNos": billNos}),
+                    okCallback: function (json) {
+                        successBack(json);
+                        $.CurrentNavtab.find('#datagrid-payment').datagrid('refresh');
+                    }
+                });
+            }
+        })
+    }
+
+
+    //缴费
+    function payment(value) {
+        if (value == "" || value == undefined) {
+            var paymentlist = $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas');
+            if (paymentlist && paymentlist.length > 0) {  //批量
+                var paymentIds = [];
+                var houseInfoArray = [];   //房屋信息数组
+                var billStatusArray = [];   //缴费状态数组
+                $.each(paymentlist, function (s, v) {
+                    houseInfoArray.push(v.houseInfo);
+                    billStatusArray.push(v.billStatus);
+                    paymentIds.push(v.billNo);
+                });
+                if (unique(houseInfoArray).length > 1) {
+                    BJUI.alertmsg('error', '请选择同一房屋信息的账单！');
+                    return;
+                }
+                if (unique(billStatusArray).length > 1 || unique(billStatusArray).length == 1 && billStatusArray[0] == 2) {
+                    BJUI.alertmsg('error', '请选择欠缴费的账单！');
+                    return;
+                }
+                showPayment(paymentIds.toString());
+            } else {
+                BJUI.alertmsg('info', '请先选择需要缴费的账单！');
+                return;
+            }
+        } else {   //单个
+            showPayment(value);
+        }
+
+    }
+
+    //预缴费
+    function prePayment(value) {
+        BJUI.dialog({
+            id: 'dialog_prePayment',
+            url: 'html/property/paymentManage/prePayment.html',
+            title: "预缴",
+            width: 600,
+            height: 300,
+            mask: true,
+            maxable: false,
+            resizable: false,
+            fresh: true,
+        });
+    }
+
+    function showPayment(billNos) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/findPayDetail',
+            loadingmask: false,
+            data: JSON.stringify({"billNos": billNos}),
+            okCallback: function (json) {
+                $.CurrentNavtab.data('paymentInfo', json);
+                $.CurrentNavtab.data('billNos', billNos);
+                BJUI.dialog({
+                    id: 'navtab_payment',
+                    url: 'html/property/paymentManage/paymentInfo.html',
+                    title: "缴费",
+                    width: 800,
+                    height: 360,
+                    mask: true,
+                    maxable: false,
+                    resizable: false,
+                    fresh: true,
+                    onClose: function () {
+                        Reset();
+                    }
+                });
+            }
+        });
+    }
+
+    //修改提供账单的状态
+    function affordPayment(id) {
+        BJUI.alertmsg('confirm', '确定该账单已提供收据？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/expenses/v1/updateDemand',
+                    loadingmask: false,
+                    data: JSON.stringify({"billNo": id}),
+                    okCallback: function (json) {
+                        successBack(json);
+                        $.CurrentNavtab.find('#datagrid-payment').datagrid('refresh');
+                    }
+                });
+            }
+        });
+    }
+
+
+    //打印账单
+    function printPayment() {
+        var paymentlist = $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas');
+        if (paymentlist && paymentlist.length > 0) {  //批量
+            var paymentIds = [];
+            var houseInfoArray = [];   //房屋信息数组
+            var billStatusArray = [];   //缴费状态数组
+            $.each(paymentlist, function (s, v) {
+                houseInfoArray.push(v.houseInfo);
+                billStatusArray.push(v.billStatus);
+                paymentIds.push(v.billNo);
+            });
+            if (unique(houseInfoArray).length > 1) {
+                BJUI.alertmsg('error', '请选择同一房屋信息的账单！');
+                return;
+            }
+            if (unique(billStatusArray).length > 1 || unique(billStatusArray).length == 1 && billStatusArray[0] == 1) {
+                BJUI.alertmsg('error', '请选择已缴费的账单！');
+                return;
+            }
+            showPrintPayment(paymentIds.toString());
+        } else {
+            BJUI.alertmsg('info', '请先选择需要打印的账单！');
+            return;
+        }
+    }
+    function showPrintPayment(billNos) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/printReceipt',
+            loadingmask: false,
+            data: JSON.stringify({"billNos": billNos}),
+            okCallback: function (json) {
+                $.CurrentNavtab.data('paymentPrint', json);
+                BJUI.dialog({
+                    id: 'navtab_payment',
+                    url: 'html/property/paymentManage/paymentPrint.html',
+                    title: "打印预览",
+                    width: 800,
+                    height: 500,
+                    mask: true,
+                    maxable: false,
+                    resizable: false,
+                    fresh: true,
+                    onClose: function () {
+                        $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas', "");
+                        $.CurrentNavtab.find('#datagrid-payment').datagrid('refresh');
+                    }
+                });
+            }
+        });
+    }
+
+    //导出按钮
+    var exportData_pay = {"billNos": ""};
+    var exportPaymentBuildingId = "";
+    var exportPaymentUnitId = "";
+    var exportPaymentIsOthers = "";
+    function exportPayment() {
+        var paymentlist = $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas');
+        if (paymentlist && paymentlist.length > 0) {  //批量
+            var paymentIds = [];
+            $.each(paymentlist, function (s, v) {
+                paymentIds.push(v.billNo);
+            });
+            exportData_pay.billNos = paymentIds.toString();
+        } else {
+            exportData_pay.billNos = "";
+        }
+        var preDataID = $.CurrentNavtab.data('preDataID');
+        if (preDataID && exportData_pay.billNos == "") {
+            var exportData_payment = {'billNos': preDataID};
+        } else {
+            var exportData_payment = JSON.stringify(exportData_pay);
+
+        }
+
+        BJUI.alertmsg('confirm', '确定要导出数据吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/expenses/v1/exportBill',
+                    loadingmask: false,
+                    data: exportData_payment,
+                    okCallback: function (json) {
+                        //画出表格
+                        var html = '';
+                        var infos = json;
+                        for (var i = 0; i < infos.length; i++) {
+                            var stateName = "";
+                            if (infos[i].itemType == 1) {
+                                stateName = "物业费";
+                            } else if (infos[i].itemType == 2) {
+                                stateName = "公摊水电费";
+                            } else if (infos[i].itemType == 3) {
+                                stateName = "停车费(购买)";
+                            } else if (infos[i].itemType == 4) {
+                                stateName = "停车费(租赁)";
+                            } else if (infos[i].itemType == 5) {
+                                stateName = "能耗费";
+                            }
+                            var billStatusName = "";
+                            if (infos[i].billStatus == 1) {
+                                billStatusName = "欠缴费";
+                            } else if (infos[i].billStatus == 2) {
+                                billStatusName = "已缴费";
+                            } else if (infos[i].billStatus == 3) {
+                                billStatusName = "预缴费";
+                            } else if (infos[i].billStatus == 4) {
+                                billStatusName = "未缴费";
+                            }
+                            var isOnline = "";
+                            if (infos[i].isOnline == "" || infos[i].isOnline == undefined) {
+                                isOnline = "";
+                            } else if (infos[i].isOnline == 0) {
+                                isOnline = "线上缴费";
+                            } else if (infos[i].isOnline == 1) {
+                                isOnline = "线下缴费";
+                            }
+
+                            if (!infos[i].payTime) {
+                                infos[i].payTime = ""
+                            }
+                            if (!infos[i].houseMaster) {
+                                infos[i].houseMaster = ""
+                            }
+                            if (!infos[i].phone) {
+                                infos[i].phone = ""
+                            }
+                            if (!infos[i].houseInfo) {
+                                infos[i].houseInfo = ""
+                            }
+
+                            if (infos[i].demandBillStatus == 1) {
+                                infos[i].demandBillStatus = "未索要";
+                            } else if (infos[i].demandBillStatus == 2) {
+                                infos[i].demandBillStatus = "已索要";
+                            } else if (infos[i].demandBillStatus == 3) {
+                                infos[i].demandBillStatus = "已提供";
+                            }else{
+                                infos[i].demandBillStatus = "";
+                            }
+
+                            html += '<tr><td>' + infos[i].houseInfo + '</td><td>' + infos[i].houseMaster + '</td><td>'
+                                    + infos[i].phone + '</td><td style="mso-number-format:\'\@\';">' + infos[i].billingStartTime +
+                                    '</td><td style="mso-number-format:\'\@\';">' + infos[i].billingEndTime + '</td><td>' + stateName +
+                                    '</td><td>' + infos[i].billAmount + '</td><td>' + infos[i].overduefinePrice + '</td><td>' + infos[i].totalAmount +
+                                    '</td><td style="mso-number-format:\'\@\';">' + infos[i].createTime + '</td><td>' + billStatusName +
+                                    '</td><td>'  + isOnline + '</td><td><span>&nbsp;</span>'  + infos[i].payTime.substr(0,19) + '</td><td>' + infos[i].demandBillStatus +
+                                    '</td></tr>';
+                        }
+                        $.CurrentNavtab.find("#paymentInfos").html(html);
+                        exportExcel('paymentList', '缴费信息表');
+//                       $.CurrentNavtab.find('#datagrid-payment').datagrid('refresh');
+                    }
+                });
+
+            }
+        })
+    }
+
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find(".btnReset").click(function () {
+        $.CurrentNavtab.find("select#billStatus").selectpicker('val', "");
+        $.CurrentNavtab.find("select#itemType").selectpicker('val', "");
+        $.CurrentNavtab.find("select#demandBillStatus").selectpicker('val', "");
+    });
+
+    //左边树
+    function ztree_returnjson() {
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/building/v1/findBuildingList',
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+                var str = {'isParent': true};
+                $.each(dataJson, function (i, n) {
+                    for (var key in str) {
+                        n[key] = str[key];
+                    }
+                });
+                var allArr = {"buildingName": "其他", "buildingId": -1};
+                dataJson.push(allArr);
+            }
+
+        });
+        return dataJson;
+    }
+    function zTreeOnCheck_pay(event, treeId, treeNode) {
+        var id;
+        var pId;
+        if (treeNode.checked) {  //勾选
+            var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_payment");
+            var nodes = treeObj.getCheckedNodes(true);
+            //var v="";
+            var isParent;
+            for (var i = 0; i < nodes.length; i++) {
+                //v+=nodes[i].name + ",";
+                //alert(nodes[i].id); //获取选中节点的值
+                id = nodes[i].buildingId;
+                isParent = nodes[i].isParent;
+                if (!isParent && id != -1) {
+                    pId = nodes[i].getParentNode().buildingId;
+
+                    exportData_pay.buildingId = pId;
+                    exportData_pay.unitId = id;
+                    exportData_pay.isOthers = "";
+                } else if (isParent) {
+                    exportData_pay.buildingId = id;
+                    exportData_pay.unitId = "";
+                    exportData_pay.isOthers = "";
+                } else {
+                    exportData_pay.buildingId = "";
+                    exportData_pay.unitId = "";
+                    exportData_pay.isOthers = "1";
+                }
+
+            }
+
+        } else {
+            exportData_pay.buildingId = "";
+            exportData_pay.unitId = "";
+            exportData_pay.isOthers = "";
+        }
+
+        //按类型查询房屋
+        exportData_pay.clearOldPostData = true;
+        $.CurrentNavtab.find('#datagrid-payment').datagrid('filter', exportData_pay)
+        $.CurrentNavtab.data('preDataID', false)
+        $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas', '');
+        $.CurrentNavtab.find('.paging-pagesize').show();
+    }
+
+    function zTreeOnClick(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_payment");
+        var nodes = treeObj.getSelectedNodes();
+        /* for (var i=0, l=nodes.length; i < l; i++) {
+         //treeObj.checkNode(nodes[i], true, true);   //点击节点选中
+
+         $.CurrentNavtab.data('houseListInfo', nodes[i].buildingDesc);
+         //点击节点查看详情
+         BJUI.dialog({
+         id:'dialog_houseListInfo',
+         url:'html/house/houseList/houseListInfo.html',
+         title:nodes[i].buildingName,   //用户id
+         height:260,
+         mask:true,
+         onClose:function(){
+         $("#"+treeNode.tId).find("a").removeClass("curSelectedNode");
+         }
+         })
+
+         }*/
+    }
+    //添加子节点
+    function filterS(treeId, parentNode, childNodes) {
+        if (childNodes.code == "00000") {
+            childNodes = childNodes.data;
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                //console.log(childNodes);
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    //childNodes[i].unitName = childNodes[i].unitName.replace(/\.n/g, '.');
+                    //console.log(childNodes[i].unitName)
+                    var obj = {};
+                    obj.buildingId = childNodes[i].unitId;
+                    obj.buildingName = childNodes[i].unitName;
+                    if (childNodes[i].unitId == exportData_pay.unitId) {
+                        obj.checked = true;
+                    }
+                    /*var obj = {
+                     buildingId: childNodes[i].unitId,
+                     //pId: childNodes[i].unitName,
+                     buildingName: childNodes[i].unitName
+                     };*/
+                    nodes.push(obj);
+                }
+                //console.log(nodes)
+                //return childNodes;
+                return nodes;
+            }
+        } else {
+            successBack(childNodes)
+        }
+    }
+    function refreshPayment() {
+        BJUI.navtab('refresh', 'paymentManage')
+        $.CurrentNavtab.data('preDataID', false)
+    }
+    changeDivHeight();
+</script>

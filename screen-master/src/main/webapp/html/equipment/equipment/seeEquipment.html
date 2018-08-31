@@ -1,0 +1,242 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow: visible;" data-toggle="ajaxform">
+        <!--<div class="bjui-row col-1" style="margin-left: -58px">-->
+        <!--<label class="row-label">设备类型:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<select id="equipmentType" name="equipmentType" data-toggle="selectpicker" data-width="100%">-->
+        <!--<option value="">&#45;&#45;请选择&#45;&#45;</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--<label class="row-label">设备编号:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+
+        <!--<label class="row-label">设备名称:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="equipmentName" name="equipmentName" value="" data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+
+        <!--<label class="row-label">所在位置:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="equipmentLocation" name="equipmentLocation" value=""-->
+        <!--data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+        <!--<label class="row-label">是否需要巡检:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<select id="isCheck" name="isCheck" data-toggle="selectpicker" data-width="100%" onchange="isCheckChange(this.htmlue)">-->
+        <!--<option value="">&#45;&#45;请选择&#45;&#45;</option>-->
+        <!--<option value="1">是</option>-->
+        <!--<option value="0">否</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--<div id="checkArea">-->
+
+        <!--</div>-->
+        <!--&lt;!&ndash;<label class="row-label">巡检周期:</label>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="row-input required">&ndash;&gt;-->
+        <!--&lt;!&ndash;<select id="checkCycle" name="checkCycle" data-toggle="selectpicker" data-width="100%">&ndash;&gt;-->
+        <!--&lt;!&ndash;<option value="1">每天</option>&ndash;&gt;-->
+        <!--&lt;!&ndash;<option value="2">每月</option>&ndash;&gt;-->
+        <!--&lt;!&ndash;<option value="3">每周</option>&ndash;&gt;-->
+        <!--&lt;!&ndash;<option value="4">季度</option>&ndash;&gt;-->
+        <!--&lt;!&ndash;<option value="5">年度</option>&ndash;&gt;-->
+        <!--&lt;!&ndash;</select>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<label class="row-label">巡查内容:</label>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="row-input required">&ndash;&gt;-->
+        <!--&lt;!&ndash;<textarea placeholder="请输入巡查内容（最多500个字）" data-rule="required,length(~500)" style="height: 120px" id="equipmentDesc"&ndash;&gt;-->
+        <!--&lt;!&ndash;name="equipmentDesc"></textarea>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+        <!--<label class="row-label">生产日期:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="equipmentCreateTime" name="equipmentCreateTime"-->
+        <!--data-rule="required" value="" placeholder=""-->
+        <!--data-toggle="datepicker" data-pattern="yyyy-MM-dd"-->
+        <!--readonly="readonly">-->
+        <!--</div>-->
+
+        <!--<label class="row-label">质保期:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="qualityPeriod" name="qualityPeriod" value=""-->
+        <!--data-rule="required,number10000"-->
+        <!--placeholder="" style="width: 68%" onblur="getDeadLine(this.htmlue)">-->
+        <!--<select id="unit" name="unit" data-toggle="selectpicker" data-width="29%" onchange="triggerDeadLine()">-->
+        <!--<option value="1">月</option>-->
+        <!--<option value="2">天</option>-->
+        <!--<option value="3">年</option>-->
+        <!--</select>-->
+        <!--</div>-->
+
+        <!--<label class="row-label">保修截止日期:</label>-->
+        <!--<div class="row-input">-->
+        <!--<input type="text" id="deadline" name="deadline"-->
+        <!--data-rule="required" value=""-->
+        <!--readonly="readonly">-->
+        <!--</div>-->
+
+        <!--<label class="row-label">生产厂商:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="equipmentProducer" name="equipmentProducer" value=""-->
+        <!--data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+
+        <!--<label class="row-label">生产厂商电话:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="producerPhone" name="producerPhone" value=""-->
+        <!--data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+
+        <!--<label class="row-label">维修厂商:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="equipmentOperator" name="equipmentOperator" value=""-->
+        <!--data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+
+        <!--<label class="row-label">维修厂商电话:</label>-->
+        <!--<div class="row-input required">-->
+        <!--<input type="text" id="operatorPhone" name="operatorPhone" value=""-->
+        <!--data-rule="required,special,length(~15)"-->
+        <!--placeholder=""/>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--<input type="hidden" id="equipmentId" name="equipmentId" value="">-->
+    </form>
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">设备类型:</td>
+            <td class="td_right" id="equipmentType"></td>
+            <td class="td_left">设备编号:</td>
+            <td class="td_right" id="equipmentNo"></td>
+        </tr>
+        <tr>
+            <td class="td_left">设备名称:</td>
+            <td class="td_right" id="equipmentName"></td>
+            <td class="td_left">所在位置:</td>
+            <td class="td_right" id="equipmentLocation"></td>
+        </tr>
+        <tr>
+            <td class="td_left">是否需要巡检:</td>
+            <td class="td_right" id="isCheck"></td>
+            <td class="td_left td_hideCycle">巡检周期:</td>
+            <td class="td_right td_hideCycle" id="checkCycle"></td>
+        </tr>
+        <tr id="descTr">
+            <td class="td_left">巡查内容:</td>
+            <td class="td_right" colspan="3" id="equipmentDesc"></td>
+        </tr>
+        <tr>
+            <td class="td_left">生产日期:</td>
+            <td class="td_right" id="equipmentCreateTime"></td>
+            <td class="td_left">质保期:</td>
+            <td class="td_right" id="qualityPeriod"></td>
+        </tr>
+        <tr style=" ">
+            <td class="td_left">保修截止日期:</td>
+            <td class="td_right" id="deadline"></td>
+            <td class="td_left">维修次数:</td>
+            <td class="td_right" id="repairNumber"></td>
+        </tr>
+        <tr style="">
+            <td class="td_left">生产厂商:</td>
+            <td class="td_right" id="equipmentProducer"></td>
+            <td class="td_left">生产厂商电话:</td>
+            <td class="td_right" id="producerPhone"></td>
+        </tr>
+        <tr style="">
+            <td class="td_left">维修厂商:</td>
+            <td class="td_right" id="equipmentOperator"></td>
+            <td class="td_left">维修厂商电话:</td>
+            <td class="td_right" id="operatorPhone"></td>
+        </tr>
+        <tr style="">
+            <td class="td_left">创建时间:</td>
+            <td class="td_right" id="createTime"></td>
+            <td class="td_left">更新时间:</td>
+            <td class="td_right" id="updateTime"></td>
+        </tr>
+
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <!--<li>-->
+        <!--<button type="button" class="btn-default" data-icon="" id="repairRecord">维保记录</button>-->
+        <!--</li>-->
+    </ul>
+</div>
+
+<script>
+    var data = $.CurrentNavtab.data("findEquipmentDetail");
+    $.CurrentDialog.find('#equipmentNo').html(data.equipmentNo);
+    $.CurrentDialog.find('#equipmentType').html(data.typeName);
+    $.CurrentDialog.find('#equipmentName').html(data.equipmentName);
+    $.CurrentDialog.find('#equipmentLocation').html(data.equipmentLocation);
+    $.CurrentDialog.find('#equipmentDesc').html(data.equipmentDesc);
+    $.CurrentDialog.find('#equipmentId').html(data.equipmentId);
+    $.CurrentDialog.find('#deadline').html(data.deadline.substr(0, 10));
+    $.CurrentDialog.find('#equipmentProducer').html(data.equipmentProducer);
+    $.CurrentDialog.find('#producerPhone').html(data.producerPhone);
+    $.CurrentDialog.find('#equipmentOperator').html(data.equipmentOperator);
+    $.CurrentDialog.find('#operatorPhone').html(data.operatorPhone);
+    $.CurrentDialog.find('#operatorPhone').html(data.operatorPhone);
+    if (!data.repairNumber) {
+        data.repairNumber = 0;
+    }
+    $.CurrentDialog.find('#repairNumber').html(data.repairNumber);
+    $.CurrentDialog.find('#equipmentCreateTime').html(data.equipmentCreateTime.substr(0, 10));
+    if (data.unit == 1) {
+        var unit = "天";
+    }
+    if (data.unit == 2) {
+        var unit = "个月";
+    }
+    if (data.unit == 3) {
+        var unit = "年";
+    }
+    $.CurrentDialog.find('#qualityPeriod').html(data.qualityPeriod + unit);
+    $.CurrentDialog.find('#unit').html(data.unit);
+    if (data.isCheck == 2) {
+        data.isCheck = "否";
+        $.CurrentDialog.find('#descTr').hide();
+        $.CurrentDialog.find('.td_hideCycle').hide();
+        $.CurrentDialog.find('#isCheck').attr('colspan','3');
+    } else {
+        data.isCheck = "是";
+
+        if (data.checkCycle == 1) {
+            data.checkCycle = '每日巡检';
+        }
+        if (data.checkCycle == 2) {
+            data.checkCycle = '每周巡检';
+        }
+        if (data.checkCycle == 3) {
+            data.checkCycle = '月度巡检';
+        }
+        if (data.checkCycle == 4) {
+            data.checkCycle = '季度巡检';
+        }
+        if (data.checkCycle == 5) {
+            data.checkCycle = '年度巡检';
+        }
+        $.CurrentDialog.find('#checkCycle').html(data.checkCycle);
+    }
+    $.CurrentDialog.find('#isCheck').html(data.isCheck);
+    $.CurrentDialog.find('#createTime').html(data.createTime);
+    if (!data.updateTime) {
+        data.updateTime = "";
+    }
+    $.CurrentDialog.find('#updateTime').html(data.updateTime);
+</script>

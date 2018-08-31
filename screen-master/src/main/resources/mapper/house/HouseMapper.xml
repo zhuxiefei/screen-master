@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.House">
+        <id column="houseId" property="houseId" jdbcType="VARCHAR"/>
+        <result column="houseNum" property="houseNum" jdbcType="VARCHAR"/>
+        <result column="houseDesc" property="houseDesc" jdbcType="VARCHAR"/>
+        <result column="buildingId" property="buildingId" jdbcType="BIGINT"/>
+        <result column="unitId" property="unitId" jdbcType="BIGINT"/>
+        <result column="typeId" property="typeId" jdbcType="BIGINT"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="floorArea" property="floorArea" jdbcType="DOUBLE"/>
+        <result column="interFloorArea" property="interFloorArea" jdbcType="DOUBLE"/>
+        <result column="deliverTime" property="deliverTime" jdbcType="TIMESTAMP"/>
+        <result column="houseStatus" property="houseStatus" jdbcType="INTEGER"/>
+        <result column="petStatus" property="petStatus" jdbcType="INTEGER"/>
+        <result column="displayOrder" property="displayOrder" jdbcType="INTEGER"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    houseId, houseNum, houseDesc, buildingId, unitId, typeId, createTime,
+    floorArea, interFloorArea, deliverTime, houseStatus, petStatus, displayOrder, estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from house_house
+        where houseId = #{houseId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from house_house
+    where houseId = #{houseId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.House">
+    insert into house_house (houseId, houseNum, houseDesc, 
+      buildingId, unitId,
+      typeId, createTime, floorArea, 
+      interFloorArea, deliverTime,
+      houseStatus, petStatus,displayOrder,estateId)
+    values (#{houseId,jdbcType=VARCHAR}, #{houseNum,jdbcType=VARCHAR}, #{houseDesc,jdbcType=VARCHAR},
+      #{houseOwner,jdbcType=VARCHAR}, #{buildingId,jdbcType=BIGINT}, #{unitId,jdbcType=BIGINT}, 
+      #{typeId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{floorArea,jdbcType=DOUBLE}, 
+      #{interFloorArea,jdbcType=DOUBLE}, #{deliverTime,jdbcType=TIMESTAMP},
+      #{houseStatus,jdbcType=INTEGER},#{petStatus,jdbcType=INTEGER},#{displayOrder,jdbcType=INTEGER},
+      #{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.House"
+            useGeneratedKeys="true" keyProperty="houseId">
+        <selectKey keyProperty="houseId" resultType="String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into house_house
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                houseId,
+            <if test="houseNum != null">
+                houseNum,
+            </if>
+            <if test="houseDesc != null">
+                houseDesc,
+            </if>
+            <if test="buildingId != null">
+                buildingId,
+            </if>
+            <if test="unitId != null">
+                unitId,
+            </if>
+            <if test="typeId != null">
+                typeId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="floorArea != null">
+                floorArea,
+            </if>
+            <if test="interFloorArea != null">
+                interFloorArea,
+            </if>
+            <if test="deliverTime != null">
+                deliverTime,
+            </if>
+            <if test="houseStatus != null">
+                houseStatus,
+            </if>
+            <if test="petStatus != null">
+                petStatus,
+            </if>
+            <if test="displayOrder != null">
+                displayOrder,
+            </if>
+            <if test="estateId != null">
+                estateId
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                #{houseId},
+            <if test="houseNum != null">
+                #{houseNum,jdbcType=VARCHAR},
+            </if>
+            <if test="houseDesc != null">
+                #{houseDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingId != null">
+                #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="unitId != null">
+                #{unitId,jdbcType=BIGINT},
+            </if>
+            <if test="typeId != null">
+                #{typeId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="floorArea != null">
+                #{floorArea,jdbcType=DOUBLE},
+            </if>
+            <if test="interFloorArea != null">
+                #{interFloorArea,jdbcType=DOUBLE},
+            </if>
+            <if test="deliverTime != null">
+                #{deliverTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="houseStatus != null">
+                #{houseStatus,jdbcType=INTEGER},
+            </if>
+            <if test="petStatus != null">
+                #{petStatus,jdbcType=INTEGER},
+            </if>
+            <if test="displayOrder != null">
+                #{displayOrder,jdbcType=INTEGER},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.House">
+        update house_house
+        <set>
+            <if test="houseNum != null">
+                houseNum = #{houseNum,jdbcType=VARCHAR},
+            </if>
+            <if test="houseDesc != null">
+                houseDesc = #{houseDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingId != null">
+                buildingId = #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="unitId != null">
+                unitId = #{unitId,jdbcType=BIGINT},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="floorArea != null">
+                floorArea = #{floorArea,jdbcType=DOUBLE},
+            </if>
+            <if test="interFloorArea != null">
+                interFloorArea = #{interFloorArea,jdbcType=DOUBLE},
+            </if>
+            <if test="deliverTime != null">
+                deliverTime = #{deliverTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="houseStatus != null">
+                houseStatus = #{houseStatus,jdbcType=INTEGER},
+            </if>
+            <if test="petStatus != null">
+                petStatus = #{petStatus,jdbcType=INTEGER},
+            </if>
+            <if test="displayOrder != null">
+                displayOrder = #{displayOrder,jdbcType=INTEGER},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where houseId = #{houseId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.House">
+    update house_house
+    set houseNum = #{houseNum,jdbcType=VARCHAR},
+      houseDesc = #{houseDesc,jdbcType=VARCHAR},
+      buildingId = #{buildingId,jdbcType=BIGINT},
+      unitId = #{unitId,jdbcType=BIGINT},
+      typeId = #{typeId,jdbcType=BIGINT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      floorArea = #{floorArea,jdbcType=DOUBLE},
+      interFloorArea = #{interFloorArea,jdbcType=DOUBLE},
+      deliverTime = #{deliverTime,jdbcType=TIMESTAMP},
+      houseStatus = #{houseStatus,jdbcType=INTEGER},
+      petStatus = #{petStatus,jdbcType=INTEGER},
+      displayOrder = #{displayOrder,jdbcType=INTEGER},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where houseId = #{houseId,jdbcType=VARCHAR}
+  </update>
+
+    <select id="findAllHouse" parameterType="com.betel.estatemgmt.business.web.house.model.HousePageReq"
+            resultType="com.betel.estatemgmt.business.web.house.model.HouseInfo">
+        SELECT * FROM(
+        select
+        houseId,
+        hh.buildingId,
+        hh.unitId,
+        hh.estateId,
+        (select buildingName from house_building hb where hb.buildingId=hh.buildingId) as buildingName,
+        (select unitName from house_building_unit hu where hu.unitId=hh.unitId) as unitName,
+        houseNum,
+        (select typeName from house_type ht where ht.typeId=hh.typeId) as typeName,
+        createTime,
+        (select ho.realName from house_owner ho where ho.ownerStatus != 3 AND ho.ownerId IN
+        (SELECT hor.ownerId FROM house_owner_rela hor WHERE hor.houseId = hh.houseId)) as userName,
+        deliverTime,
+        floorArea,
+        interFloorArea,
+        (SELECT count(*) FROM house_parking_space hps WHERE hps.houseId = hh.houseId AND spaceType = 1) AS buyCounts,
+        (SELECT count(*) FROM house_parking_space hps WHERE hps.houseId = hh.houseId AND spaceType = 2) AS rentCounts,
+        (select displayOrder from house_building hb where hb.buildingId=hh.buildingId) as buildingOrder,
+        (select displayOrder from house_building_unit hu where hu.unitId=hh.unitId) as unitOrder,
+        hh.displayOrder AS displayOrder
+        from house_house hh
+        ) aaa
+        <where>1=1
+            <if test="houseNum != null and houseNum != ''">
+                AND aaa.houseNum like CONCAT('%',#{houseNum},'%')
+            </if>
+            <if test="isOthers == 1">
+                AND aaa.buildingId is NULL and unitId is NULL
+            </if>
+            <if test="buildingId != null">
+                AND aaa.buildingId = #{buildingId,jdbcType=BIGINT}
+            </if>
+            <if test="unitId != null">
+                AND aaa.unitId = #{unitId,jdbcType=BIGINT}
+            </if>
+            <if test="typeName != null and typeName != ''">
+                AND aaa.typeName like CONCAT('%',#{typeName},'%')
+            </if>
+            <if test="ownerName != null and ownerName != ''">
+                AND aaa.userName like CONCAT('%',#{ownerName},'%')
+            </if>
+            <if test="isBuy != null and isBuy != '' and isBuy ==1">
+                AND aaa.buyCounts &gt;0
+            </if>
+            <if test="isBuy != null and isBuy != '' and isBuy ==0">
+                AND aaa.buyCounts =0
+            </if>
+            <if test="isRent != null and isRent != '' and isRent == 1 ">
+                AND aaa.rentCounts &gt;0
+            </if>
+            <if test="isRent != null and isRent != ''  and isRent == 0 ">
+                AND aaa.rentCounts = 0
+            </if>
+            AND aaa.estateId = #{estateId}
+        </where>
+        ORDER BY aaa.displayOrder ASC,aaa.createTime DESC
+    </select>
+    <!--根据buildingId查房屋-->
+    <select id="selectByBuildingId" resultType="com.betel.estatemgmt.common.model.house.House" parameterType="java.lang.Long">
+    select * from house_house
+    where buildingId = #{buildingId,jdbcType=BIGINT}
+    ORDER BY displayOrder ASC,createTime DESC
+  </select>
+    <!--根据unitId查房屋-->
+    <select id="selectByUnitId" resultType="com.betel.estatemgmt.common.model.house.House"
+            parameterType="java.lang.Long">
+    select * from house_house
+    where unitId = #{unitId,jdbcType=BIGINT}
+    ORDER BY displayOrder asc,createTime DESC
+  </select>
+
+    <!--将单元id设为空-->
+    <update id="updateUnitId" parameterType="com.betel.estatemgmt.common.model.house.House">
+    update house_house
+    set unitId = NULL
+    where houseId = #{houseId,jdbcType=VARCHAR}
+  </update>
+    <select id="selectByMultipleParams" resultType="com.betel.estatemgmt.common.model.house.House"
+            parameterType="com.betel.estatemgmt.business.web.house.model.AddHouseReq">
+        select
+        *
+        from house_house
+        where
+        <choose>
+            <when test="buildingId == null">
+                buildingId is NULL
+            </when>
+            <otherwise>
+                buildingId = #{buildingId,jdbcType=BIGINT}
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="unitId == null">
+                AND unitId is NULL
+            </when>
+            <otherwise>
+                AND unitId = #{unitId,jdbcType=BIGINT}
+            </otherwise>
+        </choose>
+        AND houseNum = #{houseNum,jdbcType=VARCHAR}
+        AND estateId = #{estateId}
+    </select>
+    <select id="selectHouseInformationByHouseId"
+            resultType="com.betel.estatemgmt.business.web.house.model.HouseInformation" parameterType="java.lang.String">
+    select
+    houseId,
+    houseNum,
+    (select buildingName from house_building hb where hb.buildingId=hh.buildingId) as buildingName,
+    buildingId,
+    (select unitName from house_building_unit hu where hu.unitId=hh.unitId) as unitName,
+    unitId,
+    (select typeName from house_type ht where ht.typeId=hh.typeId) as typeName,
+    typeId,
+    houseDesc,
+    floorArea,
+    interFloorArea,
+    deliverTime,
+    displayOrder,
+    houseStatus,
+    petStatus
+    from house_house hh
+    where hh.houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+
+    <!--查询别墅 zy-->
+    <select id="selecteHouseVillas" resultType="com.betel.estatemgmt.common.model.house.House">
+        select
+        <include refid="Base_Column_List"/>
+        from house_house
+        where buildingId is NULL and unitId is NULL
+        AND estateId = #{estateId}
+        ORDER BY displayOrder asc,createTime DESC
+    </select>
+
+    <!--查询所有房屋 zy-->
+    <select id="selecteAllHouse" resultType="com.betel.estatemgmt.common.model.house.House">
+        select
+        <include refid="Base_Column_List"/>
+        from house_house
+    </select>
+
+    <!--根据楼宇id查询单元为空房屋 zy-->
+    <select id="selectHouseByBuildIdUnitNull" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.common.model.house.House">
+        select
+        <include refid="Base_Column_List"/>
+        from house_house
+        WHERE buildingId = #{buildId} and unitId IS NULL
+        ORDER BY displayOrder asc,createTime DESC
+    </select>
+    <!--判断是否是户主 zy-->
+    <select id="selectHouseOwnerByuserId" resultType="com.betel.estatemgmt.common.model.house.House"
+            parameterType="java.lang.String">
+    select
+    hh.*
+    from house_house hh
+    LEFT JOIN house_owner_rela hor ON hor.houseId = hh.houseId
+    LEFT JOIN house_owner ho ON ho.ownerId = hor.ownerId
+    where ho.ownerStatus = 2 AND ho.userId = #{userId}
+  </select>
+
+    <select id="findHouseBuildUnitByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.userapp.house.model.UserHouseAuth">
+    select hh.houseId,hb.buildingName,hbu.unitName,hh.houseNum from house_house hh
+    left join house_building hb on hh.buildingId = hb.buildingId
+    left JOIN house_building_unit hbu on hh.unitId = hbu . unitId
+    where houseId = #{houseId}
+  </select>
+
+    <!--通过房屋ID查询房屋信息-->
+    <select id="findHouseByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.house.House">
+    SELECT
+    concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseNum ,
+    hh.houseId, hh.houseDesc, hh.buildingId, hh.unitId, hh.typeId, hh.createTime
+    FROM house_house hh
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    where hh.houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+    <insert id="insertHouseList" parameterType="java.util.List">
+        insert into house_house (houseId,houseNum, houseDesc, buildingId, unitId,
+        typeId, createTime,floorArea,interFloorArea,houseStatus,petStatus,displayOrder,estateId)
+        values
+        <foreach collection="list" item="house" index="index" separator=",">
+            (
+            #{house.houseId},
+            #{house.houseNum},#{house.houseDesc},
+            #{house.buildingId},#{house.unitId},
+            #{house.typeId},#{house.createTime},
+            #{house.floorArea},#{house.interFloorArea},
+            #{house.houseStatus},#{house.petStatus},
+            #{house.displayOrder},#{house.estateId}
+            )
+        </foreach>
+    </insert>
+    <select id="selectByHouseReq" resultType="com.betel.estatemgmt.common.model.house.House"
+            parameterType="com.betel.estatemgmt.business.web.house.model.UpdateHouseReq">
+        select
+        *
+        from house_house
+        where 1=1
+        <choose>
+            <when test="buildingId == null or buildingId == ''">
+                AND buildingId is NULL
+            </when>
+            <otherwise>
+                AND buildingId = #{buildingId,jdbcType=BIGINT}
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="unitId == null or unitId == ''">
+                AND unitId is NULL
+            </when>
+            <otherwise>
+                AND unitId = #{unitId,jdbcType=BIGINT}
+            </otherwise>
+        </choose>
+        AND houseNum = #{houseNum,jdbcType=VARCHAR}
+        AND estateId = #{estateId}
+    </select>
+
+    <delete id="deleteByHouseIds" parameterType="java.lang.String">
+        delete from house_house
+        where houseId in
+        <foreach collection="array" item="houseId" open="(" separator="," close=")">
+            #{houseId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+    <!--批量修改房屋入住时间-->
+    <update id="updateDeliverTime">
+        update house_house
+        set deliverTime = #{time}
+        where houseId in
+        <foreach collection="houseIds" item="houseId" open="(" separator="," close=")">
+            #{houseId}
+        </foreach>
+    </update>
+
+    <select id="selectByIds" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.repair.model.HouseInfo">
+        SELECT
+        houseId,
+        houseNum
+        FROM house_house
+        <where>
+            <if test="buildingId != null and buildingId != '' and buildingId != 0">
+                buildingId = #{buildingId,jdbcType=BIGINT}
+            </if>
+            <if test="unitId != null and unitId != '' and unitId != 0">
+                AND unitId = #{unitId,jdbcType=BIGINT}
+            </if>
+            <if test="(buildingId == null or buildingId == '' or buildingId == 0) and (unitId == null or unitId == '' or unitId == 0)">
+                AND buildingId is NULL and unitId is NULL
+            </if>
+            <if test="(buildingId != null and buildingId != '' and buildingId != 0) and (unitId == null or unitId == '' or unitId == 0)">
+                AND buildingId = #{buildingId,jdbcType=BIGINT} and unitId is NULL
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByItemId" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.common.model.house.House">
+    SELECT * FROM house_house hh
+    WHERE hh.buildingId IN
+    (SELECT r.buildingId FROM expense_item_building_rela r WHERE r.itemId = #{itemId} )
+  </select>
+    <select id="selectAllHouse" resultType="com.betel.estatemgmt.common.model.house.House">
+      SELECT * FROM house_house WHERE estateId = #{estateId}
+  </select>
+
+    <update id="updateHouse" parameterType="com.betel.estatemgmt.common.model.house.House">
+        update house_house
+        <set>
+            <if test="houseNum != null">
+                houseNum = #{houseNum,jdbcType=VARCHAR},
+            </if>
+            <if test="houseDesc != null">
+                houseDesc = #{houseDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="houseDesc == null || houseDesc == ''">
+                houseDesc = #{houseDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingId != null">
+                buildingId = #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="buildingId == null || buildingId == ''">
+                buildingId = #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="unitId != null">
+                unitId = #{unitId,jdbcType=BIGINT},
+            </if>
+            <if test="unitId == null || unitId == ''">
+                unitId = #{unitId,jdbcType=BIGINT},
+            </if>
+            <if test="typeId != null">
+                typeId = #{typeId,jdbcType=BIGINT},
+            </if>
+            <if test="typeId == null || typeId == ''">
+                typeId = #{typeId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="floorArea != null">
+                floorArea = #{floorArea,jdbcType=DOUBLE},
+            </if>
+            <if test="interFloorArea != null">
+                interFloorArea = #{interFloorArea,jdbcType=DOUBLE},
+            </if>
+            <if test="deliverTime != null">
+                deliverTime = #{deliverTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="displayOrder != null">
+                displayOrder = #{displayOrder,jdbcType=INTEGER}
+            </if>
+        </set>
+        where houseId = #{houseId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findHouseInfo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.userapp.house.model.HouseInfoApp">
+    SELECT
+    concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseName ,
+    hh.houseId
+    FROM house_house hh
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    where hh.houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+    <!--========================房屋状态管理=================开始==========================&ndash;&gt;-->
+    <select id="findHouseStatus" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusInfo">
+        SELECT
+        h.houseId,
+        h.houseNum,
+        h.houseStatus,
+        h.buildingId,
+        h.unitId,
+        b.buildingName,
+        u.unitName
+        FROM
+        house_house h
+        LEFT JOIN house_building b ON h.buildingId = b.buildingId
+        LEFT JOIN house_building_unit u ON h.unitId = u.unitId
+        WHERE 1=1
+        <if test="buildingId != null">
+            AND h.buildingId = #{buildingId}
+        </if>
+        GROUP BY b.buildingId,u.unitId,h.houseId
+        ORDER BY h.displayOrder ASC,h.createTime DESC
+    </select>
+    <!--jisn.z-->
+    <select id="findHouseDetail" resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusInfo"
+            parameterType="java.lang.String">
+    SELECT
+    h.houseId,
+    h.houseNum,
+    h.houseStatus,
+    --     h.buildingId,
+    --     h.unitId,
+    b.buildingName,
+    u.unitName,
+    h.houseStatus,
+    h.petStatus
+    FROM
+    house_house h
+    LEFT JOIN house_building b ON h.buildingId = b.buildingId
+    LEFT JOIN house_building_unit u ON h.unitId = u.unitId
+    where h.houseId = #{houseId}
+  </select>
+    <select id="findVillasByFist" resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusInfo">
+    SELECT  houseId,houseNum,houseStatus FROM house_house WHERE buildingId IS NULL AND unitId IS NULL
+  </select>
+    <select id="findHouseByUnitId" parameterType="com.betel.estatemgmt.common.model.house.BuildingUnit"
+            resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusInfo">
+    SELECT
+    h.houseId,
+    h.houseNum,
+    h.houseStatus
+    FROM
+    house_house h
+    LEFT JOIN house_building_unit b ON h.unitId = b.unitId
+    WHERE
+    b.unitId=#{unitId} AND h.buildingId = #{buildingId}
+  </select>
+    <!--========================房屋状态管理=================结束==========================-->
+
+    <select id="findHouseData" resultType="com.betel.estatemgmt.business.web.screen.model.HouseData">
+    SELECT
+      (SELECT count(*) FROM house_house WHERE houseStatus = 1) AS fullHouses,
+      (SELECT count(*) FROM house_house WHERE houseStatus = 2) AS emptyHouses,
+      (SELECT count(*) FROM house_house WHERE houseStatus = 3) AS rentHouses
+    FROM house_house LIMIT 1
+  </select>
+</mapper>

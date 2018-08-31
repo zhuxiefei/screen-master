@@ -1,0 +1,73 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" data-toggle="ajaxform">
+        <div class="" style="text-align: left; padding-left: 10px;">
+            <input type="hidden" name="adId" id="adId" />
+            <input type="hidden" id="createTime" />
+            <div style="font-size: 14px; margin-bottom: 10px;color: #999;margin-top:10px;">
+                <span>工作日志标题：</span>
+                <span id="editInput"  style="color: #333"></span>
+            </div>
+        </div>
+        <div class="bjui-row col-1">
+            <div class="row-input required" style=" width: 100%; margin: 0;font-size: inherit;">
+                    <textarea name="adContent" id="y_form_content" data-rule="required" class="j-content" style="width:100%;height:324px;;"
+                              data-toggle="kindeditor" data-picType="1" ></textarea>
+
+            </div>
+        </div>
+    </form>
+</div>
+<div class="clearfix bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li id="adPreview"><button type="button" id="btnPreview">手机预览</button></li>
+        <li>
+            <button type="button" class="btn-default btn" data-icon="save" id="adSavess">
+                <i class="fa fa-save"></i> 发布
+            </button>
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        var editAdData = $.CurrentNavtab.data('editAdData');
+        $.CurrentDialog.find("#adId").val(editAdData.adId);
+        $.CurrentDialog.find("#createTime").val(editAdData.createTime);
+        $.CurrentDialog.find("#editInput").text(editAdData.adTitle);
+        $.CurrentDialog.find("#y_form_content").text(editAdData.adContent);
+
+        //发布
+        $.CurrentDialog.find("#adSavess").click(function(){
+            BJUI.ajax('ajaxform', {
+                url: path + '/web/ad/v1/updateAd',
+                form: $.CurrentDialog.find('form'),
+                validate: true,
+                loadingmask: true,
+                okCallback: function (data) {
+                    BJUI.alertmsg('ok','操作成功');
+                    BJUI.dialog('closeCurrent');
+                    $.CurrentNavtab.find("#y_datagrid").datagrid('filter');
+                }
+            })
+        });
+
+        //手机预览
+        $.CurrentDialog.find("#btnPreview").click(function() {
+            var contentStr1 = $.CurrentDialog.find("#y_form_content").val();
+            if (contentStr1 == "") {
+                //BJUI.alertmsg('error', '请先填写工作日志内容！');
+                $.CurrentDialog.find("#adSavess").click();
+                return;
+            }
+            var title = $.CurrentDialog.find("#editInput").text().trim();
+            var time = $.CurrentDialog.find("#createTime").val();
+
+            //手机预览
+            checkInPhone(title,time,contentStr1)
+
+        })
+
+    })()
+
+</script>

@@ -1,0 +1,80 @@
+<style>
+    #cleaningContent .td_left{
+        width: 10%;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;" id="cleaningContent">
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">保洁编号:</td>
+            <td class="td_right" id="contentNo"></td>
+        </tr>
+        <tr>
+            <td class="td_left">保洁区域:</td>
+            <td class="td_right" id="areaName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">保洁类型:</td>
+            <td class="td_right" id="typeName"></td>
+        </tr>
+        <tr >
+            <td class="td_left">所在位置:</td>
+            <td class="td_right" id="location"></td>
+        </tr>
+
+        <tr >
+            <td class="td_left">保洁周期:</td>
+            <td class="td_right" id="cycle"></td>
+        </tr>
+
+        <tr style=" "  height="70">
+            <td class="td_left" >保洁内容:</td>
+            <td class="td_right" id="content"></td>
+        </tr>
+
+        <tr >
+            <td class="td_left">创建时间:</td>
+            <td class="td_right" id="createTime"></td>
+        </tr>
+
+        <tr id="updateTimeArea">
+            <td class="td_left">编辑时间:</td>
+            <td class="td_right" id="updateTime"></td>
+        </tr>
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var condition=$.CurrentNavtab.data("findContent");
+    $.CurrentDialog.find('#areaName').html(condition.areaName)
+    $.CurrentDialog.find('#content').html(condition.content.replace(/\n/g,'</br>'));
+    $.CurrentDialog.find('#contentNo').html(condition.contentNo)
+    $.CurrentDialog.find('#createTime').html(condition.createTime)
+    $.CurrentDialog.find('#location').html(condition.location)
+    $.CurrentDialog.find('#typeName').html(condition.typeName)
+    if (condition.cycle == 1) {
+        var html = '每小时保洁';
+    } else if (condition.cycle == 2) {
+        var html = '每半天保洁';
+    } else if (condition.cycle == 3) {
+        var html = '每日保洁';
+    } else if (condition.cycle == 4) {
+        var html = '每周保洁';
+    }else{
+        var html = '每月保洁';
+    }
+    $.CurrentDialog.find('#cycle').html(html);
+    if(condition.createTime===condition.updateTime){
+        $.CurrentDialog.find('#updateTimeArea').hide();
+    }else{
+        $.CurrentDialog.find('#updateTime').html(condition.updateTime);
+    }
+</script>

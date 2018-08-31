@@ -1,0 +1,216 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find('#j_datagrid').datagrid({
+        showToolbar: true,   //是否显示工具条
+        toolbarItem: 'add,del,import, |',   //显示工具条按钮  all显示所有按钮
+        dataUrl:path+'/web/user/v1/findAllUsers',
+        //editMode: {dialog:{height:'200',mask:true, title:"编辑用户"}},
+        //editUrl: 'html/user/userInfo.html',
+        delUrl: path+'/web/user/v1/deleteUser',
+        delPK: 'userId',
+        delConfirm:"确定要删除选中的用户吗？",  //删除前的确认
+        delCallback: function(json, option){
+            if(json.code == "00000"){
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition:'middlecenter'
+                })
+                $.CurrentNavtab.find('#j_datagrid').datagrid('refresh', true)
+            }else{
+                successBack(json);
+            }
+        },
+        delPKKey: 'userIds',
+        paging: {pageSize: 10},
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: true,  //是否显示行复选框
+        tableWidth: '98%',
+        height: '100%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+        hScrollbar:false,  //允许出现横向滚动条。
+        columns: [
+            {name: 'acctName', label: '手机号', align: 'center'},
+            {name: 'userName', label: '昵称', align: 'center'},
+            {name: 'createTime', label: '创建时间', align: 'center', type: 'date', pattern: 'yyyy-MM-dd HH:mm:ss', render: function (value) {
+                return value ? value.substr(0, 20) : value
+            }
+            },
+            {name: 'userStatus', label: '状态', align: 'center', render: function(value) {
+                var stateName=null;
+                if (value == 1){
+                    stateName="有效";
+                }else if(value == 2){
+                    stateName="禁言";
+                }else if(value == 3){
+                    stateName="停用";
+                }
+                return stateName;
+            }
+            },
+            {name: 'userId', label: '操作', align: 'center', render:function(value){
+                var html =  '<button type="button" class="btn-blue btn-edit"  data-id="'+value+'">编辑</button>'
+                        // + '<button type="button" class="btn-green btn-notice"  data-id="'+value+'">消息</button>'
+                        + '<button type="button" class="btn-red btn-detele" data-toggle="del.datagrid.tr">删除</button>';
+                return html;
+            }
+            }
+        ],
+    });
+
+    //发送消息
+    $.CurrentNavtab.find("#j_datagrid").off("click"," .btn-notice");
+    $.CurrentNavtab.find("#j_datagrid").on("click"," .btn-notice",function (event) {
+        var $node = $(event.currentTarget);
+        BJUI.dialog({
+            id:'dialog_userNotice',
+            url:'html/user/userNotice.html',
+            title:'发送消息<span spanId="'+$node.attr("data-id")+'"></span>',   //用户id
+            height:320,
+            mask:true,
+            maxable:false,
+            resizable:false
+        })
+    });
+
+    //编辑
+    $.CurrentNavtab.find("#j_datagrid").off("click"," .btn-edit");
+    $.CurrentNavtab.find("#j_datagrid").on("click"," .btn-edit",function (event) {
+        var userId = $(event.currentTarget).attr("data-id");
+        if(userId=="" || userId==null){
+            BJUI.alertmsg('warn', '请先选择需要编辑的用户！');
+            return;
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/user/v1/findUserInfor',
+            loadingmask: true,
+            data: JSON.stringify({"userId": userId}),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            headers: {"userId": $.cookie("l_userId"), "token": $.cookie("l_token")},
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.dialog({
+                        id:'dialog_userInfo',
+                        url:'html/user/userInfo.html',
+                        title:"编辑用户<span spanId='"+userId+"' spanInfo='"+JSON.stringify(json.data)+"'></span>",   //用户id  //json转换成字符串
+                        height:490,
+                        mask:true,
+                        maxable:false,
+                        resizable:false
+                    });
+                }else{
+                    successBack(json);
+                }
+            }
+        });
+    });
+
+
+/*    $.CurrentNavtab.find('#j_datagrid_tree').datagrid({
+        width: '100%',
+        height: '100%',
+        //gridTitle: '树状datagrid 示例 ',
+        showToolbar: false,
+        //toolbarItem:'add, cancel, del, save',
+        local: 'local',
+        dataUrl: 'json/datagrid/datagrid-tree.json',
+        inlineEditMult: false,
+        editUrl: 'json/ajaxDone.json',
+        isTree: 'name',
+        addLocation: 'last',
+        showLinenumber:false,  //显示行号
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+        hScrollbar:false,  //允许出现横向滚动条。
+        paging: false,
+        treeOptions: {
+            expandAll: false,
+            add:false,
+            simpleData: true,
+            keys: {
+                parentKey: 'parentid'
+            }
+        },
+        dropOptions: {
+            drop: false
+        },
+        columns: [
+            {name: 'name',width:230, label: '建材类型', align: 'center',rule:'required'}
+        ]
+    });*/
+
+    function ztree_returnjson() {
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            //url: path + '/web/announce/v1/findAnnounce',
+            url:"json/datagrid/datagrid-tree.json",
+            loadingmask: true,
+            async: false,     //同步
+            okCallback: function(json) {
+                dataJson = json;
+            }
+        });
+        var allArr = {"id":0,"department": "003","level": 2,"order": 5,"name":"所有"};
+        dataJson.splice(0, 0, allArr);  //指定位置
+        //dataJson.push(allArr);
+        return dataJson;
+    }
+    function zTreeOnCheck(event, treeId, treeNode) {
+        var data;
+        var id;
+        if(treeNode.checked){  //勾选
+            //alert(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked + "," + treeId + "," + event);
+            //data = treeNode.tId;
+            var treeObj=$.fn.zTree.getZTreeObj("ztreeFitment");
+            var nodes=treeObj.getCheckedNodes(true);
+            //var v="";
+            for(var i=0;i<nodes.length;i++){
+                //v+=nodes[i].name + ",";
+                //alert(nodes[i].id); //获取选中节点的值
+               id = nodes[i].id;
+            }
+            if(id==0){  //选中所有
+                data = null;
+            }else{
+                data = {"id":id}
+            }
+        }else{   //取消
+            data = null;
+        }
+        console.log(data)
+        //查询
+    };
+
+</script>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#j_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div style="margin:0; padding:1px 5px 5px;">
+                <span>关键字：</span>
+                <input type="text" name="keyWord" id="input_search" class="form-control"  size="30" maxlength="30" placeholder="请输入用户手机号或昵称"  data-rule="searchKeyword"/>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange" data-icon="times">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent divFitmentType">
+    <!--<table id="j_datagrid_tree" class="ztree"  data-toggle="ztree">
+    </table>-->
+    <ul id="ztreeFitment" class="ztree" data-toggle="ztree" data-options="{nodes:ztree_returnjson,checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck,showIcon: false}"></ul>
+</div>
+<div class="bjui-pageContent mainFitmentContent">
+    <table id="j_datagrid" class="table table-bordered">
+    </table>
+</div>

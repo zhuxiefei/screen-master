@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseTypeFunctionMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseTypeFunction" >
+    <id column="functionId" property="functionId" jdbcType="BIGINT" />
+    <result column="functionName" property="functionName" jdbcType="VARCHAR" />
+    <result column="typeId" property="typeId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    functionId, functionName, typeId
+  </sql>
+
+  <select id="findTypeFunctionBasic" resultType="com.betel.estatemgmt.business.web.housetype.model.BasicFunction" parameterType="java.lang.Long">
+    select functionId, functionName
+    from house_type_function
+    where typeId = #{typeId,jdbcType=BIGINT}
+  </select>
+  
+  
+  <select id="selectFunctionIsExistence" resultType="com.betel.estatemgmt.common.model.house.HouseTypeFunction" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeFunction">
+    select
+    <include refid="Base_Column_List" />
+    from house_type_function
+    where functionName = #{functionName,jdbcType=VARCHAR} and typeId = #{typeId,jdbcType=BIGINT}
+  </select>
+
+
+  <delete id="deleteFunctions">
+    delete from house_type_function
+    where typeId in
+    <foreach collection="array" index="index" item="typeId" open="(" close=")" separator=",">
+      #{typeId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+
+  <insert id="insertFunctions" parameterType="java.util.List" >
+    insert into house_type_function (functionName, typeId)
+    values
+    <foreach collection="list" index="index" item="function" separator=",">
+      (#{function.functionName,jdbcType=VARCHAR}, #{function.typeId,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_type_function
+    where functionId = #{functionId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAllByPrimaryKey" resultMap="BaseResultMap" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeFunction" >
+    select
+    <include refid="Base_Column_List" />
+    from house_type_function
+    where 1=1
+    <if test="functionId != null">
+      AND functionId = #{functionId,jdbcType=BIGINT}
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_type_function
+    where functionId = #{functionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeFunction" >
+    insert into house_type_function (functionId, functionName, typeId
+      )
+    values (#{functionId,jdbcType=BIGINT}, #{functionName,jdbcType=VARCHAR}, #{typeId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeFunction"
+          useGeneratedKeys="true" keyProperty="functionId">
+    insert into house_type_function
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="functionId != null" >
+        functionId,
+      </if>
+      <if test="functionName != null" >
+        functionName,
+      </if>
+      <if test="typeId != null" >
+        typeId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="functionId != null" >
+        #{functionId,jdbcType=BIGINT},
+      </if>
+      <if test="functionName != null" >
+        #{functionName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeFunction" >
+    update house_type_function
+    <set >
+      <if test="functionName != null" >
+        functionName = #{functionName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        typeId = #{typeId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where functionId = #{functionId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeFunction" >
+    update house_type_function
+    set functionName = #{functionName,jdbcType=VARCHAR},
+      typeId = #{typeId,jdbcType=BIGINT}
+    where functionId = #{functionId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findHouseTypeFunctionByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.HouseTypeFunction">
+    select htf.functionId,htf.functionName from house_house hh join house_type_function htf on hh.typeId = htf.typeId
+    WHERE hh.houseId = #{houseId}
+  </select>
+</mapper>

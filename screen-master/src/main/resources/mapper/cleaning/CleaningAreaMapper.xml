@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.cleaning.CleaningAreaMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.cleaning.CleaningArea" >
+    <id column="areaId" property="areaId" jdbcType="VARCHAR" />
+    <result column="areaName" property="areaName" jdbcType="VARCHAR" />
+    <result column="areaDesc" property="areaDesc" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="estateId" property="estateId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    areaId, areaName, areaDesc, createTime,estateId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cleaning_area
+    where areaId = #{areaId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cleaning_area
+    where areaId = #{areaId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningArea" >
+    insert into cleaning_area (areaId, areaName, areaDesc, 
+      createTime,estateId)
+    values (#{areaId,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{areaDesc,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{estateId})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningArea" >
+    insert into cleaning_area
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      areaId,
+      <if test="areaName != null" >
+        areaName,
+      </if>
+      <if test="areaDesc != null" >
+        areaDesc,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="estateId != null" >
+        estateId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      uuid(),
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaDesc != null" >
+        #{areaDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        #{estateId},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningArea" >
+    update cleaning_area
+    <set >
+      <if test="areaName != null" >
+        areaName = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaDesc != null" >
+        areaDesc = #{areaDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where areaId = #{areaId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningArea" >
+    update cleaning_area
+    set areaName = #{areaName,jdbcType=VARCHAR},
+      areaDesc = #{areaDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where areaId = #{areaId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByName" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.cleaning.CleaningArea">
+    SELECT * FROM cleaning_area WHERE areaName = #{name}
+  </select>
+
+  <delete id="deleteByAreaIds" parameterType="java.lang.String">
+    delete from cleaning_area
+    where areaId in
+    <foreach collection="array" item="areaId" open="(" separator="," close=")">
+      #{areaId}
+    </foreach>
+  </delete>
+
+  <select id="findAreas" resultType="com.betel.estatemgmt.common.model.cleaning.CleaningArea" parameterType="java.lang.String">
+    SELECT * FROM cleaning_area where estateId = #{estateId} ORDER BY createTime desc
+  </select>
+</mapper>

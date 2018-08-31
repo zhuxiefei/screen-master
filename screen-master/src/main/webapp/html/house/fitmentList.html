@@ -1,0 +1,241 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find('#j_datagrid').datagrid({
+        showToolbar: true,   //是否显示工具条
+        toolbarItem: 'add,del,import, |',   //显示工具条按钮  all显示所有按钮
+        dataUrl:path+'/web/material/v1/findAllBuildMaterial',
+        //dataUrl:'json/datagrid/datagrid-tree-list.json',
+        editMode: {dialog:{height:'510',mask:true,id:'dialog_fitmentAdd',title:"添加材料",maxable:false,resizable:false,beforeClose:function(){ if( $("#bjui-calendar").css('display')=="none"){return true;}else{$("#bjui-calendar").css('display',"none");return true;} }}},
+        editUrl: 'html/house/fitmentList/fitmentAdd.html',
+        delUrl: path+'/web/material/v1/deleteBuildMaterial',
+        delPK: 'materialId',
+        delConfirm:"确定要删除选中的建材吗？",  //删除前的确认
+        delCallback: function(json, option){
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition:'middlecenter'
+                })
+                $.CurrentNavtab.find('#j_datagrid').datagrid('refresh', true)
+        },
+        delPKKey: 'materialIds',
+        importOption:{type:"dialog", options:{url:"html/house/fitmentList/fitmentAddBatch.html", height:280,mask:true,maxable:false,resizable:false,title:"批量导入材料"}},
+        paging: {pageSize: 10},
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: true,  //是否显示行复选框
+        tableWidth: '98%',
+        height: '100%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+        hScrollbar:false,  //允许出现横向滚动条。
+        dialogFilterW: 0,
+        columns: [
+            {name: 'materialName', label: '材料名称', align: 'center', render:function(value, data) {
+                if(value == '' || value == null || value == undefined){
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'><i>暂无信息</i></div>";
+                    return stateName;
+                }else {
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+                    return stateName;
+                }
+            }},
+            {name: 'materialBrand', label: '品牌', align: 'center', render:function(value, data) {
+                if(value == '' || value == null || value == undefined){
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'><i>暂无信息</i></div>";
+                    return stateName;
+                }else {
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+                    return stateName;
+                }
+            }},
+            {name: 'materialModel', label: '型号', align: 'center', render:function(value, data) {
+                if(value == '' || value == null || value == undefined){
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'><i>暂无信息</i></div>";
+                    return stateName;
+                }else {
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+                    return stateName;
+                }
+            }},
+            {name: 'materialType', label: '材料类别', align: 'center', render: function (value) {
+                return value ? value : "<i>暂无信息</i>"
+            }},
+            {name: 'createTime', label: '创建时间', align: 'center', type: 'date', pattern: 'yyyy-MM-dd HH:mm:ss', render: function (value) {
+                return value ? value.substr(0, 20) : value
+            }
+            },
+            {name: 'materialId', label: '操作', align: 'center', render:function(value){
+                var html =  '<button type="button" class="btn-blue btn-edit"  data-id="'+value+'">编辑</button>'
+                        + '<button type="button" class="btn-red btn-detele" data-toggle="del.datagrid.tr">删除</button>';
+                return html;
+            }
+            }
+        ]
+    });
+
+    //编辑
+    $.CurrentNavtab.find("#j_datagrid").off("click"," .btn-edit");
+    $.CurrentNavtab.find("#j_datagrid").on("click"," .btn-edit",function (event) {
+
+        var fitmentId = $(event.currentTarget).attr("data-id");
+        if(fitmentId=="" || fitmentId==null){
+            BJUI.alertmsg('warn', '请先选择需要编辑的材料！');
+            return;
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/material/v1/findBuildMaterial',
+            loadingmask: true,
+            data: JSON.stringify({"materialId": fitmentId}),
+            okCallback: function (json) {
+                $.CurrentNavtab.data('fitmentEditInfo', json);
+                 BJUI.dialog({
+                     id:'dialog_fitmentEdit',
+                     url:'html/house/fitmentList/fitmentEdit.html',
+                     title:"编辑材料",
+                     height:510,
+                     mask:true,
+                     maxable:false,
+                     resizable:false,
+                     beforeClose:function(){
+                         if( $("#bjui-calendar").css('display')=="none"){
+                             return true;
+                         }else{
+                             $("#bjui-calendar").css('display',"none");
+                             return true;
+                         }
+                     }
+                 });
+            }
+        });
+    });
+
+    function ztree_returnjson() {
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/material/v1/findBuildMaterialType',
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function(json) {
+                dataJson = json;
+                var allArr = {"typeName":"所有","typeDesc":"查看全部的建材"};
+                dataJson.splice(0, 0, allArr);  //指定位置
+            }
+        });
+        return dataJson;
+    }
+    function zTreeOnCheck(event, treeId, treeNode) {
+        var data;
+        var id;
+        if(treeNode.checked){  //勾选
+            var treeObj=$.fn.zTree.getZTreeObj("ztreeFitment");
+            var nodes=treeObj.getCheckedNodes(true);
+            //var v="";
+            for(var i=0;i<nodes.length;i++){
+                //v+=nodes[i].name + ",";
+                //alert(nodes[i].id); //获取选中节点的值
+               id = nodes[i].typeName;
+            }
+            if(id=="所有"){  //选中所有
+                data = {"materialType":null};
+            }else{
+                data = {"materialType":id}
+            }
+        }else{   //取消
+            data = {"materialType":null};
+        }
+        //console.log(data)
+        var materialName = $.CurrentNavtab.find("#materialName").val();
+        var materialBrand = $.CurrentNavtab.find("#materialBrand").val();
+        var materialModel = $.CurrentNavtab.find("#materialModel").val();
+        var startTime = $.CurrentNavtab.find("#startTime").val();
+        var endTime = $.CurrentNavtab.find("#endTime").val();
+        var cup={
+            'materialName':materialName,
+            'materialBrand':materialBrand,
+            'materialModel':materialModel,
+            'startTime':startTime,
+            'endTime':endTime,
+        };
+        var obj = Object.assign(data,cup);
+        //按类型查询建材
+        $.CurrentNavtab.find('#j_datagrid').datagrid('filter',obj)
+    }
+
+    function zTreeOnClick(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeFitment");
+        var nodes = treeObj.getSelectedNodes();
+        for (var i=0, l=nodes.length; i < l; i++) {
+            //treeObj.checkNode(nodes[i], true, true);   //点击节点选中
+
+            $.CurrentNavtab.data('fitmentTypeInfo', nodes[i].typeDesc);
+            //点击节点查看详情
+            BJUI.dialog({
+                id:'dialog_fitmentTypeInfo',
+                url:'html/house/fitmentList/fitmentTypeInfo.html',
+                title:nodes[i].typeName,   //用户id
+                height:260,
+                mask:true,
+                maxable:false,
+                resizable:false,
+                onClose:function(){
+                    $("#"+treeNode.tId).find("a").removeClass("curSelectedNode");
+                }
+            })
+
+        }
+    }
+    changeDivHeight();
+</script>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#j_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">材料名称:</label>
+                <div class="row-input">
+                    <input type="text" id="materialName" name="materialName" value="" data-rule="special,length(~60)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">材料品牌:</label>
+                <div class="row-input">
+                    <input type="text" id="materialBrand" name="materialBrand" value="" data-rule="special,length(~20)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">材料型号:</label>
+                <div class="row-input">
+                    <input type="text" id="materialModel" name="materialModel" value="" data-rule="special,length(~20)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style=" padding-right: 0;">
+                    <input type="text" id="startTime" name="startTime"
+                           data-rule="开始时间: matchE[lte, endTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <label class="row-label">结束时间:</label>
+                <div class="row-input">
+                    <input type="text" id="endTime" name="endTime" data-rule="结束时间: matchE[gte, startTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-searchH" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent divFitmentType" style=" overflow-x:hidden;">
+    <ul id="ztreeFitment" class="ztree" data-toggle="ztree" data-options="{nodes:ztree_returnjson,checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck,onClick:zTreeOnClick,showIcon: false,idKey:'typeName',keyName:'typeName'}"></ul>
+</div>
+<div class="bjui-pageContent mainFitmentContent">
+    <table id="j_datagrid" class="table table-bordered">
+    </table>
+</div>
+
+

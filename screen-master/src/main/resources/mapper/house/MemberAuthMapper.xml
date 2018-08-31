@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.MemberAuthMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.MemberAuth" >
+    <id column="authId" property="authId" jdbcType="BIGINT" />
+    <result column="applicantId" property="applicantId" jdbcType="VARCHAR" />
+    <result column="houseId" property="houseId" jdbcType="VARCHAR" />
+    <result column="applicantName" property="applicantName" jdbcType="VARCHAR" />
+    <result column="phoneNum" property="phoneNum" jdbcType="VARCHAR" />
+    <result column="authStatus" property="authStatus" jdbcType="BIT" />
+    <result column="operatorId" property="operatorId" jdbcType="VARCHAR" />
+    <result column="reviewStatus" property="reviewStatus" jdbcType="BIT" />
+    <result column="reviewAdvice" property="reviewAdvice" jdbcType="VARCHAR" />
+    <result column="reviewTime" property="reviewTime" jdbcType="TIMESTAMP" />
+    <result column="authTime" property="authTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    authId, applicantId, houseId, applicantName,phoneNum, authStatus, operatorId, reviewStatus,
+    reviewAdvice, reviewTime, authTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_member_auth
+    where authId = #{authId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_member_auth
+    where authId = #{authId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.MemberAuth" >
+    insert into house_member_auth (authId, applicantId, houseId, 
+      applicantName,phoneNum,authStatus, operatorId,
+      reviewStatus, reviewAdvice, reviewTime, 
+      authTime)
+    values (#{authId,jdbcType=BIGINT}, #{applicantId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR},
+      #{applicantName,jdbcType=VARCHAR},#{phoneNum,jdbcType=VARCHAR},#{authStatus,jdbcType=BIT}, #{operatorId,jdbcType=VARCHAR},
+      #{reviewStatus,jdbcType=BIT}, #{reviewAdvice,jdbcType=VARCHAR}, #{reviewTime,jdbcType=TIMESTAMP}, 
+      #{authTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.MemberAuth"   useGeneratedKeys="true" keyProperty="authId">
+    insert into house_member_auth
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="authId != null" >
+        authId,
+      </if>
+      <if test="applicantId != null" >
+        applicantId,
+      </if>
+      <if test="houseId != null" >
+        houseId,
+      </if>
+      <if test="applicantName != null" >
+        applicantName,
+      </if>
+      <if test="phoneNum !=null">
+        phoneNum,
+      </if>
+      <if test="authStatus != null" >
+        authStatus,
+      </if>
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="reviewStatus != null" >
+        reviewStatus,
+      </if>
+      <if test="reviewAdvice != null" >
+        reviewAdvice,
+      </if>
+      <if test="reviewTime != null" >
+        reviewTime,
+      </if>
+      <if test="authTime != null" >
+        authTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="authId != null" >
+        #{authId,jdbcType=BIGINT},
+      </if>
+      <if test="applicantId != null" >
+        #{applicantId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantName != null" >
+        #{applicantName,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNum !=null">
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="authStatus != null" >
+        #{authStatus,jdbcType=BIT},
+      </if>
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewStatus != null" >
+        #{reviewStatus,jdbcType=BIT},
+      </if>
+      <if test="reviewAdvice != null" >
+        #{reviewAdvice,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewTime != null" >
+        #{reviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="authTime != null" >
+        #{authTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.MemberAuth" >
+    update house_member_auth
+    <set >
+      <if test="applicantId != null" >
+        applicantId = #{applicantId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        houseId = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantName != null" >
+        applicantName = #{applicantName,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNum !=null">
+        phoneNum = #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="authStatus != null" >
+        authStatus = #{authStatus,jdbcType=BIT},
+      </if>
+      <if test="operatorId != null" >
+        operatorId = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewStatus != null" >
+        reviewStatus = #{reviewStatus,jdbcType=BIT},
+      </if>
+      <if test="reviewAdvice != null" >
+        reviewAdvice = #{reviewAdvice,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewTime != null" >
+        reviewTime = #{reviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="authTime != null" >
+        authTime = #{authTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where authId = #{authId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.MemberAuth" >
+    update house_member_auth
+    set applicantId = #{applicantId,jdbcType=VARCHAR},
+      houseId = #{houseId,jdbcType=VARCHAR},
+      applicantName = #{applicantName,jdbcType=VARCHAR},
+      phoneNum = #{phoneNum,jdbcType=VARCHAR},
+      authStatus = #{authStatus,jdbcType=BIT},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      reviewStatus = #{reviewStatus,jdbcType=BIT},
+      reviewAdvice = #{reviewAdvice,jdbcType=VARCHAR},
+      reviewTime = #{reviewTime,jdbcType=TIMESTAMP},
+      authTime = #{authTime,jdbcType=TIMESTAMP}
+    where authId = #{authId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.MemberAuth">
+    SELECT * FROM house_member_auth WHERE houseId = #{houseId} AND authStatus != 5
+  </select>
+  
+  <update id="deleteAuthList" parameterType="java.util.List">
+    UPDATE house_member_auth
+    SET authStatus = 5
+    WHERE authId IN
+    <foreach collection="list" item="authId" open="(" separator="," close=")">
+      #{authId,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+  <select id="findMemberAuth" resultType="com.betel.estatemgmt.common.model.house.MemberAuth">
+    select
+    <include refid="Base_Column_List" />
+    from house_member_auth
+    WHERE houseId = #{houseId} AND phoneNum =#{phoneNum} AND authStatus = 1 AND reviewStatus !=3
+    limit 1
+  </select>
+
+  <select id="findMemberAuthInfo" resultType="com.betel.estatemgmt.business.userapp.auth.model.MemberAuthInfo">
+    SELECT hma.reviewStatus,hma.authStatus,hma.authTime,hma.authId,hma.applicantName,hma.phoneNum phone,concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseNum
+    FROM house_member_auth hma
+    JOIN house_house hh ON hma.houseId = hh.houseId
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    WHERE hma.authId = #{authId}
+  </select>
+
+  <select id="selectByUserId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.MemberAuth">
+    SELECT * FROM house_member_auth WHERE authStatus != 5 AND applicantId IN
+    <foreach collection="array" item="userId" open="(" separator="," close=")">
+      #{userId}
+    </foreach>
+  </select>
+
+  <select id="findUnMemberAuth" resultType="com.betel.estatemgmt.common.model.house.MemberAuth">
+    select *
+    from house_member_auth
+    WHERE houseId = #{houseId} AND applicantId =#{userId} AND authStatus = 1 AND reviewStatus = 1
+    limit 1
+  </select>
+  <select id="findMyHomeList" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.userapp.house.model.AuthHouse">
+    SELECT
+    hh.houseId,
+    concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseName,
+    hma.authId,
+    2 AS authType,
+    hma.authStatus,
+    hma.reviewStatus
+    FROM house_house hh
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    JOIN house_member_auth hma ON hma.houseId = hh.houseId
+    where hma.applicantId = #{userId} AND hma.authStatus != 5
+  </select>
+
+  <select id="findByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.MemberAuth">
+    SELECT * FROM house_member_auth
+    WHERE houseId = #{houseId} AND authStatus = 1 AND reviewStatus = 1
+  </select>
+  <!--jians.z  更换户主的时候，删除认证表信息，解决APP端认证过程显示的bug-->
+  <update id="deletOldHouseMemberAuthHouseId" parameterType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusReq">
+    UPDATE house_member_auth
+    SET authStatus = 5
+    WHERE houseId = #{houseId}
+  </update>
+</mapper>

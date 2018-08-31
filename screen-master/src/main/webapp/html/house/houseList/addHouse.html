@@ -1,0 +1,385 @@
+<style>
+    #addHouseForm .col-1 .row-label {
+        width: 20%;
+    }
+
+    #addHouseForm .col-1 .row-input {
+        width: 80%;
+    }
+
+    #addHouseForm .col-2 .row-label {
+        width: 19%;
+    }
+
+    #addHouseForm .col-2 .row-input {
+        width: 28%;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;">
+    <form data-toggle="ajaxform" id="addHouseForm">
+        <fieldset>
+            <legend style="font-weight:normal;">房屋信息：</legend>
+            <div class="bjui-row col-1">
+                <label class="row-label">房屋: </label>
+                <div class="row-input required">
+                    <select id="buildingId" name="buildingId" onchange="searchUnit(this)" data-toggle="selectpicker"
+                            data-width="32%" data-rule="">
+                        <option value="">--选择楼宇--</option>
+                    </select>
+                    <select id="unitId" name="unitId" data-toggle="selectpicker"
+                            data-width="32%" data-rule="">
+                        <option value="">--选择单元--</option>
+                    </select>
+                    <input type="text" name="houseNum" id="houseNum" value="" style="width: 32%" placeholder="输入房号"
+                           data-rule="required,special,length(~6)"/>
+                </div>
+                <label class="row-label">户型: </label>
+                <div class="row-input ">
+                    <select id="typeId" name="typeId" data-toggle="selectpicker" data-width="100%"
+                            data-rule="">
+                        <option value="">--请选择--</option>
+                    </select>
+                </div>
+
+                <label class="row-label">展示顺序: </label>
+                <div class="row-input required">
+                    <input type="text" name="displayOrder" id="displayOrder" value="" style="width: 100%" placeholder=""
+                           data-rule="required,number10000"/>
+                </div>
+
+            </div>
+            <div class="bjui-row col-2" style="padding-left: 5px;">
+                <label class="row-label">建筑面积: </label>
+                <div class="row-input required">
+                    <input type="text" name="floorArea" id="floorArea" value=""
+                           style="width: 80%;" data-rule="required,numberOnly,houseArea,notZero2"/>㎡
+                </div>
+                <label class="row-label">套内面积: </label>
+                <div class="row-input required">
+                    <input type="text" name="interFloorArea" id="interFloorArea" value=""
+                           style="width: 80%;" data-rule="required,numberOnly,houseArea,notZero2"/>㎡
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend style="font-weight:normal;">车位信息：</legend>
+            <div class="bjui-row col-1">
+                <label class="row-label">购买车位: </label>
+                <div class="row-input required">
+                    <select id="buyPark" name="buyPark" data-toggle="selectpicker" data-width="100%"
+                            onchange="buyChange(this.value)" data-rule="required">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+            <div id="buyParkDetail">
+
+            </div>
+
+            <div class="bjui-row col-1">
+                <label class="row-label">租赁车位: </label>
+                <div class="row-input required">
+                    <select id="rentalPark" name="rentalPark" data-toggle="selectpicker" data-width="100%"
+                            onchange="rentalChange(this.value)" data-rule="required">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+            <div id="rentalParkDetail">
+
+            </div>
+        </fieldset>
+
+
+
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-addHouse" >新增</button></li>
+    </ul>
+</div>
+<script>
+    addHouseInit()
+    function addHouseInit() {
+        //查询楼宇列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/building/v1/findBuildingList',
+            data: "",
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.each(json.data, function (i, n) {
+                        $.CurrentDialog.find("#buildingId").append('<option value="' + n.buildingId + '">' + n.buildingName + '</option>');
+                    });
+                    $.CurrentDialog.find("#buildingId").append('<option value="' + "" + '">' + "其它" + '</option>');
+                    $.CurrentDialog.find("#buildingId").selectpicker('refresh')
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+        //查询户型列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/findHouseTypes',
+            data: "",
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.each(json.data, function (i, n) {
+                        $.CurrentDialog.find("#typeId").append('<option value="' + n.typeId + '"  spanID="' + n.typeId + '">' + n.typeName + '</option>');
+                    })
+                    $.CurrentDialog.find("#typeId").selectpicker('refresh')
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    }
+
+    function searchUnit() {
+        var buildingId = $.CurrentDialog.find("#buildingId").val();
+        if(buildingId==null){
+            buildingId="";
+        }
+        var buildingIdKey = {"buildingId": buildingId};
+        if (buildingId == undefined || buildingId == "" || buildingId == null) {
+            $.CurrentDialog.find("#unitId").html('<option value="">--选择单元--</option>').selectpicker('refresh');
+        } else {
+            //查询单元列表
+            BJUI.ajax('doajax', {
+                url: path + '/web/building/v1/findUnitList',
+                data: JSON.stringify(buildingIdKey),
+                loadingmask: false,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        var obj = $.CurrentDialog.find("#unitId");
+                        $("#unitId option").first().nextAll().remove();
+                        $.each(json.data, function (i, n) {
+                            $.CurrentDialog.find("#unitId").append('<option value="' + n.unitId + '"  >' + n.unitName + '</option>');
+                        });
+                        $.CurrentDialog.find("#unitId").selectpicker('refresh')
+                    }
+                }
+            })
+        }
+    }
+
+    function buyChange(e) {
+        $.CurrentDialog.find('#buyParkDetail').empty();
+
+        for (var i = 0; i < e; i++) {
+            var html = '<div class="bjui-row col-2">' +
+                    '<label class="row-label">车位号: </label>' +
+                    '<div class="row-input required">' +
+                    '<input type="text" class="carSeatNumBuy" name="carSeatNumBuy'+i+'" style="width: 100%" value=""' +
+                    'data-rule="required,chineseEnglishNum,length(~64)"/>' +
+                    '</div>' +
+                    '<label class="row-label">车牌号: </label>' +
+                    '<div class="row-input required">' +
+                    '<input type="text" class="plateNumBuy" name="plateNumBuy'+i+'"  style="width: 100%" value=""' +
+                    'data-rule="required,chineseEnglishNum,length(~16)"/>' +
+                    '</div>' +
+                    '</div>';
+            $.CurrentDialog.find('#buyParkDetail').append(html);
+        }
+    }
+
+
+    function rentalChange(e) {
+        $.CurrentDialog.find('#rentalParkDetail').empty();
+
+        for (var i = 0; i < e; i++) {
+            var html = '<div class="bjui-row col-2">' +
+                    '<label class="row-label">车位号: </label>' +
+                    '<div class="row-input required">' +
+                    '<input type="text" class="carSeatNumRent" name="carSeatNumRent'+i+'" style="width: 100%" value=""' +
+                    'data-rule="required,chineseEnglishNum,length(~64)"/>' +
+                    '</div>' +
+                    '<label class="row-label">车牌号: </label>' +
+                    '<div class="row-input required">' +
+                    '<input type="text" class="plateNumRent" name="plateNumRent'+i+'"  style="width: 100%" value=""' +
+                    'data-rule="required,chineseEnglishNum,length(~16)"/>' +
+                    '</div>' +
+                    '</div>';
+            $.CurrentDialog.find('#rentalParkDetail').append(html);
+        }
+    }
+
+    function addFamilyMember() {
+        var html = ['<div class="memberGroup" style="position: relative">',
+            '<div class="fa fa-close memberGroupDel" style="position: absolute;right:2px;top: 0;color: #000;cursor: pointer"></div>    ',
+            '        <div class="bjui-row col-1">',
+            '            <label class="row-label">成员姓名: </label>',
+            '            <div class="row-input required">',
+            '                <input type="text" name="houseMember" id="houseMember" value=""',
+            '                       style="width:100%" data-rule="required,special,length(~6)"/>',
+            '            </div>',
+            '            <label class="row-label">手机号码: </label>',
+            '            <div class="row-input required">',
+            '                <input type="text" name="memberPhone" id="memberPhone" value=""',
+            '                        style="width:100%" data-rule="required,special,length(~6)"/>',
+            '            </div>',
+            '            <label class="row-label">籍贯: </label>',
+            '            <div class="row-input ">',
+            '                <input type="text" name="memberOrigin" id="memberOrigin" value=""',
+            '                        style="width:100%" data-rule="required,special,length(~6)"/>',
+            '            </div>',
+            '            <label class="row-label">民族: </label>',
+            '            <div class="row-input ">',
+            '                <input type="text" name="memberEthnic" id="memberEthnic" value=""',
+            '                        style="width:100%" data-rule="required,special,length(~6)"/>',
+            '            </div>',
+            '            <label class="row-label">宗教信仰: </label>',
+            '            <div class="row-input ">',
+            '                <select id="memberReligion" name="memberReligion" data-toggle="selectpicker">',
+            '                    <option value="">--请选择--</option>',
+            '                    <option value="">佛教</option>',
+            '                    <option value="">基督教</option>',
+            '                    <option value="">伊斯兰教</option>',
+            '                    <option value="">其他</option>',
+            '                    <option value="">无</option>',
+            '                </select>',
+            '            </div>',
+            '        </div>',
+            '    </div>'].join("");
+        $.CurrentDialog.find('#memberDetail').append(html);
+    }
+
+    $.CurrentDialog.on('click', '.memberGroupDel', function () {
+        $(this).parent().remove();
+    });
+
+
+
+    //确认提交
+    $.CurrentDialog.find("#btn-addHouse").click(function () {
+        var buildingId=$.CurrentDialog.find('#buildingId').val();
+        var unitId=$.CurrentDialog.find('#unitId').val();
+        if($.CurrentDialog.find('#unitId').val()==""||$.CurrentDialog.find('#unitId').val()==undefined){
+            unitId=null;
+        }
+        var houseNum=$.CurrentDialog.find('#houseNum').val();
+        var typeId=$.CurrentDialog.find('#typeId').val();
+        var displayOrder=$.CurrentDialog.find('#displayOrder').val();
+        var floorArea=$.CurrentDialog.find('#floorArea').val();
+        var interFloorArea=$.CurrentDialog.find('#interFloorArea').val();
+//        var houseStatus=$.CurrentDialog.find('#houseStatus').val();
+//        var petRaising=$.CurrentDialog.find('#petRaising').val();
+        var buyPark=$.CurrentDialog.find('#buyPark').val();
+        var rentalPark=$.CurrentDialog.find('#rentalPark').val();
+//        var householder=$.CurrentDialog.find('#householder').val();
+//        var holderPhone=$.CurrentDialog.find('#holderPhone').val();
+//        var holderEthnic=$.CurrentDialog.find('#holderEthnic').val();
+//        var holderReligion=$.CurrentDialog.find('#holderReligion').val();
+        var carSeatNumBuy=[];
+        $.CurrentDialog.find('.carSeatNumBuy').each(function () {
+            carSeatNumBuy.push($(this).val());
+        });
+        var plateNumBuy  =[];
+        $.CurrentDialog.find('.plateNumBuy').each(function () {
+            plateNumBuy.push($(this).val());
+        });
+        var carSeatNumRent=[];
+        $.CurrentDialog.find('.carSeatNumRent').each(function () {
+            carSeatNumRent.push($(this).val());
+        });
+        var plateNumRent  =[];
+        $.CurrentDialog.find('.plateNumRent').each(function () {
+            plateNumRent.push($(this).val());
+        });
+//        var memberList=[];
+//        $.CurrentDialog.find('.memberGroup').each(function () {
+//            var cup={};
+//            cup.houseMember=$.CurrentDialog.find('#houseMember').val();
+//            cup.memberPhone=$.CurrentDialog.find('#memberPhone').val();
+//            cup.memberEthnic=$.CurrentDialog.find('#memberEthnic').val();
+//            cup.memberReligion=$.CurrentDialog.find('#memberReligion').val();
+//            cup.memberOrigin=$.CurrentDialog.find('#memberOrigin').val();
+//            memberList.push(cup);
+//        });
+        var data={
+            'buildingId':buildingId,
+            'unitId':unitId,
+            'houseNum':houseNum,
+            'typeId':typeId,
+            'displayOrder':displayOrder,
+            'floorArea':floorArea,
+            'interFloorArea':interFloorArea,
+//            'houseStatus':houseStatus,
+//            'petRaising':petRaising,
+            'buyPark':buyPark,
+            'rentalPark':rentalPark,
+//            'householder':householder,
+//            'holderPhone':holderPhone,
+//            'holderEthnic':holderEthnic,
+//            'holderReligion':holderReligion,
+//            'memberList':memberList,
+            'carSeatNumBuy':carSeatNumBuy,
+            'plateNumBuy':plateNumBuy,
+            'carSeatNumRent':carSeatNumRent,
+            'plateNumRent':plateNumRent,
+        }
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                var cup=[];
+                var jumpOut=false;
+                $.CurrentDialog.find('.carSeatNumBuy,.carSeatNumRent').each(function () {
+                    var number=$(this).val();
+                    if(cup.indexOf(number)<0){
+                        cup.push(number);
+                    }else{
+                        BJUI.alertmsg('error','请不要添加重复车位号');
+                        jumpOut=true;
+                        return;
+                    }
+                });
+                if(jumpOut){
+                    return;
+                }
+                $.CurrentDialog.find("#btn-addHouse").attr('disabled','true');
+                BJUI.ajax('doajax', {
+                    url: path + '/web/house/v1/addHouse',
+                    data: data,
+                    loadingmask: false,
+                    callback: function(json) {
+                        if(json.code=="00000"){
+                            BJUI.alertmsg('ok','新增成功！');
+                            BJUI.dialog('closeCurrent');
+                            $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+                            //BJUI.navtab('refresh', 'q_datagrid');
+                            //$("#"+$.CurrentDialog.find('.dialogHeader .title span').attr('spanTag')).text(editUnitNameInput);
+                        }else {
+                            $.CurrentDialog.find("#btn-addHouse").removeAttr('disabled');
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        });
+    })
+
+</script>
+<style>
+    .memberGroup {
+        padding: 14px;
+        background-color: #EAF1F6;
+        margin: 5px 0;
+    }
+</style>

@@ -1,0 +1,325 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#rentContent_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add',
+        editMode: {
+            dialog: {
+                width: '450',
+                height: '550',
+                mask: true,
+                title: "添加租赁信息",
+                id: 'dialog_addRent',
+                maxable: false,
+                resizable: false,
+            }
+        },
+        editUrl: 'html/rentManage/rent/addRent.html',
+        dataUrl: path + '/web/lease/v1/findAllLeaseList',
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        postData: {
+            isInvalid: 0,
+            isUpload: 3
+        },
+        showCheckboxcol: false,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'rentNo', label: '租赁编号', align: 'center', width: '220', nowrap: 'true'
+            },
+            {
+                name: 'companyName', label: '租赁公司名称', align: 'center', width: '100', nowrap: 'true'
+            },
+            {
+                name: 'address', label: '租赁地址', align: 'center', width: '150', nowrap: 'true'
+            },
+            {
+                name: 'tenant', label: '租客对接人', align: 'center', width: '90', nowrap: 'true'
+            },
+            {
+                name: 'tenantPhone', label: '对接人电话', align: 'center', width: '100', nowrap: 'true'
+            },
+            {
+                name: 'endTime',
+                label: '合同到期时间',
+                align: 'center',
+                width: '170',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value.substr(0, 10)
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'isUpload',
+                label: '合同是否上传',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '是';
+                    } else {
+                        var html = '否';
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'isInvalid',
+                label: '合同状态',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '有效';
+                    } else if(value == 2) {
+                        var html = '无效';
+                    }else{
+                        var html = '待生效';
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'rentId', label: '操作', width: '200', align: 'center', render: function (value, data) {
+                if (data.isInvalid == 1||data.isInvalid == 3) {
+                    if (data.isUpload == 1) {
+                        var html = '<button type="button" class="btn-blue" onclick=editRent(\"' + value + '\")>编辑</button>'
+                                + '<button type="button" class="btn-blue" onclick=seeRent(\"' + value + '\")>查看</button>'
+                                + '<button type="button" class="btn-blue" onclick=uploadeFile(\"' + value + '\")>修改合同</button>'
+                                + '<button type="button" class="btn-blue" onclick=downloadFile(\"' + value + '\")>导出合同</button>'
+                    } else {
+                        var html = '<button type="button" class="btn-blue" onclick=editRent(\"' + value + '\")>编辑</button>'
+                                + '<button type="button" class="btn-blue" onclick=seeRent(\"' + value + '\")>查看</button>'
+                                + '<button type="button" class="btn-blue" onclick=uploadeFile(\"' + value + '\")>上传合同</button>'
+                    }
+                } else {
+                    if (data.isUpload == 1) {
+                        var html = '<button type="button" class="btn-blue" disabled onclick=editRent(\"' + value + '\")>编辑</button>'
+                                + '<button type="button" class="btn-blue" onclick=seeRent(\"' + value + '\")>查看</button>'
+                                + '<button type="button" class="btn-blue" disabled onclick=uploadeFile(\"' + value + '\")>修改合同</button>'
+                                + '<button type="button" class="btn-blue" disabled onclick=downloadFile(\"' + value + '\")>导出合同</button>'
+                    } else {
+                        var html = '<button type="button" class="btn-blue" disabled onclick=editRent(\"' + value + '\")>编辑</button>'
+                                + '<button type="button" class="btn-blue" onclick=seeRent(\"' + value + '\")>查看</button>'
+                                + '<button type="button" class="btn-blue"  disabled onclick=uploadeFile(\"' + value + '\")>上传合同</button>'
+                    }
+                }
+                return html;
+            }
+            }
+        ]
+    });
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#isInvalid").selectpicker('val', "");
+        $.CurrentNavtab.find("#isUpload").selectpicker('val', "");
+    });
+
+    function uploadeFile(val) {
+        $.CurrentNavtab.data('rentId', val);
+        BJUI.dialog({
+            id: 'dialog_uploadFile',
+            url: 'html/rentManage/rent/uploadFile.html',
+            title: '上传合同资料',
+            height: 200,
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+    }
+
+    //下载附件
+    function downloadFile(e) {
+        window.location.href = path + '/web/lease/v1/downloadPDF?userId=' + $.cookie("l_userId") + '&token=' + $.cookie("l_token") + '&rentId=' + e;
+    }
+    //查看
+    function seeRent(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/lease/v1/findLeaseInfo',
+            data: {'rentId': val},
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("seeRentData", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeRent',
+                        url: 'html/rentManage/rent/seeRent.html',
+                        title: '查看租赁信息',
+                        width: '800',
+                        height: '400',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //编辑
+    function editRent(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/lease/v1/findLeaseInfo',
+            data: {'rentId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("editRentData", json.data);
+                    $.CurrentNavtab.data("rentId", val);
+                    BJUI.dialog({
+                        id: 'dialog_editRent',
+                        url: 'html/rentManage/rent/editRent.html',
+                        title: '编辑租赁信息',
+                        width: '450',
+                        height: '670',
+                        mask: true,
+                        maxable: false,
+                        resizable: false,
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    var option = {
+        "parentUrl": "/web/lease/v1/findBuildingList",
+        "childUrl": "/web/lease/v1/findUnitList",
+        "parentParam": "",
+        "childParam": 'buildingId',
+        "parentName": "buildingName",
+        "childName": "unitName",
+        "id": "zdTree_rentContent",
+        "parentID": "buildingId",
+        "childID": "unitId",
+        "depth": 2,
+        "checkbox": true,
+        "checkCallBack": function (value) {
+            var isInvalid = $.CurrentNavtab.find('#isInvalid').val();
+            var endTime = $.CurrentNavtab.find('#endTime').val();
+            var isUpload = $.CurrentNavtab.find('#isUpload').val();
+            var address = $.CurrentNavtab.find('#address').val();
+            var companyName = $.CurrentNavtab.find('#companyName').val();
+            if (value.buildingId) {
+                var buildingId = value.buildingId;
+            } else {
+                var buildingId = null;
+            }
+            if (value.unitId) {
+                var unitId = value.unitId;
+            } else {
+                var unitId = null;
+            }
+            if (address == "") {
+                address = null;
+            }
+            if (endTime == "") {
+                endTime = null;
+            }
+            if (companyName == "") {
+                companyName = null;
+            }
+            var data = {
+                'isInvalid': isInvalid,
+                'endTime': endTime,
+                'isUpload': isUpload,
+                'buildingId': buildingId,
+                'unitId': unitId,
+                'address': address,
+                'companyName': companyName,
+            }
+            $.CurrentNavtab.find('#rentContent_datagrid').datagrid('filter', data);
+        }
+    };
+    zdTree(option);
+    changeDivHeight();
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#rentContent_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">租赁地址:</label>
+                <div class="row-input">
+                    <input type="text" id="address" name="address" value=""
+                           data-rule="special,length(~13)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">租赁公司名称:</label>
+                <div class="row-input">
+                    <input type="text" id="companyName" name="companyName" value=""
+                           data-rule="special,length(~50)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" name="startTimeStr" data-rule="开始时间: matchE[lte, endTimeStr, datetime]">
+                </div>
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" name="endTimeStr" data-rule="结束时间: matchE[gte, startTimeStr, datetime]">
+                </div>
+                <label class="row-label">合同状态:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="isInvalid" name="isInvalid" data-toggle="selectpicker" data-width="100%">
+                        <option value="0">全部</option>
+                        <option value="1">有效</option>
+                        <option value="2">无效</option>
+                        <option value="3">待生效</option>
+                    </select>
+                </div>
+                <label class="row-label">合同是否上传:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="isUpload" name="isUpload" data-toggle="selectpicker" data-width="100%">
+                        <option value="3">全部</option>
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search"
+                            style="line-height: 18px;">开始搜索！
+                    </button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn"
+                            style="line-height: 18px;">重置
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="overflow-y: auto">
+    <ul class="ztree zdTree" id="zdTree_rentContent"></ul>
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <table id="rentContent_datagrid" class="table table-bordered">
+    </table>
+</div>

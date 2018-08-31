@@ -1,0 +1,156 @@
+<div class="bjui-pageContent">
+    <!--startprint-->
+
+    <div id="repairPrintArea" class="div">
+        <div>
+            <div style=" padding: 0 20px; box-sizing:content-box;">
+                <div style="text-align: center; font-size: 18px;color: #222; padding: 10px 0;">
+                    <!--<span style="text-decoration: underline;">南京锋尚国际公寓物业管理  维修确认单收据</span>-->
+                    <span style="text-decoration: underline;">维修确认单收据</span>
+                </div>
+                <table width="100%">
+                    <tr>
+                        <td width="35%" style=" padding: 6px 6px 6px 0;">报修单编号：<span id="orderNo"></span></td>
+                        <td width="30%" style=" padding:  6px 6px 6px 0;">姓名：<span id="userName"></span></td>
+                        <td width="30%" style=" padding:  6px 6px 6px 0;">联系方式：<span id="userPhone"></span></td>
+                    </tr>
+                    <tr>
+                        <td style=" padding:  6px 6px 6px 0;">预约维修时间：<span id="appointTime"></span></td>
+                        <td style=" padding:  6px 6px 6px 0;">房屋信息：<span id="houseNo"></span></td>
+                        <td style=" padding:  6px 6px 6px 0;">报修日期：<span id="createTime"></span></td>
+                    </tr>
+                </table>
+                <table width="100%" cellspacing="0" cellpadding="0"
+                       style=" text-align: center; border-top:#333 1px solid; border-left:#333 1px solid; margin: 10px 0;">
+                    <thead style="background-color: #f6f6f6;">
+                    <tr>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 85px;">报修区域
+                        </th>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 100px;">报修类别
+                        </th>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 250px;">报修内容
+                        </th>
+                        <!--<th align="center"-->
+                            <!--style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">-->
+                            <!--预约维修时间-->
+                        <!--</th>-->
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 100px;">维修人员
+                        </th>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;  width: 85px;">
+                            物料费用
+                        </th>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 85px;">
+                            服务费用
+                        </th>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 85px;">费用合计
+                        </th>
+                        <th align="center"
+                            style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; width: 85px;">签字确认
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr id="print_detail">
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">收费项目-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">-->
+                            <!--计费开始时间-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">-->
+                            <!--计费结束时间-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">单价-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">月数-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">-->
+                            <!--滞纳金-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">应收合计-->
+                        <!--</td>-->
+                        <!--<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">收费方式-->
+                        <!--</td>-->
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table width="100%">
+                    <tr>
+                        <td width="25%" style=" padding: 6px 6px 6px 0;">合计：<span></span></td>
+                        <td width="25%" style=" padding:  6px 6px 6px 0;">应收：￥<span></span></td>
+                        <td width="25%" style=" padding:  6px 6px 6px 0;">实收：￥<span></span></td>
+                    </tr>
+                </table>
+                <div style="text-decoration: underline; padding-top: 10px;">
+                    备注：本次收据不作为报销凭证，盖章有效，妥善保管，遗失不补，服务热线：025-123456
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="quote_div"></div>
+    <!--<div id="repairPrintArea">-->
+    <!--</div>-->
+
+    <!--endprint-->
+
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="repairPrint_button">确认打印</button>
+        </li>
+    </ul>
+</div>
+<script>
+    printContent()
+    function printContent() {
+        var data = $("body").data("printRepair");
+        if(data.orderArea==1){
+            data.orderArea='个人区域'
+        }else if(data.orderArea==2){
+            data.orderArea='公共区域'
+        }
+
+        if(data.orderDesc==undefined||data.orderDesc==null){
+            data.orderDesc="";
+        }
+
+        if(data.operatorName==undefined||data.operatorName==null){
+            data.operatorName="";
+        }
+        $.CurrentDialog.find('#orderNo').text(data.orderNo);
+        if(data.houseNo==""||data.houseNo==undefined||data.houseNo==null){
+            data.houseNo="<i>暂无</i>"
+        }
+        $.CurrentDialog.find('#houseNo').html(data.houseNo);
+        $.CurrentDialog.find('#userName').text(data.userName);
+        $.CurrentDialog.find('#userPhone').text(data.userPhone);
+        $.CurrentDialog.find('#createTime').text(data.createTime);
+        $.CurrentDialog.find('#appointTime').text(data.appointTime);
+
+        var html= '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+data.orderArea+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+data.orderType+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid; word-break: break-all; word-wrap:break-word;text-align: left">'+data.orderDesc+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+data.operatorName+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+''+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+''+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+''+'</td>'
+                    +'<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+''+'</td>'
+        $.CurrentDialog.find('#print_detail').append(html)
+
+
+    }
+    $.CurrentDialog.find('#repairPrint_button').click(function () {
+        $.CurrentDialog.find("div#repairPrintArea").printArea();
+    })
+</script>

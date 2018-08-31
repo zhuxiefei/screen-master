@@ -1,0 +1,51 @@
+{
+    "code": "00000",
+    "message": "",
+    "data": [
+      {
+        "id": "1",
+        "department": "003",
+        "level": 1,
+        "order": 5,
+        "name": "主管",
+        "isParent":true
+      },
+      {
+        "id": "2",
+        "department": "003",
+        "level": 1,
+        "order": 6,
+        "name": "人事专员",
+        "isParent":true
+      },
+            {
+                "id": "3",
+                "department": "002",
+              "level": 1,
+                "order": 0,
+                "name": "总监",
+              "isParent":true
+            },
+            {
+                "id": "4",
+                "department": "002",
+                "order": 1,
+                "name": "会计",
+              "isParent":true
+            },
+            {
+                "id": "55",
+                "department": "002",
+                "order": 2,
+                "name": "审计",
+              "isParent":true
+            },
+            {
+                "id": "67",
+                "department": "002",
+                "order": 3,
+                "name": "出纳",
+              "isParent":true
+            }
+        ]
+}

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.patrol.EquipmentRepairRecordMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.patrol.EquipmentRepairRecord">
+        <id column="recordId" property="recordId" jdbcType="VARCHAR"/>
+        <result column="equipmentId" property="equipmentId" jdbcType="VARCHAR"/>
+        <result column="repairTime" property="repairTime" jdbcType="TIMESTAMP"/>
+        <result column="equipmentOperator" property="equipmentOperator" jdbcType="VARCHAR"/>
+        <result column="operatorPhone" property="operatorPhone" jdbcType="VARCHAR"/>
+        <result column="repairDesc" property="repairDesc" jdbcType="VARCHAR"/>
+        <result column="repairExpense" property="repairExpense" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="qualityPeriod" property="qualityPeriod" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recordId, equipmentId, repairTime, equipmentOperator, operatorPhone, repairDesc, 
+    repairExpense, createTime, updateTime,qualityPeriod
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from equipment_repair_record
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from equipment_repair_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.patrol.EquipmentRepairRecord">
+    insert into equipment_repair_record (recordId, equipmentId, repairTime, 
+      equipmentOperator, operatorPhone, repairDesc, 
+      repairExpense, createTime, updateTime,qualityPeriod
+      )
+    values (#{recordId,jdbcType=VARCHAR}, #{equipmentId,jdbcType=VARCHAR}, #{repairTime,jdbcType=TIMESTAMP}, 
+      #{equipmentOperator,jdbcType=VARCHAR}, #{operatorPhone,jdbcType=VARCHAR}, #{repairDesc,jdbcType=VARCHAR}, 
+      #{repairExpense,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+      #{qualityPeriod,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.patrol.EquipmentRepairRecord">
+        insert into equipment_repair_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                recordId,
+            </if>
+            <if test="equipmentId != null">
+                equipmentId,
+            </if>
+            <if test="repairTime != null">
+                repairTime,
+            </if>
+            <if test="equipmentOperator != null">
+                equipmentOperator,
+            </if>
+            <if test="operatorPhone != null">
+                operatorPhone,
+            </if>
+            <if test="repairDesc != null">
+                repairDesc,
+            </if>
+            <if test="repairExpense != null">
+                repairExpense,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="qualityPeriod != null">
+                qualityPeriod,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                #{recordId,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentId != null">
+                #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="repairTime != null">
+                #{repairTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="equipmentOperator != null">
+                #{equipmentOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorPhone != null">
+                #{operatorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="repairDesc != null">
+                #{repairDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="repairExpense != null">
+                #{repairExpense,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="qualityPeriod != null">
+                #{qualityPeriod,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.betel.estatemgmt.common.model.patrol.EquipmentRepairRecord">
+        update equipment_repair_record
+        <set>
+            <if test="equipmentId != null">
+                equipmentId = #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="repairTime != null">
+                repairTime = #{repairTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="equipmentOperator != null">
+                equipmentOperator = #{equipmentOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorPhone != null">
+                operatorPhone = #{operatorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="repairDesc != null">
+                repairDesc = #{repairDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="repairExpense != null">
+                repairExpense = #{repairExpense,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="qualityPeriod != null">
+                qualityPeriod = #{qualityPeriod,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.patrol.EquipmentRepairRecord">
+    update equipment_repair_record
+    set equipmentId = #{equipmentId,jdbcType=VARCHAR},
+      repairTime = #{repairTime,jdbcType=TIMESTAMP},
+      equipmentOperator = #{equipmentOperator,jdbcType=VARCHAR},
+      operatorPhone = #{operatorPhone,jdbcType=VARCHAR},
+      repairDesc = #{repairDesc,jdbcType=VARCHAR},
+      repairExpense = #{repairExpense,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      qualityPeriod = #{qualityPeriod,jdbcType=VARCHAR}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+    <!--查询维保记录列表-->
+    <select id="findAllMaintenanceList" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.propertyapp.check.model.MaintenanceResp">
+        SELECT err.recordId AS
+        equipmentRepairRecordId,pe.equipmentId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,DATE_FORMAT(err.repairTime,'%Y-%m-%d')
+        AS
+        repairTime,(SELECT et.typeName FROM equipment_type et WHERE et.typeId = pe.equipmentType ) AS typeName,
+        err.equipmentOperator,err.operatorPhone,err.repairDesc,err.repairExpense,err.qualityPeriod
+        from patrol_equipment pe,equipment_repair_record err WHERE pe.equipmentId=err.equipmentId AND pe.equipmentId =
+        #{equipmentId}
+        <if test="startTime != null and startTime !=''">
+            AND err.repairTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND err.repairTime &lt;=#{endTime}
+        </if>
+        ORDER BY err.createTime DESC
+    </select>
+    <!--导出维保记录byTime/app调用-->
+    <select id="findMaintenanceList" parameterType="com.betel.estatemgmt.business.web.patrol.model.MaintenanceReq"
+            resultType="com.betel.estatemgmt.business.propertyapp.check.model.MaintenanceResp">
+        SELECT
+        pe.equipmentId,err.recordId AS
+        equipmentRepairRecordId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,DATE_FORMAT(err.repairTime,'%Y-%m-%d')
+        AS repairTime,(SELECT et.typeName FROM equipment_type et WHERE et.typeId = pe.equipmentType ) AS typeName,
+        err.equipmentOperator,err.operatorPhone,err.repairDesc,err.repairExpense,err.qualityPeriod
+        from patrol_equipment pe,equipment_repair_record err WHERE pe.equipmentId=err.equipmentId
+        AND pe.equipmentId = #{equipmentId}
+        <if test="startTime != null and startTime !=''">
+            AND err.repairTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND err.repairTime &lt;=#{endTime}
+        </if>
+        ORDER BY err.createTime DESC
+    </select>
+    <!--导出维保记录byId-->
+    <select id="findMaintenanceListById" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.propertyapp.check.model.MaintenanceResp">
+        SELECT err.recordId AS
+        equipmentRepairRecordId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,DATE_FORMAT(err.repairTime,'%Y-%m-%d')
+        AS
+        repairTime,(SELECT et.typeName FROM equipment_type et WHERE et.typeId = pe.equipmentType) AS typeName,
+        err.equipmentOperator,err.operatorPhone,err.repairDesc,err.repairExpense,err.qualityPeriod
+        from patrol_equipment pe,equipment_repair_record err WHERE pe.equipmentId=err.equipmentId AND err.recordId IN
+        <foreach collection="array" item="equipmentRepairRecordId" open="(" separator="," close=")">
+            #{equipmentRepairRecordId}
+        </foreach>
+    </select>
+    <select id="findAllRecords" parameterType="com.betel.estatemgmt.business.web.patrol.model.FindAllRecordsReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.FindAllRecordsResp">
+        SELECT
+        er.recordId,
+        pe.equipmentNo,
+        pe.equipmentName,
+        et.typeName,
+        pe.equipmentLocation AS location,
+        er.repairTime AS createTime
+        FROM equipment_repair_record er
+        LEFT JOIN patrol_equipment pe ON pe.equipmentId = er.equipmentId
+        LEFT JOIN equipment_type et ON et.typeId = pe.equipmentType
+        <where>
+             pe.estateId =#{estateId} AND pe.equipmentNo IS NOT NULL
+            <if test="typeId != null and typeId != ''">
+                AND   et.typeId = #{typeId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(er.repairTime,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(er.repairTime,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+            <if test="equipmentNo != null and equipmentNo != ''">
+                AND pe.equipmentNo LIKE concat('%',#{equipmentNo},'%')
+            </if>
+            <if test="equipmentName != null and equipmentName != ''">
+                AND pe.equipmentName LIKE concat('%',#{equipmentName},'%')
+            </if>
+            <if test="location != null and location != ''">
+                AND pe.equipmentLocation LIKE concat('%',#{location},'%')
+            </if>
+        </where>
+        ORDER BY er.createTime DESC
+    </select>
+
+    <select id="findByRecordId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.FindRecordResp">
+    SELECT
+      er.recordId,
+      pe.equipmentId,
+      pe.equipmentNo,
+      et.typeName,
+      pe.equipmentName,
+      pe.isCheck,
+      pe.equipmentLocation AS location,
+      pe.equipmentCreateTime,
+      pe.qualityPeriod AS equipQuality,
+      pe.unit AS equipUnit,
+      pe.deadline,
+      pe.equipmentProducer,
+      pe.producerPhone,
+      er.repairTime,
+      er.equipmentOperator,
+      er.operatorPhone,
+      er.repairDesc,
+      er.repairExpense,
+      er.qualityPeriod AS recordQuality
+    FROM equipment_repair_record er
+    LEFT JOIN patrol_equipment pe ON pe.equipmentId = er.equipmentId
+    LEFT JOIN equipment_type et ON et.typeId = pe.equipmentType
+    WHERE er.recordId = #{recordId}
+  </select>
+    <!--批量删除维保记录jians.z-->
+    <delete id="deleteByEquipmemtId">
+        DELETE FROM equipment_repair_record WHERE equipmentId IN
+        <foreach collection="array" index="index" item="equipmentId" open="(" close=")" separator=",">
+            #{equipmentId}
+        </foreach>
+    </delete>
+
+    <select id="exportByIds" resultType="com.betel.estatemgmt.business.web.patrol.model.ExportRecordsResp">
+        SELECT
+        pe.equipmentNo,
+        pe.equipmentName,
+        et.typeName,
+        pe.equipmentLocation AS location,
+        er.repairTime AS createTime,
+        er.equipmentOperator,
+        er.operatorPhone,
+        er.repairDesc,
+        er.repairExpense,
+        er.qualityPeriod AS recordQuality
+        FROM equipment_repair_record er
+        LEFT JOIN patrol_equipment pe ON pe.equipmentId = er.equipmentId
+        LEFT JOIN equipment_type et ON et.typeId = pe.equipmentType
+        WHERE
+        er.recordId IN
+        <foreach close=")" collection="array" index="index" item="recordId" open="(" separator=",">
+            #{recordId}
+        </foreach>
+        ORDER BY er.createTime DESC
+    </select>
+
+    <select id="exportByParams" parameterType="com.betel.estatemgmt.business.web.patrol.model.ExportRepairRecordsReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.ExportRecordsResp">
+        SELECT
+        pe.equipmentNo,
+        pe.equipmentName,
+        et.typeName,
+        pe.equipmentLocation AS location,
+        er.repairTime AS createTime,
+        er.equipmentOperator,
+        er.operatorPhone,
+        er.repairDesc,
+        er.repairExpense,
+        er.qualityPeriod AS recordQuality
+        FROM equipment_repair_record er
+        LEFT JOIN patrol_equipment pe ON pe.equipmentId = er.equipmentId
+        LEFT JOIN equipment_type et ON et.typeId = pe.equipmentType
+        WHERE  pe.estateId=#{estateId} AND  pe.equipmentNo IS NOT NULL
+            <if test="typeId != null and typeId != ''">
+                AND et.typeId = #{typeId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(er.repairTime,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(er.repairTime,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+            <if test="equipmentNo != null and equipmentNo != ''">
+                AND pe.equipmentNo LIKE concat('%',#{equipmentNo},'%')
+            </if>
+            <if test="equipmentName != null and equipmentName != ''">
+                AND pe.equipmentName LIKE concat('%',#{equipmentName},'%')
+            </if>
+            <if test="location != null and location != ''">
+                AND pe.equipmentLocation LIKE concat('%',#{location},'%')
+            </if>
+        ORDER BY er.createTime DESC
+    </select>
+</mapper>

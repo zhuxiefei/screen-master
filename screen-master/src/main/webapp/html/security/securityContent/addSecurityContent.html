@@ -1,0 +1,207 @@
+<div class="bjui-pageContent" style="overflow: auto;">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 26%;">巡逻区域: </label>
+            <div class="row-input required" style="width: 74%;">
+                <select id="areaId" name="areaId" data-toggle="selectpicker" data-width="100%" data-rule="required"  onchange="getSite(this.value)">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 26%;">签到地点: </label>
+            <div class="row-input required"  style="width: 74%;">
+                <select id="signinId"  name="signinId" data-toggle="selectpicker" data-width="100%" data-rule="required" multiple="" title="--可以多选--">
+                    <option value="">--可以多选--</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 26%;">定时发布时间: </label>
+            <div class="row-input required"  style="width: 74%;">
+                <div class="addTimeIcon" style=" cursor: pointer;"><input type="hidden" name="name" data-rule="required" /><img src="images/plus.png" alt="" width="40px"></div>
+                <div class="divTimeList">
+
+                </div>
+            </div>
+            <label class="row-label" style="width: 26%;">巡逻内容: </label>
+            <div class="row-input required"  style="width: 74%;">
+                <textarea id="contentDesc" name="contentDesc" data-width="100%" data-rule="required,length(~500)" style="resize: none; height: 120px;width:100%;" ></textarea>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addSecurityContent" class="btn-default" data-icon="save">新增</button></li>
+    </ul>
+</div>
+<script>
+//    查询所有区域
+        BJUI.ajax('doajax', {
+            url: path + '/web/securityArea/v1/findAreaList',
+            loadingmask: false,
+            async:false,   //false:同步
+            callback: function (json) {
+                if(json.code == "00000"){
+                    var obj = $.CurrentDialog.find("#areaId");
+                    if(json.data.length>0){
+                        $.each(json.data, function(i, n) {
+                            obj.append('<option value="'+n.areaId+'">'+n.areaName+'</option>');
+                        })
+                    }
+                    obj.selectpicker('refresh');
+                }else{
+                    successBack(json);
+                }
+            }
+        });
+
+    //获得某区域下的类型
+    function getSite(id) {
+        if (id == "") {
+            //$.CurrentDialog.find('#signinId option').not(':eq(0)').remove();
+            $.CurrentDialog.find('#signinId').html('<option value="">--可以多选--</option>');
+            $.CurrentDialog.find('#signinId').selectpicker('refresh');
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/securityArea/v1/findSignList',
+            data: {'areaId': id},
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    var html = ""
+                    if( json.data.length>0){
+                        var data = json.data;
+                        //$.CurrentDialog.find('#signinId option').not(':eq(0)').remove();
+                        for (var i = 0; i < data.length; i++) {
+                            html += '<option value="' + data[i].signinId + '">' + data[i].signinAddress + '</option>';
+                        }
+                    }else{
+                        html = '<option value="">--可以多选--</option>';
+                    }
+                    $.CurrentDialog.find('#signinId').html(html);
+                    $.CurrentDialog.find('#signinId').selectpicker('refresh');
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    }
+
+    //添加定时发布时间
+    $.CurrentDialog.find('.addTimeIcon img').click(function () {
+        var inputNum = $.CurrentDialog.find('.divTimeList .divTimeInput').length;
+        if(inputNum < 10){
+            //删除验证是否为空的标签
+            if($('.addTimeIcon input').length > 0){
+                $('.addTimeIcon input,.addTimeIcon span').remove();
+            }
+            var equalArr = [];  //input[name = 'inspectionTime']的值的数组
+            var emptyNum = 0;   //值为空的数量
+            $("input[name = 'inspectionTime']").each(function () {
+                if($(this).val() == ""){
+                    emptyNum ++;
+                }else{
+                    equalArr.push($(this).val());
+
+                }
+            })
+
+            if(emptyNum>0){
+                //BJUI.alertmsg('error', '定时发布时间不能为空！');
+                $.CurrentDialog.find('button#addSecurityContent').click();
+                return;
+            }
+
+            if(unique(equalArr).length != inputNum){
+                BJUI.alertmsg('error', '定时发布时间不能重复！');
+                return;
+            }
+
+            var numLast = $('.divTimeList .divTimeInput input:last').attr("id");
+            if(numLast == undefined){
+                numLast = 0;
+            }else{
+                numLast = Number(numLast.substring(numLast.indexOf("_")+1,numLast.length)) + 1;
+            }
+            var html = '<div class="divTimeInput"><input id="time_'+ numLast +'" type="text" name="inspectionTime"  placeholder="请输入时分" data-rule="required,fullTime" /><span class="spanDelete">×</span></div>';
+            $('.divTimeList').append(html);
+
+            $("input[name = 'inspectionTime']").inputmask({
+                mask: "h:s",
+                placeholder: "--:--",
+                alias: "datetime",
+                hourFormat: "24"
+            });
+
+            /*BJUI.dialog({
+                id: 'dialog_addTime',
+                url: 'html/security/securityContent/addTime.html',
+                title: '添加定时发布时间',
+                width: '420',
+                height: '150',
+                minable: false,
+                mask: true,
+                maxable: false,
+                resizable: false,
+                onClose:function () {
+
+                    var numLast = $('.divTimeList .divTimeInput input:last').attr("id");
+                    if(numLast == undefined){
+                        numLast = 0;
+                    }else{
+                        numLast = Number(numLast.substring(numLast.indexOf("_")+1,numLast.length)) + 1;
+                    }
+
+                    //时间值
+                    var timeValue = $.CurrentNavtab.data("securityContentAddTime");
+                    if(timeValue && timeValue != ""){
+                        //删除验证是否为空的标签
+                        if($('.addTimeIcon input').length > 0){
+                            $('.addTimeIcon input,.addTimeIcon span').remove();
+                        }
+
+                        var html = '<div class="divTimeInput"><input id="time_'+ numLast +'" type="text" name="inspectionTime" readonly value="'+timeValue+'" /><span class="spanDelete">×</span></div>';
+                        $('.divTimeList').append(html);
+                        $.CurrentNavtab.data("securityContentAddTime","");
+                    }
+
+                }
+            })*/
+        }else{
+            BJUI.alertmsg('error', '最多只能添加10个定时发布时间！');
+        }
+    })
+
+    //删除元素
+    $.CurrentDialog.find(".divTimeList").on("click", ".spanDelete", function(){
+        $(this).parents(".divTimeInput").remove();
+
+        //添加验证是否为空的标签
+        if($.CurrentDialog.find('.divTimeList .divTimeInput').length == 0){
+            $.CurrentDialog.find('.addTimeIcon').prepend('<input type="hidden" name="name" data-rule="required" />');
+        }
+    });
+
+    //添加按钮
+    //$.CurrentDialog.find('button#addSecurityContent').bind("click", function(){
+    $.CurrentDialog.find('button#addSecurityContent').click(function () {
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/securityContent/v1/addContent',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','新增成功！');
+                    BJUI.dialog('close','dialog_addSecurityContent');
+                    $.CurrentNavtab.find("#securityContent_datagrid").datagrid('filter');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+
+
+
+</script>

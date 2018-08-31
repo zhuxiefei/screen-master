@@ -1,0 +1,150 @@
+<div class="bjui-pageContent" style="overflow: visible">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">房屋: </label>
+            <div class="row-input required" style="width: 75%;">
+                <select id="buildingSelect" data-toggle="selectpicker"  data-width="30%" onchange="getUnit(this.value)">
+                    <option value="">--选择楼宇--</option>
+                </select>
+                <select id="unitSelect" data-toggle="selectpicker"  data-width="30%" onchange="getHouse(this.value)">
+                    <option value="">--选择单元--</option>
+                </select>
+                <select id="houseSelect" name="houseId" data-toggle="selectpicker"  data-width="35%" data-rule="required">
+                    <option value="">--选择房间号--</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">装修公司: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <input type="text" id="empNum" name="decorationCompany" data-rule="required,special,length(~50)">
+            </div>
+            <label class="row-label" style="width: 25%;">装修开始时间: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <input type="text" id="startTime_search" placeholder="" readonly
+                       data-toggle="datepicker"
+                       data-pattern="yyyy-MM-dd" data-width="100%"
+                       data-rule="开始时间: required,matchE[datetime]" name="startTime">
+            </div>
+            <label class="row-label" style="width: 25%;">装修周期: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <select id="decorationCycle" name="decorationCycle" data-toggle="selectpicker"  data-width="100%" data-rule="required">
+                    <option value="">请选择</option>
+                    <option value="1">1个月</option>
+                    <option value="2">2个月</option>
+                    <option value="3">3个月</option>
+                    <option value="4">4个月</option>
+                    <option value="5">5个月</option>
+                    <option value="6">6个月</option>
+                    <option value="7">7个月</option>
+                    <option value="8">8个月</option>
+                    <option value="9">9个月</option>
+                    <option value="10">10个月</option>
+                    <option value="11">11个月</option>
+                    <option value="12">12个月</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">装修备注: </label>
+            <div class="row-input"  style="width: 75%;">
+                <textarea style="resize: none; height: 120px; " placeholder="可输入装修备注(最多500个字)" data-rule="length(~500)"
+                          id="decorationDesc" name="decorationDesc"></textarea>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addDecoration" class="btn-default" data-icon="save">确认新建</button></li>
+    </ul>
+</div>
+<script>
+    getBuilding();
+    var findDecorationHouseData = {
+        'buildingId': '',
+        'unitId': '',
+    }
+    //加载楼宇
+    function getBuilding() {
+        BJUI.ajax('doajax', {
+            url: path + '/web/decoration/v1/findBuildingList',
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (data) {
+                if(data.length > 0){
+                    $.each(data, function (i, n) {
+                        $.CurrentDialog.find("#buildingSelect").append('<option value="' + n.buildingId + '">' + n.buildingName + '</option>');
+                    })
+                }
+                $.CurrentDialog.find("#buildingSelect").append('<option value="' + "" + '">' + "其它" + '</option>');
+            }
+        });
+    }
+
+    function getUnit(buildingId) {
+        var buildingIds = {"buildingId": buildingId};
+        if (buildingId == "") {
+            findDecorationHouseData.unitId = "";
+            $.CurrentDialog.find('#unitSelect option').not(':eq(0)').remove();
+            findDecorationHouseData.buildingId = "";
+            getHouse();
+            return;
+        }
+        findDecorationHouseData.buildingId = buildingId;
+        //查询单元列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/decoration/v1/findUnitList',
+            data: JSON.stringify(buildingIds),
+            loadingmask: false,
+            okCallback: function (data) {
+                $.CurrentDialog.find('#unitSelect option').not(':eq(0)').remove();
+                var html = '';
+                if(data.length > 0){
+                    $.each(data, function (i, n) {
+                        html += '<option value="' + n.unitId + '">' + n.unitName + '</option>';
+                    });
+                }
+                $.CurrentDialog.find('#unitSelect').append(html);
+                $.CurrentDialog.find('#unitSelect').selectpicker('refresh');
+
+                getHouse();
+            }
+        })
+    }
+    function getHouse(unitId) {
+        findDecorationHouseData.unitId = unitId;
+        //查询房屋列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/decoration/v1/findHouses',
+            data: JSON.stringify(findDecorationHouseData),
+            loadingmask: false,
+            okCallback: function (data) {
+                $.CurrentDialog.find('#houseSelect option').not(':eq(0)').remove();
+                var html = '';
+                if(data.length > 0){
+                    $.each(data, function (i, n) {
+                        html += '<option value="' + n.houseId + '">' + n.houseNum + '</option>';
+                    });
+                }
+                $.CurrentDialog.find('#houseSelect').append(html);
+                $.CurrentDialog.find('#houseSelect').selectpicker('refresh');
+                //findHouse()
+            }
+        })
+    }
+
+    //提交申请
+    $.CurrentDialog.find('#addDecoration').click(function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/decoration/v1/addDecoration',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            okCallback: function (data) {
+                BJUI.alertmsg('ok','操作成功');
+                BJUI.dialog('closeCurrent');
+                $.CurrentNavtab.find("#j_datagrid_decoration").datagrid('filter');
+            }
+        })
+    })
+
+</script>

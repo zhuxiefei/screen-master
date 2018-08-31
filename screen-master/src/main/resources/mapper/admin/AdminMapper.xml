@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.admin.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.admin.Admin">
+        <id column="adminId" property="adminId" jdbcType="VARCHAR"/>
+        <result column="adminName" property="adminName" jdbcType="VARCHAR"/>
+        <result column="adminPassword" property="adminPassword" jdbcType="VARCHAR"/>
+        <result column="isInit" property="isInit" jdbcType="BIT"/>
+        <result column="shiroKey" property="shiroKey" jdbcType="VARCHAR"/>
+        <result column="lastLoginTime" property="lastLoginTime" jdbcType="TIMESTAMP"/>
+        <result column="lastLoginIp" property="lastLoginIp" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        adminId, adminName, adminPassword, isInit, shiroKey, lastLoginTime, lastLoginIp,
+        createTime
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from admin_admin
+        where adminId = #{adminId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findByAdminId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from admin_admin
+        where adminId = #{adminId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM admin_admin
+        WHERE adminId = #{adminId,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByAdminIds" parameterType="java.lang.String">
+        delete from admin_admin
+        where adminId in
+        <foreach collection="array" item="adminId" open="(" separator="," close=")">
+            #{adminId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.admin.Admin">
+        INSERT INTO admin_admin (adminId, adminName, adminPassword,
+                                 isInit, shiroKey,
+                                 lastLoginTime, lastLoginIp, createTime
+        )
+        VALUES (#{adminId,jdbcType=VARCHAR}, #{adminName,jdbcType=VARCHAR}, #{adminPassword,jdbcType=VARCHAR},
+                #{isInit,jdbcType=BIT}, #{shiroKey,jdbcType=VARCHAR},
+                #{lastLoginTime,jdbcType=TIMESTAMP}, #{lastLoginIp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.admin.Admin">
+        insert into admin_admin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminId != null">
+                adminId,
+            </if>
+            <if test="adminName != null">
+                adminName,
+            </if>
+            <if test="adminPassword != null">
+                adminPassword,
+            </if>
+            <if test="isInit != null">
+                isInit,
+            </if>
+            <if test="shiroKey != null">
+                shiroKey,
+            </if>
+            <if test="lastLoginTime != null">
+                lastLoginTime,
+            </if>
+            <if test="lastLoginIp != null">
+                lastLoginIp,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminId != null">
+                #{adminId,jdbcType=VARCHAR},
+            </if>
+            <if test="adminName != null">
+                #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null">
+                #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="isInit != null">
+                #{isInit,jdbcType=BIT},
+            </if>
+            <if test="shiroKey != null">
+                #{shiroKey,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginIp != null">
+                #{lastLoginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.admin.Admin">
+        update admin_admin
+        <set>
+            <if test="adminName != null">
+                adminName = #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null">
+                adminPassword = #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="isInit != null">
+                isInit = #{isInit,jdbcType=BIT},
+            </if>
+            <if test="shiroKey != null">
+                shiroKey = #{shiroKey,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                lastLoginTime = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginIp != null">
+                lastLoginIp = #{lastLoginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where adminId = #{adminId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.Admin">
+        UPDATE admin_admin
+        SET adminName     = #{adminName,jdbcType=VARCHAR},
+            adminPassword = #{adminPassword,jdbcType=VARCHAR},
+            isInit        = #{isInit,jdbcType=BIT},
+            shiroKey      = #{shiroKey,jdbcType=VARCHAR},
+            lastLoginTime = #{lastLoginTime,jdbcType=TIMESTAMP},
+            lastLoginIp   = #{lastLoginIp,jdbcType=VARCHAR},
+            createTime    = #{createTime,jdbcType=TIMESTAMP}
+        WHERE adminId = #{adminId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findAdminLoginInfoById" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.login.model.ReLoginInfo">
+        SELECT
+            a.adminId,
+            a.adminName,
+            a.adminPassword,
+            ac.acctName
+        FROM admin_admin a, admin_account ac
+        WHERE a.adminId = #{adminId,jdbcType=VARCHAR} AND ac.adminId = a.adminId
+    </select>
+
+    <!-- 更新密码 -->
+    <update id="updateAdminPwd" parameterType="com.betel.estatemgmt.business.web.login.model.AdminAdmin" >
+        update admin_admin
+        <set >
+            <if test="adminName != null" >
+                adminName = #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null" >
+                adminPassword = #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="isInit != null" >
+                isInit = #{isInit,jdbcType=BIT},
+            </if>
+            <if test="shiroKey != null" >
+                shiroKey = #{shiroKey,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null" >
+                lastLoginTime = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginIp != null" >
+                lastLoginIp = #{lastLoginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where adminId = #{adminId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 重置密码 -->
+    <update id="resetPwdByAdminId" parameterType="com.betel.estatemgmt.business.web.login.model.AdminAdmin">
+        update admin_admin
+        <set>
+            <if test="adminName != null">
+                adminName = #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null">
+                adminPassword = #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="isInit != null">
+                isInit = #{isInit,jdbcType=BIT},
+            </if>
+            <if test="shiroKey != null">
+                shiroKey = #{shiroKey,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                lastLoginTime = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginIp != null">
+                lastLoginIp = #{lastLoginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where adminId = #{adminId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findByAcctName" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.admin.Admin">
+        SELECT a.* FROM admin_admin a
+        LEFT JOIN admin_account c ON c.adminId = a.adminId
+        WHERE c.acctName = #{acctName}
+    </select>
+</mapper>

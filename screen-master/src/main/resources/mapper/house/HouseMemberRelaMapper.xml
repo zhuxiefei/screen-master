@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseMemberRelaMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseMemberRela" >
+    <id column="memberId" property="memberId" jdbcType="VARCHAR" />
+    <id column="houseId" property="houseId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    memberId, houseId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.betel.estatemgmt.common.model.house.HouseMemberRelaKey" >
+    select
+    <include refid="Base_Column_List" />
+    from house_member_rela
+    where memberId = #{memberId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseMemberRelaKey" >
+    delete from house_member_rela
+    where memberId = #{memberId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseMemberRela" >
+    insert into house_member_rela (memberId, houseId, createTime
+      )
+    values (#{memberId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMemberRela" >
+    insert into house_member_rela
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="memberId != null" >
+        memberId,
+      </if>
+      <if test="houseId != null" >
+        houseId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMemberRela" >
+    update house_member_rela
+    <set >
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where memberId = #{memberId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseMemberRela" >
+    update house_member_rela
+    set createTime = #{createTime,jdbcType=TIMESTAMP}
+    where memberId = #{memberId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteRelaList" parameterType="java.lang.String">
+    DELETE FROM house_member_rela
+    WHERE houseId IN
+    <foreach collection="array" item="houseId" open="(" separator="," close=")">
+      #{houseId,jdbcType=VARCHAR}
+    </foreach>
+  </delete>
+
+
+  <select id="findAuthHouse" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.userapp.house.model.AuthHouse">
+     SELECT
+       hh.houseId,
+       concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseName,
+       2 AS authType,
+       hb.buildingId buildingId,
+       hm.realName AS applicantName,
+       hbu.unitId AS unitId
+     FROM house_house hh
+     LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+     LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+     JOIN house_member_rela hmr ON hh.houseId = hmr.houseId
+     JOIN house_member hm ON hmr.memberId = hm.memberId
+     where hm.userId = #{userId} AND hm.memberStatus = 2
+  </select>
+
+  <select id="findByKey" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.HouseMemberRela">
+    SELECT * FROM house_member_rela WHERE memberId = #{key}
+  </select>
+
+  <delete id="deleteByHouseIdAndMemberId">
+    DELETE FROM house_member_rela WHERE houseId = #{houseId} AND memberId = #{memberId}
+  </delete>
+  <delete id="deleteByMemberIds" parameterType="java.lang.String">
+    DELETE FROM house_member_rela WHERE memberId IN
+    <foreach collection="list" item="memberId" open="(" separator="," close=")">
+      #{memberId}
+    </foreach>
+  </delete>
+  <!--jians.z 删除房屋下的所有成员-->
+  <delete id="deleteOldMemberByHouseId" parameterType="java.lang.String">
+    DELETE FROM house_member_rela WHERE houseId = #{houseId}
+  </delete>
+</mapper>

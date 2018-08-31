@@ -1,0 +1,380 @@
+<script type="text/javascript">
+    //初始化zTree
+    var dataJson = null;
+    function ztree_returnjson_doc() {
+        BJUI.ajax('doajax', {
+            url: path + "/web/document/v1/findTypes",
+            loadingmask: true,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+            },
+            errCallback: function (json, options) {
+                $(".bjui-pageContent").append('<span>暂无数据</span>');
+            }
+        });
+        //console.log(dataJson);
+        var str = {'isParent': true};
+        $.each(dataJson, function (i, n) {
+            for (var key in str) {
+                n[key] = str[key];
+            }
+        });
+        return dataJson;
+    }
+
+    //添加子节点
+    function filter(treeId, parentNode, childNodes) {
+        if (dataJson.length == 0) {
+            $.CurrentNavtab.find("#ztreeDocument").html("<span style='padding-left: 22px;'>没有数据！</span>");
+            return;
+        }
+
+        if (childNodes.code == "00000") {
+            childNodes = childNodes.data;
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    var obj = {
+                        typeId: childNodes[i].docId,
+                        typeName: childNodes[i].docName,
+                        adminName: childNodes[i].adminName,
+                        createTime: childNodes[i].createTime,
+                        isDownload: childNodes[i].isDownload,
+                    };
+                    nodes.push(obj);
+                }
+                return nodes;
+            }
+        } else {
+            successBack(childNodes);
+        }
+
+    }
+
+    function addDiyDom(treeId, treeNode) {
+        var aObj = $("#" + treeNode.tId + "_a");
+        if (treeNode.pId != 0) {
+            //发布人
+            if(treeNode.adminName ==null||treeNode.adminName ==undefined||treeNode.adminName ==""){
+                var adminName = "<div class='divBuildingDescZi' title=''  style='cursor: default;width: 100px; padding: 0 20px;display: inline-block;position: absolute;right: 700px;'><i>已被删除</i></div>";
+            }else{
+                var adminName = "<div class='divBuildingDescZi' title=''  style='cursor: default;width: 100px; padding: 0 20px;display: inline-block;position: absolute;right: 700px;'>" + treeNode.adminName + "</div>";
+            }
+            //发布时间
+            var createTime = "<div class='divBuildingDescZi' title='' style='cursor: default;width: 100px; padding: 0 20px;display: inline-block;position: absolute;right: 500px;'>" + treeNode.createTime.toString().substr(0) + "</div>";
+            //上传附件
+
+            if (treeNode.isDownload == 1) {
+                var msg = "上传附件";
+            } else {
+                var msg = "修改附件";
+            }
+            var uploadFile = '<button type="button" title="" class="diyBtn1 btn-blue btn" style="float: right;" class="btn-blue" onclick=uploadFile(\'' + treeNode.typeId + '\',\'' + treeNode.pId + '\')>' + msg + '</button>'
+            var downloadFile = '<button type="button" title="" class="diyBtn1 btn-blue btn" style="float: right;" class="btn-blue" onclick=downloadFile(\'' + treeNode.typeId + '\')>下载附件</button>'
+            var deleteFile = '<button type="button" title="" class="diyBtn1 btn-red btn" style="float: right;" class="btn-red" onclick=deleteFile(\'' + treeNode.typeId + '\')>删除附件</button>'
+            if (treeNode.isDownload == 1) {
+                var file = uploadFile;
+            } else {
+//                var file = uploadFile + downloadFile + deleteFile;
+                var file = deleteFile + downloadFile + uploadFile;
+            }
+            //编辑
+            var editStr = "<div class='divBuildingEditZi' style='float: right;'><span id='diyBtn_space_" + treeNode.typeId + "' class='unitA' spanid='" + treeNode.typeId + "' > </span>"
+                    + "<button type='button' class='diyBtn1 btn-blue btn' id='diyBtn_" + treeNode.typeId
+                    + "'  title=''>编辑资料</button></div>";
+            //删除
+            var delStr = "<div class='divBuildingDelZi' style='float: right;'><span id='diyBtn_space_" + treeNode.typeId + "'  class='unitB'> </span>"
+                    + "<button type='button' data-toggle='alertmsg'  class='diyBtn1 btn-red btn'  id='diyBtn_" + treeNode.typeId
+                    + "' title='' >删除资料</button></div>";
+            aObj.append(delStr + editStr + file + adminName );
+            aObj.append(createTime);
+
+            //编辑
+            var editBuilding = $(".divBuildingEditZi #diyBtn_" + treeNode.typeId);
+            if (editBuilding) editBuilding.bind("click", function (t) {
+                $.CurrentNavtab.data('docId', treeNode.typeId);
+                $.CurrentNavtab.data('typeId', treeNode.pId);
+                $.CurrentNavtab.data('typeName', treeNode.getParentNode().typeName);
+                BJUI.ajax('doajax', {
+                    url: path + '/web/document/v1/findDoc',
+                    data: {
+                        'docId': treeNode.typeId,
+                    },
+                    loadingmask: false,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            $.CurrentNavtab.data('docInf', json.data);
+                            BJUI.dialog({
+                                title: "编辑资料",
+                                width: '850',
+                                height: '500',
+                                mask: true,
+                                url: 'html/community/document/editDoc.html',
+                                maxable: false,
+                                resizable: false
+                            })
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+
+            });
+            var delBuilding = $(".divBuildingDelZi #diyBtn_" + treeNode.typeId);
+            if (delBuilding) delBuilding.bind("click", function (t) {
+                //删除
+                var tagUrl = $(t.currentTarget).parents("ul").attr("id");
+                var liLength = $(t.currentTarget).parents("ul").children("li").length;
+                BJUI.alertmsg('confirm', '确定要删除该资料吗?', {
+                    okCall: function () {
+                        var delUnit = {"docId": treeNode.typeId};
+                        BJUI.ajax('doajax', {
+                            url: path + '/web/document/v1/deleteDoc',
+                            data: JSON.stringify(delUnit),
+                            loadingmask: true,
+                            callback: function (json) {
+                                if (json.code == "00000") {
+                                    BJUI.alertmsg('ok', '删除成功！');
+                                    BJUI.dialog('closeCurrent');
+                                    var typeNameSelect = treeNode.getParentNode().typeName;
+                                    var treeObj = $.fn.zTree.getZTreeObj("ztreeDocument");
+                                    var nodes = treeObj.getNodes();
+                                    for (var i = 0; i < nodes.length; i++) {
+                                        if (typeNameSelect == nodes[i].typeName) {
+                                            var ExpandNode = treeObj.getNodeByTId(nodes[i].tId);
+                                            if (ExpandNode.children.length == 1 || ExpandNode.children.length == 0) {
+                                                BJUI.navtab('refresh', 'documentManage');
+                                                return;
+                                            } else {
+                                                treeObj.expandNode(nodes[i], true, true);
+                                                return
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    successBack(json);
+                                }
+                            }
+                        })
+                    }
+                });
+            });
+            return;
+        }
+
+        //添加
+        var addStr = "<div class='divBuildingAdd' style='float: right;'><span id='diyBtn_space_" + treeNode.typeId + "' > </span>"
+                + "<button type='button' class='diyBtn1 btn-blue btn' id='diyBtn_" + treeNode.typeId
+                + "' title=''>添加资料</button></div>";
+        //编辑
+        var editStr = "<div class='divBuildingEdit' style='float: right;'><span id='diyBtn_space_" + treeNode.typeId + "' > </span>"
+                + "<button type='button' class='diyBtn1 btn-blue btn' id='diyBtn_" + treeNode.typeId
+                + "'  title=''>编辑类别</button></div>";
+        //删除
+        var delStr = "<div class='divBuildingDel' style='float: right;'><span id='diyBtn_space_" + treeNode.typeId + "' > </span>"
+                + "<button type='button' class='diyBtn1 btn-red btn' id='diyBtn_" + treeNode.typeId
+                + "' title='')>删除类别</button></div>";
+
+        aObj.append(delStr + editStr + addStr);
+
+        var addBuilding = $(".divBuildingAdd #diyBtn_" + treeNode.typeId);
+        if (addBuilding) addBuilding.bind("click", function () {
+            //添加
+            $.CurrentNavtab.data('typeId', treeNode.typeId);
+            BJUI.dialog({
+                title: "添加资料",
+                width: '850',
+                height: '560',
+                mask: true,
+                url: 'html/community/document/lineAddDoc.html',
+                maxable: false,
+                resizable: false
+            })
+        });
+
+        var editBuilding = $(".divBuildingEdit #diyBtn_" + treeNode.typeId);
+        if (editBuilding) editBuilding.bind("click", function () {
+            $.CurrentNavtab.data('typeId', treeNode.typeId);
+            BJUI.ajax('doajax', {
+                url: path + '/web/document/v1/findDocType',
+                data: {
+                    'typeId': treeNode.typeId,
+                },
+                loadingmask: false,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        $.CurrentNavtab.data('typeName', json.data.typeName);
+                        BJUI.dialog({
+                            title: "编辑类别",
+                            width: '400',
+                            height: '200',
+                            mask: true,
+                            url: 'html/community/document/editType.html',
+                            maxable: false,
+                            resizable: false
+                        })
+                    } else {
+                        successBack(json);
+                    }
+                }
+            })
+        });
+
+
+        var delBuilding = $(".divBuildingDel #diyBtn_" + treeNode.typeId);
+        if (delBuilding) delBuilding.bind("click", function () {
+            BJUI.ajax('doajax', {
+                url: path + '/web/document/v1/findDocs',
+                data: {
+                    'typeId': treeNode.typeId,
+                },
+                loadingmask: false,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        if (json.data.length) {
+                            var msg = "此资料类别下存在资料，是否仍要删除?"
+                        } else {
+                            var msg = "确认删除该资料类别吗?"
+                        }
+
+                        BJUI.alertmsg('confirm', msg, {
+                            okCall: function () {
+                                BJUI.ajax('doajax', {
+                                    url: path + '/web/document/v1/deleteDocType',
+                                    data: {
+                                        'typeId': treeNode.typeId,
+                                    },
+                                    loadingmask: false,
+                                    callback: function (json) {
+                                        if (json.code == "00000") {
+                                            BJUI.alertmsg('ok', '操作成功！');
+                                            BJUI.navtab('refresh', 'documentManage');
+                                        } else {
+                                            successBack(json);
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    } else {
+                        successBack(json);
+                    }
+                }
+            })
+        });
+    }
+
+    //上传附件
+    function uploadFile(e, a) {
+        $.CurrentNavtab.data('docId', e);
+        $.CurrentNavtab.data('typeId', a);
+        BJUI.dialog({
+            height: 200,
+            mask: true,
+            title: "上传资料",
+            id: 'dialog_doc',
+            maxable: false,
+            resizable: false,
+            url: 'html/community/document/addLow.html'
+        })
+
+    }
+
+    //下载附件
+    function downloadFile(e) {
+        window.location.href = path + '/web/document/v1/downloadFile?userId=' + $.cookie("l_userId") + '&token=' + $.cookie("l_token") + '&docId=' + e;
+    }
+
+    //删除附件
+    function deleteFile(e) {
+        BJUI.alertmsg('confirm', '确定删除该附件吗?', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/document/v1/deleteFile',
+                    data: {
+                        'docId': e,
+                    },
+                    loadingmask: false,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            BJUI.alertmsg('ok', '操作成功！');
+                            BJUI.navtab('refresh', 'documentManage');
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        })
+    }
+    $.CurrentNavtab.find("#addType").click(function () {
+        BJUI.dialog({
+            title: "添加类别",
+            width: '400',
+            height: '200',
+            mask: true,
+            url: 'html/community/document/addType.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+
+    $.CurrentNavtab.find("#addDoc").click(function () {
+        BJUI.dialog({
+            title: "添加资料",
+            width: '850',
+            height: '560',
+            mask: true,
+            url: 'html/community/document/addDoc.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+</script>
+    <div class="bjui-pageHeader" style="background-color:#fff; padding-bottom: 10px;border-bottom: none">
+        <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#ztreeDocument')}">
+            <div>
+                <button type="button" class="btn-blue" data-icon="plus" id="addType">添加类别</button>
+                <button type="button" class="btn-blue" data-icon="plus" id="addDoc">添加资料</button>
+            </div>
+
+        </form>
+    </div>
+    <div class="bjui-pageContent" style="margin-top: 5px;width: 100%;overflow: auto">
+        <div style="padding-left: 22px; padding-top:16px; width: 1294px;font-size: 14px;font-weight: bold; overflow: hidden;padding-bottom: 10px;border-bottom: 1px #c3ced5 solid">
+            <span>类别名称</span>
+            <span style="display: inline-block; float: right; text-align: center; width: 144px;">操作</span>
+            <span style="display: inline-block; float: right;  width: 27% !important; margin-right: 5%;">发布时间</span>
+            <span style="display: inline-block; float: right;  width: 13% !important; margin-right: 5%;">发布人</span>
+        </div>
+        <ul id="ztreeDocument" class="ztree" style="position: relative;width: 1294px" data-toggle="ztree"
+            data-options="{nodes:ztree_returnjson_doc,view:{showTitle :false},checkEnable:false,showIcon: false,idKey:'typeId',keyName:'typeName',async:true,url:path+'/web/document/v1/findDocs',contentType:'application/json; charset=UTF-8',dataType:'json',autoParam:['typeId=typeId'],filter:filter,addDiyDom:addDiyDom}"></ul>
+    </div>
+
+<style>
+    #ztreeDocument li {
+    }
+
+    #ztreeDocument li a {
+        width: 97%;
+        padding: 2px 0;
+    }
+
+    #ztreeDocument li a:hover {
+        font-weight: normal;
+        background-color: #ecf1f5;
+    }
+
+    #ztreeDocument li a span {
+        float: left;
+    }
+
+    #ztreeDocument li a .divBuildingDesc {
+        width: 54% !important;
+        margin-right: 5%;
+    }
+</style>

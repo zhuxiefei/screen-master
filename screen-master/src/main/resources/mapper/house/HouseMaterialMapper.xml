@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseMaterialMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseMaterial" >
+    <id column="materialId" property="materialId" jdbcType="BIGINT" />
+    <result column="materialName" property="materialName" jdbcType="VARCHAR" />
+    <result column="materialPic" property="materialPic" jdbcType="VARCHAR" />
+    <result column="materialBrand" property="materialBrand" jdbcType="VARCHAR" />
+    <result column="materialModel" property="materialModel" jdbcType="VARCHAR" />
+    <result column="materialSpecification" property="materialSpecification" jdbcType="VARCHAR" />
+    <result column="materialOrigin" property="materialOrigin" jdbcType="VARCHAR" />
+    <result column="materialProduceDate" property="materialProduceDate" jdbcType="TIMESTAMP" />
+    <result column="materialWarrantyDate" property="materialWarrantyDate" jdbcType="TIMESTAMP" />
+    <result column="materialType" property="materialType" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    materialId, materialName, materialPic, materialBrand, materialModel, materialSpecification, 
+    materialOrigin, materialProduceDate, materialWarrantyDate, materialType, createTime
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_material
+    where materialId = #{materialId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_material
+    where materialId = #{materialId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterial" >
+    insert into house_material (materialId, materialName, materialPic, 
+      materialBrand, materialModel, materialSpecification, 
+      materialOrigin, materialProduceDate, 
+      materialWarrantyDate, materialType, createTime
+      )
+    values (#{materialId,jdbcType=BIGINT}, #{materialName,jdbcType=VARCHAR}, #{materialPic,jdbcType=VARCHAR},
+      #{materialBrand,jdbcType=VARCHAR}, #{materialModel,jdbcType=VARCHAR}, #{materialSpecification,jdbcType=VARCHAR}, 
+      #{materialOrigin,jdbcType=VARCHAR}, #{materialProduceDate,jdbcType=TIMESTAMP}, 
+      #{materialWarrantyDate,jdbcType=TIMESTAMP}, #{materialType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <!--=================================批量导入==========================================================-->
+  <insert id="bulkImportHouseMaterial" parameterType="java.util.List">
+    insert into house_material (materialId, materialName, materialPic,
+    materialBrand, materialModel, materialSpecification,
+    materialOrigin, materialProduceDate,
+    materialWarrantyDate, materialType, createTime
+    )
+    values
+    <foreach collection ="list" item="houseMaterial" index= "index" separator =",">
+      (
+      #{houseMaterial.materialId,jdbcType=BIGINT}, #{houseMaterial.materialName,jdbcType=VARCHAR}, #{houseMaterial.materialPic,jdbcType=BIGINT},
+      #{houseMaterial.materialBrand,jdbcType=VARCHAR}, #{houseMaterial.materialModel,jdbcType=VARCHAR}, #{houseMaterial.materialSpecification,jdbcType=VARCHAR},
+      #{houseMaterial.materialOrigin,jdbcType=VARCHAR}, #{houseMaterial.materialProduceDate,jdbcType=TIMESTAMP},
+      #{houseMaterial.materialWarrantyDate,jdbcType=TIMESTAMP}, #{houseMaterial.materialType,jdbcType=VARCHAR}, #{houseMaterial.createTime,jdbcType=TIMESTAMP}
+      )
+    </foreach >
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterial" keyProperty="materialId"
+         useGeneratedKeys="true">
+    insert into house_material
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="materialId != null" >
+        materialId,
+      </if>
+      <if test="materialName != null" >
+        materialName,
+      </if>
+      <if test="materialPic != null" >
+        materialPic,
+      </if>
+      <if test="materialBrand != null" >
+        materialBrand,
+      </if>
+      <if test="materialModel != null" >
+        materialModel,
+      </if>
+      <if test="materialSpecification != null" >
+        materialSpecification,
+      </if>
+      <if test="materialOrigin != null" >
+        materialOrigin,
+      </if>
+      <if test="materialProduceDate != null" >
+        materialProduceDate,
+      </if>
+      <if test="materialWarrantyDate != null" >
+        materialWarrantyDate,
+      </if>
+      <if test="materialType != null" >
+        materialType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="materialId != null" >
+        #{materialId,jdbcType=BIGINT},
+      </if>
+      <if test="materialName != null" >
+        #{materialName,jdbcType=VARCHAR},
+      </if>
+      <if test="materialPic != null" >
+        #{materialPic,jdbcType=VARCHAR},
+      </if>
+      <if test="materialBrand != null" >
+        #{materialBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="materialModel != null" >
+        #{materialModel,jdbcType=VARCHAR},
+      </if>
+      <if test="materialSpecification != null" >
+        #{materialSpecification,jdbcType=VARCHAR},
+      </if>
+      <if test="materialOrigin != null" >
+        #{materialOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="materialProduceDate != null" >
+        #{materialProduceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="materialWarrantyDate != null" >
+        #{materialWarrantyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="materialType != null" >
+        #{materialType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterial" >
+    update house_material
+    <set >
+      <if test="materialName != null" >
+        materialName = #{materialName,jdbcType=VARCHAR},
+      </if>
+      <if test="materialPic != null" >
+        materialPic = #{materialPic,jdbcType=VARCHAR},
+      </if>
+      <if test="materialBrand != null" >
+        materialBrand = #{materialBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="materialModel != null" >
+        materialModel = #{materialModel,jdbcType=VARCHAR},
+      </if>
+      <if test="materialSpecification != null" >
+        materialSpecification = #{materialSpecification,jdbcType=VARCHAR},
+      </if>
+      <if test="materialOrigin != null" >
+        materialOrigin = #{materialOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="materialProduceDate != null" >
+        materialProduceDate = #{materialProduceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="materialWarrantyDate != null" >
+        materialWarrantyDate = #{materialWarrantyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="materialType != null" >
+        materialType = #{materialType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where materialId = #{materialId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterial" >
+    update house_material
+    set materialName = #{materialName,jdbcType=VARCHAR},
+      materialPic = #{materialPic,jdbcType=VARCHAR},
+      materialBrand = #{materialBrand,jdbcType=VARCHAR},
+      materialModel = #{materialModel,jdbcType=VARCHAR},
+      materialSpecification = #{materialSpecification,jdbcType=VARCHAR},
+      materialOrigin = #{materialOrigin,jdbcType=VARCHAR},
+      materialProduceDate = #{materialProduceDate,jdbcType=TIMESTAMP},
+      materialWarrantyDate = #{materialWarrantyDate,jdbcType=TIMESTAMP},
+      materialType = #{materialType,jdbcType=VARCHAR}
+    where materialId = #{materialId,jdbcType=BIGINT}
+  </update>
+  <!--========================根据房屋ID查询房屋的家装材料  ====================================-->
+  <select id="findAllMaterialByHouseId" resultType="com.betel.estatemgmt.business.userapp.house.model.Materials" parameterType="com.betel.estatemgmt.business.userapp.house.model.Page">
+      select distinct hm.materialId,hm.materialName,sp.pictureUrl materialPic,hm.materialBrand,hm.materialModel,hm.materialWarrantyDate from  house_house hh
+      JOIN house_type ht on hh.typeId = ht.typeId
+      JOIN house_type_material htm ON htm.typeId = ht.typeId
+      JOIN house_material hm on hm.materialId = htm.materialId
+      LEFT  JOIN system_picture sp on hm.materialPic = sp.pictureId
+      where hh.houseId = #{houseId}
+    <choose>
+      <when test="functionId == 0" >
+       AND functionId is NULL
+      </when>
+      <when test="functionId != -1" >
+        AND functionId = #{functionId}
+      </when>
+    </choose>
+  </select>
+<!--==================================查询建材详情===================================================================-->
+  <select id="findMaterialBymaterialId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.business.userapp.house.model.Materials">
+    select hm.materialName,sp.pictureUrl materialPic,hm.materialBrand,hm.materialModel,hm.materialSpecification,hm.materialOrigin,
+     hm.materialProduceDate,hm.materialWarrantyDate
+     from house_material hm left JOIN system_picture sp on  hm.materialPic = sp.pictureId
+     where hm.materialId= #{materialId}
+  </select>
+  <!--===================查询建材列表，支持分页，参数有类型，材料名称=============================================-->
+  <select id="findAllBuildMaterial" resultType="com.betel.estatemgmt.business.web.material.model.BuildMaterialInfo" parameterType="com.betel.estatemgmt.business.web.material.model.BuildMaterialReq" >
+    select
+    hm.materialId, hm.materialName,hm.materialBrand, hm.materialModel,hm.createTime,hm.materialType
+    from house_material hm
+    <where>
+       1=1
+      <if test="materialType != null">
+        AND hm.materialType like  CONCAT('%',#{materialType},'%')
+      </if>
+     <if test="materialName != null">
+        AND hm.materialName like  CONCAT('%',#{materialName},'%')
+      </if>
+      <if test="materialBrand != null">
+        AND hm.materialBrand like  CONCAT('%',#{materialBrand},'%')
+      </if>
+      <if test="materialModel != null">
+        AND hm.materialModel like  CONCAT('%',#{materialModel},'%')
+      </if>
+      <if test="startTime != null and startTime !=''">
+        AND hm.createTime &gt;=#{startTime}
+      </if>
+      <if test="endTime != null and endTime !=''">
+        AND hm.createTime &lt;=#{endTime}
+      </if>
+    </where>
+    ORDER BY hm.createTime DESC
+  </select>
+  <!--========================查询所有建材名称集合==========================================-->
+  <select id="findBuildMaterialNames" resultType="com.betel.estatemgmt.common.model.house.HouseMaterial">
+    SELECT
+    HM.MATERIALNAME
+    FROM HOUSE_MATERIAL HM
+  </select>
+  <!--=======================检测建材名称是否重复================================================-->
+  <select id="checkBuildMaterialIsExist" resultType="java.lang.Integer" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterial">
+    SELECT COUNT(*) FROM house_material WHERE materialName=#{materialName}
+    <if test="materialId != null" >
+      AND materialId!=#{materialId}
+    </if>
+  </select>
+  <select id="findMaterialNameList" resultType="java.lang.String">
+    SELECT hm.materialName FROM  house_material hm
+  </select>
+  <!--======================批量查询建材获得名称：删除图片和更新缓存的时候需要==============================================-->
+  <select id="selectBulkByPrimaryKeys" resultMap="BaseResultMap" parameterType="java.util.List" >
+    select
+    <include refid="Base_Column_List" />
+    from house_material
+    where materialId IN
+    <foreach collection="list" index="index" item="materialId"  open="(" separator="," close=")">
+      #{materialId,jdbcType=BIGINT}
+    </foreach>
+  </select>
+  <!--======================批量删除建材===========================================================-->
+  <delete id="deleteBulkByPrimaryKeys"  parameterType="java.util.List" >
+    DELETE FROM  house_material
+    where materialId IN
+    <foreach collection="list" index="index" item="materialId"  open="(" separator="," close=")">
+      #{materialId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+  <!--<select id="goToUpdateMaterialPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">-->
+  <!--SELECT-->
+	<!--hm.materialId,-->
+	<!--hm.materialName,-->
+	<!--hm.materialType,-->
+	<!--sp.pictureId AS materialPicId,-->
+	<!--sp.pictureUrl AS materialPicUrl,-->
+	<!--hm.materialBrand,-->
+	<!--hm.materialModel,-->
+	<!--hm.materialSpecification,-->
+	<!--hm.materialOrigin,-->
+	<!--hm.materialProduceDate,-->
+	<!--hm.materialWarrantyDate,-->
+	<!--hmp.parmName,-->
+	<!--hmp.parmContent,-->
+	<!--hmp.parmId-->
+<!--FROM-->
+	<!--house_material hm-->
+<!--LEFT JOIN system_picture sp ON hm.materialPic = sp.pictureId-->
+<!--LEFT JOIN house_material_parm hmp ON hm.materialId=hmp.materialId-->
+<!--WHERE-->
+	<!--hm.materialId = #{materialId}-->
+  <!--</select>-->
+</mapper>

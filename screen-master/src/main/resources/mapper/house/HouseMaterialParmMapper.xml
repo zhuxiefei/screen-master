@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseMaterialParmMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseMaterialParm" >
+    <id column="parmId" property="parmId" jdbcType="BIGINT" />
+    <result column="parmName" property="parmName" jdbcType="VARCHAR" />
+    <result column="parmContent" property="parmContent" jdbcType="VARCHAR" />
+    <result column="materialId" property="materialId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    parmId, parmName, parmContent, materialId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_material_parm
+    where parmId = #{parmId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_material_parm
+    where parmId = #{parmId,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteBulkByMaterialIds" parameterType="java.util.List" >
+    delete from house_material_parm
+    where parmId IN
+    <foreach collection="list" index="index" item="parmId" open="(" separator="," close=")">
+      #{parmId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+
+
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterialParm" >
+    insert into house_material_parm (parmId, parmName, parmContent, 
+      materialId)
+    values (#{parmId,jdbcType=BIGINT}, #{parmName,jdbcType=VARCHAR}, #{parmContent,jdbcType=VARCHAR}, 
+      #{materialId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterialParm" >
+    insert into house_material_parm
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="parmId != null" >
+        parmId,
+      </if>
+      <if test="parmName != null" >
+        parmName,
+      </if>
+      <if test="parmContent != null" >
+        parmContent,
+      </if>
+      <if test="materialId != null" >
+        materialId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="parmId != null" >
+        #{parmId,jdbcType=BIGINT},
+      </if>
+      <if test="parmName != null" >
+        #{parmName,jdbcType=VARCHAR},
+      </if>
+      <if test="parmContent != null" >
+        #{parmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="materialId != null" >
+        #{materialId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterialParm" >
+    update house_material_parm
+    <set >
+      <if test="parmName != null" >
+        parmName = #{parmName,jdbcType=VARCHAR},
+      </if>
+      <if test="parmContent != null" >
+        parmContent = #{parmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="materialId != null" >
+        materialId = #{materialId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where parmId = #{parmId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseMaterialParm" >
+    update house_material_parm
+    set parmName = #{parmName,jdbcType=VARCHAR},
+      parmContent = #{parmContent,jdbcType=VARCHAR},
+      materialId = #{materialId,jdbcType=BIGINT}
+    where parmId = #{parmId,jdbcType=BIGINT}
+  </update>
+  <!--通过建材i删除自定义参数表信息-->
+  <delete id="deleteByMaterialId" parameterType="java.lang.Long" >
+    delete from house_material_parm
+    where materialId = #{materialId,jdbcType=BIGINT}
+  </delete>
+  <!--通过建材id和当前输入自定义的参数-->
+  <select id="selectMaterialCustomParmCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+    SELECT COUNT(*) FROM  house_material_parm WHERE materialId=#{materialId} AND parmName=#{parmName}
+    <if test="parmId != null" >
+      AND parmId=#{parmId}
+    </if>
+  </select>
+
+  <!--根据材料id查寻自定义参数  zy-->
+  <select id="finAllmaterialParmsBymaterialsId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.common.model.house.HouseMaterialParm">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM house_material_parm
+    WHERE  materialId = #{materialId}
+  </select>
+</mapper>

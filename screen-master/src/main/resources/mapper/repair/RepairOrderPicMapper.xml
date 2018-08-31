@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betel.estatemgmt.common.mapper.repair.RepairOrderPicMapper">
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.repair.RepairOrderPic">
+    <id column="opId" jdbcType="BIGINT" property="opId" />
+    <result column="orderNo" jdbcType="VARCHAR" property="orderNo" />
+    <result column="pictureId" jdbcType="VARCHAR" property="pictureId" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    opId, orderNo, pictureId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from repair_order_picture
+    where opId = #{opId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from repair_order_picture
+    where opId = #{opId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderPic">
+    insert into repair_order_picture (opId, orderNo, pictureId, 
+      createTime)
+    values (#{opId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{pictureId,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderPic">
+    insert into repair_order_picture
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="opId != null">
+        opId,
+      </if>
+      <if test="orderNo != null">
+        orderNo,
+      </if>
+      <if test="pictureId != null">
+        pictureId,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="opId != null">
+        #{opId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureId != null">
+        #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderPic">
+    update repair_order_picture
+    <set>
+      <if test="orderNo != null">
+        orderNo = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureId != null">
+        pictureId = #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where opId = #{opId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderPic">
+    update repair_order_picture
+    set orderNo = #{orderNo,jdbcType=VARCHAR},
+      pictureId = #{pictureId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where opId = #{opId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findByOrderNo" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.repair.RepairOrderPic">
+    SELECT * FROM repair_order_picture
+    WHERE orderNo = #{orderNo}
+  </select>
+
+  <delete id="deletePicList" parameterType="java.util.List">
+    DELETE FROM repair_order_picture
+    WHERE opId IN
+    <foreach item="item"  collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+  <!--zy  批量插入图片-->
+  <insert id="addRepairPics" parameterType="java.util.List">
+      insert into repair_order_picture (orderNo, pictureId,
+      createTime)
+    values
+    <foreach collection="list" item="picture" separator="," index="index">
+    (
+      #{picture.orderNo,jdbcType=VARCHAR}, #{picture.pictureId,jdbcType=VARCHAR},
+      #{picture.createTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+  </insert>
+
+  <select id="findPictureUrls" resultType="java.lang.String">
+    SELECT CONCAT_WS("",a.config,a.pictureUrl) url
+    from (
+    SELECT pictureUrl,(SELECT sc.confValue from system_config sc where sc.confName = "file.server") config
+    FROM repair_order_picture rop,system_picture sp
+    WHERE rop.orderNo= #{orderNo} AND rop.pictureId = sp.pictureId
+    ORDER BY sp.createTime
+    )a
+  </select>
+</mapper>

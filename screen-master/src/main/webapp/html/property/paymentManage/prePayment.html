@@ -1,0 +1,453 @@
+<style>
+    .label_title_short {
+        width: 50px;
+        display: inline-block;
+        text-align: right;
+        color: #777;
+    }
+
+    .label_title_long {
+        width: 150px;
+        display: inline-block;
+        text-align: right;
+        margin-right: 5px;
+        color: #777;
+    }
+
+    .prepay_content {
+        margin: 10px auto;
+        margin-left: 20px;
+        padding-left: 55px;
+        margin-top: 20px;
+    }
+
+    .prepay_content div {
+        margin: 10px auto;
+    }
+    .prepay_height{
+        height:30px;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow-y: hidden;">
+    <div style="margin-left: 15px;">
+        <form action="" data-toggle="ajaxform">
+            <!--楼宇单元房号-->
+            <!--<div class="bjui-row col-3">-->
+                <!--<label class="row-label">楼宇:</label>-->
+                <!--<div class="row-input">-->
+                    <!--<select id="buildingSelect" onchange="addBuilding(this)" data-toggle="selectpicker">-->
+                        <!--<option value="0">--请选择--</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <!--<label class="row-label">单元:</label>-->
+                <!--<div class="row-input">-->
+                    <!--<select id="unitSelect" onchange="findHouse(this)" data-toggle="selectpicker">-->
+                        <!--<option value="0">--请选择--</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <!--<label class="row-label">房号:</label>-->
+                <!--<div class="row-input">-->
+                    <!--<select id="houseSelect" name="houseId" onchange="selectHouse(this)" data-toggle="selectpicker">-->
+                        <!--<option value="0">--请选择--</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div>
+
+                <div id="addressDetail" style="margin-top: 20px;margin-left: 52px">
+                    <div style="display: inline-block">
+                        <span class="label_title_short">楼宇:</span>
+                        <select id="buildingSelect" onchange="addBuilding(this)" data-toggle="selectpicker" style="width: 90px;">
+                            <option value="0">--请选择--</option>
+                        </select>
+                    </div>
+                    <div style="margin-left: 4px;display: inline-block">
+                        <span class="label_title_short">单元:</span>
+                        <select id="unitSelect" onchange="findHouse(this)" data-toggle="selectpicker" style="width: 90px; ">
+                            <option value="0">--请选择--</option>
+                        </select>
+                    </div>
+                    <div style="margin-left: 5px; display: inline-block;">
+                        <span class="label_title_short">房号:</span>
+                        <select id="houseSelect" name="houseId" onchange="selectHouse(this)" data-toggle="selectpicker" style="width: 90px;">
+                            <option value="0">--请选择--</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!--预交内容-->
+            <div class="prepay_content">
+                <div style="display: block" class="prepay_height">
+                    <span class="label_title_long">预缴物业费月数:</span>
+                    <select id="prepayProperty" onchange="getPrice_prepay(1)" data-toggle="selectpicker" data-width="190">
+                        <option value="0">--请选择--</option>
+                    </select>
+                </div>
+                <div style="display: block" class="prepay_height">
+                    <span class="label_title_long">预缴停车费月数(购买):</span>
+                    <select id="prepayBuypark" onchange="getPrice_prepay(3)" data-toggle="selectpicker" data-width="190">
+                        <option value="0">--请选择--</option>
+                    </select>
+                </div>
+                <div style="display: block" class="prepay_height">
+                    <span class="label_title_long">预缴停车费月数(租赁):</span>
+                    <select id="prepayLeasepark" onchange="getPrice_prepay(4)" data-toggle="selectpicker" data-width="190">
+                        <option value="0">--请选择--</option>
+                    </select>
+                </div>
+            </div>
+
+            <!--收费总计-->
+            <div class="bjui-row col-1" style=" text-align: right; padding-top: 20px;;">
+                <label class="row-label" style=" width: auto;">共计:</label>
+                <div class="row-input" style=" width: auto; color: #F00; font-weight: bold;">
+                    ￥<span id="paymentCount">0</span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="okBtn" class="btn-default" data-icon="save">确认</button>
+        </li>
+    </ul>
+</div>
+<script>
+    addHouseInit()
+    var findHouseData = {
+        'buildingId': '',
+        'unitId': '',
+    }
+    function addHouseInit() {
+        $("#unitSelect option[value='0']").nextAll().remove();
+        $.CurrentDialog.find("#houseSelect option[value='0']").nextAll().remove();
+        //查询楼宇列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/findBuildingList',
+            data: "",
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.each(json.data, function (i, n) {
+                        $.CurrentDialog.find("#buildingSelect").append('<option value="' + n.buildingId + '"  spanID="' + n.buildingId + '">' + n.buildingName + '</option>').selectpicker('refresh');
+                    })
+                    $.CurrentDialog.find("#buildingSelect").append('<option value="' + "" + '"  spanID="' + "" + '">' + "其它" + '</option>').selectpicker('refresh');
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+
+        //清除下面的信息
+        propertyPrice = 0;
+        buyparkPrice = 0;
+        leaseparkPrice = 0;
+        $.CurrentDialog.find('#paymentCount').text(0.00)
+        $.CurrentDialog.find("#prepayProperty").children('option').not(":eq(0)").remove();
+        $.CurrentDialog.find("#prepayBuypark").children('option').not(":eq(0)").remove();
+        $.CurrentDialog.find("#prepayLeasepark").children('option').not(":eq(0)").remove();
+    }
+    function addBuilding(t) {
+        var buildingId = $("#buildingSelect option:selected ").attr('spanID');
+        var buildingIds = {"buildingId": buildingId};
+        if (buildingId == "") {
+            findHouseData.unitId = "";
+            var obj = $.CurrentDialog.find("#unitSelect");
+            $("#unitSelect option[value='0']").nextAll().remove();
+            findHouseData.buildingId = "";
+            findHouse();
+            return;
+        }
+        findHouseData.buildingId = buildingId;
+        //查询单元列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/findUnitList',
+            data: JSON.stringify(buildingIds),
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentDialog.find("#unitSelect option[value='0']").nextAll().remove();
+                    $.CurrentDialog.find("#houseSelect option[value='0']").nextAll().remove();
+                    $.each(json.data, function (i, n) {
+                        $.CurrentDialog.find("#unitSelect").append('<option value="' + (n.unitId) + '"  spanID="' + n.unitId + '">' + n.unitName + '</option>').selectpicker('refresh');
+                    });
+                    findHouse()
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+
+        //清除下面的信息
+        propertyPrice = 0;
+        buyparkPrice = 0;
+        leaseparkPrice = 0;
+        $.CurrentDialog.find('#paymentCount').text(0.00)
+        $.CurrentDialog.find("#prepayProperty").children('option').not(":eq(0)").remove();
+        $.CurrentDialog.find("#prepayBuypark").children('option').not(":eq(0)").remove();
+        $.CurrentDialog.find("#prepayLeasepark").children('option').not(":eq(0)").remove();
+    }
+
+    //查询大别墅
+    function findHouse() {
+        var unitId = $("#unitSelect option:selected ").val();
+        findHouseData.unitId = unitId;
+        $.CurrentDialog.find("#houseSelect option[value='0']").nextAll().remove();
+        $.CurrentDialog.find("#houseSelect").selectpicker('refresh');
+//        $.CurrentDialog.find("#houseSelect").children('option').not(":eq(0)").remove();
+
+        //查询房子列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/findHouses',
+            data: findHouseData,
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+//                    setTimeout(function () {
+                        $.each(json.data, function (i, n) {
+                            $.CurrentDialog.find("#houseSelect").append('<option value="' + n.houseId + '"  spanID="' + n.houseId + '">' + n.houseNum + '</option>').selectpicker('refresh');
+                        })
+//                    }, 100)
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+        //清除下面的信息
+        propertyPrice = 0;
+        buyparkPrice = 0;
+        leaseparkPrice = 0;
+        $.CurrentDialog.find('#paymentCount').text(0.00)
+        $.CurrentDialog.find("#prepayProperty").children('option').not(":eq(0)").remove();
+        $.CurrentDialog.find("#prepayBuypark").children('option').not(":eq(0)").remove();
+        $.CurrentDialog.find("#prepayLeasepark").children('option').not(":eq(0)").remove();
+    }
+
+    //选择房屋
+    var HouseId_prepay = 0;
+    function selectHouse(e) {
+        HouseId_prepay = $.CurrentDialog.find('#houseSelect').val();
+        prepayProperty();
+//        prepayBuypark();
+//        prepayLeasepark();
+        propertyPrice = 0;
+        buyparkPrice = 0;
+        leaseparkPrice = 0;
+        $.CurrentDialog.find('#paymentCount').text(0.00)
+    }
+
+    //物业费,停车费 购买和租赁
+    function prepayProperty() {
+        if (HouseId_prepay == 0) {
+            //清除下面的信息
+            propertyPrice = 0;
+            buyparkPrice = 0;
+            leaseparkPrice = 0;
+            $.CurrentDialog.find('#paymentCount').text(0.00)
+            $.CurrentDialog.find("#prepayProperty").children('option').not(":eq(0)").remove();
+            $.CurrentDialog.find("#prepayBuypark").children('option').not(":eq(0)").remove();
+            $.CurrentDialog.find("#prepayLeasepark").children('option').not(":eq(0)").remove();
+            return;
+        }
+        var data = {
+            "houseId": HouseId_prepay,
+            "itemType": "1,3,4"
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/findItemCycle',
+            data: data,
+            loadingmask: false,
+            asyn: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentDialog.find("#prepayProperty").children('option').not(":eq(0)").remove();
+                    $.CurrentDialog.find("#prepayBuypark").children('option').not(":eq(0)").remove();
+                    $.CurrentDialog.find("#prepayLeasepark").children('option').not(":eq(0)").remove();
+                    var data = json.data;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].itemType == 1) {
+                            $.CurrentDialog.find("#prepayProperty").data('itemid', data[i].itemId);
+                            $.each(data[i].monthList, function (k, n) {
+                                $.CurrentDialog.find("#prepayProperty").append('<option value="' + n + '"  itemid="' + data[i].itemId + '">' + n + '</option>').selectpicker('refresh');
+                            })
+                        }
+                        if (data[i].itemType == 3) {
+                            $.CurrentDialog.find("#prepayBuypark").data('itemid', data[i].itemId);
+                            $.each(data[i].monthList, function (k, n) {
+                                $.CurrentDialog.find("#prepayBuypark").append('<option value="' + n + '"  itemid="' + data[i].itemId + '">' + n + '</option>').selectpicker('refresh');
+                            })
+                        }
+                        if (data[i].itemType == 4) {
+                            $.CurrentDialog.find("#prepayLeasepark").data('itemid', data[i].itemId);
+                            $.each(data[i].monthList, function (k, n) {
+                                $.CurrentDialog.find("#prepayLeasepark").append('<option value="' + n + '"  itemid="' + data[i].itemId + '">' + n + '</option>').selectpicker('refresh');
+                            })
+                        }
+                    }
+
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+
+    //获得总价格
+    var price = 0;
+    function getPrice_prepay(e) {
+        var months_property = $.CurrentDialog.find("#prepayProperty").val();
+        var itemId_property = $.CurrentDialog.find("#prepayProperty").data('itemid');
+        var months_buypark = $.CurrentDialog.find("#prepayBuypark").val();
+        var itemId_buypark = $.CurrentDialog.find("#prepayBuypark").data('itemid');
+        var months_rentpark = $.CurrentDialog.find("#prepayLeasepark").val();
+        var itemId_rentpark = $.CurrentDialog.find("#prepayLeasepark").data('itemid');
+        var itemIdList = [];
+        var monthsList = [];
+        if (months_property != 0) {
+            monthsList.push(months_property);
+            itemIdList.push(itemId_property);
+        }
+        if (months_buypark != 0) {
+            monthsList.push(months_buypark);
+            itemIdList.push(itemId_buypark);
+        }
+        if (months_rentpark != 0) {
+            monthsList.push(months_rentpark);
+            itemIdList.push(itemId_rentpark);
+        }
+        var data = {
+            'houseId': HouseId_prepay,
+            'itemId': itemIdList.join(','),
+            'months': monthsList.join(','),
+        }
+        if (data.itemId == "") {
+            $.CurrentDialog.find('#paymentCount').text(0);
+            return;
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/expenses/v1/findTotalAmount',
+            data: data,
+            asyn: false,
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    price = parseFloat(json.data.totalAmount);
+                    $.CurrentDialog.find('#paymentCount').text(price);
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+
+    //确认提交
+    $.CurrentDialog.find("#okBtn").click(function () {
+            var itemIds = [];
+            var months = [];
+            var itemProperty = $.CurrentDialog.find("#prepayProperty").val();
+            var itemBuy = $.CurrentDialog.find("#prepayBuypark").val();
+            var itemlease = $.CurrentDialog.find("#prepayLeasepark").val();
+            var itemProperty_id = $.CurrentDialog.find("#prepayProperty").data('itemid');
+            var itemBuy_id = $.CurrentDialog.find("#prepayBuypark").data('itemid');
+            var itemlease_id = $.CurrentDialog.find("#prepayLeasepark").data('itemid');
+            if (itemProperty != 0) {
+                itemIds.push(itemProperty_id);
+                months.push(itemProperty);
+            }
+            if (itemBuy != 0) {
+                itemIds.push(itemBuy_id);
+                months.push(itemBuy);
+            }
+            if (itemlease != 0) {
+                itemIds.push(itemlease_id);
+                months.push(itemlease);
+            }
+            var house = $.CurrentDialog.find('#houseSelect').val();
+            var chargeway = $.CurrentDialog.find('#chargeWays').val();
+            if (house == 0) {
+                BJUI.alertmsg('error', '--请选择--房屋信息', {
+                    okCall: function () {
+                        return;
+                    }
+                })
+                return
+            }
+            if (itemIds.length == 0) {
+                BJUI.alertmsg('error', '--请选择--需要支付的收费项', {
+                    okCall: function () {
+                        return;
+                    }
+                })
+                return
+            }
+            var buildingId_prepay = $.CurrentDialog.find('#buildingSelect').val();
+            var unitId_prepay = $.CurrentDialog.find('#unitSelect').val();
+
+            var data = {
+                'buildingId': buildingId_prepay,
+                'houseId': HouseId_prepay,
+                'itemId': itemIds.join(','),
+                'months': months.join(','),
+            }
+            if (buildingId_prepay == '' && unitId_prepay == 0) {
+                delete data.buildingId;
+            }
+            $.CurrentNavtab.data('prepayShow', data);
+            BJUI.ajax('doajax', {
+                url: path + '/web/expenses/v1/prepay',
+                data: data,
+                loadingmask: false,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        var preData = json.data;
+                        /////
+                        BJUI.navtab('refresh', 'paymentManage')
+                        setTimeout(function () {
+                            var option = {
+                                data: function () {
+                                    BJUI.ajax('doajax', {
+                                        url: path + '/web/expenses/v1/findAllPrePay',
+                                        data: {
+                                            "billNos": preData.join(','),
+                                            'curPage': 1,
+                                            'pageSize': 90,
+                                        },
+                                        loadingmask: false,
+                                        async: false,
+                                        callback: function (json) {
+                                            if (json.code == "00000") {
+                                                cup = json.data;
+                                            } else {
+                                                successBack(json);
+                                            }
+                                        }
+                                    });
+                                    return cup;
+                                },
+                                preShow: true,
+//                                paging:false,
+                            }
+                            $.CurrentNavtab.find('#datagrid-payment').datagrid('reload', option);
+                            $.CurrentNavtab.find('.paging-pagesize').hide();
+                            $.CurrentNavtab.data('preDataID', preData.join(','));
+                            //////
+                            BJUI.dialog('closeCurrent', true);
+                            BJUI.alertmsg('ok', '操作成功')
+                        },500)
+                    } else {
+                        successBack(json);
+                    }
+                }
+            });
+
+
+
+    })
+</script>

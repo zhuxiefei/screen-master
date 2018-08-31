@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.property.PropertyDocTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.property.PropertyDocType" >
+    <id column="typeId" property="typeId" jdbcType="VARCHAR" />
+    <result column="typeName" property="typeName" jdbcType="VARCHAR" />
+    <result column="typeDesc" property="typeDesc" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    typeId, typeName, typeDesc, createTime, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from property_doc_type
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from property_doc_type
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.property.PropertyDocType" >
+    insert into property_doc_type (typeId, typeName, typeDesc, 
+      createTime, updateTime)
+    values (uuid(), #{typeName,jdbcType=VARCHAR}, #{typeDesc,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyDocType" >
+    insert into property_doc_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="typeId != null" >
+        typeId,
+      </if>
+      <if test="typeName != null" >
+        typeName,
+      </if>
+      <if test="typeDesc != null" >
+        typeDesc,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="typeId != null" >
+        #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="typeName != null" >
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeDesc != null" >
+        #{typeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyDocType" >
+    update property_doc_type
+    <set >
+      <if test="typeName != null" >
+        typeName = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeDesc != null" >
+        typeDesc = #{typeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.property.PropertyDocType" >
+    update property_doc_type
+    set typeName = #{typeName,jdbcType=VARCHAR},
+      typeDesc = #{typeDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectTypes" resultType="com.betel.estatemgmt.business.web.document.model.DocType">
+    SELECT typeId,typeName FROM  property_doc_type ORDER BY createTime ASC
+  </select>
+
+  <select id="selectByTypeName" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.property.PropertyDocType">
+    SELECT * FROM property_doc_type WHERE typeName = #{0}
+  </select>
+</mapper>

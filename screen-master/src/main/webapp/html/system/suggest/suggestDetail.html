@@ -1,0 +1,107 @@
+<div class="bjui-pageContent">
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">反馈人:</td>
+            <td class="td_right" id="sg-feedbackName"></td>
+            <td class="td_left">意见类型: </td>
+            <td class="td_right" id="sg-feedbackType"></td>
+        </tr>
+        <tr>
+            <td class="td_left">用户类型:</td>
+            <td class="td_right" id="sg-appType"></td>
+            <td class="td_left">APP版本:</td>
+            <td class="td_right" id="sg-appVersion"></td>
+        </tr>
+        <tr>
+            <td class="td_left">手机型号: </td>
+            <td class="td_right" id="sg-clientModel"></td>
+            <td class="td_left">手机系统版本: </td>
+            <td class="td_right" id="sg-clientVersion"></td>
+        </tr>
+        <tr>
+            <td class="td_left">反馈时间:</td>
+            <td class="td_right" id="sg-createTime"></td>
+            <td class="td_left"></td>
+            <td class="td_right"></td>
+        </tr>
+        <tr>
+            <td class="td_left">意见内容: </td>
+            <td class="td_right" colspan="3" id="sg-feedbackContent"></td>
+        </tr>
+    </table>
+    <!--<div>
+        <ul id="sg-ul">
+            <li>
+                <b>反馈人:</b>
+                <span id="sg-feedbackName"></span>
+            </li>
+            <li>
+                <b>意见类型:</b>
+                <span id="sg-feedbackType"></span>
+            </li>
+            <li>
+                <b>意见内容:</b>
+                <span id="sg-feedbackContent" class="detail-info-all"></span>
+            </li>
+            <li>
+                <b>APP版本:</b>
+                <span id="sg-appVersion"></span>
+            </li>
+            <li>
+                <b>用户类型:</b>
+                <span id="sg-appType"></span>
+            </li>
+            <li>
+                <b>手机型号:</b>
+                <span id="sg-clientModel" class="detail-info-all"></span>
+            </li>
+            <li>
+                <b>手机系统版本:</b>
+                <span id="sg-clientVersion"></span>
+            </li>
+            <li>
+                <b>反馈时间:</b>
+                <span id="sg-createTime"></span>
+            </li>
+
+        </ul>
+
+    </div>-->
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+
+    </ul>
+</div>
+
+<script>
+    var data = $("body").data("curentSuggestInfo").data;
+    $.CurrentDialog.find('#sg-feedbackName').text(data.feedbackName);
+    if (data.feedbackType == 1) {
+        $.CurrentDialog.find('#sg-feedbackType').text("建议");
+    } else {
+        $.CurrentDialog.find('#sg-feedbackType').text("问题");
+    }
+    $.CurrentDialog.find('#sg-feedbackContent').html(data.feedbackContent.replace(/\n/g,'</br>'));
+    $.CurrentDialog.find('#sg-appVersion').text(data.appVersion);
+    if(data.appType == "1"){
+        data.appType = "用户APP";
+    }else if(data.appType == "2"){
+        data.appType = "物业APP";
+    }
+    $.CurrentDialog.find('#sg-appType').text(data.appType);
+    $.CurrentDialog.find('#sg-clientModel').text(data.clientModel);
+    $.CurrentDialog.find('#sg-clientVersion').text(data.clientVersion);
+    $.CurrentDialog.find('#sg-createTime').text(data.createTime);
+    //确认按钮
+    //确定
+    $.CurrentDialog.find('#btn-ok').unbind('click').click(function () {
+        BJUI.dialog('closeCurrent', true);
+        BJUI.navtab('refresh', 'suggest');
+
+    });
+
+</script>

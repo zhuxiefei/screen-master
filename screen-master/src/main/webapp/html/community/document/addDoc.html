@@ -1,0 +1,108 @@
+<!--<div class="bjui-pageContent">-->
+    <!--<form class="datagrid-edit-form" style="overflow-x: hidden;text-align: left" data-toggle="ajaxform">-->
+        <!--<div style="text-align: center;margin-top: 44px;">-->
+
+            <!--<div>-->
+                <!--<label>资料名称 : </label>-->
+                <!--<input type="text" style="width:100px;" id="addDoc_search" name="docName" data-rule="required,special,length(~30)">-->
+            <!--</div>-->
+            <!--<br>-->
+
+            <!--<div>-->
+                <!--<label>所属类别 : </label>-->
+                <!--<select style="width:100px;" id="addDoc_select">-->
+                    <!--<option value="">请选择</option>-->
+
+                <!--</select>-->
+            <!--</div>-->
+            <!--<div>-->
+                <!--<textarea name="docContent" id="docContent" class="j-content" style="width:100%;" data-toggle="kindeditor" data-picType="3" data-minheight="200" placeholder="请填写资料内容">请填写资料内容</textarea>-->
+            <!--</div>-->
+            <!--<input type="text" id="typeId" name="typeId" style="display: none">-->
+        <!--</div>-->
+    <!--</form>-->
+<!--</div>-->
+<div class="bjui-pageContent"  >
+    <form class="datagrid-edit-form"  data-toggle="ajaxform">
+        <div class="bjui-row col-1 divActivity">
+            <label class="row-label" style=" width: 13%;">资料名称 : </label>
+            <div class="row-input required" style=" width: 40.5%;">
+                <input type="text" value="" id="addDoc_search" SIZE="30" name="docName"data-rule="required,special,length(~30)" >
+            </div>
+
+            <div >
+                <label class="row-label" style=" width: 13%;">所属类别 : </label>
+                <div class="row-input  required divAdUploadImage" id="divAdUploadImages">
+                    <select style="width:100px;" id="addDoc_select" name="typeId">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <label class="row-label" style=" width: 13%;">内容 : </label>
+            <div class="row-input required " style=" width: 87%;">
+                <textarea name="docContent" id="y_form_content" class="j-content" style="width:100%;" data-toggle="kindeditor" data-picType="1" data-minheight="200" ></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addDoc_ok" class="btn-default" data-icon="save">保存</button>
+        </li>
+    </ul>
+</div>
+<script>
+    addDoc()
+    function addDoc() {
+        BJUI.ajax('doajax', {
+            url: path + '/web/document/v1/findTypes',
+            data: JSON.stringify(''),
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.each(json.data, function (i, n) {
+                        $("#addDoc_select").append('<option value="' +  n.typeId  + '" optionId="' + n.typeId + '" title="' + n.typeName + '">' + n.typeName + '</option>');
+                    })
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+    $.CurrentDialog.find("#addDoc_ok").click(function () {
+        var typeIdL = $("#addDoc_select option:selected ").attr('optionId');
+        $.CurrentDialog.find('#typeId').val(typeIdL);
+        if($.CurrentDialog.find('#addDoc_select').val()==""){
+            BJUI.alertmsg('error', '请选择资料类别');
+            return;
+        }
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/document/v1/addDoc',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.alertmsg('ok', '新增成功！');
+                    BJUI.dialog('closeCurrent');
+                    var treeObj = $.fn.zTree.getZTreeObj("ztreeDocument");
+                    var nodes = treeObj.getNodes();
+                    var selectedType = $.CurrentDialog.find('#addDoc_select option:selected').text();
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (selectedType == nodes[i].typeName) {
+                            treeObj.expandNode(nodes[i], true, true);
+                            return
+                        }
+                    }
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    });
+
+</script>

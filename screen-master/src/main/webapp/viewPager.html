@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>四合院社区综合管理平台</title>
+    <meta name="renderer" content="webkit">
+    <script src="scripts/js/jquery-1.11.3.min.js"></script>
+    <script src="scripts/js/jquery.cookie.js"></script>
+    <link rel="shortcut icon" href="assets/ico/logo.png">
+    <style type="text/css">
+        html, body { height: 100%; /*overflow: hidden; */}
+        body {
+            font-family: "Verdana", "Tahoma", "Lucida Grande", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+            background: url(images/bg.png) no-repeat center center fixed;
+            background-size: cover;
+            min-height: 560px;
+            overflow-y: auto;
+            position: relative;
+        }
+        .divLogo{ position: absolute; top: 24px; left: 54px; width: 21.25%;}
+        .divLogo img{ max-width: 100%;}
+        .form-control{height:37px;}
+        .page_box{position:absolute; top:10%; left:50%; margin:0 0 0 -465px; width:970px; height: 80%; min-height: 488px; /*height:640px;*/ min-width:320px; overflow: hidden; padding: 20px; box-sizing: content-box;}
+        .page_box a{ display: block; width: 100%; height: 100%; text-decoration: none;}
+        .page_box img{ width: 100%; height: 50%; /*width: auto;*/}
+        .divPageLeft{float: left; width: 290px; margin-right: 30px; height: 100%;}
+        .divPageContent{float: left; width: 290px; margin-right: 30px; height: 100%;}
+        .divPageRight{float: left; width: 290px; height: 100%;}
+
+        .divPageImg{width: 100%; height: 65%; /*height: 390px;*/ background: #fff;border-radius: 10px; box-shadow: 0 0 19px 6px rgba(0,0,0,0.17);}
+        .divPageImg img{ border-top-left-radius: 10px;border-top-right-radius: 10px;}
+        .divPageImg .divTit{ /*padding: 20px;*/ display: table; height: 50%; /*height: 160px;*/ border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;}
+        .divPageImg .divTit .divCell{ display: table-cell; vertical-align: middle;}
+        .divPageImg .divTit .spanTitle{ display: block; text-align: center; font-size: 20px;  color: #333333; margin-bottom: 16px;}
+        .divPageImg .divTit .pInfo{ margin: 0; padding: 0; font-size: 14px;  color: #888;}
+
+
+        .divProperty{ margin-bottom: 5%; /* margin-bottom: 29px;*/}
+        .divHouse{}
+
+        /*.divPageBox{ text-align: center; border-radius: 10px; background: #08589D; width: 100%; height: 30%; !* height: 180px;*! position: relative; margin-bottom: 5%; !*margin-bottom:29px;*! box-shadow: 0 0 19px 6px rgba(0,0,0,0.17);}*/
+        .divPageBox{
+            text-align: center;
+            float: left;
+            border-radius: 10px;
+            background: #08589D;
+            width: 30%;
+            height: 30%;
+            position: relative;
+            box-shadow: 0 0 19px 6px rgba(0,0,0,0.17);
+            margin: 10px;
+        }
+        .divPageBox .divTitle{ position: absolute; right: 24px; bottom: 20px; font-size: 18px; color: #FFFFFF;}
+        .divPageBox img{ margin-top: 11%;  width: 31%;}
+
+        .divERP{ background:#40a9ad; /*margin-bottom:0;*/}
+        .divOA{ background: #3FA9AD;}
+        .divDispatch{ background: #BA3A7C;}
+        .divCRM{ background: #08589d; /*margin-bottom:0;*/}
+        .divSmartHome{ background: #3A8CD2; /*margin-bottom:0;*/}
+        .divWebmaster{ background: #FBA705;}
+        .divProperty{ background: #0c75d0;}
+        .divContact{ background: #6ab074;}
+
+        .divNoticeInfo{ display: none; position: fixed; z-index: 10; width: 260px; height: 120px; padding: 20px; top:40%; left: 50%; margin: -70px 0 0 -110px; background: #fff; border: #888 1px solid; text-align: center; border-radius: 6px;  box-shadow: 0 0 19px 6px rgba(0,0,0,0.17);}
+        .divNoticeInfo span{ display: block; text-align: center; font-size: 20px;}
+        .divNoticeInfo .a_close{ display: inline-block; text-decoration: none;  border: #f00 1px solid;  width: 70px;  height: 30px;  border-radius: 4px;  line-height: 28px; color: #f00; font-size: 14px; position: relative; top: 15px;}
+
+        .divPropertyImg,.divHouseImg{ background: url(images/pageImg.png) no-repeat center center !important; margin-bottom: 0; padding-bottom: 5%; box-sizing: content-box; border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;}
+        .divPropertyTit,.divHouseTit{ background: #fff; border-top-left-radius: 0px;  border-top-right-radius: 0px;}.divPageImg .divTit{ /*padding: 20px;*/ display: table; height: 50%; /*height: 160px;*/ border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;}
+        .divPropertyTit .divTit,.divHouseTit .divTit{ padding:0 20px; display: table; height: 100%; /*height: 160px;*/ border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;}
+        .divPropertyTit .divTit .divCell,.divHouseTit .divTit .divCell{ display: table-cell; vertical-align: middle;}
+        .divPropertyTit .divTit .spanTitle,.divHouseTit .divTit .spanTitle{ display: block; text-align: center; font-size: 20px;  color: #333333; margin-bottom: 16px;}
+        .divPropertyTit .divTit .pInfo,.divHouseTit .divTit .pInfo{ margin: 0; padding: 0; font-size: 14px;  color: #888;}
+
+        .divHouseImg{ background: url(images/pageImg2.png) no-repeat center center !important;}
+
+        .divPropertyImg a,.divHouseImg a{ position: absolute; left:0; top:0; }
+    </style>
+    <script type="text/javascript">
+        function skip(obj) {
+            var path = window.location.href;
+            //path = path.substring(0,path.lastIndexOf(path.split(":")[2]));
+//            if(path.substring(path.length-1,path.length) == "/"){
+//                path = path.substring(0,path.length-1);
+//            }
+            var path=path.slice(0,path.indexOf(window.location.port))+obj
+            window.location.href=path;
+//            window.open (path)
+
+        }
+
+        function showNoticeInfo() {
+            $(".divNoticeInfo").show().delay(3000).fadeOut(500);
+        }
+        var href=window.location.href;
+        var data=href.substr(href.indexOf('?')+1);
+//        $.cookie("estateId", data, {path: '/', expires: 15});
+        $.ajax({
+            type: "POST",
+            url: "web/admin/v1/findSystems",
+            data:JSON.stringify({'estateId':data}) ,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            cache: false,
+            headers:{"userId":$.cookie("l_userId"),"token":$.cookie("l_token")},
+            success: function (returnData) {
+                $.cookie("estateId", returnData.data.estateId, {path: '/', expires: 15});
+                var Jurisdiction=returnData.data.privilegeInfos;
+                var rightArray=[];
+                for(var i=0;i<Jurisdiction.length;i++){
+                    rightArray.push(Jurisdiction[i].name);
+                }
+                var html = '';
+                if(rightArray.indexOf('oa')>-1){
+                    //$('.divOA').hide();
+                    html += '<div class="divPageBox divOA">';
+                    html += '<a href="javascript:void(0)" onclick="skip(\'8099/index.html?reLogin\')">';
+                    html += '<img src="images/OAxt.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += 'OA系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('estatemgmt')>-1){
+                    //$('.divProperty').hide();
+                    html += '<div class="divPageBox divProperty">';
+                    html += '<a href="javascript:void(0)" onclick="skip(\'8097/index.html?reLogin\')">';
+                    html += '<img src="images/property.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += '物业管理系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('social')>-1){
+                    //$('.divContact').hide();
+                    html += '<div class="divPageBox divContact">';
+                    html += '<a href="javascript:void(0)" onclick="skip(\'8098/index.html?reLogin\')">';
+                    html += '<img src="images/contact.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += '社交系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('home')>-1){
+                   //$('.divSmartHome').hide();
+                    html += '<div class="divPageBox divSmartHome">';
+                    html += '<a href="javascript:void(0)" onclick="skip(\'8100/index.html?reLogin\')">';
+                    html += '<img src="images/smartHome.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += '智能家居系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('ERP')>-1){
+                    //$('.divERP').hide();
+                    html += '<div class="divPageBox divERP">';
+                    html += '<a href="javascript:void(0)" onclick="showNoticeInfo()">';
+                    html += '<img src="images/ERP.png" />';
+                    html += '<div class="divTitle">';
+                    html += 'ERP系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('CRM')>-1){
+                    //$('.divCRM').hide();
+                    html += '<div class="divPageBox divCRM">';
+                    html += '<a href="javascript:void(0)" onclick="showNoticeInfo()">';
+                    html += '<img src="images/CRM.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += 'CRM系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('dispatch')>-1){
+                    //$('.divDispatch').hide();
+                    html += '<div class="divPageBox divDispatch">';
+                    html += '<a href="javascript:void(0)" onclick="showNoticeInfo()">';
+                    html += '<img src="images/ddzx.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += '调度中心';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+                if(rightArray.indexOf('networkmgmt')>-1){
+                   //$('.divWebmaster').hide();
+                    html += '<div class="divPageBox divWebmaster">';
+                    html += '<a href="javascript:void(0)" onclick="skip(\'8097/webmaster.html\')">';
+                    html += '<img src="images/jzwg.png" width="100%" />';
+                    html += '<div class="divTitle">';
+                    html += '集中网管系统';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</div>';
+                }
+
+                $("#page_box").html(html);
+            }
+        });
+    </script>
+</head>
+<body>
+<!--[if lte IE 7]>
+
+<div id="errorie"><div>您还在使用老掉牙的IE，请升级您的浏览器到 IE8以上版本 <a target="_blank" href="http://windows.microsoft.com/zh-cn/internet-explorer/ie-8-worldwide-languages">点击升级</a>&nbsp;&nbsp;强烈建议您更改换浏览器：<a href="http://down.tech.sina.com.cn/content/40975.html" target="_blank">谷歌 Chrome</a></div></div>
+<![endif]-->
+<div class="divLogo"><a href="javascript:void(0)" onclick="skip('')"><img src="images/logo.png" /></a></div>
+<div class="container">
+
+    <div class="page_box" id="page_box">
+            <!--<div class="divPageBox divProperty">-->
+                <!--<a href="javascript:void(0)" onclick="skip('8097/index.html?reLogin')">-->
+                    <!--<img src="images/property.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--物业管理系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divContact">-->
+                <!--<a href="javascript:void(0)" onclick="skip('8098/index.html?reLogin')">-->
+                    <!--<img src="images/contact.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--社交系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divERP">-->
+                <!--<a href="javascript:void(0)" onclick="showNoticeInfo()">-->
+                    <!--<img src="images/ERP.png" />-->
+                    <!--<div class="divTitle">-->
+                        <!--ERP系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divOA">-->
+                <!--<a href="javascript:void(0)" onclick="skip('8099/index.html?reLogin')">-->
+                    <!--<img src="images/OAxt.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--OA系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divDispatch">-->
+                <!--<a href="javascript:void(0)" onclick="showNoticeInfo()">-->
+                    <!--<img src="images/ddzx.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--调度中心-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divCRM">-->
+                <!--<a href="javascript:void(0)" onclick="showNoticeInfo()">-->
+                    <!--<img src="images/CRM.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--CRM系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divSmartHome">-->
+                <!--<a href="javascript:void(0)" onclick="skip('8100/index.html?reLogin')">-->
+                    <!--<img src="images/smartHome.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--智能家居系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--<div class="divPageBox divWebmaster">-->
+                <!--<a href="javascript:void(0)" onclick="skip('8097/webmaster.html')">-->
+                    <!--<img src="images/jzwg.png" width="100%" />-->
+                    <!--<div class="divTitle">-->
+                        <!--集中网管系统-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+
+    </div>
+</div>
+
+<div class="divNoticeInfo" id="divNoticeInfo">
+    <span>敬请期待!</span>
+    <a href="javascript:void($('.divNoticeInfo').hide())" class="a_close">关闭</a>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<style>
+    #addHouseForm .col-1 .row-label {
+        width: 20%;
+    }
+
+    #addHouseForm .col-1 .row-input {
+        width: 80%;
+    }
+
+    #addHouseForm .col-2 .row-label {
+        width: 19%;
+    }
+
+    #addHouseForm .col-2 .row-input {
+        width: 28%;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;">
+    <form data-toggle="ajaxform" id="addHouseForm">
+            <div class="bjui-row col-1">
+                <label class="row-label">房屋: </label>
+                <div class="row-input required">
+                    <select id="buildingId" name="buildingId" onchange="searchUnit(this)" data-toggle="selectpicker"
+                            data-width="32%" data-rule="">
+                        <option value="">--选择楼宇--</option>
+                    </select>
+                    <select id="unitId" name="unitId" data-toggle="selectpicker"
+                            data-width="32%" data-rule="">
+                        <option value="">--选择楼座--</option>
+                    </select>
+                    <input type="text" name="houseNum" id="houseNum" value="" style="width: 32%" placeholder="输入房号"
+                           data-rule="required,special,length(~6)"/>
+                </div>
+                <label class="row-label houseStatus3">房屋状态: </label>
+                <div class="row-input houseStatus3 required">
+                    <select id="houseStatus" name="houseStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="1">招商中</option>
+                        <option value="2">空置中</option>
+                    </select>
+                </div>
+                <label class="row-label">房屋面积: </label>
+                <div class="row-input required">
+                    <input type="text" name="interFloorArea" id="interFloorArea" value=""
+                           style="width: 95%;" data-rule="required,numberOnly,houseArea,notZero2"/>㎡
+                </div>
+                <label class="row-label">展示顺序: </label>
+                <div class="row-input required">
+                    <input type="text" name="displayOrder" id="displayOrder" value="" style="width: 100%" placeholder=""
+                           data-rule="required,number10000"/>
+                </div>
+            </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-addHouse" >修改</button></li>
+    </ul>
+</div>
+<script>
+    var houseData=$.CurrentNavtab.data("houseDetail");
+    $.CurrentDialog.find("#displayOrder").val(houseData.displayOrder);
+    $.CurrentDialog.find("#interFloorArea").val(houseData.interFloorArea);
+    $.CurrentDialog.find("#houseNum").val(houseData.houseNum);
+    $.CurrentDialog.find("#houseStatus").val(houseData.houseStatus);
+    if(houseData.houseStatus == 3){
+        $.CurrentDialog.find(".houseStatus3").remove();
+    }
+
+    addHouseInit("init");
+    function addHouseInit(e) {
+        //查询楼宇列表
+        BJUI.ajax('doajax', {
+            url: path + '/web/officeHouse/v1/findBuildingList',
+            data: "",
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.each(json.data, function (i, n) {
+                        $.CurrentDialog.find("#buildingId").append('<option value="' + n.buildingId + '">' + n.buildingName + '</option>');
+                    });
+                    $.CurrentDialog.find("#buildingId").append('<option value="' + "" + '">' + "其它" + '</option>');
+                    if(e==="init"){
+                        $.CurrentDialog.find("#buildingId").val(houseData.buildingId).selectpicker('refresh')
+                        searchUnit(houseData.buildingId,"init");
+                    }else{
+                        $.CurrentDialog.find("#buildingId").selectpicker('refresh')
+                    }
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+//        //查询户型列表
+//        BJUI.ajax('doajax', {
+//            url: path + '/web/house/v1/findHouseTypes',
+//            data: "",
+//            loadingmask: false,
+//            callback: function (json) {
+//                if (json.code == "00000") {
+//                    $.each(json.data, function (i, n) {
+//                        $.CurrentDialog.find("#typeId").append('<option value="' + n.typeId + '"  spanID="' + n.typeId + '">' + n.typeName + '</option>');
+//                    })
+//                    if(e=="init"){
+//                        $.CurrentDialog.find("#typeId").val(houseData.typeId).selectpicker('refresh')
+//                        searchUnit(houseData.buildingId,"init");
+//                    }else{
+//                        $.CurrentDialog.find("#typeId").selectpicker('refresh')
+//                    }
+//                } else {
+//                    successBack(json);
+//                }
+//            }
+//        })
+    }
+
+    function searchUnit(e,a) {
+        var buildingId = $.CurrentDialog.find("#buildingId").val()
+        var buildingIdKey = {"buildingId": buildingId};
+        if (buildingId == undefined || buildingId == "" || buildingId == null) {
+            $.CurrentDialog.find("#unitId").html('<option value="">--选择楼座--</option>').selectpicker('refresh');
+        } else {
+            //查询单元列表
+            BJUI.ajax('doajax', {
+                url: path + '/web/officeHouse/v1/findUnitList',
+                data: JSON.stringify(buildingIdKey),
+                loadingmask: false,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        var obj = $.CurrentDialog.find("#unitId");
+                        $("#unitId option").first().nextAll().remove();
+                        $.each(json.data, function (i, n) {
+                            $.CurrentDialog.find("#unitId").append('<option value="' + n.unitId + '"  >' + n.unitName + '</option>');
+                        });
+                        if(a=="init"){
+                            $.CurrentDialog.find("#unitId").val(houseData.unitId).selectpicker('refresh');
+                        }else{
+                            $.CurrentDialog.find("#unitId").selectpicker('refresh');
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    //确认提交
+    $.CurrentDialog.find("#btn-addHouse").click(function () {
+
+        var buildingId=$.CurrentDialog.find('#buildingId').val();
+        var unitId=$.CurrentDialog.find('#unitId').val();
+        if($.CurrentDialog.find('#unitId').val()==""||$.CurrentDialog.find('#unitId').val()==undefined){
+            unitId=null;
+        }
+        var houseNum=$.CurrentDialog.find('#houseNum').val();
+        var displayOrder=$.CurrentDialog.find('#displayOrder').val();
+        var interFloorArea=$.CurrentDialog.find('#interFloorArea').val();
+        var houseStatus = $.CurrentDialog.find('#houseStatus').val();
+        var data={
+            'buildingId':buildingId,
+            'unitId':unitId,
+            'houseNum':houseNum,
+            'displayOrder':displayOrder,
+            'houseStatus':houseStatus,
+            'interFloorArea':interFloorArea,
+            'houseId':houseData.houseId,
+        }
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                $.CurrentDialog.find("#btn-addHouse").attr('disabled','true');
+                BJUI.ajax('doajax', {
+                    url: path + '/web/officeHouse/v1/updateOfficeHouse',
+                    data: data,
+                    loadingmask: false,
+                    callback: function(json) {
+                        if(json.code=="00000"){
+                            BJUI.alertmsg('ok','修改成功！');
+                            BJUI.dialog('closeCurrent');
+                            $.CurrentNavtab.find('#officeList_datagrid').datagrid('refresh', true);
+                        }else {
+                            $.CurrentDialog.find("#btn-addHouse").removeAttr('disabled');
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        });
+    })
+
+</script>

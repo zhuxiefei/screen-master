@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.patrol.PatrolRecordPicMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.patrol.PatrolRecordPic">
+        <id column="recordId" property="recordId" jdbcType="VARCHAR"/>
+        <id column="pictureId" property="pictureId" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recordId, pictureId, createTime, updateTime
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+            parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPicKey">
+        select
+        <include refid="Base_Column_List"/>
+        from patrol_record_picture
+        where recordId = #{recordId,jdbcType=VARCHAR}
+        and pictureId = #{pictureId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPicKey">
+    delete from patrol_record_picture
+    where recordId = #{recordId,jdbcType=VARCHAR}
+      and pictureId = #{pictureId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPic">
+    insert into patrol_record_picture (recordId, pictureId, createTime, 
+      updateTime)
+    values (#{recordId,jdbcType=VARCHAR}, #{pictureId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPic">
+        insert into patrol_record_picture
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                recordId,
+            </if>
+            <if test="pictureId != null">
+                pictureId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                #{recordId,jdbcType=VARCHAR},
+            </if>
+            <if test="pictureId != null">
+                #{pictureId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPic">
+        update patrol_record_picture
+        <set>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where recordId = #{recordId,jdbcType=VARCHAR}
+        and pictureId = #{pictureId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPic">
+    update patrol_record_picture
+    set createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+      and pictureId = #{pictureId,jdbcType=VARCHAR}
+  </update>
+    <!--=======巡检设置=======开始=============-->
+    <select id="findPictureByRecordId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.system.SystemPicture">
+    SELECT sp.pictureId,sp.pictureUrl FROM patrol_record_picture prp,system_picture sp WHERE prp.pictureId=sp.pictureId AND prp.recordId=#{recordId}
+  </select>
+    <!--删除图片与巡检记录关系表 jians.z-->
+    <delete id="deleteRecordPictureByRecordIds">
+        DELETE FROM patrol_record_picture WHERE recordId IN
+        <foreach collection="array" index="index" item="recordId" open="(" close=")" separator=",">
+            #{recordId}
+        </foreach>
+    </delete>
+    <select id="findSystemPictureByRecordIds" resultType="com.betel.estatemgmt.common.model.patrol.PatrolRecordPicKey">
+        SELECT recordId,pictureId FROM  patrol_record_picture WHERE recordId IN
+        <foreach collection="array" index="index" item="recordId" open="(" close=")" separator=",">
+            #{recordId}
+        </foreach>
+    </select>
+    <!--=======巡检设置========结束============-->
+
+    <insert id="addPics" parameterType="java.util.List">
+        insert into patrol_record_picture (recordId, pictureId, createTime,
+        updateTime)
+        values
+        <foreach collection="list" item="patrolRecordPic"  separator="," index="index">
+            (
+            #{patrolRecordPic.recordId},
+            #{patrolRecordPic.pictureId},
+            #{patrolRecordPic.createTime},
+            #{patrolRecordPic.updateTime}
+            )
+        </foreach>
+    </insert>
+</mapper>

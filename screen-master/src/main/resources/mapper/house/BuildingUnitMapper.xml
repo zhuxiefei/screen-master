@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.BuildingUnitMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.BuildingUnit">
+        <id column="unitId" property="unitId" jdbcType="BIGINT"/>
+        <result column="unitName" property="unitName" jdbcType="VARCHAR"/>
+        <result column="buildingId" property="buildingId" jdbcType="BIGINT"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="displayOrder" property="displayOrder" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    unitId, unitName, buildingId, createTime,displayOrder
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from house_building_unit
+        where unitId = #{unitId,jdbcType=BIGINT}
+    </select>
+    <select id="selectHouseStatusByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from house_building_unit
+        where unitId = #{unitId,jdbcType=BIGINT} ORDER BY unitName DESC
+    </select>
+    <!--查所有单元-->
+    <select id="findUnitList" resultType="com.betel.estatemgmt.business.web.building.model.UnitInfo"
+            parameterType="java.lang.Long">
+    select * from house_building_unit
+    where buildingId = #{buildingId,jdbcType=BIGINT}
+    ORDER BY displayOrder ASC,createTime DESC
+  </select>
+
+    <!--根据单元名称查询
+    <select id="selectByUnitName" resultType="com.betel.estatemgmt.common.model.BuildingUnit" parameterType="java.lang.String">
+      select * from house_building_unit where unitName = #{unitName,jdbcType=VARCHAR}
+    </select>-->
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from house_building_unit
+    where unitId = #{unitId,jdbcType=BIGINT}
+  </delete>
+
+    <!--删楼宇下所有单元-->
+    <delete id="deleteByBuildingId" parameterType="java.lang.Long">
+    delete from house_building_unit
+    where buildingId = #{buildingId,jdbcType=BIGINT}
+  </delete>
+
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+    insert into house_building_unit (unitId, unitName, buildingId, 
+      createTime,displayOrder)
+    values (#{unitId,jdbcType=BIGINT}, #{unitName,jdbcType=VARCHAR}, #{buildingId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP},#{displayOrder,jdbcType=INTEGER})
+  </insert>
+
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+        insert into house_building_unit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitId != null">
+                unitId,
+            </if>
+            <if test="unitName != null">
+                unitName,
+            </if>
+            <if test="buildingId != null">
+                buildingId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="displayOrder != null">
+                displayOrder,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitId != null">
+                #{unitId,jdbcType=BIGINT},
+            </if>
+            <if test="unitName != null">
+                #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingId != null">
+                #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="displayOrder != null">
+                #{displayOrder,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+        update house_building_unit
+        <set>
+            <if test="unitName != null">
+                unitName = #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingId != null">
+                buildingId = #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="displayOrder != null">
+                displayOrder = #{displayOrder,jdbcType=INTEGER},
+            </if>
+        </set>
+        where unitId = #{unitId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+    update house_building_unit
+    set unitName = #{unitName,jdbcType=VARCHAR},
+      buildingId = #{buildingId,jdbcType=BIGINT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      displayOrder = #{displayOrder,jdbcType=INTEGER}
+    where unitId = #{unitId,jdbcType=BIGINT}
+  </update>
+    <!-- 根据楼宇id和单元名称查 楼宇下是否存在该单元名称-->
+    <select id="selectByUnitNameAndBuildingId" resultType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+        select *
+        from house_building_unit
+        where
+        unitName = #{unitName,jdbcType=VARCHAR}
+        <if test="buildingId != null">
+            AND buildingId = #{buildingId,jdbcType=BIGINT}
+        </if>
+    </select>
+    <!--查询单元 根据楼宇id 返回单元-->
+    <select id="selecteUnitByBuildId" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+        select
+        <include refid="Base_Column_List"/>
+        from house_building_unit
+        where buildingId = #{buildingId,jdbcType=BIGINT}
+        ORDER BY displayOrder ASC,createTime DESC
+    </select>
+    <!--jian.z  根据1楼宇查询单元，字符串的首字母升序-->
+    <select id="selecteHouseStatusUnitByBuildId" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+        select
+        <include refid="Base_Column_List"/>
+        from house_building_unit
+        where buildingId = #{buildingId,jdbcType=BIGINT}
+        ORDER BY displayOrder ASC,createTime DESC
+    </select>
+    <!--查询单元 根据楼宇id 返回单元-->
+    <select id="selectBuildingByUnitId" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.common.model.house.Building">
+    select u.buildingId,u.unitId,u.unitName,b.buildingName,b.buildingDesc
+    from house_building_unit u
+    LEFT JOIN house_building b ON b.buildingId = u.buildingId
+    where u.unitId = #{unitId,jdbcType=BIGINT}
+  </select>
+    <!--查询单元id 查楼宇id -->
+    <select id="selectBuildingIdByUnitId" parameterType="java.lang.Long"
+            resultType="com.betel.estatemgmt.common.model.house.BuildingUnit">
+    select
+    buildingId,unitId
+    from house_building_unit
+    where unitId = #{unitId,jdbcType=BIGINT}
+  </select>
+</mapper>

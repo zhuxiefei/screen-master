@@ -1,0 +1,48 @@
+<style>
+    #addAreaForm .row-label{
+        width: 25%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="padding-top: 15px" data-toggle="ajaxform" id="addAreaForm">
+        <div class="bjui-row col-1">
+            <label class="row-label">区域名称 : </label>
+            <div class="row-input required">
+                <input type="text" id="areaName" name="areaName"  data-rule="required,special,length(~50)" >
+            </div>
+        </div>
+        <input type="hidden" id="areaId" name="areaId">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addAreaBtn" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+    var areaName=$.CurrentNavtab.data('areaName');
+    var areaId=$.CurrentNavtab.data('areaId');
+    $.CurrentDialog.find('#areaName').val(areaName);
+    $.CurrentDialog.find('#areaId').val(areaId);
+    $.CurrentDialog.find('button#addAreaBtn').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/cleaning/v1/updateArea',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function(json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','修改成功！');
+                    BJUI.dialog('closeCurrent');
+                    BJUI.navtab('refresh', 'cleaningArea');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+
+
+
+</script>

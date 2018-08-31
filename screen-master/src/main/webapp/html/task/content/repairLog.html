@@ -1,0 +1,149 @@
+<div class="bjui-pageContent" style="overflow-y: hidden;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#repairLog_datagrid')}">
+        <div class="bjui-row col-3">
+            <label class="row-label" style="width: 95px">开始时间:</label>
+            <div class="row-input" >
+                <input type="text" id="startTime" name="startTime"
+                       data-rule="开始时间: matchE[lte, endTime, datetime]"
+                       value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                       readonly="readonly">
+            </div>
+            <!--<label class="row-label" style=" padding: 0; width: 16px; text-align: center;">-</label>-->
+            <label class="row-label" style="width: 95px">结束时间:</label>
+            <div class="row-input">
+                <input type="text" id="endTime" name="endTime" data-rule="结束时间: matchE[gte, startTime, datetime]"
+                       value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                       readonly="readonly">
+            </div>
+
+            <label class="row-label" style="width: 95px">操作类型:</label>
+            <div class="row-input">
+            <select id="historyType" name="historyType" data-toggle="selectpicker" data-width="100%">
+                <option value="">全部</option>
+                <option value="1">新增</option>
+                <option value="2">删除</option>
+                <option value="3">编辑</option>
+                <option value="4">完成</option>
+                <!--<option value="5">拒绝</option>-->
+                <option value="6">接受</option>
+                <option value="7">指派</option>
+            </select>
+            </div>
+            <label class="row-label" style="width: 95px">任务编号:</label>
+            <div class="row-input">
+                <input type="text" id="taskNo" name="taskNo" value="" data-rule="special,length(~22)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label" style="width: 95px">&nbsp;</label>
+            <div class="btn-group">
+                <button type="submit" class="btn-green" id="search" data-icon="search">开始搜索！</button>
+                <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+            </div>
+        </div>
+
+    </form>
+
+
+    <table id="repairLog_datagrid" class="table table-bordered" style="height: 92%">
+    </table>
+</div>
+
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    $.CurrentDialog.find('#repairLog_datagrid').datagrid({
+        dataUrl: path + '/web/task/v1/findAllRecords',
+        paging: {pageSize: 10},
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: false,  //是否显示行复选框
+        showLinenumber: true,
+        tableWidth: '100%',
+        height: '85%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+//        hScrollbar: false,  //允许出现横向滚动条。
+        loadingmask: true,
+        dialogFilterW: 0,
+        columns: [
+            {
+                name: 'taskNo', label: '任务编号', width: 150, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'operatorName', label: '操作人员', width: 70, align: 'center', render: function (value, data) {
+                stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                return stateName;
+            }
+            },
+
+            {
+                name: 'createTime',
+                label: '操作时间',
+                width: 130,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd HH:mm:ss',
+                render: function (value) {
+                    return value ? value.substr(0, 20) : value
+                }
+            },
+
+            {
+                name: 'description', label: '操作内容', width: 150, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+
+        ],
+    });
+
+    $.CurrentDialog.find('#search').click(function () {
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                var startTime=$.CurrentDialog.find('#startTime').val();
+                var endTime=$.CurrentDialog.find('#endTime').val();
+                var taskNo=$.CurrentDialog.find('#taskNo').val();
+                var historyType=$.CurrentDialog.find('#historyType').val();
+                var data={
+                    'startTime':startTime,
+                    'endTime':endTime,
+                    'taskNo':taskNo,
+                    'historyType':historyType,
+                };
+                $.CurrentDialog.find('#repairLog_datagrid').datagrid('filter', data);
+            }
+        })
+    });
+
+    //重置搜索条件--select
+    $.CurrentDialog.find("#resetBtn").click(function () {
+        $.CurrentDialog.find("#historyType").selectpicker('val', "");
+    });
+
+</script>

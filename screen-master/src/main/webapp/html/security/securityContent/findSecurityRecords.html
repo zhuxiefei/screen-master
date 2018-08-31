@@ -1,0 +1,142 @@
+<script type="text/javascript">
+    var condition = $.CurrentNavtab.data("securityContenInfo");
+    var contentId = condition.contentId;
+    $.CurrentDialog.find("#findSecurityRecords_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        dataUrl: path + '/web/securityContent/v1/findAllRecord',
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: { pageSize: 10},
+        postData: {'contentId': contentId},
+        showCheckboxcol: false,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {name: 'employeeName', label: '巡逻人员', align: 'center', width: '100', nowrap: 'true'},
+            {name: 'signinNum', label: '签到次数', align: 'center', width: '80', nowrap: 'true'},
+            {name: 'finishTime', label: '完成时间', align: 'center', width: '120'},
+            {name: 'signinNumRecordList', label: '签到记录', width: '300', align: 'center', nowrap: 'true', render: function (value,data) {
+                var html = "";
+                if(data.signinNumRecordList && data.signinNumRecordList.length>0){
+                    $.each(data.signinNumRecordList,function (s,v) {
+                        html += '<table class="patrolDetail_center patrolDetail_center2">';
+                        html += '<tr>';
+                        html += '<td>'+v.signinEmpName+'</td>';
+                        html += '<td>'+v.createTime+'</td>';
+                        html += '<td>'+v.address+'</td>';
+                        html += '</tr>';
+                        if(v.remarks && v.remarks != 0){
+                            html += '<tr>';
+                            html += '<td colspan="3">';
+                            html += '<span>备注：'+v.remarks+'</span>';
+                            html += '</td>';
+                            html += '</tr>';
+                        }
+
+                        html += '</table>';
+                    })
+                }
+                return html;
+                }
+            }
+        ]
+    });
+
+    $.CurrentDialog.find('#contentNo').html(condition.contentNo);
+    $.CurrentDialog.find('#areaName').html(condition.areaName);
+    $.CurrentDialog.find('#areaName').attr("title",condition.areaName);
+    $.CurrentDialog.find('#signinAddress').html(condition.signinAddress);
+    $.CurrentDialog.find('#signinAddress').attr("title",condition.signinAddress);
+
+
+    function seeContentRecordPic(val) {
+        $.CurrentNavtab.data('picUrls',val.split(','))
+        BJUI.dialog({
+            id: 'dialog_seeContentRecordPic',
+            url: 'html/cleaning/cleaningContent/seeContentRecordPic.html',
+            title: '查看考核记录图片',
+            width: '800',
+            height: '500',
+            mask: true,
+            maxable: false,
+            resizable: false,
+        })
+    }
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#isStandard").selectpicker('val', "");
+    });
+
+</script>
+
+<!--<div class="bjui-pageHeader " style="background-color:#fefefe;border-bottom: 1px #c3ced5 solid">-->
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentDialog.find('#findSecurityRecords_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-3">
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search"
+                            style="line-height: 18px;">开始搜索！
+                    </button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn"
+                            style="line-height: 18px;">重置
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+<!--</div>-->
+<div class="bjui-row col-2">
+    <label class="row-label">巡逻编号:</label>
+    <div class="row-input lineWidth">
+        <span id="contentNo"></span>
+    </div>
+    <label class="row-label">巡逻区域:</label>
+    <div class="row-input lineWidth">
+        <span id="areaName"></span>
+    </div>
+    <label class="row-label">签到地点:</label>
+    <div class="row-input lineWidth">
+        <span id="signinAddress"></span>
+    </div>
+</div>
+<div class="" style="top: 170px;position: absolute;bottom: 30px">
+    <table id="findSecurityRecords_datagrid" class="table table-bordered">
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<style>
+    .lineWidth{
+        word-break: keep-all;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>

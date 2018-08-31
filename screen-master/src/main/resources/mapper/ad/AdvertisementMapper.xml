@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.ad.AdvertisementMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.ad.Advertisement">
+        <id column="adId" property="adId" jdbcType="BIGINT"/>
+        <result column="authorId" property="authorId" jdbcType="VARCHAR"/>
+        <result column="adTitle" property="adTitle" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="lastModifyId" property="lastModifyId" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.betel.estatemgmt.common.model.ad.Advertisement" extends="BaseResultMap">
+        <result column="adContent" property="adContent" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    adId, authorId, adTitle, createTime, lastModifyId, updateTime
+  </sql>
+    <sql id="Blob_Column_List">
+    adContent
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from system_ad
+        where adId = #{adId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from system_ad
+    where adId = #{adId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.ad.Advertisement">
+    insert into system_ad (adId, authorId, adTitle,
+      createTime, lastModifyId, updateTime, 
+      adContent)
+    values (#{adId,jdbcType=BIGINT}, #{authorId,jdbcType=VARCHAR}, #{adTitle,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{lastModifyId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{adContent,jdbcType=LONGVARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.ad.Advertisement" useGeneratedKeys="true"
+            keyProperty="adId">
+        insert into system_ad
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adId != null">
+                adId,
+            </if>
+            <if test="authorId != null">
+                authorId,
+            </if>
+            <if test="adTitle != null">
+                adTitle,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="lastModifyId != null">
+                lastModifyId,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="adContent != null">
+                adContent,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adId != null">
+                #{adId,jdbcType=BIGINT},
+            </if>
+            <if test="authorId != null">
+                #{authorId,jdbcType=VARCHAR},
+            </if>
+            <if test="adTitle != null">
+                #{adTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifyId != null">
+                #{lastModifyId,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="adContent != null">
+                #{adContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.ad.Advertisement">
+        update system_ad
+        <set>
+            <if test="authorId != null">
+                authorId = #{authorId,jdbcType=VARCHAR},
+            </if>
+            <if test="adTitle != null">
+                adTitle = #{adTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastModifyId != null">
+                lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="adContent != null">
+                adContent = #{adContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where adId = #{adId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.ad.Advertisement">
+    update system_ad
+    set authorId = #{authorId,jdbcType=VARCHAR},
+      adTitle = #{adTitle,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where adId = #{adId,jdbcType=BIGINT}
+  </update>
+    <select id="findAllAdInfor" resultType="com.betel.estatemgmt.business.userapp.index.model.AdInfor">
+      SELECT a.adId,a.adTitle,DATE_FORMAT(a.createTime,'%Y-%m-%d') AS createTime FROM system_ad a ORDER BY a.createTime DESC
+    </select>
+
+    <select id="selAd" resultType="com.betel.estatemgmt.business.userapp.index.model.SystemAd">
+      SELECT a.adTitle,a.adContent,a.createTime FROM system_ad a WHERE a.adId = #{adId}
+    </select>
+
+    <select id="findAllAds" resultType="com.betel.estatemgmt.business.web.ad.model.AdInfo"
+            parameterType="com.betel.estatemgmt.business.web.ad.model.AdPage">
+        SELECT * FROM (SELECT
+          ad.adId, ad.adTitle,ad.createTime,
+          (SELECT adminName FROM admin_admin a WHERE a.adminId = ad.authorId ) AS userName
+          FROM system_ad ad ) aaa
+        <where>  1=1
+            <if test="adTitle != null and adTitle != ''">
+                AND aaa.adTitle like CONCAT('%',#{adTitle},'%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND aaa.userName like CONCAT('%',#{userName},'%')
+            </if>
+            <if test="startTime != null and startTime !=''">
+                AND aaa.createTime &gt;=#{startTime,jdbcType=VARCHAR}
+            </if>
+            <if test="endTime != null and endTime !=''">
+                AND aaa.createTime &lt;=#{endTime,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by aaa.createTime DESC
+    </select>
+    <delete id="deleteByAdIds" parameterType="java.lang.Long">
+        delete from system_ad
+        where adId in
+        <foreach collection="array" item="adId" open="(" separator="," close=")">
+            #{adId,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+    <select id="selectByAdId" resultType="com.betel.estatemgmt.business.web.ad.model.AdDetail"
+            parameterType="java.lang.Long">
+    select
+    adId,
+    createTime,
+    adTitle,
+    adContent
+    from system_ad ad
+    where adId = #{adId,jdbcType=BIGINT}
+  </select>
+</mapper>

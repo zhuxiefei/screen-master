@@ -1,0 +1,40 @@
+<div class="bjui-pageContent" style="overflow: visible">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <input type="hidden" id="recordId" name="recordId" data-rule="required">
+            <input type="hidden" id="status" name="status" data-rule="required">
+            <label class="row-label required" style="width: 25%;">取消原因: </label>
+            <div class="row-input"  style="width: 75%;">
+                <textarea style="resize: none; height: 120px; " placeholder="请输入取消原因(最多500个字)" data-rule="required,length(~500)"
+                          id="cancelReason" name="cancelReason"></textarea>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="cancelDecoration" class="btn-default" data-icon="save">确认提交</button></li>
+    </ul>
+</div>
+<script>
+    $.CurrentDialog.find('#recordId').val($.CurrentNavtab.data('cancelDecorationId'));
+    $.CurrentDialog.find('#status').val("4");
+
+    //提交申请
+    $.CurrentDialog.find('#cancelDecoration').click(function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/decoration/v1/doDecoration',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            okCallback: function (data) {
+                BJUI.alertmsg('ok','操作成功');
+                BJUI.dialog('closeCurrent');
+                $.CurrentNavtab.find("#j_datagrid_decoration").datagrid('filter');
+            }
+        })
+    })
+
+</script>

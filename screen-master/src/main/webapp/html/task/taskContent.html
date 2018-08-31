@@ -1,0 +1,322 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#taskContent_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add,del',
+        editMode: {
+            dialog: {
+                width: '450',
+                height: '400',
+                mask: true,
+                title: "添加任务",
+                id: 'dialog_addTask',
+                maxable: false,
+                resizable: false,
+//                beforeClose:function () {
+//                    $('div.dropdown-menu').hide();
+//                    return true;
+//                }
+            }
+        },
+        editUrl: 'html/task/content/addTask.html',
+        dataUrl: path + '/web/task/v1/findAllTasks',
+        delUrl: path + '/web/task/v1/deleteTask',
+        delPK: 'recordId',
+        delPKKey: 'recordIds',
+        delConfirm: '确定要删除选中的任务内容吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#taskContent_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'taskNo', label: '任务编号', align: 'center', width: '220', nowrap: 'true'
+            },
+            {
+                name: 'taskType',
+                label: '任务类型',
+                align: 'center',
+                width: '100',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'taskDesc', label: '任务概述', align: 'center', width: '150', render: function (value) {
+                var text;
+                if(value==""){
+                    text = "<i>暂无信息</i>";
+                }else {
+                    text = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+htmlEncode(value)+"'>"+htmlEncode(value)+"</div>";
+                }
+                return  text;
+            }
+            },
+            {name: 'closeTime', label: '截止时间', width: '170', align: 'center', nowrap: 'true'},
+            {
+                name: 'createUserName',
+                label: '发布人',
+                align: 'center',
+                width: '130',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+
+            {
+                name: 'taskStatus',
+                label: '任务状态',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '待接受';
+                    } else if (value == 2) {
+                        var html = '进行中';
+                    } else if (value == 3) {
+                        var html = '已完成';
+                    } else if (value == 4) {
+                        var html = '超时未完成';
+                    } else {
+                        var html = '已拒绝';
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'executorName',
+                label: '接受人',
+                align: 'center',
+                width: '130',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {name: 'createTime', label: '发布时间', width: '170', align: 'center', nowrap: 'true'},
+            {name: 'updateTime', label: '更新时间', width: '170', align: 'center', nowrap: 'true'},
+            {
+                name: 'taskId', label: '操作', width: '170', align: 'center', render: function (value, data) {
+                if (data.taskStatus == 1 ) {
+                    var html = '<button type="button" class="btn-blue" onclick=editTask(\"' + value + '\",\"' + data.recordId + '\")>编辑</button>'
+                            + '<button type="button" class="btn-blue" onclick=seeTask(\"' + value + '\",\"' + data.recordId + '\")>查看</button>'
+                            + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                } else {
+                    var html = '<button type="button" class="btn-blue"  disabled onclick=editTask(\"' + value + '\",\"' + data.recordId + '\")>编辑</button>'
+                            +'<button type="button" class="btn-blue" onclick=seeTask(\"' + value + '\",\"' + data.recordId + '\")>查看</button>'
+                            + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                }
+                return html;
+            }
+            }
+        ]
+    });
+
+    //查询所有的类型
+    BJUI.ajax('doajax', {
+        url: path + '/web/task/v1/findTaskTypes',
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                var data = json.data;
+                $.CurrentNavtab.find('#taskType option').not(':eq(0)').remove();
+                var html = ""
+                for (var i = 0; i < data.length; i++) {
+                    html += '<option value="' + data[i].typeId + '">' + data[i].typeName + '</option>';
+                }
+                $.CurrentNavtab.find('#taskType').append(html);
+                $.CurrentNavtab.find('#taskType').selectpicker('refresh');
+            } else {
+                successBack(json);
+            }
+        }
+    })
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#taskType").selectpicker('val', "");
+        $.CurrentNavtab.find("#taskStatus").selectpicker('val', "");
+    });
+
+    //查看
+    function seeTask(val, e) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/task/v1/findTask',
+            data: {'recordId': e, 'taskId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findTask", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeTask',
+                        url: 'html/task/content/seeTask.html',
+                        title: '查看任务内容',
+                        width: '800',
+                        height: '450',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //编辑
+    function editTask(val, e) {
+
+        BJUI.ajax('doajax', {
+            url: path + '/web/task/v1/findTask',
+            data: {'recordId': e, 'taskId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findTask", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_editTask',
+                        url: 'html/task/content/editTask.html',
+                        title: '编辑任务内容',
+                        width: '500',
+                        height: '600',
+                        mask: true,
+                        maxable: false,
+                        resizable: false,
+                        beforeClose:function () {
+//                            $('div.dropdown-menu').hide();
+                            $.CurrentDialog.find('#taskType').click();
+                            return true;
+                        },
+                        onClose:function () {
+                        },
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //操作记录
+    function repairLog_task() {
+        BJUI.dialog({
+            id: 'dialog_repairLog',
+            url: 'html/task/content/repairLog.html',
+            title: '操作记录',
+            width: '1000',
+            height: '700',
+            minable: false,
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+    }
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#taskContent_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">任务编号:</label>
+                <div class="row-input">
+                    <input type="text" id="taskNo" name="taskNo" value=""
+                           data-rule="special,length(~22)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">发布人员:</label>
+                <div class="row-input">
+                    <input type="text" id="createUserName" name="createUserName" value=""
+                           data-rule="special,length(~32)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">接受人:</label>
+                <div class="row-input">
+                    <input type="text" id="executorName" name="executorName" value="" data-rule="special,length(~32)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">更新开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">更新结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+
+                <label class="row-label">任务类型:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="taskType" name="taskType" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <label class="row-label">任务状态:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="taskStatus" name="taskStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">待接受</option>
+                        <option value="2">进行中</option>
+                        <option value="3">已完成</option>
+                        <option value="4">超时未完成</option>
+                        <!--<option value="4">已拒绝</option>-->
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search" style="line-height: 18px;">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn" style="line-height: 18px;">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <button type="button" class="btn-blue btn-prohibit" data-icon="" style=" left: 129px;" onclick=repairLog_task()>操作记录</button>
+    <table id="taskContent_datagrid" class="table table-bordered">
+    </table>
+</div>

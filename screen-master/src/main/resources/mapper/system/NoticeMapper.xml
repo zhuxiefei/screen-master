@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.system.NoticeMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.system.Notice">
+        <id column="noticeId" property="noticeId" jdbcType="BIGINT"/>
+        <result column="noticeUserId" property="noticeUserId" jdbcType="VARCHAR"/>
+        <result column="noticeContent" property="noticeContent" jdbcType="VARCHAR"/>
+        <result column="noticeStatus" property="noticeStatus" jdbcType="BIT"/>
+        <result column="noticeType" property="noticeType" jdbcType="BIT"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    noticeId, noticeUserId, noticeContent, noticeStatus, noticeType, createTime
+  </sql>
+
+    <select id="findSystemNoticeNumber" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select count(1)
+    from system_notice where noticeUserId = #{userId,jdbcType=VARCHAR}
+    and noticeStatus = 1
+    </select>
+
+    <!-- geyf 查询系统通知列表 -->
+    <select id="findAllSystemNotices" resultType="com.betel.estatemgmt.business.propertyapp.notice.model.SystemNoticeInfo" parameterType="java.lang.String">
+      select
+        noticeId, noticeStatus, noticeType, noticeContent, createTime
+      from system_notice
+      where noticeUserId = #{userId,jdbcType=VARCHAR}
+      and noticeStatus != 3
+      order by createTime desc
+    </select>
+
+    <insert id="insertNotices" useGeneratedKeys="true" keyProperty="noticeId">
+        insert into system_notice (noticeUserId, noticeContent,
+        noticeStatus, noticeType, createTime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.noticeUserId,jdbcType=VARCHAR}, #{item.noticeContent,jdbcType=VARCHAR},
+            #{item.noticeStatus,jdbcType=BIT}, #{item.noticeType,jdbcType=BIT}, #{item.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from system_notice
+        where noticeId = #{noticeId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from system_notice
+    where noticeId = #{noticeId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.system.Notice">
+    insert into system_notice (noticeId, noticeUserId, noticeContent, 
+      noticeStatus, noticeType, createTime
+      )
+    values (#{noticeId,jdbcType=BIGINT}, #{noticeUserId,jdbcType=VARCHAR}, #{noticeContent,jdbcType=VARCHAR}, 
+      #{noticeStatus,jdbcType=BIT}, #{noticeType,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.system.Notice"
+            useGeneratedKeys="true" keyProperty="noticeId">
+        insert into system_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                noticeId,
+            </if>
+            <if test="noticeUserId != null">
+                noticeUserId,
+            </if>
+            <if test="noticeContent != null">
+                noticeContent,
+            </if>
+            <if test="noticeStatus != null">
+                noticeStatus,
+            </if>
+            <if test="noticeType != null">
+                noticeType,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                #{noticeId,jdbcType=BIGINT},
+            </if>
+            <if test="noticeUserId != null">
+                #{noticeUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeContent != null">
+                #{noticeContent,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeStatus != null">
+                #{noticeStatus,jdbcType=BIT},
+            </if>
+            <if test="noticeType != null">
+                #{noticeType,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.system.Notice">
+        update system_notice
+        <set>
+            <if test="noticeUserId != null">
+                noticeUserId = #{noticeUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeContent != null">
+                noticeContent = #{noticeContent,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeStatus != null">
+                noticeStatus = #{noticeStatus,jdbcType=BIT},
+            </if>
+            <if test="noticeType != null">
+                noticeType = #{noticeType,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where noticeId = #{noticeId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.system.Notice">
+    update system_notice
+    set noticeUserId = #{noticeUserId,jdbcType=VARCHAR},
+      noticeContent = #{noticeContent,jdbcType=VARCHAR},
+      noticeStatus = #{noticeStatus,jdbcType=BIT},
+      noticeType = #{noticeType,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where noticeId = #{noticeId,jdbcType=BIGINT}
+  </update>
+
+    <insert id="addNotice" useGeneratedKeys="true" keyProperty="noticeId" parameterType="java.util.List">
+        insert into system_notice (noticeUserId, noticeContent,
+        noticeStatus, noticeType, createTime
+        )
+        values
+        <foreach collection="list" item="notice" index="index" separator=",">
+            (
+            #{notice.noticeUserId,jdbcType=VARCHAR},
+            #{notice.noticeContent,jdbcType=VARCHAR},#{notice.noticeStatus,jdbcType=BIT},
+            #{notice.noticeType,jdbcType=BIT}, #{notice.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <insert id="insertAuditNotice" useGeneratedKeys="true" keyProperty="noticeId">
+        insert into system_notice (noticeId,noticeUserId, noticeContent,
+        noticeStatus, noticeType, createTime
+        )
+        values
+        <foreach collection="list" item="notice" index="index" separator=",">
+            (#{notice.noticeId,jdbcType=BIGINT}, #{notice.noticeUserId,jdbcType=VARCHAR},
+            #{notice.noticeContent,jdbcType=VARCHAR},#{notice.noticeStatus,jdbcType=BIT},
+            #{notice.noticeType,jdbcType=BIT}, #{notice.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+</mapper>

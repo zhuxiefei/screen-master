@@ -1,0 +1,179 @@
+<script type="text/javascript">
+    var condition = $.CurrentNavtab.data("findRecords");
+    var contentId = condition.contentId;
+    $.CurrentDialog.find("#findRecords_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        dataUrl: path + '/web/cleaning/v1/findAllContentRecords',
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        postData: {
+            'contentId': contentId
+        },
+        showCheckboxcol: false,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'createTime', label: '考核时间', align: 'center', width: '170', nowrap: 'true'
+            },
+            {
+                name: 'examiner', label: '考核人员', align: 'center', width: '100', nowrap: 'true'
+            },
+            {
+                name: 'isStandard',
+                label: '是否达标',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '是';
+                    } else {
+                        var html = '否';
+                    }
+                    return html;
+                }
+            },
+
+            {name: 'problemRecord', label: '问题记录', width: '250', align: 'center', nowrap: 'true'},
+            {
+                name: 'pictureUrls', label: '保洁考核图片', width: '150', align: 'center', render: function (value,data) {
+                if(data.pictureUrls){
+                    var html = '<button type="button" class="btn-blue" onclick=seeContentRecordPic(\"' + data.pictureUrls + '\")>查看</button>';
+                }else{
+                    var html='<i>未上传图片</i>'
+                }
+                return html;
+            }
+            }
+        ]
+    });
+
+    $.CurrentDialog.find('#contentNo').html(condition.contentNo);
+    $.CurrentDialog.find('#areaName').html(condition.areaName).attr('title',condition.areaName);
+    $.CurrentDialog.find('#typeName').html(condition.typeName).attr('title',condition.typeName);
+    $.CurrentDialog.find('#location').html(condition.location).attr('title',condition.location);
+    if (condition.cycle == 1) {
+        var html = '每小时保洁';
+    } else if (condition.cycle == 2) {
+        var html = '每半天保洁';
+    } else if (condition.cycle == 3) {
+        var html = '每日保洁';
+    } else if (condition.cycle == 4) {
+        var html = '每周保洁';
+    } else {
+        var html = '每月保洁';
+    }
+    $.CurrentDialog.find('#cycle').html(html).attr('title',html);
+
+    function seeContentRecordPic(val) {
+        $.CurrentNavtab.data('picUrls',val.split(','))
+        BJUI.dialog({
+            id: 'dialog_seeContentRecordPic',
+            url: 'html/cleaning/cleaningContent/seeContentRecordPic.html',
+            title: '查看考核记录图片',
+            width: '800',
+            height: '500',
+            mask: true,
+            maxable: false,
+            resizable: false,
+        })
+    }
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#isStandard").selectpicker('val', "");
+    });
+
+</script>
+
+<!--<div class="bjui-pageHeader " style="background-color:#fefefe;border-bottom: 1px #c3ced5 solid">-->
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentDialog.find('#findRecords_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+                <label class="row-label">是否达标:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="isStandard" name="isStandard" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="2">否</option>
+                    </select>
+                </div>
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search"
+                            style="line-height: 18px;">开始搜索！
+                    </button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn"
+                            style="line-height: 18px;">重置
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+<!--</div>-->
+<div class="bjui-row col-2">
+    <label class="row-label">保洁编号:</label>
+    <div class="row-input lineWidth">
+        <span id="contentNo"></span>
+    </div>
+    <label class="row-label">保洁区域:</label>
+    <div class="row-input lineWidth">
+        <span id="areaName"></span>
+    </div>
+    <label class="row-label">保洁类型:</label>
+    <div class="row-input lineWidth">
+        <span id="typeName"></span>
+    </div>
+    <label class="row-label">所在位置:</label>
+    <div class="row-input lineWidth">
+        <span id="location"></span>
+    </div>
+    <label class="row-label">保洁周期:</label>
+    <div class="row-input lineWidth">
+        <span id="cycle"></span>
+    </div>
+</div>
+<div class="" style="top: 225px;position: absolute;bottom: 30px">
+    <table id="findRecords_datagrid" class="table table-bordered">
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<style>
+    .lineWidth{
+        word-break: keep-all;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>

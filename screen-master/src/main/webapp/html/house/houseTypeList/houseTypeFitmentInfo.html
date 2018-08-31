@@ -1,0 +1,169 @@
+<div class="bjui-pageContent">
+    <form>
+        <input type="hidden" id="materialId" name="materialId">
+        <table class="patrolDetail" id="divAddParameter">
+            <tr>
+                <td class="td_left">材料名称:</td>
+                <td class="td_right" id="materialName"></td>
+                <td class="td_left">类别: </td>
+                <td class="td_right" id="materialType"></td>
+            </tr>
+            <tr>
+                <td class="td_left" rowspan="6">图片:</td>
+                <td class="td_right divUserUploadImage" id="activity_detail_info" rowspan="6">
+                    <!--<img src="images/no_image.png" width="80" />-->
+                </td>
+                <td class="td_left">品牌:</td>
+                <td class="td_right" id="materialBrand"></td>
+            </tr>
+            <tr>
+                <td class="td_left">型号: </td>
+                <td class="td_right" id="materialModel"></td>
+            </tr>
+            <tr>
+                <td class="td_left">规格:</td>
+                <td class="td_right" id="materialSpecification"></td>
+            </tr>
+            <tr>
+                <td class="td_left">产地: </td>
+                <td class="td_right" id="materialOrigin"></td>
+            </tr>
+            <tr>
+                <td class="td_left">生产日期:</td>
+                <td class="td_right" id="materialProduceDate"></td>
+            </tr>
+            <tr>
+                <td class="td_left">截止日期: </td>
+                <td class="td_right" id="materialWarrantyDate"></td>
+            </tr>
+        </table>
+        <!--<div class="bjui-row col-1 houseTypeFitmentInfo">
+            <input type="hidden" id="materialId" name="materialId">
+            <label class="row-label">类别:</label>
+            <div class="row-input">
+                <span id="materialType"></span>
+            </div>
+            <label class="row-label divUserName">材料名称:</label>
+            <div class="row-input">
+                <span id="materialName"></span>
+            </div>
+            <label class="row-label">图片:</label>
+            <div class="row-input divUserUploadImage">
+                <img src="images/no_image.png" width="80" />
+            </div>
+            <label class="row-label">品牌:</label>
+            <div class="row-input">
+                <span id="materialBrand"></span>
+            </div>
+            <label class="row-label">型号:</label>
+            <div class="row-input">
+                <span id="materialModel"></span>
+            </div>
+            <label class="row-label">规格:</label>
+            <div class="row-input">
+                <span id="materialSpecification"></span>
+            </div>
+            <label class="row-label">产地:</label>
+            <div class="row-input">
+                <span id="materialOrigin"></span>
+            </div>
+            <label class="row-label">生产日期:</label>
+            <div class="row-input">
+                <span id="materialProduceDate"><i>暂无信息</i></span>
+            </div>
+            <label class="row-label">截止日期:</label>
+            <div class="row-input">
+                <span id="materialWarrantyDate"><i>暂无信息</i></span>
+            </div>
+            <div id="divAddParameter"></div>
+
+        </div>-->
+    </form>
+</div>
+
+<script>
+    $(function() {
+        var fitmentData = $.CurrentNavtab.data('fitmentCheckInfo');
+        console.log(fitmentData)
+        $.CurrentDialog.find("#materialId").html(fitmentData.materialId);
+        $.CurrentDialog.find("#materialType").html(fitmentData.materialType);
+        $.CurrentDialog.find("#materialName").html(fitmentData.materialName);
+        var imgUrl ="";
+        var imgHtml = '';
+        if(fitmentData.materialPicUrl == ""){
+            //imgUrl = "images/no_image.png";
+            imgHtml = '<img src="images/no_image.png"  width="80" />';
+        }else{
+            //imgUrl = fitmentData.materialPicUrl;
+            imgHtml = '<li  style="width: 80%;/*height:49%*/ " ><a class="" href="' + fitmentData.materialPicUrl + '" ><img style="max-width: 100%; max-height: 180px;" src="' + fitmentData.materialPicUrl + '" /></a></li>';
+        }
+        //$.CurrentDialog.find(".divUserUploadImage img").attr("src",imgUrl);
+        $.CurrentDialog.find(".divUserUploadImage").html(imgHtml);
+        var materialBrand ="";
+        if(fitmentData.materialBrand == ""){
+            materialBrand = "<i>暂无信息</i>";
+        }else{
+            materialBrand = fitmentData.materialBrand;
+        }
+        $.CurrentDialog.find("#materialBrand").html(materialBrand);
+        var materialModel ="";
+        if(fitmentData.materialModel == ""){
+            materialModel = "<i>暂无信息</i>";
+        }else{
+            materialModel = fitmentData.materialModel;
+        }
+        $.CurrentDialog.find("#materialModel").html(materialModel);
+        var materialSpecification ="";
+        if(fitmentData.materialSpecification == ""){
+            materialSpecification = "<i>暂无信息</i>";
+        }else{
+            materialSpecification = fitmentData.materialSpecification;
+        }
+        $.CurrentDialog.find("#materialSpecification").html(materialSpecification);
+        var materialOrigin ="";
+        if(fitmentData.materialOrigin == ""){
+            materialOrigin = "<i>暂无信息</i>";
+        }else{
+            materialOrigin = fitmentData.materialOrigin;
+        }
+        $.CurrentDialog.find("#materialOrigin").html(materialOrigin);
+        var materialProduceDate ="";
+        if(fitmentData.materialProduceDate == ""){
+            materialProduceDate = "<i>暂无信息</i>";
+        }else{
+            materialProduceDate = fitmentData.materialProduceDate.substring(0,10);
+        }
+        $.CurrentDialog.find("#materialProduceDate").html(materialProduceDate);
+        var materialWarrantyDate ="";
+        if(fitmentData.materialWarrantyDate == ""){
+            materialWarrantyDate = "<i>暂无信息</i>";
+        }else{
+            materialWarrantyDate = fitmentData.materialWarrantyDate.substring(0,10);
+        }
+        $.CurrentDialog.find("#materialWarrantyDate").html(materialWarrantyDate);
+
+        if(fitmentData.houseMaterialParms.length > 0){
+            var html = '<tr>';
+            console.log(fitmentData.houseMaterialParms.length)
+            $.each(fitmentData.houseMaterialParms, function (s, v) {
+                //var html = '<div class="divLabel"><label class="row-label"><span id="parmName_'+s+'">'+v.parmName+':</span></label><div class="row-input"><span id="parmContent_'+s+'">'+v.parmContent+'</span></div></div>';
+                //$.CurrentDialog.find("#divAddParameter").append(html);
+
+                html += '<td class="td_left" id="parmName_'+s+'">'+v.parmName+'</td><td class="td_right" id="parmContent_'+s+'">'+v.parmContent+'</td>';
+                if(fitmentData.houseMaterialParms.length == (s+1) && (s+1)%2 != 0){
+                    html += '<td class="td_left"></td><td class="td_right"></td>';
+                }
+                if((s+1)%2 == 0 ) {
+                    html += '</tr><tr>';
+                }
+            })
+            html += '</tr>';
+            $.CurrentDialog.find("#divAddParameter").append(html);
+        }
+
+    });
+
+    $.CurrentDialog.find("#activity_detail_info").each(function () {
+        $(this).find("a").touchTouch();
+    });
+</script>

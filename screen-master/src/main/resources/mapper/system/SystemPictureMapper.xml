@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.system.SystemPictureMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.system.SystemPicture" >
+    <id column="pictureId" property="pictureId" jdbcType="VARCHAR" />
+    <result column="pictureName" property="pictureName" jdbcType="VARCHAR" />
+    <result column="pictureUrl" property="pictureUrl" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pictureId, pictureName, pictureUrl, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from system_picture
+    where pictureId = #{pictureId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from system_picture
+    where pictureId = #{pictureId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.system.SystemPicture" >
+    insert into system_picture (pictureId, pictureName, pictureUrl, 
+      createTime)
+    values (#{pictureId,jdbcType=VARCHAR}, #{pictureName,jdbcType=VARCHAR}, #{pictureUrl,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.system.SystemPicture">
+    <selectKey keyProperty="pictureId" resultType="String" order="BEFORE">
+      select uuid()
+    </selectKey>
+    insert into system_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      pictureId,
+      <if test="pictureName != null" >
+        pictureName,
+      </if>
+      <if test="pictureUrl != null" >
+        pictureUrl,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{pictureId},
+      <if test="pictureName != null" >
+        #{pictureName,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureUrl != null" >
+        #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.system.SystemPicture" >
+    update system_picture
+    <set >
+      <if test="pictureName != null" >
+        pictureName = #{pictureName,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureUrl != null" >
+        pictureUrl = #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where pictureId = #{pictureId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.system.SystemPicture" >
+    update system_picture
+    set pictureName = #{pictureName,jdbcType=VARCHAR},
+      pictureUrl = #{pictureUrl,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where pictureId = #{pictureId,jdbcType=VARCHAR}
+  </update>
+
+  <insert id="savePictures" parameterType="java.util.List">
+    insert into system_picture (pictureId,pictureName, pictureUrl,
+    createTime) values
+    <foreach collection="list" item="picture"  separator="," index="index">
+      (
+      #{picture.pictureId},
+      #{picture.pictureName,jdbcType=VARCHAR},
+      #{picture.pictureUrl,jdbcType=VARCHAR},
+      #{picture.createTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+  </insert>
+    <!--删除巡检记录图片 jians.z-->
+    <delete id="deleteSysPicByIds">
+        DELETE FROM system_picture WHERE pictureId IN
+        <foreach collection="list" index="index" item="pictureId" open="(" close=")" separator=",">
+            #{pictureId}
+        </foreach>
+    </delete>
+  <select id="findSysPicByIds" resultType="com.betel.estatemgmt.common.model.system.SystemPicture">
+    SELECT * FROM  system_picture WHERE pictureId IN
+    <foreach collection="list" index="index" item="pictureId" open="(" close=")" separator=",">
+      #{pictureId}
+    </foreach>
+  </select>
+</mapper>

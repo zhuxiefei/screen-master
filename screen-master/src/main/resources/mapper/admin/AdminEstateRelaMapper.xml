@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.admin.AdminEstateRelaMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.admin.AdminEstateRela" >
+    <id column="adminId" property="adminId" jdbcType="VARCHAR" />
+    <id column="estateId" property="estateId" jdbcType="VARCHAR" />
+    <result column="roleId" property="roleId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="isEnableAccount" property="isEnableAccount" jdbcType="BIT"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    adminId, estateId, roleId, createTime,isEnableAccount
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.betel.estatemgmt.common.model.admin.AdminEstateRelaKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_estate_rela
+    where adminId = #{adminId,jdbcType=VARCHAR}
+      and estateId = #{estateId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.AdminEstateRelaKey" >
+    delete from admin_estate_rela
+    where adminId = #{adminId,jdbcType=VARCHAR}
+      and estateId = #{estateId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.admin.AdminEstateRela" >
+    insert into admin_estate_rela (adminId, estateId, roleId, 
+      createTime,isEnableAccount)
+    values (#{adminId,jdbcType=VARCHAR}, #{estateId,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{isEnableAccount,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminEstateRela" >
+    insert into admin_estate_rela
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adminId != null" >
+        adminId,
+      </if>
+      <if test="estateId != null" >
+        estateId,
+      </if>
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="isEnableAccount != null" >
+        isEnableAccount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adminId != null" >
+        #{adminId,jdbcType=VARCHAR},
+      </if>
+      <if test="estateId != null" >
+        #{estateId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEnableAccount != null" >
+        #{isEnableAccount,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminEstateRela" >
+    update admin_estate_rela
+    <set >
+      <if test="roleId != null" >
+        roleId = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEnableAccount != null" >
+        isEnableAccount = #{isEnableAccount,jdbcType=BIT},
+      </if>
+    </set>
+    where adminId = #{adminId,jdbcType=VARCHAR}
+      and estateId = #{estateId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.AdminEstateRela" >
+    update admin_estate_rela
+    set roleId = #{roleId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      isEnableAccount = #{isEnableAccount,jdbcType=BIT}
+    where adminId = #{adminId,jdbcType=VARCHAR}
+      and estateId = #{estateId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByAdminId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.estate.Estate">
+    SELECT e.* FROM estate_estate e
+    LEFT JOIN admin_estate_rela r ON r.estateId = e.estateId
+    WHERE r.adminId = #{adminId}
+  </select>
+
+  <delete id="deleteByAdminIdsAndEstateId">
+    DELETE FROM admin_estate_rela
+    WHERE estateId = #{estateId}
+    AND adminId IN
+    <foreach collection="adminIds" item="adminId" open="(" separator="," close=")">
+      #{adminId}
+    </foreach>
+  </delete>
+</mapper>

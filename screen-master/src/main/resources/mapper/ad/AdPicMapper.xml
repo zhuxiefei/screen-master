@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.ad.AdPicMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.ad.AdPic" >
+    <id column="apId" property="apId" jdbcType="BIGINT" />
+    <result column="adId" property="adId" jdbcType="BIGINT" />
+    <result column="pictureId" property="pictureId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    apId, adId, pictureId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from system_ad_picture
+    where apId = #{apId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from system_ad_picture
+    where apId = #{apId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.ad.AdPic" >
+    insert into system_ad_picture (apId, adId, pictureId, 
+      createTime)
+    values (#{apId,jdbcType=BIGINT}, #{adId,jdbcType=BIGINT}, #{pictureId,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.ad.AdPic" >
+    insert into system_ad_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="apId != null" >
+        apId,
+      </if>
+      <if test="adId != null" >
+        adId,
+      </if>
+      <if test="pictureId != null" >
+        pictureId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="apId != null" >
+        #{apId,jdbcType=BIGINT},
+      </if>
+      <if test="adId != null" >
+        #{adId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureId != null" >
+        #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.ad.AdPic" >
+    update system_ad_picture
+    <set >
+      <if test="adId != null" >
+        adId = #{adId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureId != null" >
+        pictureId = #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where apId = #{apId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.ad.AdPic" >
+    update system_ad_picture
+    set adId = #{adId,jdbcType=BIGINT},
+      pictureId = #{pictureId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where apId = #{apId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByAdId" resultType="com.betel.estatemgmt.common.model.ad.AdPic" parameterType="java.lang.Long">
+    select
+    apId,adId,pictureId,createTime
+    from system_ad_picture
+    where adId=#{adId,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insertList" parameterType="java.util.List">
+    insert into system_ad_picture (adId, pictureId,
+    createTime)
+    values
+    <foreach collection ="list" item="adPic" index= "index" separator =",">
+      (
+      #{adPic.adId},
+      #{adPic.pictureId},
+      #{adPic.createTime}
+      )
+    </foreach >
+  </insert>
+
+  <delete id="deleteList" parameterType="java.util.List">
+    delete from system_ad_picture
+    where adId IN
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,229 @@
+<div class="bjui-pageContent">
+    <form>
+        <div class="bjui-row col-1">
+            <label class="row-label divUserName" style=" width: 20%;">户型名称:</label>
+            <div class="row-input required" style=" width: 80%;">
+                <input type="text" id="typeName" name="typeName" value="" data-rule="required,special,length(~10)"/>
+            </div>
+            <label class="row-label divUserName" style=" width: 20%;">功能区域:</label>
+            <div class="row-input" style=" width: 80%;">自定义功能区域，如（卧室、厨房等）<a href="javascript:void(0);"
+                                                                            class="btn btn-blue" id="a_addFunction"
+                                                                            style=" margin-left: 10px;">添加</a></div>
+            <div class="row-input" style=" width: 100%; padding-right: 0;" id="divFunctions">
+
+            </div>
+        </div>
+    </form>
+
+    <div class="error_area" style="display: none">
+        <div class="error">
+            <div class="error_Inner"><h1><i class="fa fa-times-circle"></i>错误提示</h1>
+                <div class="error_msg">功能区域名称不能为”所有”和”全户型”</div>
+            </div>
+            <div class="error_area_tool clearfix">
+                <ul>
+                    <li>
+                        <button class="btn error_area_btn" rel="" type="button"><i class="fa fa-close"></i> 确定</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="btn-add-houseType">确认新建</button>
+        </li>
+    </ul>
+</div>
+<style>
+    .error_area {
+        top: 50%;
+        margin-top: -46.5px;
+        position: absolute;
+        left: 50%;
+        z-index: 1011;
+        display: block;
+        margin-left: -175px;
+        padding: 0px;
+        width: 350px;
+        height: 93px;
+        /*background: #FFF;*/
+        /*background: rgba(255, 255, 255, 0.8);*/
+        border: 1px #DDD solid;
+        border-radius: 3px;
+        box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    }
+
+    .error_Inner {
+        border-color: #FF0000;
+        display: block;
+        text-indent: 2px;
+        text-align: left;
+        border-radius: 3px;
+    }
+
+    .error_Inner > h1 {
+        color: #FF0000;
+        background-color: #FFE4E4;
+        border-bottom: 1px #FD7F7F solid;
+        display: block;
+        margin: 0;
+        padding: 3px 0 0 10px;
+        height: 26px;
+        overflow: hidden;
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .fa-times-circle:before {
+        content: "\f057";
+    }
+
+    .error_msg {
+        border-top: 1px #fefefe solid;
+        padding: 8px;
+        max-height: 200px;
+        overflow: auto;
+        font-size: 14px;
+        line-height: 1.4em;
+        word-wrap: break-word;
+        word-break: normal;
+        background-color: #fff;
+    }
+
+    .error_area_tool {
+        display: block;
+        padding: 2px 5px;
+        text-align: right;
+        background-color: #f9f9f9;
+        border-top: 1px #f1f1f1 solid;
+    }
+
+    .error_area_tool > ul {
+        float: right;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .error_area_tool > ul > li {
+        float: left;
+    }
+
+    .error_area_btn {
+        color: #FF0000;
+        border-color: #FF0000;
+        margin-left: 15px;
+        background-color: #fff;
+    }
+</style>
+<script>
+    $.CurrentDialog.find('.error_area_btn').mouseover(function () {
+        $.CurrentDialog.find('.error_area_btn').css({
+            'color': '#fff',
+            'background-color': '#FF0000',
+        })
+    }).mouseout(function () {
+        $.CurrentDialog.find('.error_area_btn').css({
+            'color': '#FF0000',
+            'background-color': '#fff',
+        })
+    }).click(function () {
+        $.CurrentDialog.find('.error_area').hide();
+        return;
+    })
+    $(function () {
+        var count = 0;
+        $.CurrentDialog.find("#a_addFunction").click(function () {
+            if ($.CurrentDialog.find("#typeName").val().trim() == "") {
+                addHouseType();
+            } else {     //户型名称不为空，才会出现输入功能区域的框
+                count++;
+                var inputSize = $.CurrentDialog.find("#divFunctions input").size();
+                if (inputSize == 0) {
+                    var html = '<div class="divLabel divLabel2" style="float: left;"><input type="text" id="functionNames' + count + '" name="functionNames" value="" data-rule="required,special,length(~10)" placeholder="请输入功能区域名称"  /><a href="javascript:void(0);" class="btn btn-red  a_delParameter"><b>X</b></a></div>';
+                    $.CurrentDialog.find("#divFunctions").append(html);
+                } else {
+                    var a = 0;
+                    var b = 0;
+                    $.CurrentDialog.find("#divFunctions input").each(function () {
+                        if ($(this).val().trim() == "") {
+                            a++;
+                        } else {
+                            b++;
+                        }
+                    })
+                    if (b == inputSize) {
+                        var html = '<div class="divLabel divLabel2" style="float: left;"><input type="text" id="functionNames' + count + '" name="functionNames" value="" data-rule="required,special,length(~10)" placeholder="请输入功能区域名称"  /><a href="javascript:void(0);" class="btn btn-red  a_delParameter"><b>X</b></a></div>';
+                        $.CurrentDialog.find("#divFunctions").append(html);
+                    } else {
+                        addHouseType();   //调用验证
+                    }
+                }
+            }
+        });
+
+        //删除自定义参数
+        $.CurrentDialog.find("#divFunctions").delegate(".a_delParameter", "click", function (event) {
+            $(event.currentTarget).parents(".divLabel").remove();
+        });
+
+        //新增
+        $.CurrentDialog.find("#btn-add-houseType").click(function () {
+            var inputSize = $.CurrentDialog.find("#divFunctions input[name='functionNames']").size();
+            if (inputSize == 0) {
+                addHouseType();
+            } else {
+                var ary = [];
+                $.CurrentDialog.find("#divFunctions input[name='functionNames']").each(function () {
+                    ary.push($(this).val().trim());
+                });
+                var nary = ary.sort();
+                var condition_addHouseType=1;
+                for (var i = 0; i < ary.length; i++) {
+                    if (nary[i] == nary[i + 1]) {
+                        //alert("数组重复内容："+nary[i]);
+                        BJUI.alertmsg('error', "功能区域名称不能重复");
+                        condition_addHouseType=0
+                        break;
+                    } else if (nary[i] == "所有") {
+                        $.CurrentDialog.find('.error_area').show();
+                        condition_addHouseType=0
+                        break
+                    } else if (nary[i] == "全户型") {
+                        $.CurrentDialog.find('.error_area').show();
+                        condition_addHouseType=0
+                        break
+                    } else {
+
+                    }
+                }
+                if(condition_addHouseType){
+                    addHouseType();
+                }
+            }
+        });
+
+        function addHouseType() {
+            BJUI.ajax('ajaxform', {
+                url: path + '/web/houseType/v1/addHouseType',
+                form: $.CurrentDialog.find('form'),
+                validate: true,     //是否验证
+                loadingmask: false,    // ajax请求时是否显示数据加载遮罩
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        BJUI.dialog('close', 'dialog_houseTypeAdd');
+                        $.CurrentNavtab.find('#datagrid_typelist').datagrid('refresh', true)
+                    }
+                    successBack(json);
+                }
+            })
+        }
+
+    });
+
+</script>

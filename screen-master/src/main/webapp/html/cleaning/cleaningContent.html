@@ -1,0 +1,304 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#cleaningContent_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add,del',
+        editMode: {
+            dialog: {
+                width: '450',
+                height: '300',
+                mask: true,
+                title: "添加保洁内容",
+                id: 'dialog_addCleaningContent',
+                maxable: false,
+                resizable: false,
+            }
+        },
+        editUrl: 'html/cleaning/cleaningContent/addCleaningContent.html',
+        dataUrl: path + '/web/cleaning/v1/findAllContent',
+        delUrl: path + '/web/cleaning/v1/deleteContent',
+        delPK: 'contentId',
+        delPKKey: 'contentId',
+        delConfirm: '确定要删除选中的保洁内容吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#cleaningContent_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'contentNo', label: '保洁编号', align: 'center', width: '220', nowrap: 'true'
+            },
+            {
+                name: 'areaName',
+                label: '保洁区域',
+                align: 'center',
+                width: '100',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'typeName',
+                label: '保洁类型',
+                align: 'center',
+                width: '100',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'location', label: '所在位置', align: 'center', width: '150',nowrap: 'true',
+            },
+            {
+                name: 'cycle',
+                label: '保洁周期',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '每小时保洁';
+                    } else if (value == 2) {
+                        var html = '每半天保洁';
+                    } else if (value == 3) {
+                        var html = '每日保洁';
+                    } else if (value == 4) {
+                        var html = '每周保洁';
+                    }else{
+                        var html = '每月保洁';
+                    }
+                    return html;
+                }
+            },
+
+            {name: 'createTime', label: '创建时间', width: '170', align: 'center', nowrap: 'true'},
+            {
+                name: 'contentId', label: '操作', width: '250', align: 'center', render: function (value, data) {
+                    var html = '<button type="button" class="btn-blue" onclick=editCleaningContent(\"' + value + '\",\"' + data.areaId + '\")>编辑</button>'
+                            + '<button type="button" class="btn-blue" onclick=seeCleaningContent(\"' + value + '\",\"' + data.areaId + '\")>查看</button>'
+                            + '<button type="button" class="btn-blue" onclick=findContentRecord(\"' + value + '\",\"' + data.areaId + '\")>考核记录</button>'
+                            + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                return html;
+            }
+            }
+        ]
+    });
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#cycle").selectpicker('val', "");
+    });
+
+    //查看
+    function seeCleaningContent(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/cleaning/v1/findContent',
+            data: {'contentId': val},
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findContent", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeCleaningContent',
+                        url: 'html/cleaning/cleaningContent/seeCleaningContent.html',
+                        title: '查看保洁内容',
+                        width: '500',
+                        height: '450',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //编辑
+    function editCleaningContent(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/cleaning/v1/findContent',
+            data: {'contentId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findContent", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_editCleaningContent',
+                        url: 'html/cleaning/cleaningContent/editCleaningContent.html',
+                        title: '编辑保洁内容',
+                        width: '450',
+                        height: '330',
+                        mask: true,
+                        maxable: false,
+                        resizable: false,
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //考核记录
+    function findContentRecord(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/cleaning/v1/findContent',
+            data: {'contentId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findRecords", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_findRecords',
+                        url: 'html/cleaning/cleaningContent/findRecords.html',
+                        title: '考核记录',
+                        width: '850',
+                        height: '600',
+                        mask: true,
+                        maxable: false,
+                        resizable: false,
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    var option={
+        "parentUrl": "/web/cleaning/v1/findAreas",
+        "childUrl": "/web/cleaning/v1/findTypes",
+        "parentParam": "",
+        "childParam": 'areaId',
+        "parentName": "areaName",
+        "childName": "typeName",
+        "id": "zdTree_cleaningContent",
+        "parentID": "areaId",
+        "childID": "typeId",
+        "depth": 2,
+        "checkbox": true,
+        "checkCallBack":function (value) {
+            var cycle=$.CurrentNavtab.find('#cycle').val();
+            var startTime=$.CurrentNavtab.find('#startTime').val();
+            var endTime=$.CurrentNavtab.find('#endTime').val();
+            var contentNo=$.CurrentNavtab.find('#contentNo').val();
+            var location=$.CurrentNavtab.find('#location').val();
+            if(value.areaId){
+                var areaId=value.areaId;
+            }else{
+                var areaId=null;
+            }
+            if(value.typeId){
+                var typeId=value.typeId;
+            }else{
+                var typeId=null;
+            }
+            var data={
+                'cycle':cycle,
+                'startTime':startTime,
+                'endTime':endTime,
+                'contentNo':contentNo,
+                'location':location,
+                'areaId':areaId,
+                'typeId':typeId,
+            }
+            $.CurrentNavtab.find('#cleaningContent_datagrid').datagrid('filter',data);
+        }
+    };
+
+    zdTree(option);
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#cleaningContent_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">保洁编号:</label>
+                <div class="row-input">
+                    <input type="text" id="contentNo" name="contentNo" value=""
+                           data-rule="special,length(~16)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">所在位置:</label>
+                <div class="row-input">
+                    <input type="text" id="location" name="location" value=""
+                           data-rule="special,length(~50)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+                <label class="row-label">保洁周期:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="cycle" name="cycle" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">每小时保洁</option>
+                        <option value="2">每半天保洁</option>
+                        <option value="3">每日保洁</option>
+                        <option value="4">每周保洁</option>
+                        <option value="4">每月保洁</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search" style="line-height: 18px;">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn" style="line-height: 18px;">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto">
+    <ul class="ztree zdTree" id="zdTree_cleaningContent"></ul>
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <table id="cleaningContent_datagrid" class="table table-bordered">
+    </table>
+</div>

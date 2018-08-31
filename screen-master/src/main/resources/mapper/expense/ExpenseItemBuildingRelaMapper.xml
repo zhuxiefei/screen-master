@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.expense.ExpenseItemBuildingRelaMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    <id column="ibId" property="ibId" jdbcType="BIGINT" />
+    <result column="itemId" property="itemId" jdbcType="BIGINT" />
+    <result column="buildingId" property="buildingId" jdbcType="BIGINT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ibId, itemId, buildingId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from expense_item_building_rela
+    where ibId = #{ibId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from expense_item_building_rela
+    where ibId = #{ibId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    insert into expense_item_building_rela (ibId, itemId, buildingId, 
+      createTime)
+    values (#{ibId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{buildingId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    insert into expense_item_building_rela
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ibId != null" >
+        ibId,
+      </if>
+      <if test="itemId != null" >
+        itemId,
+      </if>
+      <if test="buildingId != null" >
+        buildingId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ibId != null" >
+        #{ibId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="buildingId != null" >
+        #{buildingId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    update expense_item_building_rela
+    <set >
+      <if test="itemId != null" >
+        itemId = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="buildingId != null" >
+        buildingId = #{buildingId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ibId = #{ibId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    update expense_item_building_rela
+    set itemId = #{itemId,jdbcType=BIGINT},
+      buildingId = #{buildingId,jdbcType=BIGINT},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where ibId = #{ibId,jdbcType=BIGINT}
+  </update>
+  <select id="findItemAndBuildingsByItemType" parameterType="java.lang.String" resultType="java.util.HashMap">
+--    查询收费项目和楼宇已经建立的关系数据（默认所有的楼宇都是存在房屋信息）
+   SELECT ei.itemId,ei.itemType,ei.itemName,hb.buildingId,hb.buildingName,eibr.ibId
+    FROM expense_item_building_rela eibr,expense_item ei,house_building hb
+    WHERE eibr.itemId=ei.itemId AND eibr.buildingId=hb.buildingId
+    AND ei.itemType=(SELECT itemType FROM expense_item item WHERE item.itemId=#{itemId})
+  </select>
+
+  <!--判断该小区的楼宇和别墅是否已经应用了该类型（物业/公摊水电费）的收费项目-->
+  <select id="findBuildApplicateAssignTypeItemByItemId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela">
+    --    判断该小区的楼宇和别墅是否已经应用了该类型（物业/公摊水电费）的收费项目
+    SELECT ei.itemId,ei.itemType,ei.itemName,eibr.ibId,eibr.itemId
+    FROM expense_item_building_rela eibr,expense_item ei
+    WHERE eibr.itemId=ei.itemId
+    AND ei.itemType=(SELECT itemType FROM expense_item item WHERE item.itemId=#{itemId})
+  </select>
+  <select id="findVilla" resultType="com.betel.estatemgmt.common.model.house.House">
+--     查询别墅
+    SELECT * FROM  house_house hh WHERE  hh.buildingId is NULL and unitId is NULL
+  </select>
+  <select id="findHouseBuildings" resultType="com.betel.estatemgmt.common.model.house.Building">
+-- 查询普通的楼宇
+    SELECT hb.buildingId,hb.buildingName FROM  house_building hb
+  </select>
+  <select id="findBatchOfJHBuilding" resultType="com.betel.estatemgmt.common.model.house.Building">
+    -- 查询普通的楼宇
+    SELECT
+    hb.buildingId,
+    hb.buildingName
+    FROM
+    house_building hb WHERE  hb.buildingId IN
+    <foreach collection="list" index="index" item="buildingId"  open="(" separator="," close=")">
+      #{buildingId}
+    </foreach>
+  </select>
+  <insert id="actionChargesItemToAllBuildings">
+    insert into expense_item_building_rela (itemId, buildingId,
+    createTime)
+    VALUES
+    <foreach collection="list" item="expenseItemBuildingRela" index="index" separator="," >
+      (#{expenseItemBuildingRela.itemId},#{expenseItemBuildingRela.buildingId},#{expenseItemBuildingRela.createTime})
+    </foreach>
+  </insert>
+  <select id="findItemBuildingByBuildingIds" parameterType="com.betel.estatemgmt.business.web.charges.model.ItemBuildReq" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    SELECT eibr.* FROM  expense_item_building_rela eibr,expense_item ei WHERE ei.itemId=#{itemId} and ei.itemId=eibr.itemId and eibr.buildingId IN
+    <foreach collection="buildingIds" index="index" item="buildingId"  open="(" separator="," close=")">
+      #{buildingId}
+    </foreach>
+  </select>
+  <select id="findExpenseItemnBuildingRelaByBuildingIds" parameterType="com.betel.estatemgmt.business.web.charges.model.ItemBuildReq" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela" >
+    SELECT * FROM (SELECT
+    eibr.ibId,eibr.itemId,IFNULL(eibr.buildingId,'0') AS buildingId,eibr.createTime
+    FROM
+    expense_item_building_rela eibr,
+    expense_item ei
+    WHERE
+    ei.itemType = (SELECT itemType FROM expense_item WHERE itemId = #{itemId})
+    and ei.itemId=eibr.itemId) aaa
+    WHERE aaa.buildingId IN
+    <foreach collection="buildingIds" index="index" item="buildingId"  open="(" separator="," close=")">
+      #{buildingId}
+    </foreach>
+  </select>
+  <select id="selectItemBuildingRelaByItemId" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela">
+--    jian.z  应用全部楼宇的时候点击一次再点击报错：该收费项目已经应用了全部楼宇，不能再应用所有楼宇
+    SELECT * FROM expense_item_building_rela WHERE  itemId=#{itemId}
+  </select>
+  <select id="selectBuildingIdByItemId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    SELECT buildingId FROM expense_item_building_rela WHERE itemId = #{itemId}
+  </select>
+  <select id="findBatchBuilding" resultType="com.betel.estatemgmt.common.model.house.Building">
+--     查询激活时选中的楼宇是否存在
+    SELECT
+    hh.houseId,hh.houseNum,hh.houseDesc,IFNULL(hh.buildingId,'0') AS buildingId,IFNULL(hb.buildingName,'其他（别墅群）') AS buildingName
+    FROM house_house hh LEFT JOIN house_building hb ON hh.buildingId=hb.buildingId where hh.buildingId IN
+    <foreach collection="list" index="index" item="buildingId"  open="(" separator="," close=")">
+      #{buildingId}
+    </foreach>
+  </select>
+<select id="findfiltrateBuilding" resultType="com.betel.estatemgmt.common.model.house.Building" parameterType="java.lang.String">
+--   查询已经应用某类型的收费项目的楼宇（需要屏蔽的）和别墅
+     SELECT * FROM (SELECT
+        eibr.itemId,
+        ei.itemType,
+        ei.itemName,
+        eibr.ibId,
+        IFNULL(eibr.buildingId, '0') AS buildingId,
+        IFNULL(hb.buildingName, '其他') AS buildingName,
+        IFNULL(hb.buildingDesc, '') AS buildingDesc
+    FROM
+	expense_item ei INNER JOIN
+	expense_item_building_rela eibr
+    ON
+	ei.itemId = eibr.itemId LEFT JOIN house_building hb ON eibr.buildingId=hb.buildingId) aaa WHERE
+    aaa.itemType= (SELECT  itemType FROM expense_item WHERE  itemId=#{itemId})
+</select>
+
+  <select id="findByItemIdAndBuildingId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela">
+    SELECT * FROM expense_item_building_rela
+    <where>
+      1=1
+      <if test="itemId != null">
+        AND itemId = #{itemId}
+      </if>
+      <if test="buildingId == null">
+      AND buildingId IS NULL
+      </if>
+      <if test="buildingId != null">
+      AND buildingId = #{buildingId}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByBuildingId" parameterType="java.lang.Long">
+    DELETE FROM expense_item_building_rela WHERE buildingId = #{buildingId}
+  </delete>
+
+  <select id="findByItemId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItemBuildingRela">
+    SELECT * FROM expense_item_building_rela WHERE itemId = #{itemId}
+  </select>
+</mapper>

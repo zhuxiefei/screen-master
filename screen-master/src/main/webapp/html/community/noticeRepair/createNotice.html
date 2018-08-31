@@ -1,0 +1,67 @@
+<div class="bjui-pageContent">
+<form class="datagrid-edit-form" style="overflow: visible;" data-toggle="ajaxform">
+    <div class="bjui-row col-2" style="margin-left: -17px;">
+        <label class="row-label">公告标题 : </label>
+        <div class="row-css required">
+            <input type="text" style="width:430px;" id="input_searchsaq" name="announceTitle" placeholder="请输入标题" data-rule="required,special,length(~60)"  >
+        </div>
+        <br>
+        <span class="row-label">公告内容 : </span>
+        <div class="row-css required" >
+            <textarea cols="43" placeholder="请输入内容" id="yf" name="announceContent" style="width:430px;resize: vertical" rows="6" data-toggle="autowidth" data-rule="required,length(~1500)" ></textarea>
+        </div>
+
+    </div>
+</form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addNotice" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+(function(){
+    $.CurrentDialog.find('button#addNotice').bind("click", function(){
+        var noticeInput =  $("#input_searchsaq").val().trim();
+        var noticeInputs =  $("#yf").val();
+       // $("body").data("notices",noticeInput);
+//        if (noticeInput == '' || noticeInput == null || noticeInput == undefined){
+//            BJUI.alertmsg('warn','标题不能为空！');
+//        }else if (noticeInputs == '' || noticeInputs == null || noticeInputs == undefined){
+//            BJUI.alertmsg('warn','内容不能为空！');
+//        }else {
+            checkSearchsabsb(noticeInput);
+            function checkSearchsabsb(str) {
+//                var vkeyWords=/['"<>%\\]+/;
+//                if(str.length >120){
+//                    BJUI.alertmsg('warn','公告标题不能输入\'\"<>%\\且长度不超过120位');
+//                }else if(vkeyWords.test(str)){
+//                    BJUI.alertmsg('warn','公告标题不能输入\'\"<>%\\且长度不超过120位');
+//                }else if(noticeInputs.length >= 1500){
+//                    BJUI.alertmsg('warn','公告内容不能超过1500个字！');
+//                    event.returnValue = false;
+//                }else{
+                    BJUI.ajax('ajaxform', {
+                        url: path + '/web/announce/v1/addAnnounce',
+                        form: $.CurrentDialog.find('form'),
+                        validate: true,
+                        loadingmask: true,
+                        okCallback: function(json, options) {
+                            BJUI.alertmsg('ok','新建成功！');
+                            BJUI.dialog('closeCurrent')
+                            $.CurrentNavtab.find('#datagrid-notice-list').datagrid('refresh', true);
+                            // $('#atagrid-notice-list').datagird('refresh', true);
+                        },
+                        errCallback:function (json, options) {
+                            successBack(json);
+                        }
+                    })
+//                }
+            }
+//        }
+    })
+})()
+
+
+</script>

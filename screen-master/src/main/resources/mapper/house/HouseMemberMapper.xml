@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseMember" >
+    <id column="memberId" property="memberId" jdbcType="VARCHAR" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="realName" property="realName" jdbcType="VARCHAR" />
+    <result column="phoneNum" property="phoneNum" jdbcType="VARCHAR" />
+    <result column="idNum" property="idNum" jdbcType="VARCHAR" />
+    <result column="ethnic" property="ethnic" jdbcType="VARCHAR" />
+    <result column="residency" property="residency" jdbcType="VARCHAR" />
+    <result column="religion" property="religion" jdbcType="BIT" />
+    <result column="memberStatus" property="memberStatus" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    memberId, userId, realName, phoneNum, idNum, ethnic, residency, religion, memberStatus, 
+    createTime, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_member
+    where memberId = #{memberId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from house_member
+    where memberId = #{memberId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseMember" >
+    insert into house_member (memberId, userId, realName, 
+      phoneNum, idNum, ethnic, 
+      residency, religion, memberStatus, 
+      createTime, updateTime)
+    values (#{memberId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{phoneNum,jdbcType=VARCHAR}, #{idNum,jdbcType=VARCHAR}, #{ethnic,jdbcType=VARCHAR}, 
+      #{residency,jdbcType=VARCHAR}, #{religion,jdbcType=BIT}, #{memberStatus,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMember" useGeneratedKeys="true" keyProperty="memberId">
+    <selectKey keyProperty="memberId" resultType="String" order="BEFORE">
+      select uuid()
+    </selectKey>
+    insert into house_member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        memberId,
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="realName != null" >
+        realName,
+      </if>
+      <if test="phoneNum != null" >
+        phoneNum,
+      </if>
+      <if test="idNum != null" >
+        idNum,
+      </if>
+      <if test="ethnic != null" >
+        ethnic,
+      </if>
+      <if test="residency != null" >
+        residency,
+      </if>
+      <if test="religion != null" >
+        religion,
+      </if>
+      <if test="memberStatus != null" >
+        memberStatus,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{memberId},
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNum != null" >
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="idNum != null" >
+        #{idNum,jdbcType=VARCHAR},
+      </if>
+      <if test="ethnic != null" >
+        #{ethnic,jdbcType=VARCHAR},
+      </if>
+      <if test="residency != null" >
+        #{residency,jdbcType=VARCHAR},
+      </if>
+      <if test="religion != null" >
+        #{religion,jdbcType=BIT},
+      </if>
+      <if test="memberStatus != null" >
+        #{memberStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseMember" >
+    update house_member
+    <set >
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        realName = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNum != null" >
+        phoneNum = #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="idNum != null" >
+        idNum = #{idNum,jdbcType=VARCHAR},
+      </if>
+      <if test="ethnic != null" >
+        ethnic = #{ethnic,jdbcType=VARCHAR},
+      </if>
+      <if test="residency != null" >
+        residency = #{residency,jdbcType=VARCHAR},
+      </if>
+      <if test="religion != null" >
+        religion = #{religion,jdbcType=BIT},
+      </if>
+      <if test="memberStatus != null" >
+        memberStatus = #{memberStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where memberId = #{memberId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseMember" >
+    update house_member
+    set userId = #{userId,jdbcType=VARCHAR},
+      realName = #{realName,jdbcType=VARCHAR},
+      phoneNum = #{phoneNum,jdbcType=VARCHAR},
+      idNum = #{idNum,jdbcType=VARCHAR},
+      ethnic = #{ethnic,jdbcType=VARCHAR},
+      residency = #{residency,jdbcType=VARCHAR},
+      religion = #{religion,jdbcType=BIT},
+      memberStatus = #{memberStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where memberId = #{memberId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectHouseMemberByHouseId"  parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.HouseMember">
+    SELECT *
+    FROM house_member hm
+    WHERE hm.memberId IN (SELECT hmr.memberId FROM house_member_rela hmr WHERE hmr.houseId = #{houseId})
+  </select>
+
+  <delete id="deleteMemberList" parameterType="java.util.List">
+    UPDATE house_member SET memberStatus = 3
+    WHERE memberId IN
+    <foreach close=")" collection="list" item="item" open="(" separator=",">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="selectByUserIds" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.user.model.Members">
+    SELECT
+    hh.houseId AS houseId,
+    hm.userId AS userId,
+    hh.houseNum AS houseNum,
+    hm.memberId AS memberId
+    FROM house_house hh
+    LEFT JOIN house_member_rela hmr ON hmr.houseId = hh.houseId
+    LEFT JOIN house_member hm ON hm.memberId = hmr.memberId
+    WHERE hm.memberStatus != 3 AND hm.userId IN
+    <foreach collection="array" item="userId" open="(" separator="," close=")">
+      #{userId,jdbcType=BIGINT}
+    </foreach>
+  </select>
+
+  <select id="findMemberByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.userapp.house.model.Member">
+    SELECT hm.memberId AS hmId,hm.phoneNum AS userAccount,hm.realName AS userName,2 AS type FROM house_member_rela hmr
+    JOIN house_member hm ON hmr.memberId = hm.memberId
+    WHERE hmr.houseId = #{houseId} AND hm.memberStatus = 2
+  </select>
+
+  <select id="findHouseOwnerByMemberId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT ho.userId FROM house_member_rela hmr
+    JOIN house_owner_rela hor ON hor.houseId = hmr.houseId
+    JOIN  house_owner ho ON ho.ownerId = hor.ownerId
+    WHERE hmr.memberId = #{memberId} AND ho.ownerStatus = 2
+  </select>
+  <!--jisn.z-->
+  <select id="isMemberExist"  parameterType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusReq" resultType="java.lang.Integer">
+    SELECT
+    COUNT(hm.memberId)
+    FROM
+    house_member hm,
+    house_member_rela hmr
+    WHERE
+    hm.memberId = hmr.memberId
+    AND hm.memberStatus &lt;&gt; '3'
+    AND hm.phoneNum = #{memberPhoneNum}
+    AND hmr.houseId=#{houseId}
+  </select>
+  <!--jians.z-->
+  <update id="setOldMemberOver" parameterType="java.lang.String">
+    update house_member set memberStatus = '3',updateTime = NOW() where memberId IN
+    (SELECT hmr.memberId FROM house_house h,house_member_rela hmr WHERE h.houseId=hmr.houseId AND h.houseId= #{houseId})
+  </update>
+  <select id="findHouseStatusMember" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusMember">
+  SELECT
+	hm.memberId,
+	hm.realName AS memberName,
+	hm.phoneNum AS memberPhoneNum,
+	hm.ethnic AS memberEthnic,
+	hm.residency AS memberResidency,
+	hm.religion AS memberReligion,
+	hm.memberStatus AS memberStatus
+    FROM
+	house_member hm,
+	house_member_rela hmr
+    WHERE
+	hm.memberId = hmr.memberId AND hmr.houseId=#{houseId}
+	ORDER BY hm.memberStatus ASC ,hm.createTime DESC
+  </select>
+  <!--jians.z-->
+  <delete id="deleteOldMemberByMemberIds" parameterType="java.util.List">
+    delete from house_member
+    where memberId IN
+    <foreach collection="list" item="memberId" open="(" separator="," close=")">
+      #{memberId}
+    </foreach>
+  </delete>
+<select id="findOldMemberByHouseId" resultType="com.betel.estatemgmt.common.model.house.HouseMember" parameterType="java.lang.String">
+  SELECT  hm.memberId, hm.userId, hm.realName, hm.phoneNum, hm.idNum, hm.ethnic, hm.residency, hm.religion
+   FROM house_member hm,house_member_rela hmr WHERE hm.memberId=hmr.memberId and hmr.houseId=#{houseId}
+</select>
+  <select id="findOldValidMemberByHouseId" resultType="com.betel.estatemgmt.common.model.house.HouseMember" parameterType="java.lang.String">
+    SELECT
+	hm.userId
+    FROM
+	house_member hm,
+	house_member_rela hmr
+    WHERE
+	hm.memberId = hmr.memberId
+    AND hmr.houseId = #{houseId}
+    AND hm.memberStatus = '2'
+  </select>
+  <select id="findMemBySmsReq" resultType="com.betel.estatemgmt.common.model.house.HouseMember">
+    SELECT hm.* FROM house_member hm
+    LEFT JOIN house_member_rela hmr ON hmr.memberId = hm.memberId
+    WHERE hm.memberStatus = 2 AND hm.phoneNum = #{ownerPhone} AND hmr.houseId = #{houseId}
+  </select>
+
+  <select id="findByHouseIdAndPhone" resultType="com.betel.estatemgmt.common.model.house.HouseMember">
+    SELECT * FROM house_member hm
+    LEFT JOIN house_member_rela hmr ON hmr.memberId = hm.memberId
+    WHERE hmr.houseId = #{1} AND hm.phoneNum = #{0} AND hm.memberStatus = 1
+  </select>
+
+  <select id="findMembersByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.user.model.Members">
+    SELECT
+    hh.houseId AS houseId,
+    hm.userId AS userId,
+    hh.houseNum AS houseNum,
+    hm.memberId AS memberId
+    FROM house_house hh
+    LEFT JOIN house_member_rela hmr ON hmr.houseId = hh.houseId
+    LEFT JOIN house_member hm ON hm.memberId = hmr.memberId
+    WHERE hm.memberStatus =2 AND hh.houseId = #{houseId}
+  </select>
+
+  <select id="findInfoByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.house.model.MemberInfo">
+    select
+      hm.realName AS name,
+      hm.phoneNum AS phone,
+      hm.residency,
+      hm.ethnic,
+      hm.religion,
+      hm.memberStatus AS status,
+      2 AS flag
+  FROM house_member hm
+  WHERE
+      hm.memberStatus !=3
+      AND hm.memberId IN (SELECT hmr.memberId FROM house_member_rela hmr WHERE hmr.houseId = #{houseId})
+  </select>
+</mapper>

@@ -1,0 +1,153 @@
+<div class="bjui-pageContent" style="overflow: auto">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <table class="patrolDetail">
+            <tr>
+                <td class="td_left">房屋编号:</td>
+                <td class="td_right" id="houseInfo"></td>
+                <td class="td_left">装修公司: </td>
+                <td class="td_right" id="decorationCompany"></td>
+            </tr>
+            <tr>
+                <td class="td_left">装修周期:</td>
+                <td class="td_right" id="decorationCycle"></td>
+                <td class="td_left">装修开始时间:</td>
+                <td class="td_right" id="startTime"></td>
+            </tr>
+            <tr>
+                <td class="td_left">申请时间: </td>
+                <td class="td_right" id="createTime"></td>
+                <td class="td_left">许可证打印状态: </td>
+                <td class="td_right" id="printStatus"></td>
+            </tr>
+            <tr>
+                <td class="td_left">装修备注: </td>
+                <td class="td_right" colspan="3" id="decorationDesc"></td>
+            </tr>
+            <tr>
+                <td class="td_left">装修审核:</td>
+                <td class="td_right" id="status"></td>
+                <td class="td_left">审核完成时间: </td>
+                <td class="td_right" id="updateTime"></td>
+            </tr>
+            <tr style=" display: none;">
+                <td class="td_left">拒绝原因:</td>
+                <td class="td_right" colspan="3" id="reason"></td>
+            </tr>
+            <tr style=" display: none;">
+                <td class="td_left">取消时间: </td>
+                <td class="td_right" id="cancelTime"></td>
+                <td class="td_left" style="opacity: 0;" id="operator_text">取消人:</td>
+                <td class="td_right" id="operator"></td>
+            </tr>
+            <tr style=" display: none;">
+                <td class="td_left">取消原因: </td>
+                <td class="td_right" colspan="3" id="cancelReason"></td>
+            </tr>
+            <tr>
+                <td class="td_left">物业备注:</td>
+                <td class="td_right" colspan="3" id="description"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <!--<li><button type="button" id="addAccount" class="btn-default" data-icon="save">生成账号</button></li>-->
+    </ul>
+</div>
+<script>
+    var checkDecorationInfo = $.CurrentNavtab.data("checkDecorationInfo");
+    //房屋信息
+    if(checkDecorationInfo.buildingName == "" || checkDecorationInfo.buildingName == null || checkDecorationInfo.buildingName == undefined){
+        checkDecorationInfo.buildingName = ""
+    }
+    if(checkDecorationInfo.unitName == "" || checkDecorationInfo.unitName == null || checkDecorationInfo.unitName == undefined){
+        checkDecorationInfo.unitName = ""
+    }
+    $.CurrentDialog.find("#houseInfo").text(checkDecorationInfo.buildingName+checkDecorationInfo.unitName+checkDecorationInfo.houseName);
+    //装饰公司
+    $.CurrentDialog.find("#decorationCompany").text(checkDecorationInfo.decorationCompany);
+    //装修周期
+    var cycleData = checkDecorationInfo.decorationCycle;
+    var cycleText = "";
+    if(cycleData == 1){
+        cycleText = "1个月";
+    }else if(cycleData == 2){
+        cycleText = "2个月";
+    }else if(cycleData == 3){
+        cycleText = "3个月";
+    }else if(cycleData == 4){
+        cycleText = "4个月";
+    }else if(cycleData == 5){
+        cycleText = "5个月";
+    }else if(cycleData == 6){
+        cycleText = "6个月";
+    }else if(cycleData == 7){
+        cycleText = "7个月";
+    }else if(cycleData == 8){
+        cycleText = "8个月";
+    }else if(cycleData == 9){
+        cycleText = "9个月";
+    }else if(cycleData == 10){
+        cycleText = "10个月";
+    }else if(cycleData == 11){
+        cycleText = "11个月";
+    }else if(cycleData == 12){
+        cycleText = "12个月";
+    }
+    $.CurrentDialog.find("#decorationCycle").text(cycleText);
+    //装修开始时间
+    $.CurrentDialog.find("#startTime").text(checkDecorationInfo.startTime.substring(0,10));
+    //申请时间
+    $.CurrentDialog.find("#createTime").text(checkDecorationInfo.createTime);
+    //许可证打印状态
+    var printStatusData = checkDecorationInfo.printStatus;
+    var printStatusText = '';
+    if(printStatusData == 1){
+        printStatusText = "未打印";
+    }else if(printStatusData == 2){
+        printStatusText = "已打印";
+    }
+    $.CurrentDialog.find("#printStatus").text(printStatusText);
+    //装修备注
+    $.CurrentDialog.find("#decorationDesc").text(checkDecorationInfo.decorationDesc);
+    //装修审核
+    var statusData = checkDecorationInfo.status;
+    var statusText = "";
+    if(statusData == 1){
+        statusText = "未处理";
+    }else if(statusData == 2){
+        statusText = "已同意";
+    }else if(statusData == 3){
+        statusText = "已拒绝";
+
+        //拒绝原因
+        $.CurrentDialog.find("#reason").parents("tr:first").show();
+        $.CurrentDialog.find("#reason").text(checkDecorationInfo.reason);
+    }else if(statusData == 4){
+        statusText = "已取消";
+
+        //取消时间
+        $.CurrentDialog.find("#operator").parents("tr:first").show();
+        $.CurrentDialog.find("#cancelTime").text(checkDecorationInfo.cancelTime);
+        //取消人
+        if(checkDecorationInfo.operator){
+            $.CurrentDialog.find("#operator_text").css("opacity","1");
+            $.CurrentDialog.find("#operator").text(checkDecorationInfo.operator);
+        }
+        //取消原因
+        if(checkDecorationInfo.cancelReason){
+            $.CurrentDialog.find("#cancelReason").parents("tr:first").show();
+            $.CurrentDialog.find("#cancelReason").text(checkDecorationInfo.cancelReason);
+        }
+    }
+    $.CurrentDialog.find("#status").text(statusText);
+    //审核完成时间
+    $.CurrentDialog.find("#updateTime").text(checkDecorationInfo.updateTime);
+
+    //物业备注
+    $.CurrentDialog.find("#description").text(checkDecorationInfo.description);
+
+
+</script>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseOwnerRelaMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseOwnerRela" >
+    <id column="ownerId" property="ownerId" jdbcType="VARCHAR" />
+    <id column="houseId" property="houseId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ownerId, houseId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.betel.estatemgmt.common.model.house.HouseOwnerRelaKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_owner_rela
+    where ownerId = #{ownerId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseOwnerRelaKey" >
+    delete from house_owner_rela
+    where ownerId = #{ownerId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseOwnerRela" >
+    insert into house_owner_rela (ownerId, houseId, createTime
+      )
+    values (#{ownerId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseOwnerRela" >
+    insert into house_owner_rela
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ownerId != null" >
+        ownerId,
+      </if>
+      <if test="houseId != null" >
+        houseId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ownerId != null" >
+        #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseOwnerRela" >
+    update house_owner_rela
+    <set >
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ownerId = #{ownerId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseOwnerRela" >
+    update house_owner_rela
+    set createTime = #{createTime,jdbcType=TIMESTAMP}
+    where ownerId = #{ownerId,jdbcType=VARCHAR}
+      and houseId = #{houseId,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteRelaList" parameterType="java.lang.Long">
+    DELETE FROM house_owner_rela
+    WHERE houseId IN
+    <foreach collection="array" item="houseId" open="(" separator="," close=")">
+      #{houseId,jdbcType=VARCHAR}
+    </foreach>
+  </delete>
+
+  <select id="findAuthHouse" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.userapp.house.model.AuthHouse">
+    SELECT
+      hh.houseId,
+      concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseName,
+      1 AS authType,
+      hb.buildingId buildingId,
+      ho.realName AS applicantName,
+      hbu.unitId AS unitId
+    FROM house_house hh
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    JOIN house_owner_rela hor ON hh.houseId = hor.houseId
+    JOIN house_owner ho ON ho.ownerId = hor.ownerId
+    where ho.userId = #{userId} AND ho.ownerStatus = 2
+  </select>
+  <delete id="deleteByHouseId" parameterType="java.lang.String">
+    DELETE FROM house_owner_rela WHERE houseId =#{houseId,jdbcType=VARCHAR}
+  </delete>
+
+  <select id="findByOwnerId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseName
+    FROM house_house hh
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    JOIN house_owner_rela hor ON hh.houseId = hor.houseId
+    JOIN house_owner ho ON ho.ownerId = hor.ownerId
+    where ho.ownerId = #{ownerId}
+    limit 1
+  </select>
+
+  <delete id="deleteByOwnerIds" parameterType="java.lang.String">
+    DELETE FROM house_owner_rela WHERE ownerId IN
+    <foreach collection="list" item="ownerId" open="(" separator="," close=")">
+      #{ownerId}
+    </foreach>
+  </delete>
+</mapper>

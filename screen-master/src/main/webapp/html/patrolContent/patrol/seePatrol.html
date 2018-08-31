@@ -1,0 +1,308 @@
+<div class="bjui-pageContent" style="overflow-y: auto;">
+    <!--<div style=" text-align: right; margin-bottom: 10px;"><button type="button" id="btn_repairRecord" class="btn-blue" data-icon="save">维保记录</button></div>-->
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">设备编号:</td>
+            <td class="td_right" id="equipmentNo"></td>
+            <td class="td_left">设备名称: </td>
+            <td class="td_right" id="equipmentName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">所在位置: </td>
+            <td class="td_right" id="equipmentLocation"></td>
+            <td class="td_left">设备类型: </td>
+            <td class="td_right" id="typeName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">是否正常: </td>
+            <td class="td_right" id="recordStatus"></td>
+            <td class="td_left">巡检周期: </td>
+            <td class="td_right" id="checkCycle"></td>
+        </tr>
+        <tr>
+            <td class="td_left">发布时间: </td>
+            <td class="td_right" id="createTime"></td>
+            <td class="td_left">设备生产日期: </td>
+            <td class="td_right" id="equipmentCreateTime"></td>
+        </tr>
+        <tr>
+            <td class="td_left">质保期: </td>
+            <td class="td_right" id="qualityPeriod"></td>
+            <td class="td_left">保修截止日期: </td>
+            <td class="td_right" id="deadline"></td>
+        </tr>
+        <tr>
+            <td class="td_left">设备生产厂商: </td>
+            <td class="td_right" id="equipmentProducer"></td>
+            <td class="td_left">生产厂商电话: </td>
+            <td class="td_right" id="producerPhone"></td>
+        </tr>
+        <tr>
+            <td class="td_left">设备维修厂商: </td>
+            <td class="td_right" id="equipmentOperator"></td>
+            <td class="td_left">维修厂商电话: </td>
+            <td class="td_right" id="operatorPhone"></td>
+        </tr>
+        <tr>
+            <td class="td_left">完成状态: </td>
+            <td class="td_right" colspan="3" id="isPatrol"></td>
+        </tr>
+        <tr>
+            <td class="td_left">巡检内容: </td>
+            <td class="td_right" colspan="3" id="equipmentDesc"></td>
+        </tr>
+        <tr id="recordDesc_li">
+            <td class="td_left">问题记录: </td>
+            <td class="td_right" colspan="3" id="recordDesc"></td>
+        </tr>
+        <tr>
+            <td class="td_left">巡检人员: </td>
+            <td class="td_right" id="employeeName"></td>
+            <td class="td_left">巡检时间: </td>
+            <td class="td_right" id="updateTime"></td>
+        </tr>
+        <tr>
+            <td class="td_left">巡检完成上传的图片: </td>
+            <td class="td_right" colspan="3" id="activity_detail_info"></td>
+        </tr>
+    </table>
+
+    <!--<form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">设备编号: </label>
+            <div class="row-input" style="width: 75%;"  id="equipmentNo">
+            </div>
+            <label class="row-label" style="width: 25%;">设备名称: </label>
+            <div class="row-input"  style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">所在位置: </label>
+            <div class="row-input"  style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">设备类型: </label>
+            <div class="row-input"  style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">是否正常: </label>
+            <div class="row-input"  style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">巡检周期: </label>
+            <div class="row-input"  style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">发布时间: </label>
+            <div class="row-input"  style="width: 75%;">
+                2018-3-15
+            </div>
+            <label class="row-label" style="width: 25%;">设备生产日期: </label>
+            <div class="row-input"  style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">质保期: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">保修截止日期: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">设备生产厂商: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">生产厂商电话: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%; padding-left: 0;">设备维修厂商: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%; padding-left: 0;">维修厂商电话: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%; padding-left: 0;">完成状态: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+
+            <label class="row-label" style="width: 25%;">巡检内容: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%;">问题记录: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%; padding-left: 0;">巡检人员: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%; padding-left: 0;">巡检时间: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+            <label class="row-label" style="width: 25%; padding-left: 0;">巡检完成上传的图片: </label>
+            <div class="row-input" style="width: 75%;">
+            </div>
+
+        </div>
+    </form>-->
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+    </ul>
+</div>
+<script>
+    var pageData = $.CurrentNavtab.data("findRecordDetail");
+    if (pageData.equipmentNo == undefined || pageData.equipmentNo == null || pageData.equipmentNo == "") {
+        pageData.equipmentNo = '<i>已被删除</i>';
+    }
+    if (pageData.equipmentName == undefined || pageData.equipmentName == null || pageData.equipmentName == "") {
+        pageData.equipmentName = '<i>已被删除</i>';
+    }
+    if (pageData.equipmentLocation == undefined || pageData.equipmentLocation == null || pageData.equipmentLocation == "") {
+        pageData.equipmentLocation = '<i>已被删除</i>';
+    }
+    if (pageData.equipmentDesc == undefined || pageData.equipmentDesc == null || pageData.equipmentDesc == "") {
+        pageData.equipmentDesc = '<i>已被删除</i>';
+    }
+    if (pageData.employeeName == undefined || pageData.employeeName == null || pageData.employeeName == "") {
+        pageData.employeeName = '';
+    }
+
+    //设备类型
+    if (pageData.typeName == undefined || pageData.typeName == null || pageData.typeName == "") {
+        pageData.typeName = '<i>已被删除</i>';
+    }
+    //巡检周期
+    if (pageData.checkCycle == undefined || pageData.checkCycle == null || pageData.checkCycle == "") {
+        pageData.checkCycle = '<i>已被删除</i>';
+    }else if(pageData.checkCycle == 1) {
+        pageData.checkCycle = "每日巡检";
+    } else if(pageData.checkCycle == 2) {
+        pageData.checkCycle = "每周巡检";
+    } else if(pageData.checkCycle == 3) {
+        pageData.checkCycle = "月度巡检";
+    } else if(pageData.checkCycle == 4) {
+        pageData.checkCycle = "季度巡检";
+    } else if(pageData.checkCycle == 5) {
+        pageData.checkCycle = "年度巡检";
+    }
+    //完成状态
+    if (pageData.checkCycle == undefined || pageData.checkCycle == null || pageData.checkCycle == "") {
+        pageData.checkCycle = '<i>已被删除</i>';
+    }else if(pageData.checkCycle == 1) {
+        pageData.checkCycle = "待巡检";
+    } else if(pageData.checkCycle == 2) {
+        pageData.checkCycle = "已巡检";
+    } else if(pageData.checkCycle == 3) {
+        pageData.checkCycle = "逾期未巡检";
+    }
+    //质保期
+    if (pageData.qualityPeriod == undefined || pageData.qualityPeriod == null || pageData.qualityPeriod == "") {
+        pageData.qualityPeriod = '';
+    }
+    //质保期单位
+    if (pageData.unit == undefined || pageData.unit == null || pageData.unit == "") {
+        pageData.unit = '';
+    }else if(pageData.unit == 1) {
+        pageData.unit = "天";
+    } else if(pageData.unit == 2) {
+        pageData.unit = "个月";
+    } else if(pageData.unit == 3) {
+        pageData.unit = "年";
+    }
+
+    $.CurrentDialog.find('#createTime').html(pageData.createTime.substr(0,10));
+    $.CurrentDialog.find('#employeeName').html(pageData.employeeName);
+    $.CurrentDialog.find('#equipmentDesc').html(pageData.equipmentDesc.replace(/(\n)/g,'<br>').replace(/\r\n/g,"<br>"));
+    $.CurrentDialog.find('#equipmentLocation').html(pageData.equipmentLocation);
+    $.CurrentDialog.find('#equipmentName').html(pageData.equipmentName);
+    $.CurrentDialog.find('#equipmentNo').html(pageData.equipmentNo);
+    $.CurrentDialog.find('#checkCycle').html(pageData.checkCycle);
+    if(pageData.equipmentCreateTime==""||pageData.equipmentCreateTime==undefined||pageData.equipmentCreateTime==null){
+        pageData.equipmentCreateTime='<i>已被删除</i>'
+    }else{
+        pageData.equipmentCreateTime = pageData.equipmentCreateTime.substring(0,10);
+    }
+    $.CurrentDialog.find('#equipmentCreateTime').html(pageData.equipmentCreateTime);
+    if(pageData.qualityPeriod==""||pageData.qualityPeriod==undefined||pageData.qualityPeriod==null){
+        pageData.qualityPeriod='<i>已被删除</i>'
+    }
+    $.CurrentDialog.find('#qualityPeriod').html(pageData.qualityPeriod);
+    $.CurrentDialog.find('#deadline').html(pageData.deadline);
+    $.CurrentDialog.find('#equipmentProducer').html(pageData.equipmentProducer);
+    $.CurrentDialog.find('#producerPhone').html(pageData.producerPhone);
+    $.CurrentDialog.find('#equipmentOperator').html(pageData.equipmentOperator);
+    $.CurrentDialog.find('#operatorPhone').html(pageData.operatorPhone);
+    //完成状态
+    var isPatrolText = "";
+    if (pageData.isPatrol == "1") {
+        isPatrolText = '待巡检';
+    } else if (pageData.isPatrol == "2") {
+        isPatrolText = '已巡检';
+    } else if (pageData.isPatrol == "3") {
+        isPatrolText = '逾期未巡检';
+    }
+    $.CurrentDialog.find('#isPatrol').html(isPatrolText);
+
+    $.CurrentDialog.find('#qualityPeriod').html(pageData.qualityPeriod+pageData.unit);
+    if(pageData.isPatrol==2){
+        $.CurrentDialog.find('#updateTime').html(pageData.updateTime);
+    }
+    $.CurrentDialog.find('#typeName').html(pageData.typeName);
+
+    if(pageData.deadline){
+        $.CurrentDialog.find('#deadline').html(pageData.deadline.substr(0,10));
+    }else{
+        $.CurrentDialog.find('#deadline').html('<i>已被删除</i>');
+    }
+    if(pageData.equipmentProducer){
+        $.CurrentDialog.find('#equipmentProducer').html(pageData.equipmentProducer);
+    }else{
+        $.CurrentDialog.find('#equipmentProducer').html('<i>已被删除</i>');
+    }
+    if(pageData.producerPhone){
+        $.CurrentDialog.find('#producerPhone').html(pageData.producerPhone);
+    }else{
+        $.CurrentDialog.find('#producerPhone').html('<i>已被删除</i>');
+    }
+    if(pageData.equipmentOperator){
+        $.CurrentDialog.find('#equipmentOperator').html(pageData.equipmentOperator);
+    }else{
+        $.CurrentDialog.find('#equipmentOperator').html('<i>已被删除</i>');
+    }
+    if(pageData.operatorPhone){
+        $.CurrentDialog.find('#operatorPhone').html(pageData.operatorPhone);
+    }else{
+        $.CurrentDialog.find('#operatorPhone').html('<i>已被删除</i>');
+    }
+    //是否正常
+    if (pageData.recordStatus == 1) {
+        pageData.recordStatus = "是";
+        $.CurrentDialog.find('#recordDesc_li').hide();  //问题记录
+    } else {
+        if(pageData.isPatrol==2){   //完成状态
+            pageData.recordStatus = "否";
+
+        }else{
+            pageData.recordStatus = "";
+        }
+
+        if (pageData.recordDesc == undefined || pageData.recordDesc == null || pageData.recordDesc == "") {
+            pageData.recordDesc = '';
+        }
+        $.CurrentDialog.find('#recordDesc_li').show();  //问题记录
+        $.CurrentDialog.find('#recordDesc').html(pageData.recordDesc.replace(/(\n)/g,'<br>').replace(/\r\n/g,"<br>"));
+
+    }
+    $.CurrentDialog.find('#recordStatus').text(pageData.recordStatus);
+
+
+    // 图片
+    if (pageData.pictureUrls.length) {
+        $.CurrentDialog.find('#activity_detail_info').html("");
+        var html = "";
+        for (var i = 0; i < pageData.pictureUrls.length; i++) {
+            html = html + '<li  style="width: 20%;height:49%" ><a class="" href="' + pageData.pictureUrls[i] + '" ><img src="' + pageData.pictureUrls[i] + '" /></a></li>'
+            if (i == 4) {
+                html = html + '<div class="clear" style=" margin-bottom: 1%;"></div>';
+            }
+        }
+        $.CurrentDialog.find('#activity_detail_info').append(html);
+    }/* else {
+        $.CurrentDialog.find('#activity_detail_info').hide();
+    }*/
+    $.CurrentDialog.find("#activity_detail_info").each(function () {
+        $(this).find("a").touchTouch();
+    });
+
+</script>

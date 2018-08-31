@@ -1,0 +1,111 @@
+<div class="bjui-pageContent" style="position: relative;height: 100%;">
+    <form action="" data-toggle="ajaxform" style="margin-top: 20px;" id="addCharge_form">
+        <div class="bjui-row col-2">
+            <label class="row-label" style="width: 100px">计费区间:</label>
+            <div class="row-input" style="width: 300px">
+                <span id="startTime_show"></span>&nbsp;<b>至</b>&nbsp;<span id="endTime_show"></span>
+            </div>
+        </div>
+        <div class="bjui-row col-2">
+            <label class="row-label" style="width: 100px">金额:</label>
+            <div class="row-input" style="width: 300px">
+                <input type="text" value="" name="price" size="12" id="itemPrice"
+                       style="height: 22px;margin-bottom: 7px;border: 1px solid #AAA;"
+                       data-rule="required,itemPriceBig,notZero1">元
+            </div>
+        </div>
+        <div style="display: none">
+            <input type="text" name="startTime" id="startTime">
+            <input type="text" name="endTime" id="endTime">
+            <input type="text" name="itemId" id="itemId">
+        </div>
+
+    </form>
+
+    <div id="uploading" style="display:none;font-size: 12px;color: #000;background-color: #eee;width: 100%;height: 100%;position:absolute;top: 0px;left: 0px;opacity: 0.5;z-index: 9999;font-weight: 700">
+        <div style="width: 200px;margin-left: 68px;margin-top: 145px;text-align: center">
+            <span>出账中</span>&nbsp;<img src="images/loading.gif" alt="">
+        </div>
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="btn-addCharge">确认</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var timeData = $.CurrentNavtab.data("timeSpan");
+    initBillPage();
+    function initBillPage() {
+        $.CurrentDialog.find('#startTime_show').text(timeData.startTime.substr(0, 10));
+        $.CurrentDialog.find('#endTime_show').text(timeData.endTime.substr(0, 10));
+
+    }
+    //确认提交
+    $.CurrentDialog.find("#btn-addCharge").click(function () {
+        var itemId = $('body').data('actionChargeId');
+        var startTime = timeData.startTime;
+        var endTime = timeData.endTime;
+        $.CurrentDialog.find('#itemId').val(itemId);
+        $.CurrentDialog.find('#startTime').val(startTime);
+        $.CurrentDialog.find('#endTime').val(endTime);
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                BJUI.alertmsg('confirm', '金额确认后不可修改,确认出账?', {
+                    okCall: function () {
+                        $.CurrentDialog.find('#uploading').show();
+                        $.CurrentDialog.find('#btn-addCharge').attr('disabled', true);
+                        var html='<div class="dialog_header_mask" style="width: 100%;height: 100%;position: absolute;top: 0;left: 0;background-color: #eee;z-index: 99;opacity: 0.5;"></div>'
+                        $.CurrentDialog.find('.dialogHeader').css('position', 'relative');
+                        $.CurrentDialog.find('.dialogHeader').append(html);
+                        BJUI.ajax('ajaxform', {
+                            url: path + '/web/charges/v1/createBill',
+                            validate: true,
+                            form: $.CurrentDialog.find('form'),
+                            loadingmask: false,
+                            callback: function (json) {
+                                if (json.code == "00000") {
+                                    BJUI.dialog('closeCurrent', true);
+                                    BJUI.navtab('refresh', 'itemSetting');
+                                    BJUI.alertmsg('ok', '操作成功')
+                                } else {
+                                    successBack(json);
+                                }
+                                $.CurrentDialog.find('#uploading').hide();
+                                $.CurrentDialog.find('.dialog_header_mask').remove();
+                                $.CurrentDialog.find('#btn-addCharge').attr('disabled', false);
+                            },
+                            okAfterCallback: function () {
+
+                            }
+                        });
+                    }
+                });
+
+            }
+        })
+
+//        $.CurrentDialog.find('#itemPrice').focus().blur();
+//        setTimeout(function () {
+//            debugger
+//            if($.CurrentDialog.find('span.n-error').css('opacity')>0){
+//                return;
+//            }
+//            BJUI.alertmsg('confirm', '金额确认后不可修改,确认出账?', {
+//                okCall: function () {
+
+
+//                }
+//            })
+//        },100)
+
+
+    })
+</script>

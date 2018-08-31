@@ -1,0 +1,278 @@
+<script type="text/javascript">
+    var houseTypeFunctionId = $.CurrentNavtab.data('houseTypeFunctionId');
+    if(houseTypeFunctionId =="" || houseTypeFunctionId == undefined){
+        houseTypeFunctionId = 0; //选中所有，建材添加页面默认全户型（选中所有、全户型、不选择，建材添加页面默认全户型）
+    }
+    var typeId = $("body").data('houseTypeId');
+
+    $.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid({
+        showToolbar: false,   //是否显示工具条
+        toolbarItem: '',   //显示工具条按钮  all显示所有按钮
+        dataUrl:path+'/web/houseType/v1/findAllNoFunctionMaterial',
+        postData:JSON.stringify({"typeId":typeId,"functionId":houseTypeFunctionId}),
+        dataErrorCallBack:function(json){
+            if(json.code == "G0021"){  //功能区域已被删除
+                $.CurrentNavtab.data('houseTypeFunctionId',"");
+                BJUI.dialog('close', 'dialog_houseTypeFitmentListAdd');  //当前弹窗
+                BJUI.navtab('refresh', 'dialog_houseTypeFitmentList');  //刷新户型建材
+            }else if(json.code == "G0009"){  //戶型被刪除
+                BJUI.dialog('close', 'dialog_houseTypeFitmentListAdd');  //当前弹窗
+                BJUI.navtab('closeTab', 'dialog_houseTypeFitmentList');  //户型建材
+                BJUI.navtab('switchTab', 'houseTypeManage');    //户型列表
+                BJUI.navtab('refresh', 'houseTypeManage');    //刷新户型列表
+            }
+        },
+        paging: {pageSize: 10},
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: true,  //是否显示行复选框
+        tableWidth: '100%',
+        height: '100%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+        hScrollbar:false,  //允许出现横向滚动条。
+        dialogFilterW: 0,
+        columns: [
+            {name: 'materialName', label: '材料名称', align: 'center',width:150, render:function(value, data) {
+                if(value == '' || value == null || value == undefined){
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'><i>暂无信息</i></div>";
+                    return stateName;
+                }else {
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+                    return stateName;
+                }
+            }},
+            {name: 'materialBrand', label: '品牌', align: 'center',width:140, render:function(value, data) {
+                if(value == '' || value == null || value == undefined){
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'><i>暂无信息</i></div>";
+                    return stateName;
+                }else {
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+                    return stateName;
+                }
+            }},
+            {name: 'materialModel', label: '型号', align: 'center',width:140, render:function(value, data) {
+                if(value == '' || value == null || value == undefined){
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'><i>暂无信息</i></div>";
+                    return stateName;
+                }else {
+                    stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+                    return stateName;
+                }
+            }},
+            {name: 'createTime', label: '创建时间', align: 'center', type: 'date',width:170, pattern: 'yyyy-MM-dd HH:mm:ss', render: function (value) {
+                return value ? value.substr(0, 20) : value
+            }
+            },
+            {name: 'materialId', label: '操作', align: 'center',width:94, render:function(value){
+                var html =  '<button type="button" class="btn-blue btn-check"  data-id="'+value+'">查看</button>';
+                return html;
+            }
+            }
+        ]
+    });
+
+    //加载户型的功能区域
+    BJUI.ajax('doajax', {
+        url: path + '/web/houseType/v1/findHouseType',
+        loadingmask: false,
+        data: JSON.stringify({"typeId": typeId}),
+        async:false,   //false:同步
+        okCallback: function (json) {
+            $.CurrentDialog.find("#fitmentName").html(json.typeName);   //户型名称
+
+            var obj = $.CurrentDialog.find("#functoinType");
+            if(houseTypeFunctionId == 0){
+                obj.append('<option value="0" selected>全户型</option>');
+            }else{
+                obj.append('<option value="0">全户型</option>');
+            }
+            if(json.BasicFunctions != undefined){
+                $.each(json.BasicFunctions, function(i, n) {
+                    if(n.functionId == houseTypeFunctionId){
+                        obj.append('<option value="'+n.functionId+'" selected>'+n.functionName+'</option>');
+                    }else{
+                        obj.append('<option value="'+n.functionId+'">'+n.functionName+'</option>');
+                    }
+                })
+            }
+        }
+    });
+
+    //查看
+    $.CurrentDialog.find("#j_datagrid_houseTypeFitmentListAdd").off("click"," .btn-check");
+    $.CurrentDialog.find("#j_datagrid_houseTypeFitmentListAdd").on("click"," .btn-check",function (event) {
+        var fitmentId = $(event.currentTarget).attr("data-id");
+        if(fitmentId=="" || fitmentId==null){
+            BJUI.alertmsg('warn', '请先选择需要查看的材料！');
+            return;
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/material/v1/findBuildMaterial',
+            loadingmask: true,
+            data: JSON.stringify({"materialId": fitmentId}),
+            okCallback: function (json) {
+                $.CurrentNavtab.data('fitmentCheckInfo', json);
+                BJUI.dialog({
+                    id:'dialog_houseTypeEdit',
+                    url:'html/house/houseTypeList/houseTypeFitmentInfo.html',
+                    title:"查看材料",
+                    width:800,
+                    height:400,
+                    mask:true,
+                    maxable:false,
+                    resizable:false
+                });
+            },
+            errCallback:function (json) {
+                if(json.code == "J0034"){
+                    $.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid('refresh', true)
+                }
+                successBack(json)
+            }
+        });
+    });
+
+    function ztree_returnjson() {
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/material/v1/findBuildMaterialType',
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function(json) {
+                dataJson = json;
+                var allArr = {"typeName":"所有","typeDesc":"查看全部的建材"};
+                dataJson.splice(0, 0, allArr);  //指定位置
+            }
+        });
+        return dataJson;
+    }
+    function zTreeOnCheck(event, treeId, treeNode) {
+        var data;
+        var id;
+        if(treeNode.checked){  //勾选
+            var treeObj=$.fn.zTree.getZTreeObj("ztreeFitmentAdd");
+            var nodes=treeObj.getCheckedNodes(true);
+            //var v="";
+            for(var i=0;i<nodes.length;i++){
+                //v+=nodes[i].name + ",";
+                //alert(nodes[i].id); //获取选中节点的值
+                id = nodes[i].typeName;
+            }
+            if(id=="所有"){  //选中所有
+                data = {"materialType":null};
+            }else{
+                data = {"materialType":id}
+            }
+        }else{   //取消
+            data = {"materialType":null};
+        }
+        //console.log(data)
+        data.typeId = typeId;
+        //data.functionId = houseTypeFunctionId;
+        data.functionId = $.CurrentDialog.find('#functoinType').val();
+        //console.log(data.functionId)
+        data.clearOldPostData = true;
+        //按类型查询建材
+        $.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid('filter',data)
+    }
+
+    function zTreeOnClick(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeFitmentAdd");
+        var nodes = treeObj.getSelectedNodes();
+        for (var i=0, l=nodes.length; i < l; i++) {
+            //treeObj.checkNode(nodes[i], true, true);   //点击节点选中
+
+            $.CurrentNavtab.data('fitmentTypeInfo', nodes[i].typeDesc);
+            //点击节点查看详情
+            BJUI.dialog({
+                id:'dialog_fitmentTypeInfo',
+                url:'html/house/fitmentList/fitmentTypeInfo.html',
+                title:nodes[i].typeName,   //用户id
+                height:260,
+                mask:true,
+                onClose:function(){
+                    $.CurrentDialog.find("#"+treeNode.tId).find("a").removeClass("curSelectedNode");
+                }
+            })
+
+        }
+    }
+
+    $.CurrentDialog.find("#btn-add-houseTypeFitmentAdd").click(function () {
+        var j_datagrid = $.CurrentDialog.find("#j_datagrid_houseTypeFitmentListAdd").data('selectedDatas');
+        if(j_datagrid == ""){
+            BJUI.alertmsg('error', "请先选择需要添加的材料！");
+            return
+        }
+        if(j_datagrid != undefined){
+            var materialIds = [];
+            $.each(j_datagrid, function(i, n) {
+                materialIds.push(n.materialId);
+            });
+            var funId = $.CurrentDialog.find("#functoinType").val();
+            var data = {"typeId":typeId,"functionId":funId,"materialIds":materialIds.toString()}
+            BJUI.ajax('doajax', {
+                url: path + '/web/houseType/v1/addHouseTypeMaterial',
+                loadingmask: false,
+                data: JSON.stringify(data),
+                async: false,     //同步
+                callback: function(json) {
+                    if(json.code == "00000"){
+                        $.CurrentDialog.find("#j_datagrid_houseTypeFitmentListAdd").data('selectedDatas',"");  //清空选中的数据
+                        $.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid('refresh',true);
+                        $.CurrentNavtab.find('#j_datagrid').datagrid('refresh',true);
+                    }else if(json.code == "G0012"){
+                        BJUI.alertmsg('error', "建材<span style=' color: #f00;'>"+json.data+"</span>已添加过，不能重复添加！");
+                        return;
+                    }else  if(json.code == "G0009"){   //户型已被删除
+                        BJUI.dialog('close', 'dialog_houseTypeFitmentListAdd');  //当前弹窗
+                        BJUI.navtab('closeTab', 'dialog_houseTypeFitmentList');  //户型建材
+                        BJUI.navtab('switchTab', 'houseTypeManage');    //户型列表
+                        BJUI.navtab('refresh', 'houseTypeManage');    //刷新户型列表
+                    }else if(json.code == "G0021"){   //功能区域已被删除
+                        $.CurrentNavtab.data('houseTypeFunctionId',"");
+                        BJUI.dialog('close', 'dialog_houseTypeFitmentListAdd');  //当前弹窗
+                        BJUI.navtab('refresh', 'dialog_houseTypeFitmentList');  //刷新户型建材
+                    }else if(json.code == "G0018"){  //建材已被删除
+                        $.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid('reload');
+                    }else if(json.code == "G0022"){ //部分建材被删除
+                        $.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid('reload');
+                    }
+                    successBack(json);
+                }
+            });
+        }else{
+            BJUI.alertmsg('info', "请先选择需要添加的材料！");
+        }
+    });
+</script>
+<div class="bjui-pageHeader" style="background-color:#fefefe; border:0; border-bottom:#ccc 1px solid;padding: 20px 5px; font-size: 14px;">
+    <label class="divLabelTitle">户型名称:</label>
+    <div class="row-input" style="float:left; margin-right: 20px;">
+        <div class="divFitmentName" id="fitmentName"></div>
+    </div>
+    <label class="divLabelTitle">功能区域:</label>
+    <div class="row-input" style="float:left;">
+        <select id="functoinType" name="functionId" data-toggle="selectpicker"  data-width="120"  onchange="$.CurrentDialog.find('#j_datagrid_houseTypeFitmentListAdd').datagrid('filter',{'typeId':typeId,'functionId':this.value})" >
+        </select>
+    </div>
+</div>
+<div class="bjui-pageContent divFitmentType" style=" width: 200px;">
+    <ul id="ztreeFitmentAdd" class="ztree" data-toggle="ztree" data-options="{nodes:ztree_returnjson,checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck,onClick:zTreeOnClick,showIcon: false,idKey:'typeName',keyName:'typeName'}"></ul>
+</div>
+<div class="bjui-pageContent mainFitmentContent">
+    <table id="j_datagrid_houseTypeFitmentListAdd" class="table table-bordered">
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-add-houseTypeFitmentAdd" >确认添加</button></li>
+    </ul>
+</div>
+
+

@@ -1,0 +1,174 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" data-toggle="ajaxform">
+        <div class="bjui-row col-1 divActivity">
+            <div class="row-input required" style=" width: 100%; margin: 0;font-size: inherit;">
+                <textarea name="adContent" id="y_form_content" data-rule="required" class="j-content" style="width:100%;height:324px;;"
+                          data-toggle="kindeditor" data-picType="1" ></textarea>
+
+            </div>
+        </div>
+    </form>
+</div>
+<div class="clearfix bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li id="adPreview"><button type="button" id="btnPreview">手机预览</button></li>
+        <li>
+            <button type="button" class="btn-default btn" data-icon="save" id="adSave">
+                <i class="fa fa-save"></i> 发布
+            </button>
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    //手机预览
+    $.CurrentDialog.find("#btnPreview").click(function(){
+        var contentStr1 = $.CurrentDialog.find("#y_form_content").val();
+        if(contentStr1 == ""){
+            //BJUI.alertmsg('error', '请先填写工作日志内容！');
+            $.CurrentDialog.find("#adSave").click();
+            return;
+        }
+        var logTitle = "";
+        var now = new Date();
+
+        var year = now.getFullYear();       //年
+        var month = now.getMonth() + 1;     //月
+        var day = now.getDate();            //日
+
+        var hh = now.getHours();            //时
+        var mm = now.getMinutes();          //分
+        var ss = now.getSeconds();           //秒
+
+        var clock = year + "-";
+
+        if(month < 10)
+            clock += "0";
+
+        clock += month + "-";
+
+        if(day < 10)
+            clock += "0";
+
+        clock += day;
+        logTitle = clock;
+        clock += "&nbsp;";
+
+        if(hh < 10)
+            clock += "0";
+
+        clock += hh + ":";
+        if (mm < 10) clock += '0';
+        clock += mm + ":";
+
+        if (ss < 10) clock += '0';
+        clock += ss + "";
+
+        //手机预览
+        checkInPhone(logTitle,clock,contentStr1)
+    });
+
+    //发布
+    $.CurrentDialog.find("#adSave").click(function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/ad/v1/addAd',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            okCallback: function (data) {
+                BJUI.alertmsg('ok','操作成功');
+                BJUI.dialog('closeCurrent');
+                $.CurrentNavtab.find("#y_datagrid").datagrid('filter');
+            }
+        })
+    })
+
+    //textarea计数
+    /*  console.log(11);
+     $("#y_form_content").onkeydown = function()
+     {
+     alert(11);
+     var createAdDescNum = this.value.trim().length;
+     var num = 1;
+     console.log(createAdDescNum);
+     $("#createDescnum").text(createAdDescNum + num);
+     }*/
+    //预览里的时间
+   /* var today = new Date(), time = today.getTime();
+    $('#bjui-date').html(today.formatDate('yyyy-MM-dd'));
+    today = new Date(today.setSeconds(today.getSeconds()));
+    $('#bjui-clock').html(today.formatDate('HH:mm:ss'));
+
+    //预览遮罩
+    function shields() {
+        var pictrueAd = $.CurrentDialog.find("#uploader .imgWrap img").attr("src");
+        var contentStr1 = $("#y_form_content").val();
+        checkSearchsk();
+        function checkSearchsk(str) {
+            if (contentStr1 == "") {
+                BJUI.alertmsg('error', '请先填写广告内容！');
+            }
+            else {
+                var s = document.getElementById("previewMask");
+                s.style.display = "block";
+                var l = document.getElementById("adPreviewHead");
+                l.style.display = "block";
+                $("#adPreviewContent").html(contentStr1);
+            }
+        }
+    }
+
+    function cancel_shield() {
+        var s = document.getElementById("previewMask");
+        s.style.display = "none";
+
+        var l = document.getElementById("adPreviewHead");
+        l.style.display = "none";
+    }
+    var wid = window.parent.parent.document.body.width;
+    var hei = window.screen.height;
+    $("#previewMask").css("width", wid);
+    $("#previewMask").css("height", hei);*/
+
+    //文本编辑器内容图的上传
+
+    /*$("#adSave").click(function (event) {
+        var pictrueAd = $.CurrentDialog.find("#uploader input[name='pictureId']").val();
+        checkSearchsab();
+        function checkSearchsab(str) {
+            var newsTextarea = $("#y_form_content").val();
+            console.log(newsTextarea);
+            var pictrueContent = $("body").data("kindeDataIdes");
+
+            if (pictrueContent == '' || pictrueContent == null || pictrueContent == undefined) {
+                var allInfor = {"adContent": newsTextarea, "adPicId": pictrueAd};
+            } else {
+                var pictrueContentss = pictrueContent.join(',');
+                var allInfor = {
+                    "adContent": newsTextarea,
+                    "adPicId": pictrueAd,
+                    "contentPicId": pictrueContentss
+                };
+            }
+            if (newsTextarea == '') {
+                BJUI.alertmsg('error', '请先填写广告内容！');
+            } else {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/ad/v1/addAd',
+                    data: JSON.stringify(allInfor),
+                    loadingmask: true,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            BJUI.alertmsg('ok', '新建成功！');
+                            BJUI.dialog('closeCurrent')
+                            $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        }
+    });*/
+</script>

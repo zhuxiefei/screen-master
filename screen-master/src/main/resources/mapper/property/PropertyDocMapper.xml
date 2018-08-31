@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.property.PropertyDocMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.property.PropertyDoc" >
+    <id column="docId" property="docId" jdbcType="VARCHAR" />
+    <result column="docTitle" property="docTitle" jdbcType="VARCHAR" />
+    <result column="typeId" property="typeId" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="createUser" property="createUser" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.betel.estatemgmt.common.model.property.PropertyDoc" extends="BaseResultMap" >
+    <result column="docContent" property="docContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    docId, docTitle, typeId, attachment, createUser, createTime, updateTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    docContent
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from property_doc
+    where docId = #{docId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from property_doc
+    where docId = #{docId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.property.PropertyDoc" >
+    insert into property_doc (docId, docTitle, typeId, 
+      attachment, createUser, createTime, 
+      updateTime, docContent)
+    values (uuid(), #{docTitle,jdbcType=VARCHAR}, #{typeId,jdbcType=VARCHAR},
+      #{attachment,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{docContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyDoc" >
+    insert into property_doc
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="docId != null" >
+        docId,
+      </if>
+      <if test="docTitle != null" >
+        docTitle,
+      </if>
+      <if test="typeId != null" >
+        typeId,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="createUser != null" >
+        createUser,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+      <if test="docContent != null" >
+        docContent,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="docId != null" >
+        #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="docTitle != null" >
+        #{docTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="docContent != null" >
+        #{docContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyDoc" >
+    update property_doc
+    <set >
+      <if test="docTitle != null" >
+        docTitle = #{docTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        typeId = #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="docContent != null" >
+        docContent = #{docContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where docId = #{docId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.betel.estatemgmt.common.model.property.PropertyDoc" >
+    update property_doc
+    set docTitle = #{docTitle,jdbcType=VARCHAR},
+      typeId = #{typeId,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      docContent = #{docContent,jdbcType=LONGVARCHAR}
+    where docId = #{docId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.property.PropertyDoc" >
+    update property_doc
+    set docTitle = #{docTitle,jdbcType=VARCHAR},
+      typeId = #{typeId,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where docId = #{docId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByTypeId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.document.model.Document">
+    SELECT
+      pd.docId,
+      pd.docTitle AS docName,
+      (SELECT aa.adminName FROM admin_admin aa WHERE aa.adminId = pd.createUser) AS adminName,
+      pd.createTime,
+      pd.attachment AS isDownload
+    FROM property_doc pd
+    WHERE pd.typeId = #{0}
+    ORDER BY pd.createTime DESC
+  </select>
+
+  <select id="selectByDocNameAndTypeId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.property.PropertyDoc">
+    SELECT * FROM property_doc WHERE docTitle = #{0} AND typeId = #{1}
+  </select>
+
+  <select id="findByTypeId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.property.PropertyDoc">
+    SELECT * FROM property_doc WHERE typeId = #{typeId}
+  </select>
+
+  <delete id="deleteDocs" parameterType="java.util.List">
+    DELETE FROM property_doc
+    WHERE docId IN
+    <foreach collection="list" item="docId" open="(" separator="," close=")">
+      #{docId}
+    </foreach>
+  </delete>
+</mapper>

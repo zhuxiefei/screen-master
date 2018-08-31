@@ -1,0 +1,106 @@
+<div class="bjui-pageContent">
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">编号:</td>
+            <td class="td_right" id="rentNo"></td>
+            <td class="td_left">租赁公司名称:</td>
+            <td class="td_right" id="companyName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">租客对接人:</td>
+            <td class="td_right" id="tenant"></td>
+            <td class="td_left">对接人电话:</td>
+            <td class="td_right" id="tenantPhone"></td>
+        </tr>
+        <tr>
+            <td class="td_left">租赁地址:</td>
+            <td class="td_right" id="address"></td>
+            <td class="td_left td_hideCycle">租赁面积:</td>
+            <td class="td_right td_hideCycle" id="acreage"></td>
+        </tr>
+        <tr >
+            <td class="td_left">租赁单价:</td>
+            <td class="td_right"  id="rentUnitPrice"></td>
+            <td class="td_left td_houseStatus">招租状态:</td>
+            <td class="td_right td_houseStatus" id="houseStatus"></td>
+        </tr>
+        <tr>
+            <td class="td_left">合同签订时间:</td>
+            <td class="td_right" id="signTime"></td>
+            <td class="td_left">合同计租时间:</td>
+            <td class="td_right" id="startTime"></td>
+        </tr>
+        <tr style=" ">
+            <td class="td_left">合同周期:</td>
+            <td class="td_right" id="rentCycle"></td>
+            <td class="td_left">合同结束时间:</td>
+            <td class="td_right" id="endTime"></td>
+        </tr>
+        <tr style="">
+            <td class="td_left">合同状态:</td>
+            <td class="td_right" id="isInvalid"></td>
+            <td class="td_left">物业公司:</td>
+            <td class="td_right" id="propertyCompany"></td>
+        </tr>
+        <tr style="">
+            <td class="td_left">物业费单价:</td>
+            <td class="td_right" id="propertyUnitPrice"></td>
+            <td class="td_left">物业联系电话:</td>
+            <td class="td_right" id="propertyPhone"></td>
+        </tr>
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <!--<li>-->
+        <!--<button type="button" class="btn-default" data-icon="" id="repairRecord">维保记录</button>-->
+        <!--</li>-->
+    </ul>
+</div>
+
+<script>
+
+    var data = $.CurrentNavtab.data("seeRentData");
+    if (data.isInvalid == 1) {
+        data.isInvalid = "有效";
+    }else if(data.isInvalid == 2){
+        data.isInvalid = "无效";
+    }else{
+        data.isInvalid = "待生效";
+    }
+    if (data.isUpload == 1) {
+        data.isUpload = "已上传";
+    }else{
+        data.isUpload = "未上传";
+    }
+
+    if (data.houseStatus=="1" ) {
+        data.houseStatus = "招商中"
+    }else if(data.houseStatus=="2"){
+        data.houseStatus = "空置中"
+    }else if(data.houseStatus=="3"){
+        data.houseStatus = "出租中"
+    }else{
+        $.CurrentDialog.find('.td_houseStatus').empty();
+    }
+    $.CurrentDialog.find('#houseStatus').html(data.houseStatus);
+    $.CurrentDialog.find('#acreage').html(data.acreage+'㎡');
+    $.CurrentDialog.find('#rentNo').html(data.rentNo);
+    $.CurrentDialog.find('#address').html(data.address);
+    $.CurrentDialog.find('#companyName').html(data.companyName);
+    $.CurrentDialog.find('#endTime').html(data.endTime.substr(0,10));
+    $.CurrentDialog.find('#isInvalid').html(data.isInvalid);
+    $.CurrentDialog.find('#isUpload').html(data.isUpload);
+    $.CurrentDialog.find('#propertyCompany').html(data.propertyCompany);
+    $.CurrentDialog.find('#propertyPhone').html(data.propertyPhone);
+    $.CurrentDialog.find('#propertyUnitPrice').html(data.propertyUnitPrice+'元/㎡/月');
+    $.CurrentDialog.find('#rentUnitPrice').html(data.rentUnitPrice+'元');
+    $.CurrentDialog.find('#signTime').html(data.signTime.substr(0,10));
+    $.CurrentDialog.find('#startTime').html(data.startTime.substr(0,10));
+    $.CurrentDialog.find('#tenant').html(data.tenant);
+    $.CurrentDialog.find('#tenantPhone').html(data.tenantPhone);
+    $.CurrentDialog.find('#rentCycle').html(data.rentCycle+'月');
+</script>

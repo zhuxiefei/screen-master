@@ -1,0 +1,174 @@
+<div class="bjui-pageContent">
+    <form id="validate-payment">
+        <input type="hidden" id="billNos" name="billNos" />
+        <div class="bjui-row col-" style=" text-align: center; padding-bottom: 0;">
+            <label class="row-label" style=" width: auto; color: #222;">支付倒计时：</label>
+            <div class="row-input" style=" width: auto; font-weight: bold; color: #F00; font-size: 16px;">
+                <span id="timetext">00:04:59</span>
+            </div>
+        </div>
+        <div class="bjui-row col-3">
+            <label class="row-label">房屋信息:</label>
+            <div class="row-input">
+                <span id="houseInfo"></span>
+            </div>
+
+            <label class="row-label">户主姓名:</label>
+            <div class="row-input">
+                <span id="houseMaster"></span>
+            </div>
+
+            <label class="row-label">联系电话:</label>
+            <div class="row-input">
+                <span id="phone"></span>
+            </div>
+        </div>
+
+        <table class="payment_table">
+            <thead class="payment_table_thead">
+                <tr>
+                    <th>收费项</th>
+                    <th>计费开始时间</th>
+                    <th>计费结束时间</th>
+                    <th>欠费金额</th>
+                    <th>滞纳金</th>
+                    <th>合计</th>
+                </tr>
+            </thead>
+            <tbody class="payment_table_tbody">
+            </tbody>
+        </table>
+        <div class="bjui-row col-1" style=" text-align: right; padding-top: 20px;;">
+            <label class="row-label" style=" width: auto;">收费方式:</label>
+            <div class="row-input" style=" width: auto;">
+                <select id="chargeWays" name="chargeWays" data-toggle="selectpicker" data-rule="required"  data-width="100">
+                    <option value="">--请选择--</option>
+                    <option value="1">现金</option>
+                    <option value="2">刷卡</option>
+                    <option value="3">支付宝</option>
+                    <option value="4">微信</option>
+                </select>
+            </div>
+            <label class="row-label" style=" width: auto;">共计:</label>
+            <div class="row-input" style=" width: auto; color: #F00; font-weight: bold;">
+                ￥<span id="paymentCount">23.0</span>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-payment" >确认缴费</button></li>
+    </ul>
+</div>
+
+<script>
+    $(function () {
+        $.CurrentDialog.find('#billNos').val($.CurrentNavtab.data('billNos'));
+        var paymentInfo = $.CurrentNavtab.data('paymentInfo');
+        //初始化
+        $.CurrentDialog.find('#houseInfo').text(paymentInfo.houseInfo);
+        $.CurrentDialog.find('#houseMaster').text(paymentInfo.houseMaster);
+        $.CurrentDialog.find('#phone').text(paymentInfo.phone);
+        var tdHtml='';
+        var paymentCount = 0;
+        $.each(paymentInfo.payDetails,function (s,v) {
+            var stateName = '';
+            if (v.itemType == 1) {
+                stateName = "物业费";
+            } else if (v.itemType == 2) {
+                stateName = "公摊水电费";
+            } else if (v.itemType == 3) {
+                stateName = "停车费(购买)";
+            } else if (v.itemType == 4) {
+                stateName = "停车费(租赁)";
+            } else if (v.itemType == 5) {
+                stateName = "能耗费";
+            }
+
+            paymentCount = paymentCount + parseFloat(v.totalAmount);
+
+            tdHtml += '<tr>';
+            tdHtml += '<td>'+stateName+'</td>';
+            tdHtml += '<td>'+v.billingStartTime+'</td>';
+            tdHtml += '<td>'+v.billingEndTime+'</td>';
+            tdHtml += '<td>'+v.billAmount+'</td>';
+            tdHtml += '<td>'+v.overduefinePrice+'</td>';
+            tdHtml += '<td>'+v.totalAmount+'</td>';
+            tdHtml += '</tr>';
+        });
+        $.CurrentDialog.find('.payment_table_tbody').html(tdHtml);
+        $.CurrentDialog.find('#paymentCount').text(parseFloat(paymentCount).toFixed(2));
+
+        //确认缴费
+        $.CurrentDialog.find('#btn-payment').click(function () {
+            BJUI.ajax('ajaxform', {
+                url: path + '/web/expenses/v1/updateBill',
+                form: $.CurrentDialog.find('form'),
+                validate: true,
+                loadingmask: false,
+                callback: function(json) {
+                    if(json.code=='00000'){
+                        BJUI.alertmsg('ok','操作成功！');
+                        BJUI.dialog('closeCurrent');
+                        $.CurrentNavtab.find('#datagrid-payment').datagrid('refresh', true);
+                        $.CurrentNavtab.data('preDataID',false);
+                        $.CurrentNavtab.find('.paging-pagesize').show();
+                        $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas',"")
+                    }else{
+                        successBack(json)
+                    }
+                }
+            })
+        });
+
+    });
+
+
+
+    //倒计时器
+    var int=setInterval(timer,1000);
+
+    var minute,second;//时 分 秒
+    minute=4;
+    second=59;//初始化
+
+    function timer()//计时
+    {
+        second=second-1;
+        if(second<0){
+            second = 59;
+            minute = minute-1;
+        }
+        if(minute<0){
+            minute = 0;
+        }
+
+        if(minute == 0 && second==0){
+            second = 0;
+            window.clearInterval(int);
+            BJUI.alertmsg('warn', '已超过支付时间，请重新打开缴费弹窗！', {
+                okCall: function() {
+                    BJUI.dialog('close',"navtab_payment");  //当前弹窗
+                    BJUI.dialog('closeCurrent');
+                }
+            })
+        }
+        if(second.toString().length==1) {
+            second = "0"+second;
+        }
+        if(minute.toString().length==1) {
+            minute = "0"+minute;
+        }
+        $("#timetext").text('00:'+minute+':'+second);
+    }
+
+    function Reset()//重置
+    {
+        window.clearInterval(int);
+        minute=4;
+        second=59;
+        $("#timetext").text('00:04:59');
+    }
+</script>

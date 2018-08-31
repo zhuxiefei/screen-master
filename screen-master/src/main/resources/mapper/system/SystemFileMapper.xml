@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.system.SystemFileMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.system.SystemFile" >
+    <id column="fileId" property="fileId" jdbcType="VARCHAR" />
+    <result column="fileName" property="fileName" jdbcType="VARCHAR" />
+    <result column="fileUrl" property="fileUrl" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    fileId, fileName, fileUrl, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from system_file
+    where fileId = #{fileId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from system_file
+    where fileId = #{fileId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.system.SystemFile" >
+    <selectKey keyProperty="fileId" resultType="String" order="BEFORE">
+      select uuid()
+    </selectKey>
+    insert into system_file (fileId, fileName, fileUrl,
+    createTime)
+    values (#{fileId}, #{fileName,jdbcType=VARCHAR}, #{fileUrl,jdbcType=VARCHAR},
+    #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.system.SystemFile" >
+    insert into system_file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        fileId,
+      </if>
+      <if test="fileName != null" >
+        fileName,
+      </if>
+      <if test="fileUrl != null" >
+        fileUrl,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null" >
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.system.SystemFile" >
+    update system_file
+    <set >
+      <if test="fileName != null" >
+        fileName = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null" >
+        fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where fileId = #{fileId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.system.SystemFile" >
+    update system_file
+    set fileName = #{fileName,jdbcType=VARCHAR},
+      fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where fileId = #{fileId,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteFileList" parameterType="java.util.List">
+    DELETE FROM system_file WHERE fileId IN
+    <foreach collection="list" item="fileId" open="(" separator="," close=")">
+      #{fileId}
+    </foreach>
+  </delete>
+  <!-- 批量查询巡检设备二维码文件信息jians.z-->
+  <select id="findBatchQRcodeByFileIds" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.system.SystemFile">
+    SELECT * FROM system_file WHERE fileId IN
+    <foreach collection="list" index="index" item="fileId" open="(" close=")" separator=",">
+      #{fileId}
+    </foreach>
+  </select>
+
+  <select id="selectByFileId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.system.SystemFile">
+    SELECT * FROM system_file WHERE fileId = #{fileId}
+  </select>
+
+  <delete id="deleteFile" parameterType="java.lang.String">
+    DELETE FROM system_file WHERE fileId = #{fileId}
+  </delete>
+</mapper>

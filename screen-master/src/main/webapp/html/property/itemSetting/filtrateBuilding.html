@@ -1,0 +1,84 @@
+<div class="bjui-pageContent filtrateBuilding_area">
+    <div class=" bjui-row col-2 filtrateBuilding">
+        <!--<label class="row-label">复选框</label>-->
+        <!--<div class="row-input">-->
+        <!--<input type="checkbox" name="checkbox" id="j_form_checkbox1" value="1" data-toggle="icheck" data-label="复选框">-->
+        <!--</div>-->
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="btn-action-buildings">确认</button>
+        </li>
+    </ul>
+</div>
+
+<style>
+    .filtrateBuilding_area {
+        overflow-y: auto;
+    }
+    .filtrateBuilding label{
+        color:black!important;
+    }
+</style>
+<script>
+    var actionChargeId = $('body').data('actionChargeId');
+    var itemId = {
+        'itemId': actionChargeId,
+    }
+    BJUI.ajax('doajax', {
+        url: path + '/web/charges/v1/filtrateBuilding',
+        data: itemId,
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                $.CurrentDialog.find(".operatorList").show();
+                $.CurrentDialog.find(".operatorList").empty();
+                $.each(json.data.buildingIds, function (i, n) {
+                    $.CurrentDialog.find(".filtrateBuilding").append(' <label class="row-label">' + n.buildingName
+                            + '</label><div class="row-input"><input type="checkbox" name="checkbox" id="' + n.buildingId + '" value="1" data-toggle="icheck" data-label="'
+                            + n.buildingName + '"></div>');
+                })
+                $.each(json.data.filtrateBuildingIds, function (i, n) {
+                    $.CurrentDialog.find('input[type=checkbox]').each(function () {
+                        var nowId = $(this).attr('id');
+                        if (n.buildingId == nowId) {
+//                            $(this).attr('disabled','');
+                            $(this).iCheck('disable').iCheck('check');
+                        }
+                    })
+                })
+
+                //查看以保存
+                var tempIds = $('body').data('actionBuildingIds');
+                if (tempIds) {
+                    $.each(tempIds, function (i, n) {
+                        $.CurrentDialog.find('input[type=checkbox]').each(function () {
+                            var nowId = $(this).attr('id');
+                            if (nowId== n) {
+                                $(this).iCheck('check');
+                            }
+                        })
+                    })
+                }
+            } else {
+                successBack(json);
+            }
+        }
+    });
+
+    //确认提交
+    $.CurrentDialog.find("#btn-action-buildings").click(function () {
+        var buildingIds = [];
+        $.CurrentDialog.find('input:checked').not(':disabled').each(function () {
+            buildingIds.push($(this).attr('id'))
+        })
+        $('body').data('actionBuildingIds', buildingIds);
+        BJUI.dialog('closeCurrent', true);
+    })
+
+</script>

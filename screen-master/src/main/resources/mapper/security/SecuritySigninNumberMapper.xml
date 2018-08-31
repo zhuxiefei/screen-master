@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.security.SecuritySigninNumberMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.security.SecuritySigninNumber">
+        <id column="numId" property="numId" jdbcType="VARCHAR"/>
+        <result column="longitude" property="longitude" jdbcType="DOUBLE"/>
+        <result column="latitude" property="latitude" jdbcType="DOUBLE"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="recordId" property="recordId" jdbcType="VARCHAR"/>
+        <result column="signinEmpId" property="signinEmpId" jdbcType="VARCHAR"/>
+        <result column="signinEmpName" property="signinEmpName" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    numId, longitude, latitude, address, remarks, recordId, createTime, updateTime,signinEmpId,signinEmpName
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from security_signin_number
+        where numId = #{numId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from security_signin_number
+    where numId = #{numId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.security.SecuritySigninNumber">
+    insert into security_signin_number (numId, longitude, latitude, 
+      address, remarks, recordId, signinEmpId,signinEmpName,
+      createTime, updateTime)
+    values (#{numId,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
+      #{address,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{recordId,jdbcType=VARCHAR},#{signinEmpId,jdbcType=VARCHAR}, #{signinEmpName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.security.SecuritySigninNumber">
+        insert into security_signin_number
+        <selectKey keyProperty="numId" resultType="String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="numId != null">
+                numId,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="recordId != null">
+                recordId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="signinEmpId != null">
+                signinEmpId,
+            </if>
+            <if test="signinEmpName != null">
+                signinEmpName,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="numId != null">
+                #{numId,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="recordId != null">
+                #{recordId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="signinEmpId != null">
+                #{signinEmpId,jdbcType=VARCHAR},
+            </if>
+            <if test="signinEmpName != null">
+                #{signinEmpName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.betel.estatemgmt.common.model.security.SecuritySigninNumber">
+        update security_signin_number
+        <set>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="recordId != null">
+                recordId = #{recordId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="signinEmpId != null">
+                signinEmpId = #{signinEmpId,jdbcType=VARCHAR},
+            </if>
+            <if test="signinEmpName != null">
+                signinEmpName = #{signinEmpName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where numId = #{numId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.security.SecuritySigninNumber">
+    update security_signin_number
+    set longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      address = #{address,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      recordId = #{recordId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      signinEmpId = #{signinEmpId,jdbcType=VARCHAR},
+      signinEmpName = #{signinEmpName,jdbcType=VARCHAR}
+    where numId = #{numId,jdbcType=VARCHAR}
+  </update>
+    <select id="findByRecordId" resultType="com.betel.estatemgmt.common.model.security.SecuritySigninNumber"
+            parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq">
+        select signinEmpId,signinEmpName,address, remarks, recordId, DATE_FORMAT(createTime,'%Y-%m-%d %T') AS createTime from security_signin_number WHERE recordId = #{recordId};
+    </select>
+    <select id="findAllSignList" resultType="com.betel.estatemgmt.business.propertyapp.security.model.SignInfo"
+            parameterType="java.lang.String">
+        select
+        createTime,address,remarks,longitude,latitude,signinEmpName
+        from security_signin_number
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+</mapper>

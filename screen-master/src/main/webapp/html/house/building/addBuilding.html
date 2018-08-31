@@ -1,0 +1,84 @@
+<style>
+    #addBuildingForm .row-label{
+        width: 25%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;padding-top: 15px" data-toggle="ajaxform" id="addBuildingForm">
+        <div class="bjui-row col-1">
+            <label class="row-label">楼宇名称 : </label>
+            <div class="row-input required">
+                <input type="text" id="addBuild_search" name="buildingName"  data-rule="required,special,length(~4)" >
+            </div>
+            <label class="row-label">展示顺序 : </label>
+            <div class="row-input required">
+                <input type="text" id="displayOrder" name="displayOrder"  data-rule="required,number10000" >
+            </div>
+            <span class="row-label">描述 : </span>
+            <div class="row-input" >
+                <textarea   id="addBuildK" name="buildingDesc" data-toggle="autowidth" data-rule="length(~512)"></textarea>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addBuilds" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+       /* document.getElementById('addBuild').onkeydown = function()
+        {
+            if(this.value.trim().length >= 100)
+            //event.returnValue = false;
+                BJUI.alertmsg('warn','描述不能超过100个字！');
+        };*/
+        $.CurrentDialog.find('button#addBuilds').bind("click", function(){
+            var addBuildInput =  $("#addBuild_search").val().trim();
+            var addBuildInputs =  $("#addBuildK").val().trim();
+           // console.log("---"+addBuildInputs)
+            if (addBuildInputs == '' || addBuildInputs == null || addBuildInputs == undefined){
+                var addBuildFG = {"buildingName":addBuildInput};
+            }else {
+                var addBuildFG = {"buildingName":addBuildInput,"buildingDesc":addBuildInputs};
+            }
+            // $("body").data("notices",noticeInput);
+//            if (addBuildInput == '' || addBuildInput == null || addBuildInput == undefined){
+//                BJUI.alertmsg('warn','楼宇名称不能为空！');
+//            }else if(addBuildInputs.length > 100){
+//                BJUI.alertmsg('warn','楼宇描述不能超过100个字！');
+//            }else {
+//                    var vkeyWords=/['"<>%\\]+/;
+//                    if(addBuildInput.length >4){
+//                        BJUI.alertmsg('warn','楼宇名称不能输入\'\"<>%\\且长度不超过4位');
+//                    }else if(vkeyWords.test(addBuildInput)){
+//                        BJUI.alertmsg('warn','楼宇名称不能输入\'\"<>%\\且长度不超过4位');
+//                    }else{
+                        BJUI.ajax('ajaxform', {
+                            url: path + '/web/building/v1/addBuilding',
+//                            data: JSON.stringify(addBuildFG),
+                            form: $.CurrentDialog.find('form'),
+                            validate: true,
+                            loadingmask: true,
+                            headers:{"estateId":$.cookie("estateId")},
+                            callback: function(json) {
+                                if(json.code=="00000"){
+                                    BJUI.alertmsg('ok','新增成功！');
+                                    BJUI.dialog('closeCurrent');
+                                    BJUI.navtab('refresh', 'buildingManage');
+                                    //$("#"+$.CurrentDialog.find('.dialogHeader .title span').attr('spanTag')).text(editUnitNameInput);
+                                }else {
+                                    successBack(json);
+                                }
+                            }
+                        })
+//                    }
+
+//            }
+        })
+
+
+
+</script>

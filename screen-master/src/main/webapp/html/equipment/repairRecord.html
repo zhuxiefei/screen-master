@@ -1,0 +1,268 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#j_datagrid_repairRecord").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add',
+        dataUrl: path + '/web/maintenance/v1/findAllRepairRecords',
+        editUrl: 'html/equipment/repairRecord/addRepairRecord.html',
+        editMode: {
+            dialog: {
+                id: 'dialog_addRepairRecord',
+                width:'800',
+                height: '580',
+                mask: true,
+                title: "添加维保记录",
+                maxable: false,
+                resizable: false
+            }
+        },
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {name: 'equipmentNo', label: '设备编号',width:200, align: 'center', nowrap: 'true'},
+            {name: 'equipmentName', label: '设备名称',width:200, align: 'center', nowrap: 'true'},
+            {name: 'typeName', label: '设备类型',width:200, align: 'center', nowrap: 'true'},
+            {name: 'location', label: '所在位置',width:200, align: 'center', nowrap: 'true'},
+            {name: 'createTime', label: '维修时间',width:200, align: 'center', nowrap: 'true', render: function (value, data) {
+                return value.substring(0,10);
+            }},
+            {
+                name: 'recordId', label: '操作',width:200, align: 'center', render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick=checkRepairRecord(\'' + value + '\')>查看</button>'
+                        + '<button type="button" class="btn-blue"  onclick=editRepairRecord(\'' + value + '\')>编辑</button>';
+                return html;
+            }
+            }
+        ]
+    })
+
+    //搜索类型
+    BJUI.ajax('doajax', {
+        url: path + '/web/maintenance/v1/findEquipmentTypes',
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                var data=json.data;
+                for(var i=0;i<data.length;i++){
+                    var html='<option value="'+data[i].typeId+'">'+data[i].typeName+'</option>'
+                    $.CurrentNavtab.find('#equipmentType').append(html);
+                }
+                $.CurrentNavtab.find('#equipmentType').selectpicker('refresh');
+            } else {
+                successBack(json)
+            }
+        }
+    });
+
+    //查看
+    function checkRepairRecord(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/maintenance/v1/findRecord',
+            data: {'recordId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("checkRepairRecordDetail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_checkRepairRecord',
+                        url: 'html/equipment/repairRecord/checkRepairRecord.html',
+                        title: '查看维保记录',
+                        width: '800',
+                        height: '450',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+
+    }
+
+    //编辑
+    function editRepairRecord(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/maintenance/v1/findRecord',
+            data: {'recordId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("editRepairRecordDetail", json.data);
+                     BJUI.dialog({
+                         id: 'dialog_checkRepairRecord',
+                         url: 'html/equipment/repairRecord/editRepairRecord.html',
+                         title: '编辑维保记录',
+                         width: '800',
+                         height: '555',
+                         mask: true,
+                         maxable: false,
+                         resizable: false
+                     })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //重置
+    $.CurrentNavtab.find('#resetBtn').click(function () {
+        $.CurrentNavtab.find('#equipmentType').val("").selectpicker('refresh');
+    })
+
+    //开始搜索事件
+    $.CurrentNavtab.find('#btn-search').click(function () {
+        $.CurrentNavtab.find("#j_datagrid_repairRecord").data('selectedDatas', "");
+        exportData_repairRecord.equipmentNo = $.CurrentNavtab.find("#equipmentNo").val().trim();
+        exportData_repairRecord.location = $.CurrentNavtab.find("#location").val().trim();
+        exportData_repairRecord.startTime = $.CurrentNavtab.find("#startTime").val();
+        exportData_repairRecord.endTime = $.CurrentNavtab.find("#endTime").val();
+        exportData_repairRecord.equipmentName = $.CurrentNavtab.find("#equipmentName").val();
+        exportData_repairRecord.typeId = $.CurrentNavtab.find("#typeId").val();
+    });
+
+    //导出按钮
+    var exportData_repairRecord = {};
+    function exportRepairRecord() {
+        var repairRecordList = $.CurrentNavtab.find("#j_datagrid_repairRecord").data('selectedDatas');
+        if (repairRecordList && repairRecordList.length > 0) {  //批量
+            var repairRecords = [];
+            $.each(repairRecordList, function (s, v) {
+                repairRecords.push(v.recordId);
+            });
+            exportData_repairRecord.recordIds = repairRecords.toString();
+        } else {
+            exportData_repairRecord.recordIds = "";
+        }
+
+        BJUI.alertmsg('confirm', '确定要导出数据吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/maintenance/v1/exportRepairRecords',
+                    loadingmask: false,
+                    data: exportData_repairRecord,
+                    okCallback: function (json) {
+                        //画出表格
+                        var html = '';
+                        var infos = json;
+                        for (var i = 0; i < infos.length; i++) {
+                            if (infos[i].recordUnit == 1) {
+                                infos[i].recordUnit = "天";
+                            }
+                            if (infos[i].recordUnit == 2) {
+                                infos[i].recordUnit = "个月";
+                            }
+                            if (infos[i].recordUnit == 3) {
+                                infos[i].recordUnit = "年";
+                            }
+                            html += '<tr><td style="mso-number-format:\'\@\';">'+infos[i].equipmentNo+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].equipmentName+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].typeName+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].location+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].createTime+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].equipmentOperator+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].operatorPhone+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].repairDesc+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].repairExpense+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].recordQuality+infos[i].recordUnit+'</td style="mso-number-format:\'\@\';"></tr>';
+                        }
+                        $.CurrentNavtab.find("#repairRecords").html(html);
+                        exportExcel('repairRecordList', '维保记录信息表');
+                    }
+                });
+
+            }
+        })
+    }
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#j_datagrid_repairRecord')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">设备类型:</label>
+                <div class="row-input">
+                    <select id="equipmentType" name="typeId" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <label class="row-label">设备编号:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">设备名称:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentName" name="equipmentName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">所在位置:</label>
+                <div class="row-input">
+                    <input type="text" id="location" name="location" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label" >维修开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd"  data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label" >维修结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd"  data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <button type="button" class="btn-green btn-prohibit" onclick="exportRepairRecord()" data-icon="sign-in" style=" left:67px;">导出</button>
+</div>
+<a id="dlink" href="" style="display: none ;">下载</a>
+<div id="ieExport_securityRecord">
+    <table id="repairRecordList" style="display:none;">
+        <tr>
+            <th>设备编号</th>
+            <th>设备名称</th>
+            <th>设备类型</th>
+            <th>所在位置</th>
+            <th>维修时间</th>
+            <th>维修厂商</th>
+            <th>维修厂商电话</th>
+            <th>维修内容</th>
+            <th>维修费用</th>
+            <th>质保期</th>
+        </tr>
+        <tbody id="repairRecords">
+
+        </tbody>
+    </table>
+</div>
+<div class="bjui-pageContent">
+    <table id="j_datagrid_repairRecord" class="table table-bordered">
+    </table>
+</div>

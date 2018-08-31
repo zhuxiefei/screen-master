@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseParkingSpaceMapper">
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseParkingSpace">
+    <id column="spaceNum" jdbcType="VARCHAR" property="spaceNum" />
+    <result column="spaceId" jdbcType="VARCHAR" property="spaceId" />
+    <result column="houseId" jdbcType="VARCHAR" property="houseId" />
+    <result column="spaceType" jdbcType="BIT" property="spaceType" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="licensePlate" jdbcType="VARCHAR" property="licensePlate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    spaceNum, spaceId, houseId, spaceType, createTime, licensePlate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from house_parking_space
+    where spaceNum = #{spaceNum,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from house_parking_space
+    where spaceNum = #{spaceNum,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseParkingSpace">
+    insert into house_parking_space (spaceNum, spaceId, houseId, 
+      spaceType, createTime,licensePlate)
+    values (#{spaceNum,jdbcType=VARCHAR}, #{spaceId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR},
+      #{spaceType,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{licensePlate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseParkingSpace">
+    insert into house_parking_space
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="spaceNum != null">
+        spaceNum,
+      </if>
+      <if test="spaceId != null">
+        spaceId,
+      </if>
+      <if test="houseId != null">
+        houseId,
+      </if>
+      <if test="spaceType != null">
+        spaceType,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="licensePlate != null">
+        licensePlate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="spaceNum != null">
+        #{spaceNum,jdbcType=VARCHAR},
+      </if>
+      <if test="spaceId != null">
+        #{spaceId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null">
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="spaceType != null">
+        #{spaceType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="licensePlate != null">
+        #{licensePlate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseParkingSpace">
+    update house_parking_space
+    <set>
+      <if test="spaceId != null">
+        spaceId = #{spaceId,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null">
+        houseId = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="spaceType != null">
+        spaceType = #{spaceType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="licensePlate != null">
+        licensePlate = #{licensePlate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where spaceNum = #{spaceNum,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseParkingSpace">
+    update house_parking_space
+    set spaceId = #{spaceId,jdbcType=VARCHAR},
+      houseId = #{houseId,jdbcType=VARCHAR},
+      spaceType = #{spaceType,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      licensePlate = #{licensePlate,jdbcType=VARCHAR}
+    where spaceNum = #{spaceNum,jdbcType=VARCHAR}
+  </update>
+
+  <select id="insertList" parameterType="java.util.List">
+    insert into house_parking_space (spaceId, houseId, spaceType,createTime, spaceNum, licensePlate)
+    values
+    <foreach collection="list" item="space" index="index" separator=",">
+      (
+      UUID(),#{space.houseId},#{space.spaceType},#{space.createTime}
+      ,#{space.spaceNum},#{space.licensePlate}
+      )
+    </foreach>
+  </select>
+
+  <select id="findCountsByHouseIdAndType" resultType="java.lang.Integer">
+    SELECT count(*) FROM house_parking_space WHERE houseId = #{houseId} AND spaceType = #{spaceType}
+  </select>
+
+  <delete id="deleteByHouseId" parameterType="java.lang.String">
+    DELETE FROM house_parking_space WHERE houseId = #{houseId}
+  </delete>
+
+  <delete id="deleteByHouseIds" parameterType="java.util.List">
+    DELETE FROM house_parking_space WHERE houseId IN
+    <foreach item="houseId"  collection="list" open="(" separator="," close=")">
+      #{houseId}
+    </foreach>
+  </delete>
+
+  <select id="findSpacesByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.HouseParkingSpace">
+    SELECT * FROM house_parking_space WHERE houseId = #{houseId}
+  </select>
+</mapper>

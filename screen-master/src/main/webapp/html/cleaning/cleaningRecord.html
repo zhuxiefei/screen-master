@@ -1,0 +1,390 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#cleaningRecord_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: '',
+        dataUrl: path + '/web/cleaning/v1/findAllRecords',
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'contentNo',
+                label: '保洁编号',
+                align: 'center',
+                width: '220',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'areaName',
+                label: '保洁区域',
+                align: 'center',
+                width: '100',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'typeName',
+                label: '保洁类型',
+                align: 'center',
+                width: '100',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'location',
+                label: '所在位置',
+                align: 'center',
+                width: '150',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'cycle',
+                label: '保洁周期',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '每小时保洁';
+                    } else if (value == 2) {
+                        var html = '每半天保洁';
+                    } else if (value == 3) {
+                        var html = '每日保洁';
+                    } else if (value == 4) {
+                        var html = '每周保洁';
+                    } else {
+                        var html = '每月保洁';
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'isStandard',
+                label: '是否达标',
+                align: 'center',
+                width: '80',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == 1) {
+                        var html = '是';
+                    } else {
+                        var html = '否';
+                    }
+                    return html;
+                }
+            },
+
+            {name: 'createTime', label: '创建时间', width: '170', align: 'center', nowrap: 'true'},
+            {
+                name: 'recordId', label: '操作', width: '100', align: 'center', render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick=seeRecordDetail(\"' + value + '\",\"' + data.areaId + '\")>查看</button>'
+                return html;
+            }
+            }
+        ]
+    });
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#cycle").selectpicker('val', "");
+        $.CurrentNavtab.find("#isStandard").selectpicker('val', "");
+    });
+
+    //查看
+    function seeRecordDetail(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/cleaning/v1/findRecord',
+            data: {'recordId': val},
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findRecord", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeRecordDetail',
+                        url: 'html/cleaning/cleaningRecord/seeRecordDetail.html',
+                        title: '查看考核内容',
+                        width: '600',
+                        height: '700',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+    //开始搜索事件
+    $.CurrentNavtab.find('#btn-search').click(function () {
+        $.CurrentNavtab.find("#cleaningRecord_datagrid").data('selectedDatas', "");
+       
+        exportData_cleaningRecord.contentNo = $.CurrentNavtab.find("#contentNo").val().trim();
+        exportData_cleaningRecord.location = $.CurrentNavtab.find("#location").val().trim();
+        exportData_cleaningRecord.startTime = $.CurrentNavtab.find("#startTime").val();
+        exportData_cleaningRecord.endTime = $.CurrentNavtab.find("#endTime").val();
+        exportData_cleaningRecord.cycle = $.CurrentNavtab.find("#cycle").val();
+        exportData_cleaningRecord.isStandard = $.CurrentNavtab.find("#isStandard").val();
+    });
+    var exportData_cleaningRecord = {};
+    $.CurrentNavtab.find('#exportBtn').click(function () {
+        BJUI.alertmsg('confirm', '确定导出查询到的保洁考核记录吗?', {
+            okCall: function () {
+                var cleaningRecordList = $.CurrentNavtab.find("#cleaningRecord_datagrid").data('selectedDatas');
+                if (cleaningRecordList && cleaningRecordList.length > 0) {  //批量
+                    var recordIds = [];
+                    $.each(cleaningRecordList, function (s, v) {
+                        recordIds.push(v.recordId);
+                    });
+                    exportData_cleaningRecord.recordIds = recordIds.toString();
+                } else {
+                    exportData_cleaningRecord.recordIds = "";
+                }
+                $('#bjui-alertMsgBox').hide();
+                BJUI.ajax('doajax', {
+                    url: path + '/web/cleaning/v1/exportRecords',
+                    loadingmask: false,
+                    data: exportData_cleaningRecord,
+                    asyn: false,
+                    okCallback: function (json) {
+                        //画出表格
+                        var html = '';
+                        for (var i = 0; i < json.length; i++) {
+                            if (json[i].cycle == 1) {
+                                json[i].cycle = '每小时保洁';
+                            } else if (json[i].cycle == 2) {
+                                json[i].cycle = '每半天保洁';
+                            } else if (json[i].cycle == 3) {
+                                json[i].cycle = '每日保洁';
+                            } else if (json[i].cycle == 4) {
+                                json[i].cycle = '每周保洁';
+                            } else {
+                                json[i].cycle = '每月保洁';
+                            }
+
+                            if (json[i].isStandard == 1) {
+                                json[i].isStandard = '是';
+                            } else {
+                                json[i].isStandard = '否';
+                            }
+
+                            if(json[i].contentNo==undefined||json[i].contentNo==null||json[i].contentNo==""){
+                                json[i].contentNo=""
+                            }
+                            if(json[i].areaName==undefined||json[i].areaName==null||json[i].areaName==""){
+                                json[i].areaName=""
+                            }
+                            if(json[i].typeName==undefined||json[i].typeName==null||json[i].typeName==""){
+                                json[i].typeName=""
+                            }
+                            if(json[i].location==undefined||json[i].location==null||json[i].location==""){
+                                json[i].location=""
+                            }
+                            if(json[i].content==undefined||json[i].content==null||json[i].content==""){
+                                json[i].content=""
+                            }
+
+                            html += '<tr><td style="mso-number-format:\'\@\';">' + json[i].contentNo + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].content + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].areaName + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].typeName + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].location + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].cycle + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].isStandard + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';"><span>&nbsp;</span>'+ json[i].createTime + '</td></tr>'
+                        }
+                        $.CurrentNavtab.find("#exportDetail_cleaningRecord tr:not(:first)").remove();
+                        $.CurrentNavtab.find("#exportDetail_cleaningRecord").append(html);
+                        exportExcel('incomelList', '保洁考核记录');
+                    }
+                });
+
+            }
+        })
+    })
+
+    var option = {
+        "parentUrl": "/web/cleaning/v1/findCleaningAreas",
+        "childUrl": "/web/cleaning/v1/findCleaningTypes",
+        "parentParam": "",
+        "childParam": 'areaId',
+        "parentName": "areaName",
+        "childName": "typeName",
+        "id": "zdTree_cleaningRecord",
+        "parentID": "areaId",
+        "childID": "typeId",
+        "depth": 2,
+        "checkbox": true,
+        "checkCallBack": function (value) {
+            var cycle = $.CurrentNavtab.find('#cycle').val();
+            var startTime = $.CurrentNavtab.find('#startTime').val();
+            var endTime = $.CurrentNavtab.find('#endTime').val();
+            var contentNo = $.CurrentNavtab.find('#contentNo').val();
+            var location = $.CurrentNavtab.find('#location').val();
+            if (value.areaId) {
+                var areaId = value.areaId;
+                exportData_cleaningRecord.areaId = value.areaId;
+            } else {
+                var areaId = null;
+                exportData_cleaningRecord.areaId = null;
+            }
+            if (value.typeId) {
+                var typeId = value.typeId;
+                exportData_cleaningRecord.typeId = value.typeId;
+            } else {
+                var typeId = null;
+                exportData_cleaningRecord.typeId = null;
+            }
+            var data = {
+                'cycle': cycle,
+                'startTime': startTime,
+                'endTime': endTime,
+                'contentNo': contentNo,
+                'location': location,
+                'areaId': areaId,
+                'typeId': typeId,
+            };
+            $.CurrentNavtab.find('#cleaningRecord_datagrid').datagrid('filter', data);
+
+        }
+    };
+
+    zdTree(option);
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#cleaningRecord_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">保洁编号:</label>
+                <div class="row-input">
+                    <input type="text" id="contentNo" name="contentNo" value=""
+                           data-rule="special,length(~16)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">所在位置:</label>
+                <div class="row-input">
+                    <input type="text" id="location" name="location" value=""
+                           data-rule="special,length(~50)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="开始时间: matchE[lte, endTime, datetime]"
+                           name="startTime">
+                </div>
+
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd HH:mm:ss" data-rule="结束时间: matchE[gte, startTime, datetime]"
+                           name="endTime">
+                </div>
+                <label class="row-label">保洁周期:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="cycle" name="cycle" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">每小时保洁</option>
+                        <option value="2">每半天保洁</option>
+                        <option value="3">每日保洁</option>
+                        <option value="4">每周保洁</option>
+                        <option value="4">每月保洁</option>
+                    </select>
+                </div>
+                <label class="row-label">是否达标:</label>
+                <div class="row-input" style="line-height: 18px;">
+                    <select id="isStandard" name="isStandard" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="2">否</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search"
+                            style="line-height: 18px;">开始搜索！
+                    </button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn"
+                            style="line-height: 18px;">重置
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto">
+    <ul class="ztree zdTree" id="zdTree_cleaningRecord"></ul>
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <button type="button" class="btn-green btn-prohibit" style=" left: 5px;" id="exportBtn"><i
+            class="fa fa-sign-out"></i>导出
+    </button>
+    <table id="cleaningRecord_datagrid" class="table table-bordered">
+    </table>
+</div>
+<!--导出模板-->
+<a id="dlink" href="" style="display: none;"></a>
+<div id="ieExport_income">
+    <table id="incomelList" style="display:none;border-collapse: collapse;border-width:0px;text-align: center" border="1" align="center">
+
+        <tbody id="exportDetail_cleaningRecord">
+        <tr>
+            <th>保洁编号</th>
+            <th>保洁内容</th>
+            <th>保洁区域</th>
+            <th>保洁类型</th>
+            <th>所在位置</th>
+            <th>保洁周期</th>
+            <th>是否达标</th>
+            <th>创建时间</th>
+        </tr>
+        </tbody>
+    </table>
+</div>

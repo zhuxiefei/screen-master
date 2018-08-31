@@ -1,0 +1,140 @@
+<!--<div class="bjui-pageContent" style="overflow-y: auto;">-->
+<!--<div class="bjui-row col-1">-->
+<!--<label class="row-label" style="width: 20%;">确认单描述: </label>-->
+<!--<div class="row-input"  style="width: 70%;">-->
+<!--<div id="description" style="word-break: break-all;"></div>-->
+<!--</div>-->
+<!--<label class="row-label" style="width: 20%;">确认单图片: </label>-->
+<!--<div class="row-input"  style="width: 70%;">-->
+<!--<a href=""><img src="" id="picUrl" alt="" style="width:400px;height: 200px;"></a>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<style>
+    .tableBorder {
+        border: 1px solid #ccc
+    }
+    .repairLabelWidth{
+        width: 130px;
+        text-align: right;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow-y: hidden;">
+    <form action="" data-toggle="ajaxform" enctype="multipart/form-data">
+        <table style="width: 100%">
+            <tr>
+                <td align="center" class="detailTitle tableBorder">
+                    确认单描述
+                </td>
+            </tr>
+            <tr>
+                <td id="description" align="center" style="width: 100%;height:80px;border:1px solid #ccc; padding: 5px">
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="detailTitle tableBorder">
+                    确认单图片
+                </td>
+            </tr>
+            <tr>
+                <td height="210" class="tableBorder">
+                    <div style="width: 100%;height: 200px;text-align: center;padding: 5px">
+                        <a href="" style="width: 90%;height: 90%"><img src="" id="picUrl" alt=""
+                                                                       style="max-width: 90%;max-height: 90%"></a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="detailTitle tableBorder">
+                    用户评价
+                </td>
+            </tr>
+            <tr>
+                <td height="210" class="tableBorder" style="overflow: auto;" id="commentArea">
+                    <div style="padding: 5px;height: 200px" >
+                        <label class="repairLabelWidth">准时上门维修：</label>
+                        <div id="serviceOnTime" style="display: inline-block">
+
+                        </div>
+                        </br>
+                        <label class="repairLabelWidth">维修人员服务态度：</label>
+                        <div id="serviceAttitude" style="display: inline-block">
+
+                        </div>
+                        </br>
+                        <label class="repairLabelWidth">维修完成情况：</label>
+                        <div id="serviceQuality" style="display: inline-block">
+
+                        </div>
+                        </br>
+                        <label class="repairLabelWidth">维修评价：</label>
+                        <div  style="display: inline-block;width: 70%;vertical-align: top">
+                            <div id="serviceDesc" style="width: 100%;word-break: break-all"></div>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var data = $.CurrentNavtab.data("seeDetailRepair");
+    if (data.description == null || data.description == undefined ||data.description == "") {
+        data.description = '<i>暂无信息</i>'
+    }
+    $.CurrentDialog.find('#description').html(data.description);
+    $.CurrentDialog.find('#picUrl').attr('src', data.picUrl);
+    $.CurrentDialog.find('a').attr('href', data.picUrl);
+
+    $.CurrentDialog.find(".tableBorder").each(function () {
+        $(this).find("a").touchTouch();
+    });
+    if (!data.serviceOnTime&&!data.serviceAttitude&&!data.serviceQuality&&!data.serviceDesc) {
+       $.CurrentDialog.find('#commentArea').html('<i>暂未评价</i>').css('text-align','center');
+    }
+    if (data.serviceOnTime) {
+        for (var i = 0; i < data.serviceOnTime; i++) {
+            var html='<img src="images/star-blue.png" alt="">';
+            $.CurrentDialog.find("#serviceOnTime").append(html)
+        }
+        var k=5-data.serviceOnTime;
+        for (var i = 0; i < k; i++) {
+            var html='<img src="images/star-white.png" alt="">';
+            $.CurrentDialog.find("#serviceOnTime").append(html)
+        }
+    }
+    if (data.serviceAttitude) {
+        for (var i = 0; i < data.serviceAttitude; i++) {
+            var html='<img src="images/star-blue.png" alt="">';
+            $.CurrentDialog.find("#serviceAttitude").append(html)
+        }
+        var k=5-data.serviceAttitude;
+        for (var i = 0; i < k; i++) {
+            var html='<img src="images/star-white.png" alt="">';
+            $.CurrentDialog.find("#serviceAttitude").append(html)
+        }
+    }
+    if (data.serviceQuality) {
+        for (var i = 0; i < data.serviceQuality; i++) {
+            var html='<img src="images/star-blue.png" alt="">';
+            $.CurrentDialog.find("#serviceQuality").append(html)
+        }
+        var k=5-data.serviceQuality;
+        for (var i = 0; i < k; i++) {
+            var html='<img src="images/star-white.png" alt="">';
+            $.CurrentDialog.find("#serviceQuality").append(html)
+        }
+    }
+
+    if(data.serviceDesc){
+        $.CurrentDialog.find('#serviceDesc').text(data.serviceDesc);
+    }
+</script>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.BuildingMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.Building">
+        <id column="buildingId" property="buildingId" jdbcType="BIGINT"/>
+        <result column="buildingName" property="buildingName" jdbcType="VARCHAR"/>
+        <result column="buildingDesc" property="buildingDesc" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="displayOrder" property="displayOrder" jdbcType="INTEGER"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    buildingId, buildingName, buildingDesc, createTime,displayOrder,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from house_building
+        where buildingId = #{buildingId,jdbcType=BIGINT}
+    </select>
+
+    <!--查所有楼宇-->
+    <select id="findBuildingList" resultType="com.betel.estatemgmt.business.web.building.model.BuildingInfo">
+    select buildingId,buildingName,buildingDesc,displayOrder
+    from house_building
+    WHERE estateId = #{estateId}
+    ORDER BY displayOrder ASC,createTime DESC
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from house_building
+    where buildingId = #{buildingId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.Building">
+    insert into house_building (buildingId, buildingName, buildingDesc, 
+      createTime,displayOrder,estateId)
+    values (#{buildingId,jdbcType=BIGINT}, #{buildingName,jdbcType=VARCHAR}, #{buildingDesc,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{displayOrder,jdbcType=INTEGER},#{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.Building" useGeneratedKeys="true"
+            keyProperty="buildingId">
+        insert into house_building
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="buildingId != null">
+                buildingId,
+            </if>
+            <if test="buildingName != null">
+                buildingName,
+            </if>
+            <if test="buildingDesc != null">
+                buildingDesc,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="displayOrder != null">
+                displayOrder,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="buildingId != null">
+                #{buildingId,jdbcType=BIGINT},
+            </if>
+            <if test="buildingName != null">
+                #{buildingName,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingDesc != null">
+                #{buildingDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="displayOrder != null">
+                #{displayOrder,jdbcType=INTEGER},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.Building">
+        update house_building
+        <set>
+            <if test="buildingName != null">
+                buildingName = #{buildingName,jdbcType=VARCHAR},
+            </if>
+            <if test="buildingDesc != null">
+                buildingDesc = #{buildingDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="displayOrder != null">
+                displayOrder = #{displayOrder,jdbcType=INTEGER},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where buildingId = #{buildingId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.Building">
+    update house_building
+    set buildingName = #{buildingName,jdbcType=VARCHAR},
+      buildingDesc = #{buildingDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      displayOrder = #{displayOrder,jdbcType=INTEGER},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where buildingId = #{buildingId,jdbcType=BIGINT}
+  </update>
+
+    <!--根据楼宇名称查询-->
+    <select id="selectByBuildingName" resultType="com.betel.estatemgmt.common.model.house.Building"
+            parameterType="java.lang.String">
+    select * from house_building where buildingName = #{buildingName,jdbcType=VARCHAR} AND estateId = #{estateId}
+  </select>
+    <!--查询全部楼宇  zy-->
+    <select id="findAllBuildings" resultType="com.betel.estatemgmt.common.model.house.Building">
+        select
+        <include refid="Base_Column_List"/>
+        from house_building
+        WHERE estateId = #{estateId}
+        ORDER BY displayOrder ASC,createTime DESC
+    </select>
+    <!--默认加载第一次树的楼宇jian.z-->
+    <select id="findFirtBuilding" resultType="com.betel.estatemgmt.common.model.house.Building">
+        select buildingId,buildingName,buildingDesc
+        from house_building
+        WHERE estateId = #{estateId}
+        ORDER BY displayOrder ASC,createTime DESC
+    </select>
+
+    <select id="findBuildings" resultType="com.betel.estatemgmt.business.smarthome.model.BuildingResp">
+        select buildingId,buildingName
+        from house_building
+        WHERE estateId = #{estateId}
+        ORDER BY displayOrder ASC,createTime DESC
+    </select>
+</mapper>

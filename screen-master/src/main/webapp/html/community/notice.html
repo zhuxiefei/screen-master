@@ -1,0 +1,251 @@
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#datagrid-notice-list')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">标题:</label>
+                <div class="row-input">
+                    <input type="text" id="announceTitle" name="announceTitle" value="" data-rule="special,length(~60)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">发布人:</label>
+                <div class="row-input">
+                    <input type="text" id="userName" name="userName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style=" padding-right: 0;">
+                    <input type="text" id="startTime" name="startTime"
+                           data-rule="开始时间: matchE[lte, endTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <label class="row-label">结束时间:</label>
+                <div class="row-input">
+                    <input type="text" id="endTime" name="endTime" data-rule="结束时间: matchE[gte, startTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <label class="row-label">是否置顶:</label>
+                <div class="row-input">
+                    <select id="isTop" name="isTop" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </div>
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-searchH" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <table class="table table-bordered" id="datagrid-notice-list">
+    </table>
+</div>
+<script>
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find(".btnReset").click(function () {
+        $.CurrentNavtab.find("select#announceStatus").selectpicker('val', "");
+        $.CurrentNavtab.find("select#isTop").selectpicker('val', "");
+    });
+    $("#datagrid-notice-list").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add,del',
+        dataUrl: path + '/web/announce/v1/findAllAnnounce',
+        editMode: {dialog: {width: '560', height: '300', mask: true, title: "添加公告", maxable: false, resizable: false}},
+        editUrl: 'html/community/noticeRepair/createNotice.html?id={announceId}',
+        delUrl: path + '/web/announce/v1/deleteAnnounce',
+        delPK: 'announceId',
+        delCallback: function (json, option) {
+            BJUI.alertmsg('ok', '删除成功', {
+                displayPosition: 'middlecenter'
+            });
+            $.CurrentNavtab.find('#datagrid-notice-list').datagrid('refresh', true)
+        },
+        delConfirm: '确定要删除选中的公告吗？',
+        delPKKey: 'announceIds',
+        //jsonPrefix: 'obj',
+        paging: {pageSize: 10},
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        linenumberAll: false,
+        columns: [
+            {
+                name: 'announceTitle', label: '标题', align: 'center', render: function (value, data) {
+                if (data.isTop == 1) {
+                    var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + value + "" + "</div>"
+                    return stateName;
+                } else {
+                    var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>"
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'userName', label: '发布人', align: 'center', render: function (value, data) {
+                if (value == null || value == undefined || value == "") {
+                    var stateName = "<i>已被删除</i>"
+                } else {
+                    var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>"
+                }
+                return stateName;
+            }
+            },
+            {name: 'createTime', label: '发布时间', align: 'center'},
+            {
+                name: 'isTop', label: '置顶状态', align: 'center', render: function (value, data) {
+                var tophtml = "";
+                if (value == 1) {
+                    tophtml = '<button type="button" id="setTopBtn"  class="btn-red"  onclick=setTop_announce(' + data.announceId + ',' + data.isTop + ')>' + '取消置顶' + '</button>'
+                } else {
+                    tophtml = '<button type="button" id="setTopBtn"  class="btn-blue"  onclick=setTop_announce(' + data.announceId + ',' + data.isTop + ')>' + '置顶 ' + '</button>'
+
+                }
+                return tophtml
+            }
+            },
+            {
+                name: 'announceId', label: '操作', align: 'center', render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick="modifyNotice(' + value + ',0' + ')">编辑</button>'
+                        + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>'
+                return html
+            }
+            }
+        ]
+    })
+
+    //置顶
+    function setTop_announce(a, e, event) {
+        var e = e == 0 ? 1 : 0;
+        if (e == 1) {
+            BJUI.alertmsg('confirm', '您确定要置顶该公告吗？', {
+                okCall: function () {
+                    BJUI.ajax('doajax', {
+                        url: path + '/web/announce/v1/setAnnounceTop',
+                        data: {'announceId': a, 'status': e},
+                        loadingmask: false,
+                        okCallback: function (json, options) {
+                            if (json.code == "00000") {
+                                BJUI.alertmsg('ok', '置顶成功', {
+                                    displayPosition: 'middlecenter'
+                                });
+                                $('#datagrid-notice-list').datagrid('refresh', true);
+                            } else {
+                                successBack(json);
+                            }
+                        },
+
+                    })
+                }
+            });
+        }
+
+        if (e == 0) {
+            BJUI.alertmsg('confirm', '您确定要取消置顶该公告吗？', {
+                okCall: function () {
+                    BJUI.ajax('doajax', {
+                        url: path + '/web/announce/v1/setAnnounceTop',
+                        data: {'announceId': a, 'status': e},
+                        loadingmask: false,
+                        okCallback: function (json, options) {
+                            if (json.code == "00000") {
+                                BJUI.alertmsg('ok', '取消置顶成功', {
+                                    displayPosition: 'middlecenter'
+                                });
+                                $('#datagrid-notice-list').datagrid('refresh', true);
+                            } else {
+                                successBack(json);
+                            }
+
+                        },
+
+                    })
+                }
+            });
+        }
+
+    }
+
+    function modifyNotice(announceId, e) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/announce/v1/findAnnounce',
+            data: JSON.stringify({announceId: announceId}),
+            loadingmask: true,
+            okCallback: function (json, options) {
+                $.CurrentNavtab.data('opNoctice', json)
+                $.CurrentNavtab.data('isTopTip', e);
+                BJUI.dialog({
+                    title: '编辑公告',
+                    width: '560',
+                    height: '300',
+                    mask: true,
+                    url: 'html/community/noticeRepair/editNotice.html',
+                    maxable: false,
+                    resizable: false
+                })
+            }
+        })
+
+    }
+
+    function sendNotice(announceStatus, announceId) {
+        if (announceStatus == 2) {
+            // BJUI.alertmsg('warn','公告已经发送过了！');
+            BJUI.ajax('doajax', {
+                url: path + '/web/announce/v1/pushAnnounce',
+                data: JSON.stringify({announceId: announceId}),
+                loadingmask: false,
+                confirmMsg: '该公告已经发送过了，请确认是否再次发送公告？',
+                okCallback: function (json, options) {
+                    BJUI.alertmsg('ok', '发送成功', {
+                        displayPosition: 'middlecenter'
+
+                    });
+                    $.CurrentNavtab.find('#datagrid-notice-list').datagrid('refresh', true)
+
+                },
+                errCallback: function (json, options) {
+                    successBack(json);
+                }
+
+            })
+        } else {
+            BJUI.ajax('doajax', {
+                url: path + '/web/announce/v1/pushAnnounce',
+                data: JSON.stringify({announceId: announceId}),
+                loadingmask: true,
+                confirmMsg: '请确认是否发送公告？',
+                okCallback: function (json, options) {
+                    BJUI.alertmsg('ok', '发送成功', {
+                        displayPosition: 'middlecenter'
+
+                    });
+                    $.CurrentNavtab.find('#datagrid-notice-list').datagrid('refresh', true)
+
+                },
+                errCallback: function (json, options) {
+                    successBack(json);
+                }
+
+            })
+        }
+//        $.CurrentNavtab.find('#datagrid-notice-list').datagrid('refresh', true);
+    }
+</script>

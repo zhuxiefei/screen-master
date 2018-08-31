@@ -1,0 +1,214 @@
+<div class="bjui-pageContent">
+    <div id="validate-paymentPrint" class="div" style=" padding: 0 20px;">
+        <!--<div style=" padding: 0 20px; box-sizing:content-box; color: #000;">
+            <div style="text-align: center; font-size: 18px;color: #222; padding: 10px 0;">
+                <span style="text-decoration: underline; color: #000;">xx物业管理有限责任公司  收款收据</span>
+            </div>
+            <table width="100%">
+                <tr>
+                    <td width="50%" style=" padding: 6px 6px 6px 0;">收据号：<span class="paymentNum">SJ20170919165823</span></td>
+                    <td width="50%" style=" padding:  6px 6px 6px 0;">姓名：<span class="houseMaster">张丹</span></td>
+                </tr>
+                <tr>
+                    <td style=" padding:  6px 6px 6px 0;">联系方式：<span class="phone">15050505050</span></td>
+                    <td style=" padding:  6px 6px 6px 0;">房屋信息：<span class="houseInfo">1号楼1单元301室</span></td>
+                </tr>
+            </table>
+            <table width="100%" cellspacing="0" cellpadding="0" style=" text-align: center; border-top:#f3f3f3 1px solid; border-left:#f3f3f3 1px solid; margin: 10px 0;">
+                <thead style="background-color: #f6f6f6;">
+                    <tr>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">收费项目</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">计费开始时间</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">计费结束时间</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">单价</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">月数</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">滞纳金</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">应收合计</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">收费方式</th>
+                        <th align="center" style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">收费日期</th>
+                    </tr>
+                </thead>
+                <tbody class="paymentPrint_Table">
+
+
+                </tbody>
+            </table>
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style=" padding: 6px 6px 6px 0;">合计：<span class="total">壹佰元整</span></td>
+                    <td width="25%" style=" padding:  6px 6px 6px 0;">应收：￥<span class="receivable">100.00</span></td>
+                    <td width="25%"  style=" padding:  6px 6px 6px 0;">滞纳金：￥<span class="overdueFine">10.00</span></td>
+                    <td width="25%"  style=" padding:  6px 6px 6px 0;">实收：￥<span class="actual">110.00</span></td>
+                </tr>
+            </table>
+            <div  style="text-decoration: underline; padding-top: 10px;">备注：本次收据不作为报销凭证，盖章有效，妥善保管，遗失不补，服务热线：025-123456 </div>
+        </div>-->
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-paymentPrint" >确认打印</button></li>
+    </ul>
+</div>
+
+<script>
+    $(function(){
+        var paymentPrint = $.CurrentNavtab.data('paymentPrint');
+        //初始化
+        var notesResult = [];
+        for(var i=0,len=paymentPrint.notes.length;i<len;i+=3){
+            notesResult.push(paymentPrint.notes.slice(i,i+3));
+        }
+
+        var paymentPrintHtml = '';
+        for(var n=0; n<notesResult.length; n++){
+            if(!paymentPrint.houseMaster){
+                paymentPrint.houseMaster=""
+            }
+            if(!paymentPrint.phone){
+                paymentPrint.phone=""
+            }
+            if(!paymentPrint.houseInfo){
+                paymentPrint.houseInfo=""
+            }
+            paymentPrintHtml += '<div style=" padding:40px 0 ; box-sizing:content-box; color: #000;">';
+            paymentPrintHtml += '<div style="text-align: center; font-size: 18px;color: #222; padding: 10px 0;">';
+            paymentPrintHtml += '<span style="text-decoration: underline; color: #000;">南京锋尚国际公寓物业管理  收款收据</span>';
+            paymentPrintHtml += '</div>';
+            paymentPrintHtml += '<table width="100%">';
+            paymentPrintHtml += '<tr>';
+            paymentPrintHtml += '<td width="50%" style=" padding: 6px 6px 6px 0;">收据号：<span class="paymentNum">SJ'+new Date().getTime()+n+'</span></td>';
+            paymentPrintHtml += '<td width="50%" style=" padding:  6px 6px 6px 0;">姓名：<span class="houseMaster">'+paymentPrint.houseMaster+'</span></td>';
+            paymentPrintHtml += '</tr>';
+            paymentPrintHtml += '<tr>';
+            paymentPrintHtml += '<td style=" padding:  6px 6px 6px 0;">联系方式：<span class="phone">'+paymentPrint.phone+'</span></td>';
+            paymentPrintHtml += '<td style=" padding:  6px 6px 6px 0;">房屋信息：<span class="houseInfo">'+paymentPrint.houseInfo+'</span></td>';
+            paymentPrintHtml += '</tr>';
+            paymentPrintHtml += '</table>';
+            paymentPrintHtml += '<table width="100%" cellspacing="0" cellpadding="0" style=" text-align: center; border-top:#333 1px solid; border-left:#333 1px solid; margin: 10px 0;">';
+            paymentPrintHtml += '<thead style="background-color: #f6f6f6;">';
+            paymentPrintHtml += '<tr>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">收费项目</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">计费开始时间</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">计费结束时间</th>';
+//            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">单价</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">月数</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">滞纳金</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">应收合计</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">收费方式</th>';
+            paymentPrintHtml += '<th align="center" style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">收费日期</th>';
+            paymentPrintHtml += '</tr>';
+            paymentPrintHtml += '</thead>';
+            paymentPrintHtml += '<tbody class="paymentPrint_Table">';
+            var tdHtml='';
+            var totalAmount = 0;
+            var totalOverdueFinePrice = 0;
+            var ableTotalAmount = 0;
+            $.each(notesResult[n],function (s,v) {
+                var stateName = '';
+                if (v.itemType == 1) {
+                    stateName = "物业费";
+                } else if (v.itemType == 2) {
+                    stateName = "公摊水电费";
+                }else if (v.itemType == 3) {
+                    stateName = "停车费(购买)";
+                }else if (v.itemType == 4) {
+                    stateName = "停车费(租赁)";
+                }else if (v.itemType == 5) {
+                    stateName = "能耗费";
+                }
+                var wayName = '';
+                if (v.chargeWay == 1) {
+                    wayName = "现金";
+                }else if (v.chargeWay == 2) {
+                    wayName = "刷卡";
+                }else if (v.chargeWay == 3) {
+                    wayName = "支付宝";
+                } else if (v.chargeWay == 4) {
+                    wayName = "微信";
+                }
+                tdHtml += '<tr>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+stateName+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.billingStartTime+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.billingEndTime+'</td>';
+//                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.itemPrice+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.itemCycle+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.overdueFinePrice+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.totalbillAmount+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+wayName+'</td>';
+                tdHtml += '<td style="padding:  6px; border-bottom:#333 1px solid; border-right:#333 1px solid;">'+v.payTime+'</td>';
+                tdHtml += '</tr>';
+
+                totalAmount = totalAmount + parseFloat(v.totalbillAmount);
+                ableTotalAmount = ableTotalAmount + parseFloat(v.price);
+                totalOverdueFinePrice = totalOverdueFinePrice + parseFloat(v.overdueFinePrice);
+
+            });
+            paymentPrintHtml += tdHtml;
+            paymentPrintHtml += '</tbody>';
+            paymentPrintHtml += '</table>';
+            paymentPrintHtml += '<table width="100%">';
+            paymentPrintHtml += '<tr>';
+            paymentPrintHtml += '<td width="25%" style=" padding: 6px 6px 6px 0;">合计：<span class="total">'+convertCurrency(totalAmount)+'</span></td>';
+            paymentPrintHtml += '<td width="25%" style=" padding:  6px 6px 6px 0;">应收：￥<span class="receivable">'+parseFloat(ableTotalAmount).toFixed(2)+'</span></td>';
+            paymentPrintHtml += '<td width="25%"  style=" padding:  6px 6px 6px 0;">滞纳金：￥<span class="overdueFine">'+parseFloat(totalOverdueFinePrice).toFixed(2)+'</span></td>';
+            paymentPrintHtml += '<td width="25%"  style=" padding:  6px 6px 6px 0;">实收：￥<span class="actual">'+parseFloat(totalAmount).toFixed(2)+'</span></td>';
+            paymentPrintHtml += '</tr>';
+            paymentPrintHtml += '</table>';
+            paymentPrintHtml += '<div  style="text-decoration: underline; padding:10px 0;">备注：本次收据不作为报销凭证，盖章有效，妥善保管，遗失不补，服务热线：025-123456 </div>';
+            paymentPrintHtml += '</div>';
+        }
+        $.CurrentDialog.find("#validate-paymentPrint").html(paymentPrintHtml);
+
+
+
+       /* var paymentPrintObj = $.CurrentDialog.find("#validate-paymentPrint");
+        var timestamp = new Date().getTime();   //当前时间的时间戳
+        paymentPrintObj.find(".paymentNum").text("BT"+timestamp);
+        paymentPrintObj.find(".houseMaster").text(paymentPrint.houseMaster);
+        paymentPrintObj.find(".phone").text(paymentPrint.phone);
+        paymentPrintObj.find(".houseInfo").text(paymentPrint.houseInfo);
+
+        paymentPrintObj.find(".total").text(convertCurrency(paymentPrint.totalAmount));
+        paymentPrintObj.find(".receivable").text(paymentPrint.receivableTotalAmount);
+        paymentPrintObj.find(".overdueFine").text(paymentPrint.totalOverdueFinePrice);
+        paymentPrintObj.find(".actual").text(paymentPrint.actualTotalAmount);
+        var tdHtml='';
+        $.each(paymentPrint.notes,function (s,v) {
+            var stateName = '';
+            if (v.itemType == 1) {
+                stateName = "物业费";
+            } else if (v.itemType == 2) {
+                stateName = "公摊水电费";
+            }
+            var wayName = '';
+            if (v.chargeWay == 1) {
+                wayName = "现金";
+            }else if (v.chargeWay == 2) {
+                wayName = "刷卡";
+            }else if (v.chargeWay == 3) {
+                wayName = "支付宝";
+            } else if (v.chargeWay == 4) {
+                wayName = "微信";
+            }
+            tdHtml += '<tr>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+stateName+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.billingStartTime+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.billingEndTime+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.itemPrice+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.itemCycle+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.overdueFinePrice+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.totalbillAmount+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+wayName+'</td>';
+            tdHtml += '<td style="padding:  6px; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;">'+v.payTime+'</td>';
+            tdHtml += '</tr>';
+        });
+        $.CurrentDialog.find('.paymentPrint_Table').html(tdHtml);*/
+
+        $.CurrentDialog.find("#btn-paymentPrint").click(function(){
+            $.CurrentDialog.find("div#validate-paymentPrint").printArea();
+        });
+    });
+</script>

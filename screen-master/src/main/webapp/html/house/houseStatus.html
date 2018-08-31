@@ -1,0 +1,296 @@
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto; margin-top: 30px;">
+    <ul id="ztreeHouseStatus" style="" class="ztree" data-toggle="ztree"
+        data-options="{nodes:ztree_returnjson,async:true,url:path+'/web/building/v1/findUnitList',contentType:'application/json; charset=UTF-8',dataType:'json',checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck_house,onClick:zTreeOnClick,showIcon: false,idKey:'buildingId',keyName:'buildingName',autoParam:['buildingId=buildingId'],filter:filterS,addDiyDom:addDiyDomS}"></ul>
+
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <div class="divHouseStatus" id="divHouseStatus">
+            <div class="buildingTitle">别墅</div>
+            <div class="divBuildingContent">
+                <div class="divRightReminder">
+                    <span class="span1"><b></b>自住</span>
+                    <span class="span2"><b></b>出租</span>
+                    <span class="span3"><b></b>空置</span>
+                </div>
+                <!--单元-->
+                <div class="divUnitTitle">
+                </div>
+                <!--单元-->
+                <!--房屋-->
+                <div class="divHouseBox">
+                </div>
+                <!--房屋-->
+            </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //左边树
+    function ztree_returnjson() {
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/building/v1/findBuildingList',
+            //url:"json/datagrid/datagrid-tree3.json",
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+                var str = {'isParent': true};
+                $.each(dataJson, function (i, n) {
+                    for (var key in str) {
+                        n[key] = str[key];
+                    }
+                });
+                var allArr = {"buildingName": "其他", "buildingId": -1};
+                dataJson.push(allArr);
+            }
+
+        });
+
+        loadHouseList(dataJson[0].buildingId);   //房屋状态加载
+        dataJson[0].checked=true;
+        //loadHouseList(1)
+        return dataJson;
+    }
+    var exportData = {};
+    var unitLeftId = '';
+    function zTreeOnCheck_house(event, treeId, treeNode) {
+        var data = {};
+        var id;
+        var pId;
+        if (treeNode.checked) {  //勾选
+
+            var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseStatus");
+            var nodes = treeObj.getCheckedNodes(true);
+            //var v="";
+            var isParent;
+            for (var i = 0; i < nodes.length; i++) {
+                id = nodes[i].buildingId;
+                isParent = nodes[i].isParent;
+                if (!isParent && id != -1) {
+                    pId = nodes[i].getParentNode().buildingId;
+
+                    unitLeftId = id;
+                    loadHouseList(pId,"unit",id);
+
+                } else if (isParent) {
+                    unitLeftId = '';
+                    loadHouseList(id);
+                } else {
+                    unitLeftId = '';
+                    loadHouseList(id,"isOthers");
+                }
+
+            }
+
+        }
+        exportData.unitId = data.unitId;
+    }
+
+    function zTreeOnClick(e, treeId, treeNode, clickFlag) {
+
+    }
+    //添加子节点
+    function filterS(treeId, parentNode, childNodes) {
+        if(childNodes.code == "00000"){
+            childNodes = childNodes.data;
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                //console.log(childNodes);
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    //childNodes[i].unitName = childNodes[i].unitName.replace(/\.n/g, '.');
+                    //console.log(childNodes[i].unitName)
+                    var obj = {
+                        buildingId: childNodes[i].unitId,
+                        //pId: childNodes[i].unitName,
+                        buildingName: childNodes[i].unitName
+                    };
+                    if(childNodes[i].unitId == exportData.unitId){
+                        obj.checked = true;
+                    }
+                    nodes.push(obj);
+                }
+                //console.log(nodes)
+                //return childNodes;
+                return nodes;
+            }
+        }else{
+            successBack(childNodes)
+        }
+
+    }
+    //选中节点 -- 暂时用不到
+    function zTreeOnClicks(e, treeId, treeNode, clickFlag) {
+    }
+    function addDiyDomS(treeId, treeNode) {
+    }
+
+    changeDivHeight();
+
+
+    //房屋状态信息加载
+    function loadHouseList(buildingId,typeId,unitId) {
+        var data = '';
+        if(typeId == "isOthers"){
+            data = JSON.stringify({"isOthers":"1"});
+        }else if(typeId == "unit"){
+            data = JSON.stringify({"buildingId":buildingId,"unitId":unitId});
+        }else{
+            data = JSON.stringify({"buildingId":buildingId});
+        }
+        BJUI.ajax('doajax', {
+            url: path+'/web/houseStatus/v1/findHouseStatus',
+            loadingmask: true,
+            data:data,
+            callback: function (json) {
+                if(json.code == "00000"){
+                    if(json.data != ''){
+                        //楼宇
+                        if(json.data.buildingName != undefined ){
+                            $.CurrentNavtab.find(".divHouseStatus .buildingTitle").text(json.data.buildingName);
+                            $.CurrentNavtab.find(".divHouseStatus .buildingTitle").attr("id",json.data.buildingId);
+                        }else{
+                            $.CurrentNavtab.find(".divHouseStatus .buildingTitle").text("其他");
+                            $.CurrentNavtab.find(".divHouseStatus .buildingTitle").attr("id","0");
+                        }
+
+                        //单元
+                        if(json.data.unitList.length>0){
+                            var html = '';
+                            var houseHtml = '';
+                            $.each(json.data.unitList, function (s, v) {
+                                if(v.unitName != undefined){
+                                    if(unitLeftId == ""){
+                                        if(s == 0){   //第一个单元 添加选中样式
+                                            html += '<span class="unitTitle on" id="unitTitle_'+v.unitId+'">'+v.unitName+'</span>';
+                                            //房屋 -- 开始
+                                            houseHtml += '<div class="divHouseTitle"  id="houseTitle_'+v.unitId+'"  style="display: block;">';
+                                        }else{
+                                            html += '<span class="unitTitle" id="unitTitle_'+v.unitId+'">'+v.unitName+'</span>';
+                                            //房屋 -- 开始
+                                            houseHtml += '<div class="divHouseTitle"  id="houseTitle_'+v.unitId+'">';
+                                        }
+                                    }else{
+                                        if(unitLeftId == v.unitId){   //左边选中单元
+                                            html += '<span class="unitTitle on" id="unitTitle_'+v.unitId+'">'+v.unitName+'</span>';
+                                            //房屋 -- 开始
+                                            houseHtml += '<div class="divHouseTitle"  id="houseTitle_'+v.unitId+'"  style="display: block;">';
+                                        }else{
+                                            html += '<span class="unitTitle" id="unitTitle_'+v.unitId+'">'+v.unitName+'</span>';
+                                            //房屋 -- 开始
+                                            houseHtml += '<div class="divHouseTitle"  id="houseTitle_'+v.unitId+'">';
+                                        }
+                                    }
+
+                                }else{   //楼宇下没有单元名称的房屋
+                                    if(s == 0){   //第一个单元 添加选中样式
+                                        html += '<span class="unitTitle on" id="unitTitle_0">其他</span>';
+                                        //房屋 -- 开始
+                                        houseHtml += '<div class="divHouseTitle"  id="houseTitle_0" style="display: block;">';
+                                    }else{
+                                        html += '<span class="unitTitle" id="unitTitle_0">其他</span>';
+                                        //房屋 -- 开始
+                                        houseHtml += '<div class="divHouseTitle"  id="houseTitle_0">';
+                                    }
+                                }
+
+                                if(v.houseList.length>0){
+                                    for(var i=0;i<v.houseList.length;i++){
+                                        if(v.houseList[i].houseStatus == "1"){   //自住
+                                            houseHtml += '<span class="houseTitle onHouseTitle" onclick="checkHonuseInfo(\'' + v.houseList[i].houseId + '\')">'+v.houseList[i].houseNum+'室</span>';
+                                        }else if(v.houseList[i].houseStatus == "3"){ //出租
+                                            houseHtml += '<span class="houseTitle outHouseTitle" onclick="checkHonuseInfo(\'' + v.houseList[i].houseId + '\')">'+v.houseList[i].houseNum+'室</span>';
+                                        }else{   // 空置
+                                            houseHtml += '<span class="houseTitle" onclick="checkHonuseInfo(\'' + v.houseList[i].houseId + '\')">'+v.houseList[i].houseNum+'室</span>';
+                                        }
+
+                                    }
+                                }else{
+                                    houseHtml += '<div style=" text-align: left;">没有数据！</div>';
+                                }
+
+                                houseHtml += '<div class="clear"></div></div>';
+                            });
+                            html += '<div class="clear"></div>';
+                            $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divUnitTitle").html(html);
+                            $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divHouseBox").html(houseHtml);
+
+                        }else{
+                            var html = '<span class="unitTitle" id="unitTitle_0">其他</span><div class="clear"></div>';
+                            var houseHtml = '<div class="divHouseTitle" id="houseTitle_0" style="display: block;"><div style=" text-align: left;">没有数据！</div></div>';
+                            $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divUnitTitle").html(html);
+                            $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divHouseBox").html(houseHtml);
+                        }
+
+                    }
+
+                }else{
+                    successBack(json)
+                }
+            }
+        });
+    }
+
+    //查看房屋状态信息
+    function checkHonuseInfo(houseId) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/houseStatus/v1/findHouseDetail',
+            loadingmask: false,
+            data: JSON.stringify({"houseId": houseId}),
+            okCallback: function (json) {
+                $.CurrentNavtab.data('findHouseDetail', json);
+                var buildingId = $.CurrentNavtab.find(".divHouseStatus .buildingTitle").attr("id");
+                $.CurrentNavtab.data('buildingId', buildingId);
+                var id = $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divUnitTitle span.on").attr("id");
+                id = id.substring(id.indexOf("_")+1,id.length);
+                $.CurrentNavtab.data('unitId', id);
+
+                BJUI.dialog({
+                    id:'houseStatusInfo',
+                    title: "房屋详情",
+                    width: '880',
+                    height: '650',
+                    mask: true,
+                    url: 'html/house/houseStatus/houseStatusInfo.html',
+                    maxable: false,
+                    resizable: false
+                })
+            }
+        });
+    }
+
+    //单元切换
+    $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divUnitTitle").on('click','span.unitTitle',function(){
+        var id = $(this).attr("id");
+        id = id.substring(id.indexOf("_")+1,id.length);
+        //单元
+        $(this).addClass("on").siblings("span.unitTitle").removeClass("on");
+        //房屋
+        $.CurrentNavtab.find(".divHouseStatus .divBuildingContent .divHouseBox #houseTitle_"+id).show().siblings("div.divHouseTitle").hide();
+
+        var pId = $.CurrentNavtab.find(".divHouseStatus .buildingTitle").attr("id");
+        onCheckNode(pId,id);
+    });
+    
+    function onCheckNode(pId,id) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseStatus");
+        var nodes = treeObj.getNodes();
+        for (var i = 0; i < nodes.length; i++) {  //编辑父节点
+            if(pId == nodes[i].buildingId){
+                if(nodes[i].children){
+                    for(var n=0;n<nodes[i].children.length;n++){   //遍历子节点
+                        if (id == nodes[i].children[n].buildingId) {
+                            treeObj.checkNode(nodes[i].children[n], true, true);
+                            return
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+</script>

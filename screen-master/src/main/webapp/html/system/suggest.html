@@ -1,0 +1,321 @@
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#datagrid-suggest')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <!--<div style="margin:0; padding:1px 5px 5px;">-->
+                <div class=" bjui-row col-4">
+                    <!--意见类型-->
+                    <!--<div style="float: left;width: 30%;margin-bottom: 5px">-->
+                    <label class="row-label">意见类型:</label>
+                    <div class="row-input" style="display: inline-block">
+                        <select data-toggle="selectpicker" data-width="100%" id="topicStatus_search"
+                                name="feedbackType">
+                            <option value="" selected="">全部</option>
+                            <option value="1">建议</option>
+                            <option value="2">问题</option>
+                        </select>
+                    </div>
+
+                    <label class="row-label">用户类型:</label>
+                    <div class="row-input" style="display: inline-block">
+                        <select data-toggle="selectpicker" data-width="100%" id="appType"
+                                name="appType">
+                            <option value="" selected="">全部</option>
+                            <option value="1">用户APP</option>
+                            <option value="2">物业APP</option>
+                        </select>
+                    </div>
+                    <!--</div>-->
+
+                    <!--时间-->
+                    <!--<div style="float: left;width: 30%;margin-bottom: 5px">-->
+                    <label class="row-label">开始时间:</label>
+                    <div class="row-input" style="display: inline-block">
+                        <input type="text" id="startTime_search" placeholder="" readonly
+                               data-toggle="datepicker"
+                               data-pattern="yyyy-MM-dd HH:mm:ss" data-width="100%"
+                               data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                    </div>
+                    <!--</div>-->
+
+                    <!--时间-->
+                    <!--<div style="float: left;width: 30%;margin-bottom: 5px">-->
+                    <label class="row-label">结束时间:</label>
+                    <div class="row-input" style="display: inline-block">
+                        <input type="text" id="endTime_search" placeholder="" readonly
+                               data-toggle="datepicker"
+                               data-pattern="yyyy-MM-dd HH:mm:ss" data-width="100%"
+                               data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                    </div>
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="clearfix">-->
+                <!--反馈人-->
+                <!--<div style="float: left;width: 30%">-->
+                <label class="row-label">反馈人：</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="topicTitle_search" class="form-control" data-width="100%"
+                           name="feedbackName" placeholder="" data-rule="special,length(~15)"/>
+                </div>
+
+
+                <!--APP版本-->
+                <!--<div style="float: left;width: 30%">-->
+                <label class="row-label">APP版本：</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="userName_search" class="form-control" data-width="100%"
+                           name="appVersion" placeholder="" data-rule="special,length(~30)"/>
+                </div>
+
+                <!--按钮-->
+                <!--<div style="float: left;width: 30%">-->
+                    <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button class="btn-green" data-icon="search" id="searchBtn">开始搜索！</button>
+                    <button type="reset" class="btn-orange" data-icon="times" id="resetBtn">重置</button>
+                </div>
+                <!--</div>-->
+            </div>
+            <!--</div>-->
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <button type="button" class="btn-green btn-prohibit" style=" left: 68px;" id="exportBtn"><i
+            class="fa fa-sign-out"></i>导出意见反馈
+    </button>
+    <table class="table table-bordered" id="datagrid-suggest">
+    </table>
+</div>
+<a id="dlink" href="" style="display: none;">下载</a>
+<div id="ieExport_suggest">
+    <table id="suggestList" style="display:none;">
+        <tbody id="exportDetail_suggest">
+        <tr>
+            <th>反馈人</th>
+            <th>意见类型</th>
+            <th>用户类型</th>
+            <th>APP版本</th>
+            <th>反馈时间</th>
+            <th>手机型号</th>
+            <th>手机系统版本</th>
+            <th>意见内容</th>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    //展示页面
+    $("#datagrid-suggest").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'del',
+        delUrl: path + '/web/feedback/v1/deleteFeedback',
+        delPK: 'feedbackId',
+        delConfirm: '确定要删除选中的意见吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#datagrid-suggest').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        delPKKey: 'feedbackIds',
+        paging: {pageSize: 10},
+        dataUrl: path + '/web/feedback/v1/findAllFeedback',
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        dialogFilterW: 0,
+        columns: [
+            {
+                name: 'feedbackName', label: '反馈人', align: 'center', render: function (value, data) {
+                stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>"
+                return stateName;
+            }
+            },
+            {
+                name: 'feedbackType', label: '意见类型', align: 'center', render: function (value, data) {
+                var stateName = "";
+                if (value == 1) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + "建议" + "" + "</div>"
+
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + "问题" + "" + "</div>"
+                }
+                return stateName;
+            }
+            },
+            {
+                name: 'appType', label: '用户类型', align: 'center', render: function (value, data) {
+                var stateName = "";
+                if (value == 1) {
+                    stateName = "用户APP";
+                } else if (value == 2)  {
+                    stateName = "物业APP";
+                }
+                return stateName;
+            }
+            },
+            {name: 'appVersion', label: 'APP版本', align: 'center'},
+            {name: 'createTime', label: '反馈时间', align: 'center'},
+            {
+                name: 'feedbackId', label: '操作', align: 'center', render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick=seeFeedbackDetail(' + value + ')>查看</button>'
+                        + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                return html
+            }
+            }
+        ]
+    })
+
+    //开始搜索事件
+    $.CurrentNavtab.find('#searchBtn').click(function () {
+        $.CurrentNavtab.find('#datagrid-suggest').data('selectedDatas', "");
+        exportData_suggest.feedbackType = $.CurrentNavtab.find('#topicStatus_search').val();
+        exportData_suggest.startTime = $.CurrentNavtab.find('#startTime_search').val();
+        exportData_suggest.endTime = $.CurrentNavtab.find('#endTime_search').val();
+        exportData_suggest.appVersion = $.CurrentNavtab.find('#userName_search').val();
+        exportData_suggest.appType = $.CurrentNavtab.find('#appType').val();
+        exportData_suggest.feedbackName = $.CurrentNavtab.find('#topicTitle_search').val();
+    })
+
+    //导出明细
+    var exportData_suggest = {};
+    $.CurrentNavtab.find('#exportBtn').click(function () {
+        BJUI.alertmsg('confirm', '确定导出意见反馈吗?', {
+            okCall: function () {
+                //页面勾选
+                var data = $.CurrentNavtab.find('#datagrid-suggest').data('selectedDatas');
+                var feedbackIds = [];
+                if (data && data.length != 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        feedbackIds.push(data[i].feedbackId)
+                    }
+                }
+                exportData_suggest.feedbackIds = feedbackIds.join(',');
+                //后台请求;
+                BJUI.ajax('doajax', {
+                    url: path + '/web/feedback/v1/exportFeedback',
+                    loadingmask: false,
+                    data: exportData_suggest,
+                    okCallback: function (json) {
+                        //画出表格
+                        var html = '';
+                        for (var i = 0; i < json.length; i++) {
+
+                            if (json[i].feedbackType == 1) {
+                                json[i].feedbackType = "建议";
+                            } else if (json[i].feedbackType == 2) {
+                                json[i].feedbackType = "问题";
+                            }
+
+
+                            if (json[i].appType == 1) {
+                                json[i].appType = "用户APP";
+                            } else if (json[i].appType == 2) {
+                                json[i].appType = "物业APP";
+                            }
+
+                            html += '<tr><td style="mso-number-format:\'\@\';">' + json[i].feedbackName + '</td>'
+                                    + '<td>' + json[i].feedbackType + '</td>'
+                                    + '<td>' + json[i].appType + '</td>'
+                                    + '<td>' + json[i].appVersion + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';">' + json[i].createTime + '</td>'
+                                    + '<td>' + json[i].clientModel + '</td>'
+                                    + '<td>' + json[i].clientVersion + '</td>'
+                                    + '<td>' + json[i].feedbackContent + '</td></tr>'
+                        }
+                        $.CurrentNavtab.find("#exportDetail_suggest tr:not(:first)").remove();
+                        $.CurrentNavtab.find("#exportDetail_suggest").append(html);
+                        exportExcel('suggestList', '意见反馈表格');
+                    }
+                });
+            }
+        })
+    })
+
+
+    //查看帖子详情
+    function seeFeedbackDetail(id, topicStatus) {
+        var postDetailId = {"feedbackId": id};
+        BJUI.ajax('doajax', {
+            url: path + '/web/feedback/v1/findFeedback',
+            data: postDetailId,
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+//        var json = {};
+                    $("body").data("curentSuggestInfo", json);
+                    BJUI.dialog({
+                        id: 'navtab_suggestDetail',
+                        url: 'html/system/suggest/suggestDetail.html',
+                        title: "反馈详情",
+                        width: '800',
+                        height: '350',
+                        mask: 'true',
+                        maxable: false,
+                        resizable: false
+                    });
+
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+
+    }
+
+    //点击重置按钮
+    $.CurrentNavtab.find('#resetBtn').click(function () {
+        $.CurrentNavtab.find("#startTime_search").val("");
+        $.CurrentNavtab.find("#appType").val('').selectpicker("refresh");
+        $.CurrentNavtab.find("#endTime_search").val("");
+        $.CurrentNavtab.find("#topicTitle_search").val("");
+        $.CurrentNavtab.find("#userName_search").val("");
+        $.CurrentNavtab.find("#topicStatus_search").val("").find('[value=""]').attr('selected', "").siblings().removeAttr('selected');
+        $.CurrentNavtab.find("[data-id=topicStatus_search]").attr('title', '全部').find('span').first().text('全部');
+    });
+
+    //批量审批按钮
+    $.CurrentNavtab.find('#batchReviewBtn').click(function () {
+        var data = $.CurrentNavtab.find('#datagrid-suggest').data('selectedDatas');
+        if (!data || data.length == 0) {
+            BJUI.alertmsg('info', '请先选择需要审核的信息！', {
+                okCall: function () {
+                }
+            })
+        } else {
+            $("body").data("checkedReview", data);
+            BJUI.dialog({
+                id: 'navtab_batchReview',
+                url: 'html/review/seeDetail/batchReview.html',
+                title: "批量审核",
+                width: '500',
+                height: '300',
+                mask: true,
+                maxable: false,
+                resizable: false
+            });
+
+        }
+
+
+    });
+
+</script>

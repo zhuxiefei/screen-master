@@ -1,0 +1,763 @@
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#taskContent_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+                <label class="row-label">结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search"
+                            style="line-height: 18px;">统计
+                    </button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn"
+                            style="line-height: 18px;">重置
+                    </button>
+                    <button type="" class="btn-blue " data-icon="" id="exportStatistics" style="line-height: 18px;">
+                        导出报表
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent" style="min-width: 1000px;overflow:auto;min-height: 500px">
+    <div class="tab">
+        <div class="box">
+            <ul class="menus">
+                <li class="tabBg">本月</li>
+                <li>本季</li>
+                <li>全年</li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="pieArea" id="repairPart">
+        <div class="pieAreaTitle">报修统计</div>
+        <div id="repairStatistics" class="pieAreaContent"></div>
+        <div class="pieSum">
+            <div class="sumPart">
+                <span class="tipTitle" class="clearfix">共计</span>
+                <span class="pieSumAccount"></span>
+                <span>次维修</span>
+            </div>
+            <ul class="clearfix">
+                <li style="color: #70c1b3" class="clearfix">
+                    <i style="background-color:#70c1b3 "></i>
+                    <span class="tipTitle">待维修:</span>
+                    <span class="pieWaitRepairs"></span>
+                </li>
+                <li style="color: #f25f5c" class="clearfix">
+                    <i style="background-color:#f25f5c "></i>
+                    <span class="tipTitle">已接单:</span>
+                    <span class="pieAcceptRepairs"></span>
+                </li>
+                <li style="color: #247ba0" class="clearfix">
+                    <i style="background-color:#247ba0 "></i>
+                    <span class="tipTitle">已完成:</span>
+                    <span class="pieFinishRepairs"></span>
+                </li>
+                <li style="color: #5ad269" class="clearfix">
+                    <i style="background-color:#5ad269 "></i>
+                    <span class="tipTitle">已取消:</span>
+                    <span class="pieCancelRepairs"></span>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+    <div class="pieArea" id="cleanStatisticsPart">
+        <div class="pieAreaTitle">保洁工作统计</div>
+        <select name="cleanArea" id="cleanArea" data-toggle="selectpicker" class="pieSelect" data-width="80"
+                onchange="changeCleanArea(this.value)">
+            <option value="">全部区域</option>
+        </select>
+        <div id="cleanStatistics" class="pieAreaContent"></div>
+        <div class="pieSum">
+            <div class="sumPart">
+                <span>共计</span>
+                <span class="pieSumAccount"></span>
+                <span>次保洁</span>
+            </div>
+            <ul class="clearfix">
+                <li style="color: #247ba0" class="clearfix">
+                    <i style="background-color:#247ba0 "></i>
+                    <span class="tipTitle">已达标:</span>
+                    <span class="pieFinishCleanings"></span>
+                </li>
+                <li style="color: #f25f5c" class="clearfix">
+                    <i style="background-color:#f25f5c "></i>
+                    <span class="tipTitle">未达标:</span>
+                    <span class="pieUnFinishCleanings"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="pieArea" id="equipmentStatisticsPart">
+        <div class="pieAreaTitle">设施巡检统计</div>
+        <div id="equipmentStatistics" class="pieAreaContent"></div>
+        <div class="pieSum">
+            <div class="sumPart">
+                <span>共计</span>
+                <span class="pieSumAccount"></span>
+                <span>次巡检</span>
+            </div>
+            <ul class="clearfix">
+                <li style="color: #247ba0" class="clearfix">
+                    <i style="background-color:#247ba0 "></i>
+                    <span class="tipTitle">已巡检:</span>
+                    <span class="pieFinishPatrols"></span>
+                </li>
+                <li style="color: #f25f5c" class="clearfix">
+                    <i style="background-color:#f25f5c "></i>
+                    <span class="tipTitle">待巡检:</span>
+                    <span class="pieUnFinishPatrols"></span>
+                </li>
+                <li style="color: #5ad269;width:100%" class="clearfix">
+                    <i style="background-color:#5ad269 "></i>
+                    <span class="tipTitle">逾期未巡检:</span>
+                    <span class="pieOverTimePatrols"></span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <div class="pieArea" id="securityStatisticsPart">
+        <div class="pieAreaTitle">安防巡逻统计</div>
+        <div id="securityStatistics" class="pieAreaContent"></div>
+        <div class="pieSum">
+            <div class="sumPart">
+                <span>共计</span>
+                <span class="pieSumAccount"></span>
+                <span>次巡逻</span>
+            </div>
+            <ul class="clearfix">
+                <li style="color: #247ba0" class="clearfix">
+                    <i style="background-color:#247ba0 "></i>
+                    <span class="tipTitle">已巡逻：</span>
+                    <span class="pieFinishSecurity"></span>
+                </li>
+                <li style="color: #f25f5c" class="clearfix">
+                    <i style="background-color:#f25f5c "></i>
+                    <span class="tipTitle">待巡逻：</span>
+                    <span class="pieUnFinishSecurity"></span>
+                </li>
+                <li style="color: #5ad269;width: 100%" class="clearfix">
+                    <i style="background-color:#5ad269 "></i>
+                    <span class="tipTitle">逾期未巡逻：</span>
+                    <span class="pieOverTimeSecurity"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--导出模板-->
+<a id="dlink" href="" style="display: none;">下载</a></button>
+<div id="ieExport_income">
+    <table id="taskStatisticsList" style="display:none;">
+
+        <tbody id="taskStatisticsDetail">
+        <tr>
+            <th colspan="5">报修统计</th>
+            <th colspan="4">保洁统计</th>
+            <th colspan="4">设施巡检统计</th>
+            <th colspan="4">安防巡逻统计</th>
+        </tr>
+        <tr>
+            <td>报修待维修</td>
+            <td>报修已接单</td>
+            <td>报修已完成</td>
+            <td>报修已取消</td>
+            <td>报修总计</td>
+            <td>保洁区域</td>
+            <td>保洁已达标</td>
+            <td>保洁未达标</td>
+            <td>保洁总计</td>
+            <td>设施已巡检</td>
+            <td>设施待巡检</td>
+            <td>设施逾期未巡检</td>
+            <td>设施巡检总计</td>
+            <td>安防已巡逻</td>
+            <td>安防待巡逻</td>
+            <td>安防逾期未巡逻</td>
+            <td>安防巡逻总计</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<style>
+    .pieArea {
+        box-sizing: border-box;
+        width: 25%;
+        height: 95%;
+        float: left;
+        position: relative;
+    }
+
+    .pieArea .pieAreaTitle {
+        display: block;
+        width: 100%;
+        height: 20%;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        position: absolute;
+        /*top: 40px;*/
+        top: 7%;
+        left: 0
+    }
+
+    .pieSum {
+        color: #000;
+        font-size: 14px;
+        position: absolute;
+        /*top: 90px;*/
+        top: 15%;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding-left: 65px;
+    }
+
+    .pieSum ul {
+        list-style: none;
+    }
+
+    .pieSum ul li {
+        float: left;
+        width: 50%;
+        text-align: left;
+    }
+
+    .pieSum i{
+        display: inline-block;
+        width: 15px;
+        height:15px;
+        /*float: left;*/
+    }
+    .pieSum ul span {
+        /*float: left;*/
+        display: inline-block;
+        text-align: right;
+        vertical-align: text-bottom;
+    }
+
+    /*.pieSum div span:nth-child(2){*/
+    /*width: right;*/
+    /*}*/
+
+    .tipTitle {
+        display: inline-block;
+        /*width: 70px;*/
+        text-align: left;
+    }
+
+    .sumPart{
+        width: 100%;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: left;
+    }
+
+    .pieArea .pieAreaContent {
+        width: 100%;
+        height: 100%;
+    }
+
+    .pieArea .pieSelect {
+        top: 35%;
+        /*top: 165px;*/
+        right: 0;
+        position: absolute;
+        z-index: 100;
+    }
+
+    .menus {
+        list-style: none;
+        width: 300px;
+        border: 1px solid #247ba0;
+        overflow: hidden;
+        border-radius: 6px;
+        color: #247ba0;
+    }
+
+    .menus li {
+        float: left;
+        width: 33%;
+        border-right: 1px solid #247ba0;
+        text-align: center;
+        height: 28px;
+        line-height: 28px;
+        cursor: pointer;
+    }
+
+    .menus li:last-child {
+        float: left;
+        width: 34%;
+        border-right: none;
+    }
+
+    .tabBg {
+        color: #fff;
+        background-color: #247ba0;
+    }
+</style>
+<script>
+    var data = {
+        flag: 1
+    };
+    var severData = {};
+    getDataFromServer()
+    //查询
+    function getDataFromServer() {
+        BJUI.ajax('doajax', {
+            url: path + '/web/task/v1/findTaskCount',
+            data: data,
+//            async:false,
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    var data = json.data;
+                    severData = data
+                    setRepairStatistics(data.waitRepairs, data.acceptRepairs, data.finishRepairs, data.cancelRepairs, data.allRepairs);
+                    setCleanStatistics(data.finishCleanings, data.unFinishCleanings, data.allCleanings);
+                    setEquipmentStatistics(data.finishPatrols, data.unFinishPatrols, data.OverTimePatrols, data.allPatrols);
+                    setSecurityStatistics(data.finishSecurity, data.unFinishSecurity, data.OverTimeSecurity, data.allSecurity);
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+    //获取保洁区域
+    BJUI.ajax('doajax', {
+        url: path + '/web/task/v1/findAreaList',
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                var data = json.data;
+                for (var i = 0; i < data.length; i++) {
+                    var html = '<option value="' + data[i].areaId + '">' + data[i].areaName + '</option>';
+                    $.CurrentNavtab.find('#cleanArea').append(html)
+                }
+                $.CurrentNavtab.find('#cleanArea').selectpicker('refresh');
+            } else {
+                successBack(json);
+            }
+        }
+    });
+
+    //保洁区域转换
+    function changeCleanArea(val) {
+        data.areaId = val;
+//        delete data.flag;
+        getDataFromServer();
+    }
+
+    //选项卡
+    $('.tab .menus li').click(function () {
+        $('.tab .menus li').removeClass('tabBg');
+        $(this).addClass('tabBg');
+        var index = $(this).index();
+        data = {
+            flag: index + 1
+        };
+        getDataFromServer();
+    })
+
+    //统计
+    $.CurrentNavtab.find('#btn-search').click(function () {
+        data.startTime = $.CurrentNavtab.find('#startTime_search').val() + " 00:00:00";
+        data.endTime = $.CurrentNavtab.find('#endTime_search').val() + " 23:59:59";
+        if (data.startTime == "" && data.endTime == "") {
+            data.flag = 1;
+            delete data.startTime;
+            delete data.endTime;
+            getDataFromServer();
+            $('.tab .menus li').removeClass('tabBg');
+            $('.tab .menus li:first').addClass('tabBg');
+        } else {
+            delete data.flag;
+            getDataFromServer();
+            $('.tab .menus li').removeClass('tabBg');
+        }
+    });
+
+    //导出
+    $.CurrentNavtab.find('#exportStatistics').click(function () {
+        var areaName = $.CurrentNavtab.find('#cleanArea option:selected').text();
+        if (!severData.waitRepairs) {
+            severData.waitRepairs = 0
+        }
+        if (!severData.acceptRepairs) {
+            severData.acceptRepairs = 0
+        }
+        if (!severData.finishRepairs) {
+            severData.finishRepairs = 0
+        }
+        if (!severData.cancelRepairs) {
+            severData.cancelRepairs = 0
+        }
+        if (!severData.allRepairs) {
+            severData.allRepairs = 0
+        }
+        if (!severData.finishCleanings) {
+            severData.finishCleanings = 0
+        }
+        if (!severData.unFinishCleanings) {
+            severData.unFinishCleanings = 0
+        }
+        if (!severData.allCleanings) {
+            severData.allCleanings = 0
+        }
+        if (!severData.finishPatrols) {
+            severData.finishPatrols = 0
+        }
+        if (!severData.unFinishPatrols) {
+            severData.unFinishPatrols = 0
+        }
+        if (!severData.OverTimePatrols) {
+            severData.OverTimePatrols = 0
+        }
+        if (!severData.allPatrols) {
+            severData.allPatrols = 0
+        }
+        if (!severData.finishSecurity) {
+            severData.finishSecurity = 0
+        }
+        if (!severData.unFinishSecurity) {
+            severData.unFinishSecurity = 0
+        }
+        if (!severData.OverTimeSecurity) {
+            severData.OverTimeSecurity = 0
+        }
+        if (!severData.allSecurity) {
+            severData.allSecurity = 0
+        }
+        html = '<tr><td style="mso-number-format:\'\@\';">' + severData.waitRepairs + '</td>'
+                + '<td>' + severData.acceptRepairs + '</td>'
+                + '<td>' + severData.finishRepairs + '</td>'
+                + '<td>' + severData.cancelRepairs + '</td>'
+                + '<td style="mso-number-format:\'\@\';"><span>&nbsp;</span>' + severData.allRepairs + '</td>'
+                + '<td style="mso-number-format:\'\@\';"><span>&nbsp;</span>' + areaName + '</td>'
+                + '<td>' + severData.finishCleanings + '</td>'
+                + '<td>' + severData.unFinishCleanings + '</td>'
+                + '<td>' + severData.allCleanings + '</td>'
+                + '<td>' + severData.finishPatrols + '</td>'
+                + '<td>' + severData.unFinishPatrols + '</td>'
+                + '<td>' + severData.OverTimePatrols + '</td>'
+                + '<td>' + severData.allPatrols + '</td>'
+                + '<td>' + severData.finishSecurity + '</td>'
+                + '<td>' + severData.unFinishSecurity + '</td>'
+                + '<td>' + severData.OverTimeSecurity + '</td>'
+                + '<td>' + severData.allSecurity + '</td></tr>'
+//        $.CurrentNavtab.find("#taskStatisticsDetail tr:not(:first)").remove();
+        $.CurrentNavtab.find("#taskStatisticsDetail tr").not(':first,:eq(1)').remove();
+        $.CurrentNavtab.find("#taskStatisticsDetail").append(html);
+        exportExcel('taskStatisticsList', '任务统计明细');
+    });
+
+
+    function setRepairStatistics(waitRepairs, acceptRepairs, finishRepairs, cancelRepairs, allRepairs) {
+        if (!waitRepairs) {
+            waitRepairs = 0
+        }
+        if (!acceptRepairs) {
+            acceptRepairs = 0
+        }
+        if (!finishRepairs) {
+            finishRepairs = 0
+        }
+        if (!cancelRepairs) {
+            cancelRepairs = 0
+        }
+        if (!allRepairs) {
+            allRepairs = 0
+        }
+        var repairStatistics = echarts.init(document.getElementById('repairStatistics'));
+        var repairStatistics_option = {
+            color: ['#70c1b3', '#f25f5c', '#247ba0', '#5ad269'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+//            legend: {
+//                orient: 'vertical',
+//                top: '200px',
+//                x: 'right',
+//                data: ['待维修', '已接单', '已完成', '已取消']
+//            },
+            legend: {
+                orient: 'horizontal',
+                bottom: '10%',
+                borderColor: '#ccc',
+                borderWidth:1,
+                borderRadius:4,
+                data: ['待维修', '已接单', '已完成', '已取消']
+            },
+            series: [
+                {
+                    name: '报修统计',
+                    type: 'pie',
+                    selectedMode: 'single',
+                    radius: '55%',
+                    center: ['50%', '52%'],
+                    label: {
+                        normal: {
+                            position: 'inner'
+                        }
+                    },
+                    data: [
+                        {value: waitRepairs, name: '待维修', selected: true, label: {show: true}},
+                        {value: acceptRepairs, name: '已接单', label: {show: true}},
+                        {value: finishRepairs, name: '已完成', label: {show: true}},
+                        {value: cancelRepairs, name: '已取消', label: {show: true}},
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 5,
+                            shadowColor: 'rgba(	0,0,0, 0.5)'
+                        },
+                    }
+                }
+            ]
+        };
+        var opt = repairStatistics_option.series[0];
+        jQuery.each(opt.data, function (i, item) {
+            if (item.value == 0) {
+                item.label.show = false;
+            }
+        });
+//        var legendName='待维修:'+ waitRepairs+'/已接单:'+acceptRepairs+ '/已完成:'+finishRepairs+'/已取消:'+cancelRepairs;
+//        legendName=legendName.split('/');
+//        repairStatistics_option.legend.data=legendName;
+        repairStatistics.setOption(repairStatistics_option);
+        $.CurrentNavtab.find('#repairPart .pieSumAccount').text(allRepairs);
+        $.CurrentNavtab.find('#repairPart .pieAcceptRepairs').text(acceptRepairs);
+        $.CurrentNavtab.find('#repairPart .pieFinishRepairs').text(finishRepairs);
+        $.CurrentNavtab.find('#repairPart .pieWaitRepairs').text(waitRepairs);
+        $.CurrentNavtab.find('#repairPart .pieCancelRepairs').text(cancelRepairs);
+    }
+    function setCleanStatistics(finishCleanings, unFinishCleanings, allCleanings) {
+        if (!finishCleanings) {
+            finishCleanings = 0
+        }
+        if (!unFinishCleanings) {
+            unFinishCleanings = 0
+        }
+        if (!allCleanings) {
+            allCleanings = 0
+        }
+        var repairStatistics = echarts.init(document.getElementById('cleanStatistics'));
+        var repairStatistics_option = {
+            color: ['#247ba0', '#f25f5c'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'horizontal',
+                bottom: '10%',
+                borderColor: '#ccc',
+                borderWidth:1,
+                borderRadius:4,
+                data: ['已达标', '未达标']
+            },
+            series: [
+                {
+                    name: '保洁工作统计',
+                    type: 'pie',
+                    selectedMode: 'single',
+                    radius: '55%',
+                    center: ['50%', '52%'],
+                    label: {
+                        normal: {
+                            position: 'inner'
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: [
+                        {value: finishCleanings, name: '已达标', selected: true, label: {show: true}},
+                        {value: unFinishCleanings, name: '未达标', label: {show: true}},
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 5,
+                            shadowColor: 'rgba(	0,0,0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        var opt = repairStatistics_option.series[0];
+        jQuery.each(opt.data, function (i, item) {
+            if (item.value == 0) {
+                item.label.show = false;
+            }
+        });
+        repairStatistics.setOption(repairStatistics_option);
+        $.CurrentNavtab.find('#cleanStatisticsPart .pieSumAccount').text(allCleanings);
+        $.CurrentNavtab.find('#cleanStatisticsPart .pieFinishCleanings').text(finishCleanings);
+        $.CurrentNavtab.find('#cleanStatisticsPart .pieUnFinishCleanings').text(unFinishCleanings);
+    }
+    function setEquipmentStatistics(finishPatrols, unFinishPatrols, OverTimePatrols, allPatrols) {
+        if (!finishPatrols) {
+            finishPatrols = 0
+        }
+        if (!unFinishPatrols) {
+            unFinishPatrols = 0
+        }
+        if (!OverTimePatrols) {
+            OverTimePatrols = 0
+        }
+        if (!allPatrols) {
+            allPatrols = 0
+        }
+        var repairStatistics = echarts.init(document.getElementById('equipmentStatistics'));
+        var repairStatistics_option = {
+            color: ['#247ba0', '#f25f5c', '#5ad269'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'horizontal',
+                bottom: '10%',
+                borderColor: '#ccc',
+                borderWidth:1,
+                borderRadius:4,
+                data: ['已巡检', '待巡检', '逾期未巡检']
+            },
+            series: [
+                {
+                    name: '设施巡检统计',
+                    type: 'pie',
+                    selectedMode: 'single',
+                    radius: '55%',
+                    center: ['50%', '52%'],
+                    label: {
+                        normal: {
+                            position: 'inner'
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: [
+                        {value: finishPatrols, name: '已巡检', selected: true, label: {show: true}},
+                        {value: unFinishPatrols, name: '待巡检', label: {show: true}},
+                        {value: OverTimePatrols, name: '逾期未巡检', label: {show: true}},
+
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 5,
+                            shadowColor: 'rgba(	0,0,0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        var opt = repairStatistics_option.series[0];
+        jQuery.each(opt.data, function (i, item) {
+            if (item.value == 0) {
+                item.label.show = false;
+            }
+        });
+        repairStatistics.setOption(repairStatistics_option);
+        $.CurrentNavtab.find('#equipmentStatisticsPart .pieSumAccount').text(allPatrols);
+        $.CurrentNavtab.find('#equipmentStatisticsPart .pieFinishPatrols').text(finishPatrols);
+        $.CurrentNavtab.find('#equipmentStatisticsPart .pieUnFinishPatrols').text(unFinishPatrols);
+        $.CurrentNavtab.find('#equipmentStatisticsPart .pieOverTimePatrols').text(OverTimePatrols);
+    }
+    function setSecurityStatistics(finishSecurity, unFinishSecurity, OverTimeSecurity, allSecurity) {
+        if (!finishSecurity) {
+            finishSecurity = 0
+        }
+        if (!unFinishSecurity) {
+            unFinishSecurity = 0
+        }
+        if (!OverTimeSecurity) {
+            OverTimeSecurity = 0
+        }
+        if (!allSecurity) {
+            allSecurity = 0
+        }
+        var repairStatistics = echarts.init(document.getElementById('securityStatistics'));
+        var repairStatistics_option = {
+            color: ['#247ba0', '#f25f5c', '#5ad269'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'horizontal',
+                bottom: '10%',
+                borderColor: '#ccc',
+                borderWidth:1,
+                borderRadius:4,
+                data: ['已巡逻', '待巡逻', '逾期未巡逻']
+            },
+            series: [
+                {
+                    name: '安防巡逻统计',
+                    type: 'pie',
+                    selectedMode: 'single',
+                    radius: '55%',
+                    center: ['50%', '52%'],
+                    label: {
+                        normal: {
+                            position: 'inner'
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: [
+                        {value: finishSecurity, name: '已巡逻', selected: true, label: {show: true}},
+                        {value: unFinishSecurity, name: '待巡逻', label: {show: true}},
+                        {value: OverTimeSecurity, name: '逾期未巡逻', label: {show: true}},
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 5,
+                            shadowColor: 'rgba(	0,0,0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        var opt = repairStatistics_option.series[0];
+        jQuery.each(opt.data, function (i, item) {
+            if (item.value == 0) {
+                item.label.show = false;
+            }
+        });
+        repairStatistics.setOption(repairStatistics_option);
+        $.CurrentNavtab.find('#securityStatisticsPart .pieSumAccount').text(allSecurity);
+        $.CurrentNavtab.find('#securityStatisticsPart .pieFinishSecurity').text(finishSecurity);
+        $.CurrentNavtab.find('#securityStatisticsPart .pieUnFinishSecurity').text(unFinishSecurity);
+        $.CurrentNavtab.find('#securityStatisticsPart .pieOverTimeSecurity').text(OverTimeSecurity);
+    }
+
+</script>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.config.ConfigMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.config.Config">
+        <id column="confName" property="confName" jdbcType="VARCHAR"/>
+        <result column="confValue" property="confValue" jdbcType="VARCHAR"/>
+        <result column="confType" property="confType" jdbcType="VARCHAR"/>
+        <result column="confDesc" property="confDesc" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    confName, confValue, confType, confDesc
+  </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from system_config
+        where confName = #{confName,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.config.Config">
+        update system_config
+        <set>
+            <if test="confValue != null">
+                confValue = #{confValue,jdbcType=VARCHAR},
+            </if>
+            <if test="confType != null">
+                confType = #{confType,jdbcType=VARCHAR},
+            </if>
+            <if test="confDesc != null">
+                confDesc = #{confDesc,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where confName = #{confName,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findAll" resultMap="BaseResultMap">
+    select * from system_config
+  </select>
+
+</mapper>

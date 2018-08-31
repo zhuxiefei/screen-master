@@ -1,0 +1,141 @@
+<div class="bjui-pageContent" style="overflow-y: auto;">
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">设备编号:</td>
+            <td class="td_right" id="equipmentNo"></td>
+            <td class="td_left">设备名称: </td>
+            <td class="td_right" id="equipmentName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">设备类型: </td>
+            <td class="td_right" id="typeName"></td>
+            <td class="td_left">是否需要巡检: </td>
+            <td class="td_right" id="isCheck"></td>
+        </tr>
+        <tr>
+            <td class="td_left">所在位置: </td>
+            <td class="td_right" id="location"></td>
+            <td class="td_left">设备生产日期: </td>
+            <td class="td_right" id="equipmentCreateTime"></td>
+        </tr>
+        <tr>
+            <td class="td_left">质保期: </td>
+            <td class="td_right" id="equipQuality"></td>
+            <td class="td_left">保修截止日期: </td>
+            <td class="td_right" id="deadline"></td>
+        </tr>
+        <tr>
+            <td class="td_left">设备生产厂商: </td>
+            <td class="td_right" id="equipmentProducer"></td>
+            <td class="td_left">生产厂商电话: </td>
+            <td class="td_right" id="producerPhone"></td>
+        </tr>
+
+        <tr>
+            <td class="td_left">维修厂商: </td>
+            <td class="td_right"  colspan="3" id="equipmentOperator"></td>
+        </tr>
+        <tr>
+            <td class="td_left">维修时间: </td>
+            <td class="td_right" id="repairTime"></td>
+            <td class="td_left">维修厂商电话: </td>
+            <td class="td_right"id="operatorPhone"></td>
+        </tr>
+        <tr>
+            <td class="td_left">维修费用: </td>
+            <td class="td_right" id="repairExpense"></td>
+            <td class="td_left">质保期: </td>
+            <td class="td_right" id="recordQuality"></td>
+        </tr>
+        <tr>
+            <td class="td_left">维修内容: </td>
+            <td class="td_right" colspan="3" id="repairDesc"></td>
+        </tr>
+    </table>
+
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+    </ul>
+</div>
+<script>
+    var checkRepairRecordDetail = $.CurrentNavtab.data("checkRepairRecordDetail");
+    //设备编号
+    $.CurrentDialog.find("#equipmentNo").text(checkRepairRecordDetail.equipmentNo);
+    //设备名称
+    $.CurrentDialog.find("#equipmentName").text(checkRepairRecordDetail.equipmentName);
+    //设备类型
+    $.CurrentDialog.find("#typeName").text(checkRepairRecordDetail.typeName);
+    //巡检周期
+    if (checkRepairRecordDetail.isCheck == undefined || checkRepairRecordDetail.isCheck == null || checkRepairRecordDetail.isCheck == "") {
+        checkRepairRecordDetail.isCheck = '';
+    }else if(checkRepairRecordDetail.isCheck == 1) {
+        checkRepairRecordDetail.isCheck = "是";
+    }else if(checkRepairRecordDetail.isCheck == 2) {
+        checkRepairRecordDetail.isCheck = "否";
+    }
+    $.CurrentDialog.find("#isCheck").text(checkRepairRecordDetail.isCheck);
+   /* if (checkRepairRecordDetail.checkCycle == undefined || checkRepairRecordDetail.checkCycle == null || checkRepairRecordDetail.checkCycle == "") {
+        checkRepairRecordDetail.checkCycle = '<i>已被删除</i>';
+    }else if(checkRepairRecordDetail.checkCycle == 1) {
+        checkRepairRecordDetail.checkCycle = "每日巡检";
+    } else if(checkRepairRecordDetail.checkCycle == 2) {
+        checkRepairRecordDetail.checkCycle = "每周巡检";
+    } else if(checkRepairRecordDetail.checkCycle == 3) {
+        checkRepairRecordDetail.checkCycle = "月度巡检";
+    } else if(checkRepairRecordDetail.checkCycle == 4) {
+        checkRepairRecordDetail.checkCycle = "季度巡检";
+    } else if(checkRepairRecordDetail.checkCycle == 3) {
+        checkRepairRecordDetail.checkCycle = "年度巡检";
+    }
+    $.CurrentDialog.find("#checkCycle").text(checkRepairRecordDetail.checkCycle);*/
+    //所在位置
+    $.CurrentDialog.find("#location").text(checkRepairRecordDetail.location);
+    //设备生产日期
+    $.CurrentDialog.find("#equipmentCreateTime").text(checkRepairRecordDetail.equipmentCreateTime.substring(0,10));
+    //质保期
+    if (checkRepairRecordDetail.equipQuality == undefined || checkRepairRecordDetail.equipQuality == null || checkRepairRecordDetail.equipQuality == "") {
+        checkRepairRecordDetail.equipQuality = '';
+    }
+
+    if (checkRepairRecordDetail.equipUnit == undefined || checkRepairRecordDetail.equipUnit == null || checkRepairRecordDetail.equipUnit == "") {
+        checkRepairRecordDetail.equipUnit = '';
+    }else if(checkRepairRecordDetail.equipUnit == 1) {
+        checkRepairRecordDetail.equipUnit = "天";
+    } else if(checkRepairRecordDetail.equipUnit == 2) {
+        checkRepairRecordDetail.equipUnit = "个月";
+    } else if(checkRepairRecordDetail.equipUnit == 3) {
+        checkRepairRecordDetail.equipUnit = "年";
+    }
+
+    $.CurrentDialog.find("#equipQuality").text(checkRepairRecordDetail.equipQuality+checkRepairRecordDetail.equipUnit);
+    //保修截止日期
+    $.CurrentDialog.find("#deadline").text(checkRepairRecordDetail.deadline.substring(0,10));
+    //设备生产厂商
+    $.CurrentDialog.find("#equipmentProducer").text(checkRepairRecordDetail.equipmentProducer);
+    //生产厂商电话
+    $.CurrentDialog.find("#producerPhone").text(checkRepairRecordDetail.producerPhone);
+    //维修时间
+    $.CurrentDialog.find("#repairTime").text(checkRepairRecordDetail.repairTime.substring(0,10));
+    //维修厂商
+    $.CurrentDialog.find("#equipmentOperator").text(checkRepairRecordDetail.equipmentOperator);
+    //维修厂商电话
+    $.CurrentDialog.find("#operatorPhone").text(checkRepairRecordDetail.operatorPhone);
+    //维修费用
+    $.CurrentDialog.find("#repairExpense").text(checkRepairRecordDetail.repairExpense);
+    //维修质保期
+    if (checkRepairRecordDetail.recordUnit == undefined || checkRepairRecordDetail.recordUnit == null || checkRepairRecordDetail.recordUnit == "") {
+        checkRepairRecordDetail.recordUnit = '';
+    }else if(checkRepairRecordDetail.recordUnit == 1) {
+        checkRepairRecordDetail.recordUnit = "天";
+    } else if(checkRepairRecordDetail.recordUnit == 2) {
+        checkRepairRecordDetail.recordUnit = "个月";
+    } else if(checkRepairRecordDetail.recordUnit == 3) {
+        checkRepairRecordDetail.recordUnit = "年";
+    }
+    $.CurrentDialog.find('#recordQuality').html(checkRepairRecordDetail.recordQuality+checkRepairRecordDetail.recordUnit);
+    //维修内容
+    $.CurrentDialog.find("#repairDesc").html(htmlEncode(checkRepairRecordDetail.repairDesc));
+
+</script>

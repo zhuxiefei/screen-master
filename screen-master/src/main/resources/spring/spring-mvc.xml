@@ -1,0 +1,83 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.2.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.2.xsd ">
+
+    <context:annotation-config/>
+
+    <!-- 开启aop，对类代理 -->
+    <aop:config proxy-target-class="true"/>
+
+    <!--start 2016年3月9日09:20:19 dhx修改：将controller包扫描改为通配包 -->
+    <context:component-scan base-package="com.betel.estatemgmt.business.**.**.controller">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!--end -->
+
+    <!--start app统一鉴权拦截器 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="interceptors">
+            <!-- 多个拦截器,顺序执行 -->
+            <list>
+                <ref bean="UserAppPermissionsInterceptor"/>
+                <ref bean="PropertyAppPermissionsInterceptor"/>
+                <ref bean="HttpClientPermissionsInterceptor"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="UserAppPermissionsInterceptor" class="com.betel.estatemgmt.common.UserAppPermissionsInterceptor">
+        <property name="mappingURL" value="/userApp/"/>
+    </bean>
+    <bean id="PropertyAppPermissionsInterceptor" class="com.betel.estatemgmt.common.PropertyAppPermissionsInterceptor">
+        <property name="mappingURL" value="/propertyApp/"/>
+    </bean>
+    <bean id="HttpClientPermissionsInterceptor" class="com.betel.estatemgmt.common.HttpClientPermissionsInterceptor">
+        <property name="mappingURL" value="/httpclientProperty/"/>
+    </bean>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.GsonHttpMessageConverter">
+                <property name="gson">
+                    <bean class="com.google.gson.Gson" factory-bean="gsonBuilder"
+                          factory-method="create"/>
+                </property>
+            </bean>
+        </mvc:message-converters>
+
+    </mvc:annotation-driven>
+
+
+    <bean id="gsonBuilder" class="com.google.gson.GsonBuilder">
+        <property name="dateFormat" value="yyyy'-'MM'-'dd' 'HH':'mm':'ss"/>
+    </bean>
+
+    <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀 -->
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="requestContextAttribute" value="rc"/>
+        <property name="viewClass"
+                  value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/html/"/>
+    </bean>
+
+    <!--start 2016年3月9日09:18:36 dhx修改：增加文件上传bean -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="maxUploadSize" value="524288000"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
+    <!--end -->
+
+
+
+</beans>

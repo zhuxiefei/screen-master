@@ -1,0 +1,158 @@
+<style>
+    #seeHouseForm .col-1 .row-label {
+        width: 20%;
+    }
+
+    #seeHouseForm .col-1 .row-span {
+        width: 80%;
+        font-size: 14px;
+    }
+
+    #seeHouseForm .col-2 .row-label {
+        width: 19%;
+    }
+
+    #seeHouseForm .col-2 .row-span {
+        width: 28%;
+        font-size: 14px;
+    }
+
+    #seeHouseForm .row-span {
+        display: inline-block;
+        vertical-align: bottom;
+        margin-bottom: 10px;
+    }
+
+    .detailTitle {
+        font-weight: bold;
+        background-color: #b0d3f7;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;">
+    <table class="patrolDetail">
+        <tr>
+            <td colspan="4" align="center" class="detailTitle">
+                巡逻内容信息
+            </td>
+        </tr>
+        <tr>
+            <td class="td_left">巡逻编号:</td>
+            <td class="td_right" id="contentNo"></td>
+            <td class="td_left">完成状态:</td>
+            <td class="td_right" id="isPatrol"></td>
+        </tr>
+        <tr>
+            <td class="td_left">巡逻区域：</td>
+            <td class="td_right" id="areaName"></td>
+            <td class="td_left">签到地点:</td>
+            <td class="td_right" id="signinAddress"></td>
+        </tr>
+        <tr>
+            <td class="td_left">定时发布时间:</td>
+            <td class="td_right" id="createTime" colspan="3"></td>
+        </tr>
+        <tr>
+            <td class="td_left">巡逻内容:</td>
+            <td class="td_right" id="contentDesc" colspan="3"></td>
+        </tr>
+
+
+        <tr class="patrolDetail_tr">
+            <td colspan="4" align="center" class="detailTitle">
+                巡逻记录信息
+            </td>
+        </tr>
+        <tr class="patrolDetail_tr">
+            <td class="td_left">巡逻人员:</td>
+            <td class="td_right" id="employeeName"></td>
+            <td class="td_left">签到次数:</td>
+            <td class="td_right" id="signinNum"></td>
+        </tr>
+        <tr class="patrolDetail_tr">
+            <td class="td_left">巡逻完成时间:</td>
+            <td class="td_right" colspan="3" id="finishTime"></td>
+        </tr>
+
+        <tr class="patrolDetail_tr">
+            <td class="td_left">签到记录:</td>
+            <td class="td_right" colspan="3" id="signinNumRecordList">
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var securityRecord = $.CurrentNavtab.data("findSecurityRecord");
+    //编号
+    if(securityRecord.contentNo == undefined || securityRecord.contentNo == "" || securityRecord.contentNo == null){
+        securityRecord.contentNo = "<i>已被删除</i>";
+    }
+    $.CurrentDialog.find('#contentNo').html(securityRecord.contentNo);
+    //巡逻区域
+    if(securityRecord.areaName == undefined || securityRecord.areaName == "" || securityRecord.areaName == null){
+        securityRecord.areaName = "<i>已被删除</i>";
+    }
+    $.CurrentDialog.find('#areaName').html(securityRecord.areaName);
+    // 签到地点
+    if(securityRecord.signinAddress == undefined || securityRecord.signinAddress == "" || securityRecord.signinAddress == null){
+        securityRecord.signinAddress = "<i>已被删除</i>";
+    }
+    $.CurrentDialog.find('#signinAddress').html(securityRecord.signinAddress);
+    // 定时发布时间
+    $.CurrentDialog.find('#createTime').text(securityRecord.createTime);
+    // 巡逻内容
+    if(securityRecord.contentDesc == undefined || securityRecord.contentDesc == "" || securityRecord.contentDesc == null){
+        securityRecord.contentDesc = "<i>已被删除</i>";
+    }
+    $.CurrentDialog.find('#contentDesc').html(securityRecord.contentDesc);
+    //完成状态
+    var isPatrol = "";
+    if(securityRecord.isPatrol == 1){
+        isPatrol = "待巡逻";
+    }else if(securityRecord.isPatrol == 2){
+        isPatrol = "已巡逻";
+
+        //巡检人员
+        $.CurrentDialog.find('#employeeName').text(securityRecord.employeeName);
+        //签到次数
+        $.CurrentDialog.find('#signinNum').text(securityRecord.signinNum);
+        //完成时间
+        $.CurrentDialog.find('#finishTime').text(securityRecord.finishTime);
+        //签到记录
+        if(securityRecord.signinNumRecordList && securityRecord.signinNumRecordList.length > 0){
+            var html = "";
+            $.each(securityRecord.signinNumRecordList,function (s,v) {
+                html += '<table class="patrolDetail_center patrolDetail_center2">';
+                html += '<tr>';
+                html += '<td>'+v.signinEmpName+'</td>';
+                html += '<td>'+v.createTime+'</td>';
+                html += '<td>'+v.address+'</td>';
+                html += '</tr>';
+                if(v.remarks && v.remarks != 0){
+                    html += '<tr>';
+                    html += '<td colspan="3">';
+                    html += '<span>备注：'+v.remarks+'</span>';
+                    html += '</td>';
+                    html += '</tr>';
+                }
+
+                html += '</table>';
+            })
+            $.CurrentDialog.find('#signinNumRecordList').html(html);
+        }
+        $.CurrentDialog.find('.patrolDetail_tr').show();
+
+    }else if(securityRecord.isPatrol == 3){
+        isPatrol = "逾期未巡逻";
+    }
+    $.CurrentDialog.find('#isPatrol').text(isPatrol);
+
+
+
+</script>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.admin.AdminAccountMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.admin.AdminAccount" >
+    <id column="acctName" property="acctName" jdbcType="VARCHAR" />
+    <result column="acctType" property="acctType" jdbcType="BIT" />
+    <result column="adminId" property="adminId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    acctName, acctType, adminId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_account
+    where acctName = #{acctName,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByAcctName" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.admin.AdminAccount" >
+    select *
+    from admin_account
+    where acctName = #{acctName,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from admin_account
+    where acctName = #{acctName,jdbcType=VARCHAR}
+  </delete>
+  <!--删账号-->
+  <delete id="deleteAdminAccountByAdminIds" parameterType="java.lang.String" >
+    delete from admin_account
+    where adminId in
+    <foreach collection="array" item="adminId" open="(" separator="," close=")">
+      #{adminId,jdbcType=VARCHAR}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.admin.AdminAccount" >
+    insert into admin_account (acctName, acctType, adminId,
+      createTime)
+    values (#{acctName,jdbcType=VARCHAR}, #{acctType,jdbcType=BIT}, #{adminId,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminAccount" >
+    insert into admin_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="acctName != null" >
+        acctName,
+      </if>
+      <if test="acctType != null" >
+        acctType,
+      </if>
+      <if test="adminId != null" >
+        adminId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="acctName != null" >
+        #{acctName,jdbcType=VARCHAR},
+      </if>
+      <if test="acctType != null" >
+        #{acctType,jdbcType=BIT},
+      </if>
+      <if test="adminId != null" >
+        #{adminId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminAccount" >
+    update admin_account
+    <set >
+      <if test="acctType != null" >
+        acctType = #{acctType,jdbcType=BIT},
+      </if>
+      <if test="adminId != null" >
+        adminId = #{adminId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where acctName = #{acctName,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.AdminAccount" >
+    update admin_account
+    set acctType = #{acctType,jdbcType=BIT},
+      adminId = #{adminId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where acctName = #{acctName,jdbcType=VARCHAR}
+  </update>
+</mapper>

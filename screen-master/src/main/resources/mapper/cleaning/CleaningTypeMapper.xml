@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.cleaning.CleaningTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.cleaning.CleaningType" >
+    <id column="typeId" property="typeId" jdbcType="VARCHAR" />
+    <result column="typeName" property="typeName" jdbcType="VARCHAR" />
+    <result column="typeDesc" property="typeDesc" jdbcType="VARCHAR" />
+    <result column="areaId" property="areaId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    typeId, typeName, typeDesc, areaId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cleaning_type
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cleaning_type
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningType" >
+    insert into cleaning_type (typeId, typeName, typeDesc, 
+      areaId, createTime)
+    values (#{typeId,jdbcType=VARCHAR}, #{typeName,jdbcType=VARCHAR}, #{typeDesc,jdbcType=VARCHAR}, 
+      #{areaId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningType" >
+    insert into cleaning_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      typeId,
+      <if test="typeName != null" >
+        typeName,
+      </if>
+      <if test="typeDesc != null" >
+        typeDesc,
+      </if>
+      <if test="areaId != null" >
+        areaId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      uuid(),
+      <if test="typeName != null" >
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeDesc != null" >
+        #{typeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningType" >
+    update cleaning_type
+    <set >
+      <if test="typeName != null" >
+        typeName = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeDesc != null" >
+        typeDesc = #{typeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        areaId = #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningType" >
+    update cleaning_type
+    set typeName = #{typeName,jdbcType=VARCHAR},
+      typeDesc = #{typeDesc,jdbcType=VARCHAR},
+      areaId = #{areaId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByAreaId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.cleaning.CleaningType">
+    SELECT * FROM cleaning_type WHERE areaId = #{areaId} ORDER BY createTime desc
+  </select>
+
+  <select id="findByAreaIdAndTypeName" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.cleaning.CleaningType">
+    SELECT * FROM cleaning_type WHERE areaId = #{areaId} AND typeName = #{typeName}
+  </select>
+
+  <delete id="deleteByTypeIds" parameterType="java.lang.String">
+    delete from cleaning_type
+    where typeId in
+    <foreach collection="array" item="typeId" open="(" separator="," close=")">
+      #{typeId}
+    </foreach>
+  </delete>
+</mapper>

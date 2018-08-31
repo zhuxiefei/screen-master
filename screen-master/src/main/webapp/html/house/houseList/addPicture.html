@@ -1,0 +1,72 @@
+<div class="bjui-pageContent">
+    <div class="bjui-row col-1 divUpload">
+        <div id="addPicture">
+            <div id="uploadPicture"></div>
+        </div>
+    </div>
+</div>
+<div class="bjui-pageFooter">
+   <!-- <ul>
+        <li><button type="button" class="btn-close btn-blue" data-icon="check">确认</button></li>
+    </ul>-->
+</div>
+<script>
+
+    var drawId = $("body").data("drawId");
+    var pictureType = $.CurrentNavtab.find("#"+drawId).find(".divDraw .spanTitle").text();
+
+    $.CurrentDialog.find('#uploadPicture').Huploadify({
+        auto:false,       //是否自动上传
+        fileTypeExts:'*.bmp;*.jpg;*.jpeg;*.png',
+        multi:false,    //是否允许选择多个文件
+        formData: {houseId:$("body").data("houseListmkP"),pictureType:pictureType,pictureFlag:0},
+        fileObjName:'multipartFile',
+        fileSizeLimit:5*1024,   //允许上传的文件大小，单位KB
+        showUploadedPercent:true,//是否实时显示上传的百分比，如20%
+        showUploadedSize:true,
+        removeTimeout:9999999,
+        uploader:path + '/web/house/v1/uploadPicture',
+        onUploadStart:function(){
+            //alert('开始上传');
+        },
+        onInit:function(){
+            //alert('初始化');
+        },
+        onUploadComplete:function(file,json){  //上传完成  //json:接口返回的数据
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .uploadbtn").remove();  //移除上传的按钮
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .delfilebtn").remove(); //移除删除的按钮
+            var data = JSON.parse(json);
+            if(data.code=="00000"){
+                BJUI.navtab('refresh', 'navtab_drawManagement');
+                /*console.log(data);
+                $("body").data("hpId",data.data.hpId)
+                $("body").data("pictureUrl",data.data.pictureUrl)*/
+                var drawId = $("body").data("drawId");
+                var pictureType = $.CurrentNavtab.find("#"+drawId).find(".divDraw .spanTitle").text();
+                //$.CurrentNavtab.find("#"+drawId).find("div.divDrawPicture").find("div.col-xs-6").css("cursor","pointer");
+                //$.CurrentNavtab.find("#"+drawId).find("div.divDrawPicture").find("div.col-xs-6").data("options","{id:'bjui-dialog-view-upload-image', image:'"+data.data.pictureUrl+"', width:800, height:500, mask:true, title:'查看已上传图片'}");
+                $.CurrentNavtab.find("#"+drawId).find("div.divDrawPicture").find("div.col-xs-6 img").attr("src",data.data.pictureUrl);
+                var html = '<button type="button" class="btn-blue btn-uploadFile btn" data-pictureType="'+pictureType+'">修改图片</button>';
+                html += '<button type="button" class="btn-blue btn-delFile btn" data-hpId="'+data.data.hpId+'" data-pictureFlag="0">删除</button>';
+                html += '<button type="button" class="btn-blue btn-downloadFile btn" data-hpId="'+data.data.hpId+'" data-pictureFlag="0">下载</button>';
+                $.CurrentNavtab.find("#"+drawId).find("div.divDrawPicture div.divBtn").html(html);
+                BJUI.dialog('close', 'dialog_addPicture');
+                BJUI.alertmsg('ok', '上传成功！');
+            }else if(data.code=="11111"){
+                window.location.href=path+'/login.html'
+            }else{
+                successBack(data);
+            }
+        },onSelect:function(file){  //选择文件后的回调函数
+            //console.log(file.index)
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index).siblings('div').remove();
+
+            $.CurrentDialog.find("#divErrorList").css("display","none");
+            $.CurrentDialog.find("#downBtnFail").css("display","none");
+        },
+        onDelete:function(file){
+            console.log('删除的文件：'+file);
+            console.log(file);
+        }
+    });
+</script>

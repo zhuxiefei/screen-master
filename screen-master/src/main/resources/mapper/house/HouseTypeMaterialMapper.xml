@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseTypeMaterialMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseTypeMaterial" >
+    <id column="tmId" property="tmId" jdbcType="BIGINT" />
+    <result column="typeId" property="typeId" jdbcType="BIGINT" />
+    <result column="functionId" property="functionId" jdbcType="BIGINT" />
+    <result column="materialId" property="materialId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    tmId, typeId, functionId, materialId
+  </sql>
+
+  <select id="insertTypeMaterials" parameterType="java.util.List">
+    insert into house_type_material
+    (typeId,functionId,materialId)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.typeId,jdbcType=BIGINT}, #{item.functionId,jdbcType=BIGINT},
+      #{item.materialId,jdbcType=BIGINT})
+    </foreach>
+  </select>
+
+  <select id="selectMaterialIsExistence" resultType="com.betel.estatemgmt.business.web.housetype.model.TypeMaterialInfo"
+                                      parameterType="com.betel.estatemgmt.common.model.house.HouseTypeMaterial">
+    select
+    tm.tmId tmId, tm.typeId typeId, tm.functionId functionId,
+    tm.materialId materialId, m.materialName materialName
+    from house_type_material tm
+    left join house_material m
+    on tm.materialId = m.materialId
+    where tm.materialId = #{materialId,jdbcType=BIGINT}
+    <if test="functionId == null">
+       and ISNULL(functionId)
+    </if>
+    <if test="functionId != null">
+      and tm.functionId = #{functionId,jdbcType=BIGINT}
+    </if>
+    and
+    tm.typeId = #{typeId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteHouseTypeMaterials">
+    delete from house_type_material
+    where tmId in
+    <foreach collection="array" index="index" item="tmId" open="(" close=")" separator=",">
+      #{tmId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+
+
+
+  <delete id="deleteMaterialByFunctionId" parameterType="java.lang.Long">
+    delete from house_type_material
+    where functionId = #{functionId,jdbcType=BIGINT}
+  </delete>
+
+
+  <delete id="deleteMaterials">
+    delete from house_type_material
+    where typeId in
+    <foreach collection="array" index="index" item="typeId" open="(" close=")" separator=",">
+      #{typeId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+
+<!--=======根据建材id删除建材户型关系信息  批量删除  开始==========-->
+  <delete id="deleteHouseTypeMaterialsByMaterialsIds">
+    delete from house_type_material
+    where materialId in
+    <foreach collection="array" index="index" item="materialId" open="(" close=")" separator=",">
+      #{materialId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+
+  <delete id="deleteHouseTypeMaterialsByMaterialId" parameterType="java.lang.Long">
+    delete from house_type_material
+    where materialId = #{materialId,jdbcType=BIGINT}
+  </delete>
+  <!--======根据建材id删除建材户型关系信息  批量删除  结束=====-->
+  <delete id="deleteBulkHouseTypeMaterialsByMaterialIds" parameterType="java.util.List">
+    delete from house_type_material
+    where materialId IN
+    <foreach collection="list" index="index" item="materialId" open="(" separator="," close=")">
+      #{materialId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_type_material
+    where tmId = #{tmId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_type_material
+    where tmId = #{tmId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeMaterial" >
+    insert into house_type_material (tmId, typeId, functionId, 
+      materialId)
+    values (#{tmId,jdbcType=BIGINT}, #{typeId,jdbcType=BIGINT}, #{functionId,jdbcType=BIGINT}, 
+      #{materialId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeMaterial" >
+    insert into house_type_material
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tmId != null" >
+        tmId,
+      </if>
+      <if test="typeId != null" >
+        typeId,
+      </if>
+      <if test="functionId != null" >
+        functionId,
+      </if>
+      <if test="materialId != null" >
+        materialId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tmId != null" >
+        #{tmId,jdbcType=BIGINT},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=BIGINT},
+      </if>
+      <if test="functionId != null" >
+        #{functionId,jdbcType=BIGINT},
+      </if>
+      <if test="materialId != null" >
+        #{materialId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeMaterial" >
+    update house_type_material
+    <set >
+      <if test="typeId != null" >
+        typeId = #{typeId,jdbcType=BIGINT},
+      </if>
+      <if test="functionId != null" >
+        functionId = #{functionId,jdbcType=BIGINT},
+      </if>
+      <if test="materialId != null" >
+        materialId = #{materialId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where tmId = #{tmId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseTypeMaterial" >
+    update house_type_material
+    set typeId = #{typeId,jdbcType=BIGINT},
+      functionId = #{functionId,jdbcType=BIGINT},
+      materialId = #{materialId,jdbcType=BIGINT}
+    where tmId = #{tmId,jdbcType=BIGINT}
+  </update>
+</mapper>

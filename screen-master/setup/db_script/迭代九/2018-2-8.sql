@@ -1,0 +1,1 @@
+ALTER TABLE patrol_record MODIFY COLUMN updateTime datetime DEFAULT NULL COMMENT '巡检时间';

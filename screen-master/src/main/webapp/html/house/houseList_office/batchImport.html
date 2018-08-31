@@ -1,0 +1,266 @@
+<div class="bjui-pageContent">
+    <form >
+        <div class="bjui-row col-1 divUpload">
+                <label class="row-label">下载模板：</label>
+                <div class="row-input">
+                    <a href="" class="btn btn-blue" data-toggle="ajaxdownload" id="importDown">模板文件下载</a>
+                </div>
+                <div class="row-input" style=" width: 100%; padding-right: 0; "><div id="upload"></div></div>
+        </div>
+        <!--<div style="margin-top: 28px;margin-left: 93px;">
+            <div class="col-sm-3" style="width: 57%;">
+                <input type="file" class="form-control" id="upload_file" name="upload_file"
+                       style="display: none;" onchange="change();">
+                <input type="text" class="form-control" id="upload_file_tmp" name="upload_file_tmp"
+                >
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-primary" id="select_file"
+                        onclick="upload_file.click();">添加文件
+                </button>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div >
+            <button type="button" class="btn btn-primary btn-lg" style="width: 100px;background-color:#00b7ee;border-color:#00b7ee; " onclick="importUpload()">上传</button>
+        </div>-->
+        <div class="row-input" id="divErrorList" style=" display: none; width: 100%; padding-right: 0; text-align: center;">
+            <span class="span-success" style=" display: inline-block; line-height: 24px; width: 60%;"></span>
+            <button type="button" onclick="exportExcel('customers','房屋错误信息表格')" class="btn btn-blue">
+                <a id="dlink" href="" style="display: none;"></a>下载</button>
+            <table id="customers" style="display:none;">
+                <tr>
+                    <th>楼宇名称</th>
+                    <th>单元名称</th>
+                    <th>房号</th>
+                    <th>户型</th>
+                    <th>房屋排序</th>
+                    <th>建筑面积</th>
+                    <th>套内面积</th>
+                    <th>错误信息</th>
+
+                </tr>
+                <tbody id="fileUserInfos">
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <!-- <ul>
+         <li><button type="button" class="btn-close btn-blue" data-icon="check">确认</button></li>
+     </ul>-->
+</div>
+<script type="text/javascript">
+    var templateFlag = {"templateFlag":"0"};
+    BJUI.ajax('doajax', {
+        url: path + '/web/house/v1/downloadTemplate',
+        data: JSON.stringify(templateFlag),
+        loadingmask: true,
+        callback: function (json) {
+            if (json.code == "00000") {
+                $("#importDown").attr("href",json.data.templateUrl);
+
+            }else {
+                successBack(json);
+            }
+        }
+    });
+
+
+
+/*    function change(){
+        var file=document.getElementById("upload_file").files[0];
+        $("#upload_file_tmp").val(file['name'])
+        //document.getElementById("upload_file_tmp").value=document.getElementById("upload_file").value;
+    }
+    function importUpload() {
+        photoExt=$("#upload_file").val().substr($("#upload_file").val().lastIndexOf(".")).toLowerCase();//获得文件后缀名
+        if(photoExt!='.xls'){
+            BJUI.alertmsg('warn','请选择xls格式的文件！');
+            return false;
+        }
+    }*/
+    $.CurrentDialog.find('#upload').Huploadify({
+        auto:false,       //是否自动上传
+        fileTypeExts:'*.xls',
+        multi:false,    //是否允许选择多个文件
+        //formData:{key:123456,key2:'vvvv'},
+        fileObjName:'multipartFile',
+        fileSizeLimit:15*1024,  //允许上传的文件大小，单位KB
+        showUploadedPercent:true,//是否实时显示上传的百分比，如20%
+        showUploadedSize:true,
+        removeTimeout:9999999,
+        uploader:path + '/web/house/v1/importHouse',
+        //uploader:'json/datagrid/datagrid-tree-error.json',
+        onUploadStart:function(){
+            //alert('开始上传');
+        },
+        onInit:function(){
+            //alert('初始化');
+        },
+        onUploadComplete:function(file,json){  //上传完成  //json:接口返回的数据
+            $("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .uploadbtn").hide();  //移除上传的按钮
+            $("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .delfilebtn").hide(); //移除删除的按钮
+            var data = JSON.parse(json);
+            if(data.code=="00000"){
+                console.log(data);
+                if(data.data =='' || data.data==undefined){
+                    BJUI.alertmsg('ok',"导入成功！");
+                    $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+                }else{
+                    $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+                    var filenum = data.data.length;
+                    if(filenum >0){
+                        $.CurrentDialog.find(".span-success").html('&nbsp;<B>'+filenum+'</B>&nbsp;个房屋没有成功导入，请下载失败文件').show();
+
+                        //画出表格
+                        var html = '';
+                        var infos = data.data;
+                        for(var i=0;i<filenum;i++){
+                            if(!infos[i].buildingName){
+                                infos[i].buildingName = '';
+                            }
+                            if(!infos[i].unitName){
+                                infos[i].unitName = '';
+                            }
+                            if(!infos[i].houseNum){
+                                infos[i].houseNum = '';
+                            }
+                            if(!infos[i].typeName){
+                                infos[i].typeName = '';
+                            }
+                            if(!infos[i].displayOrder){
+                                infos[i].displayOrder = '';
+                            }
+                            if(!infos[i].houseDesc){
+                                infos[i].houseDesc = '';
+                            }
+                            if(!infos[i].floorArea){
+                                infos[i].floorArea = '';
+                            }
+                            if(!infos[i].interFloorArea){
+                                infos[i].interFloorArea = '';
+                            }
+                            if(!infos[i].failureMsg){
+                                infos[i].failureMsg = '';
+                            }
+
+                            html += '<tr><td style="mso-number-format:\'\@\';">'+infos[i].buildingName+'</td><td>'
+                                    +infos[i].unitName+'</td><td>'
+                                    +infos[i].houseNum+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].typeName+'</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].displayOrder+ '</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].floorArea+ '</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].interFloorArea+ '</td><td style="mso-number-format:\'\@\';">'
+                                    +infos[i].failureMsg+'</td></tr>';
+                        }
+                        $("#fileUserInfos").html(html);
+                        $("#divErrorList").css("display","block");
+                        $("#downBtnFail").css("display","inline-block");
+                    }
+                }
+            }else if(data.code=="11111"){
+                window.location.href=path+'/login.html'
+            }else{
+                successBack(data);
+            }
+        },onSelect:function(file){  //选择文件后的回调函数
+            //console.log(file.index)
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index).siblings('div').remove();
+
+            $("#divErrorList").css("display","none");
+            $("#downBtnFail").css("display","none");
+        },
+        onDelete:function(file){
+            console.log('删除的文件：'+file);
+            console.log(file);
+        }
+    });
+
+    //下载excel
+    $("#downBtnFail").click(function(){
+        method1('customers');
+    });
+
+
+    //导入
+    /*$.CurrentDialog.find("#btn-addBatch-fitment").click(function () {
+     if(checkfile()){
+     BJUI.ajax('ajaxform', {
+     url: path + '/web/material/v1/importBulkBuildMaterial',
+     form: $.CurrentDialog.find('form'),
+     validate: false,     //是否验证
+     loadingmask: true,    // ajax请求时是否显示数据加载遮罩
+     okCallback: function(json, options) {
+     $.CurrentNavtab.data('fitmentAddBatchResult', json);
+     BJUI.dialog({
+     id:'dialog_fitmentAddBatchResult',
+     url:'html/house/fitmentList/fitmentAddBatchResult.html',
+     title:"批量导入材料",
+     width:400,
+     height:180,
+     mask:true
+     });
+     }
+     })
+     }
+
+     });
+
+     function checkfile(){
+     var maxsize = 40*1024*1024;//40M
+     var errMsg = "上传的文件不能超过40M！！！";
+     var tipMsg = "您的浏览器暂不支持计算上传文件的大小，确保上传文件不要超过40M，建议使用IE、FireFox、Chrome浏览器。";
+     var  browserCfg = {};
+     var ua = window.navigator.userAgent;
+     if (ua.indexOf("MSIE")>=1){
+     browserCfg.ie = true;
+     }else if(ua.indexOf("Firefox")>=1){
+     browserCfg.firefox = true;
+     }else if(ua.indexOf("Chrome")>=1){
+     browserCfg.chrome = true;
+     }
+     try{
+     var obj_file = document.getElementById("fileuploade");
+     var lowName=obj_file.value.toLocaleLowerCase();
+     if(obj_file.value==""){
+     BJUI.alertmsg('error', "请先选择上传文件");
+     return;
+     }else if(lowName==""){
+     BJUI.alertmsg('error', "请先选择上传图片");
+     return false;
+     }else if(lowName.indexOf("zip") < 0){
+     BJUI.alertmsg('error', "请选择正确的文件格式");
+     return false;
+     }
+
+     var filesize = 0;
+     if(browserCfg.firefox || browserCfg.chrome ){
+     filesize = obj_file.files[0].size;
+     }else if(browserCfg.ie){
+     var obj_img = document.getElementById('tempimg');
+     obj_img.dynsrc=obj_file.value;
+     filesize = obj_img.fileSize;
+     }else{
+     BJUI.alertmsg('error', tipMsg);
+     return;
+     }
+     if(filesize==-1){
+     BJUI.alertmsg('error', tipMsg);
+     return;
+     }else if(filesize>maxsize){
+     BJUI.alertmsg('error', errMsg);
+     return;
+     }else{
+     //alert("文件大小符合要求");
+     return true;
+     }
+     }catch(e){
+     BJUI.alertmsg('error',e);
+     }
+     }*/
+</script>

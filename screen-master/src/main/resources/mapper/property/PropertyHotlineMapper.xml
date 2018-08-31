@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.property.PropertyHotlineMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.property.PropertyHotline" >
+    <id column="hotlineId" property="hotlineId" jdbcType="VARCHAR" />
+    <result column="hotlineName" property="hotlineName" jdbcType="VARCHAR" />
+    <result column="hotline" property="hotline" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    hotlineId, hotlineName, hotline, createTime, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from property_hotline
+    where hotlineId = #{hotlineId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from property_hotline
+    where hotlineId = #{hotlineId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.property.PropertyHotline" >
+    insert into property_hotline (hotlineId, hotlineName, hotline, 
+      createTime, updateTime)
+    values (#{hotlineId,jdbcType=VARCHAR}, #{hotlineName,jdbcType=VARCHAR}, #{hotline,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyHotline" >
+    insert into property_hotline
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hotlineId != null" >
+        hotlineId,
+      </if>
+      <if test="hotlineName != null" >
+        hotlineName,
+      </if>
+      <if test="hotline != null" >
+        hotline,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hotlineId != null" >
+        #{hotlineId,jdbcType=VARCHAR},
+      </if>
+      <if test="hotlineName != null" >
+        #{hotlineName,jdbcType=VARCHAR},
+      </if>
+      <if test="hotline != null" >
+        #{hotline,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyHotline" >
+    update property_hotline
+    <set >
+      <if test="hotlineName != null" >
+        hotlineName = #{hotlineName,jdbcType=VARCHAR},
+      </if>
+      <if test="hotline != null" >
+        hotline = #{hotline,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where hotlineId = #{hotlineId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.property.PropertyHotline" >
+    update property_hotline
+    set hotlineName = #{hotlineName,jdbcType=VARCHAR},
+      hotline = #{hotline,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where hotlineId = #{hotlineId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findHotlines" resultType="com.betel.estatemgmt.business.userapp.hotline.model.Hotline">
+    SELECT hotlineName,hotline FROM property_hotline
+  </select>
+</mapper>

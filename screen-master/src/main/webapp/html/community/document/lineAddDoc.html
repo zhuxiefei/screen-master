@@ -1,0 +1,58 @@
+<div class="bjui-pageContent"  >
+    <form class="datagrid-edit-form"  data-toggle="ajaxform">
+        <div class="bjui-row col-1 divActivity">
+            <label class="row-label" style=" width: 13%;">资料名称 : </label>
+            <div class="row-input required" style=" width: 40.5%;">
+                <input type="text" value="" id="addDoc_search" SIZE="30" name="docName"data-rule="required,special,length(~30)" >
+            </div>
+            <br>
+            <label class="row-label" style=" width: 13%;">内容 : </label>
+            <div class="row-input  required" style=" width: 87%;">
+                <textarea name="docContent" id="y_form_content" class="j-content" style="width:100%;" data-toggle="kindeditor" data-picType="1" data-minheight="200" ></textarea>
+            </div>
+        </div>
+        <input type="text" style="display: none" id="typeId" name="typeId">
+
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addDoc_ok" class="btn-default" data-icon="save">保存</button>
+        </li>
+    </ul>
+</div>
+<script>
+
+    $("#addDoc_ok").click(function () {
+        var typeIdL =$.CurrentNavtab.data('typeId');
+        $.CurrentDialog.find('#typeId').val(typeIdL);
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/document/v1/addDoc',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.alertmsg('ok', '新增成功！');
+                    BJUI.dialog('closeCurrent');
+                    var treeObj = $.fn.zTree.getZTreeObj("ztreeDocument");
+                    var nodes = treeObj.getNodes();
+//                    var selectedType = $.CurrentDialog.find('#addDoc_select option:selected').text();
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (typeIdL == nodes[i].typeId) {
+                            treeObj.expandNode(nodes[i], true, true);
+                            return
+                        }
+                    }
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    });
+
+</script>

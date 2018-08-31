@@ -1,0 +1,1088 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betel.estatemgmt.common.mapper.expense.ExpenseBillMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        <id column="billNo" jdbcType="VARCHAR" property="billNo"/>
+        <result column="itemId" jdbcType="BIGINT" property="itemId"/>
+        <result column="houseId" jdbcType="VARCHAR" property="houseId"/>
+        <result column="houseOwnerName" jdbcType="VARCHAR" property="houseOwnerName"/>
+        <result column="houseOwnerPhone" jdbcType="VARCHAR" property="houseOwnerPhone"/>
+        <result column="billAmount" jdbcType="DOUBLE" property="billAmount"/>
+        <result column="deadLine" jdbcType="TIMESTAMP" property="deadLine"/>
+        <result column="startTime" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="billStatus" jdbcType="BIT" property="billStatus"/>
+        <result column="urgeCount" jdbcType="BIGINT" property="urgeCount"/>
+        <result column="lastUrgeTime" jdbcType="TIMESTAMP" property="lastUrgeTime"/>
+        <result column="demandBillStatus" jdbcType="BIGINT" property="demandBillStatus"/>
+        <result column="demandBillTime" jdbcType="TIMESTAMP" property="demandBillTime"/>
+        <result column="flowNo" jdbcType="VARCHAR" property="flowNo"/>
+        <result column="overdueFine" jdbcType="DOUBLE" property="overdueFine"/>
+        <result column="isPrint" jdbcType="BIT" property="isPrint"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="isDelete" jdbcType="BIT" property="isDelete"/>
+        <result column="itemType" jdbcType="TINYINT" property="itemType"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    billNo, itemId, houseId, houseOwnerName, houseOwnerPhone, billAmount, deadLine, startTime, 
+    endTime, billStatus,urgeCount,lastUrgeTime,demandBillStatus,demandBillTime,
+    flowNo, overdueFine, isPrint, createTime, isDelete, itemType
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from expense_bill
+        where billNo = #{billNo,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from expense_bill
+    where billNo = #{billNo,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    insert into expense_bill (billNo, itemId, houseId, 
+      houseOwnerName, houseOwnerPhone, billAmount, 
+      deadLine, startTime, endTime, 
+      billStatus,urgeCount,lastUrgeTime,demandBillStatus,demandBillTime, flowNo, overdueFine,
+      isPrint, createTime, isDelete, 
+      itemType)
+    values (#{billNo,jdbcType=VARCHAR}, #{itemId,jdbcType=BIGINT}, #{houseId,jdbcType=VARCHAR},
+      #{houseOwnerName,jdbcType=VARCHAR}, #{houseOwnerPhone,jdbcType=VARCHAR}, #{billAmount,jdbcType=DOUBLE}, 
+      #{deadLine,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{billStatus,jdbcType=BIT},#{urgeCount,jdbcType=BIGINT},#{lastUrgeTime},#{demandBillStatus,jdbcType=BIT},#{demandBillTime,jdbcType=TIMESTAMP},
+      #{flowNo,jdbcType=VARCHAR}, #{overdueFine,jdbcType=DOUBLE},
+      #{isPrint,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=BIT}, 
+      #{itemType,jdbcType=TINYINT})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        insert into expense_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billNo != null">
+                billNo,
+            </if>
+            <if test="itemId != null">
+                itemId,
+            </if>
+            <if test="houseId != null">
+                houseId,
+            </if>
+            <if test="houseOwnerName != null">
+                houseOwnerName,
+            </if>
+            <if test="houseOwnerPhone != null">
+                houseOwnerPhone,
+            </if>
+            <if test="billAmount != null">
+                billAmount,
+            </if>
+            <if test="deadLine != null">
+                deadLine,
+            </if>
+            <if test="startTime != null">
+                startTime,
+            </if>
+            <if test="endTime != null">
+                endTime,
+            </if>
+            <if test="billStatus != null">
+                billStatus,
+            </if>
+            <if test="urgeCount != null">
+                urgeCount,
+            </if>
+            <if test="lastUrgeTime != null">
+                lastUrgeTime,
+            </if>
+            <if test="demandBillStatus != null">
+                demandBillStatus,
+            </if>
+            <if test="demandBillTime != null">
+                demandBillTime,
+            </if>
+            <if test="flowNo != null">
+                flowNo,
+            </if>
+            <if test="overdueFine != null">
+                overdueFine,
+            </if>
+            <if test="isPrint != null">
+                isPrint,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="isDelete != null">
+                isDelete,
+            </if>
+            <if test="itemType != null">
+                itemType
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billNo != null">
+                #{billNo,jdbcType=VARCHAR},
+            </if>
+            <if test="itemId != null">
+                #{itemId,jdbcType=BIGINT},
+            </if>
+            <if test="houseId != null">
+                #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="houseOwnerName != null">
+                #{houseOwnerName,jdbcType=VARCHAR},
+            </if>
+            <if test="houseOwnerPhone != null">
+                #{houseOwnerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="billAmount != null">
+                #{billAmount,jdbcType=DOUBLE},
+            </if>
+            <if test="deadLine != null">
+                #{deadLine,jdbcType=TIMESTAMP},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="billStatus != null">
+                #{billStatus,jdbcType=BIT},
+            </if>
+            <if test="urgeCount != null">
+                #{urgeCount},
+            </if>
+            <if test="lastUrgeTime != null">
+                #{lastUrgeTime},
+            </if>
+            <if test="demandBillStatus != null">
+                #{demandBillStatus},
+            </if>
+            <if test="demandBillTime != null">
+                #{demandBillTime},
+            </if>
+            <if test="flowNo != null">
+                #{flowNo,jdbcType=VARCHAR},
+            </if>
+            <if test="overdueFine != null">
+                #{overdueFine,jdbcType=DOUBLE},
+            </if>
+            <if test="isPrint != null">
+                #{isPrint,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="itemType != null">
+                #{itemType,jdbcType=TINYINT}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        update expense_bill
+        <set>
+            <if test="itemId != null">
+                itemId = #{itemId,jdbcType=BIGINT},
+            </if>
+            <if test="houseId != null">
+                houseId = #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="houseOwnerName != null">
+                houseOwnerName = #{houseOwnerName,jdbcType=VARCHAR},
+            </if>
+            <if test="houseOwnerPhone != null">
+                houseOwnerPhone = #{houseOwnerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="billAmount != null">
+                billAmount = #{billAmount,jdbcType=DOUBLE},
+            </if>
+            <if test="deadLine != null">
+                deadLine = #{deadLine,jdbcType=TIMESTAMP},
+            </if>
+            <if test="startTime != null">
+                startTime = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                endTime = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="billStatus != null">
+                billStatus = #{billStatus,jdbcType=BIT},
+            </if>
+            <if test="urgeCount != null">
+                urgeCount = #{urgeCount},
+            </if>
+            <if test="lastUrgeTime != null">
+                lastUrgeTime = #{lastUrgeTime},
+            </if>
+            <if test="demandBillStatus != null">
+                demandBillStatus = #{demandBillStatus},
+            </if>
+            <if test="demandBillTime != null">
+                demandBillTime = #{demandBillTime},
+            </if>
+            <if test="flowNo != null">
+                flowNo = #{flowNo,jdbcType=VARCHAR},
+            </if>
+            <if test="overdueFine != null">
+                overdueFine = #{overdueFine,jdbcType=DOUBLE},
+            </if>
+            <if test="isPrint != null">
+                isPrint = #{isPrint,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                isDelete = #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="itemType != null">
+                itemType = #{itemType,jdbcType=TINYINT},
+            </if>
+        </set>
+        where billNo = #{billNo,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    update expense_bill
+    set itemId = #{itemId,jdbcType=BIGINT},
+      houseId = #{houseId,jdbcType=VARCHAR},
+      houseOwnerName = #{houseOwnerName,jdbcType=VARCHAR},
+      houseOwnerPhone = #{houseOwnerPhone,jdbcType=VARCHAR},
+      billAmount = #{billAmount,jdbcType=DOUBLE},
+      deadLine = #{deadLine,jdbcType=TIMESTAMP},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      billStatus = #{billStatus,jdbcType=BIT},
+      urgeCount = #{urgeCount},
+      lastUrgeTime = #{lastUrgeTime},
+      demandBillStatus = #{demandBillStatus},
+      demandBillTime = #{demandBillTime},
+      flowNo = #{flowNo,jdbcType=VARCHAR},
+      overdueFine = #{overdueFine,jdbcType=DOUBLE},
+      isPrint = #{isPrint,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      isDelete = #{isDelete,jdbcType=BIT},
+      itemType = #{itemType,jdbcType=TINYINT}
+    where billNo = #{billNo,jdbcType=VARCHAR}
+  </update>
+
+    <select id="findByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    SELECT * from expense_bill
+    WHERE houseId = #{houseId}
+  </select>
+
+    <delete id="deleteBillList" parameterType="java.util.List">
+        UPDATE expense_bill SET isDelete = 2
+        where billNo IN
+        <foreach close=")" collection="list" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="findAllIncome" parameterType="com.betel.estatemgmt.business.web.income.model.IncomePageReq"
+            resultType="com.betel.estatemgmt.business.web.income.model.Income">
+        SELECT
+        ef.flowNo AS flowNo,
+        hh.houseId AS houseNo,
+        eb.houseOwnerName AS payer,
+        eb.itemType AS itemType,
+        ef.createTime AS payTime,
+        CONCAT_WS("~",DATE_FORMAT(eb.startTime,'%Y-%m-%d'),DATE_FORMAT(eb.endTime,'%Y-%m-%d')) AS billInterval,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime,
+        eb.billAmount,
+        eb.overdueFine,
+        ef.totalAmount,
+        ef.chargeWay
+        FROM expense_bill eb
+        LEFT JOIN expense_flow ef ON ef.flowNo=eb.flowNo
+        LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+        LEFT JOIN expense_item ei ON ei.itemId = eb.itemId
+        WHERE
+        eb.billStatus = 2
+        <if test=" buildingId!= null and buildingId != ''">
+            AND hh.buildingId = #{buildingId}
+        </if>
+        <if test="itemType == 1 or itemType == 2 or itemType == 3 or itemType == 4 or itemType == 5">
+            AND ei.itemType = #{itemType}
+        </if>
+        <if test="unitId != null and unitId != ''">
+            AND hh.unitId = #{unitId}
+        </if>
+        <if test="isOthers == 1">
+            AND hh.buildingId is NULL and unitId is NULL
+        </if>
+        <if test="houseNum != null and houseNum != ''">
+            AND hh.houseNum LIKE CONCAT('%',#{houseNum},'%')
+        </if>
+        <if test="userName != null and userName != ''">
+            AND eb.houseOwnerName LIKE CONCAT('%',#{userName},'%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND DATE_FORMAT(eb.createTime,'%Y-%m-%d') &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND DATE_FORMAT(eb.createTime,'%Y-%m-%d') &lt;= #{endTime}
+        </if>
+        ORDER BY ef.createTime DESC
+    </select>
+
+    <select id="findExportIncomes" parameterType="com.betel.estatemgmt.business.web.income.model.IncomePageReq"
+            resultType="com.betel.estatemgmt.business.web.income.model.Income">
+        SELECT
+        ef.flowNo AS flowNo,
+        hh.houseId AS houseNo,
+        eb.houseOwnerName AS payer,
+        eb.itemType AS itemType,
+        ef.createTime AS payTime ,
+        CONCAT_WS("~",DATE_FORMAT(eb.startTime,'%Y-%m-%d'),DATE_FORMAT(eb.endTime,'%Y-%m-%d')) AS billInterval,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime,
+        eb.billAmount,
+        eb.overdueFine,
+        ef.totalAmount,
+        ef.chargeWay
+        FROM expense_bill eb
+        LEFT JOIN expense_flow ef ON ef.flowNo=eb.flowNo
+        LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+        LEFT JOIN expense_item ei ON ei.itemId = eb.itemId
+        WHERE
+        eb.billStatus = 2
+        <if test=" buildingId!= null and buildingId != ''">
+            AND hh.buildingId = #{buildingId}
+        </if>
+        <if test="itemType == 1 or itemType == 2 or itemType == 3 or itemType == 4 or itemType == 5">
+            AND ei.itemType = #{itemType}
+        </if>
+        <if test="unitId != null and unitId != ''">
+            AND hh.unitId = #{unitId}
+        </if>
+        <if test="isOthers == 1">
+            AND hh.buildingId is NULL and unitId is NULL
+        </if>
+        <if test="houseNum != null and houseNum != ''">
+            AND hh.houseNum LIKE CONCAT('%',#{houseNum},'%')
+        </if>
+        <if test="userName != null and userName != ''">
+            AND eb.houseOwnerName LIKE CONCAT('%',#{userName},'%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND ef.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND ef.createTime &lt;= #{endTime}
+        </if>
+        ORDER BY ef.createTime DESC
+    </select>
+    <!--=====================费用设置==========开始===========================================-->
+    <select id="findAllExpenses" parameterType="com.betel.estatemgmt.business.web.expenses.model.ExpensesReq"
+            resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+        -- 费用管理模块的查询费用列表分页
+        SELECT
+        ei.itemPrice,
+        ei.itemCycle,
+        eb.billNo,
+        hh.houseId AS houseInfo,
+        eb.houseOwnerName AS houseMaster,
+        eb.houseOwnerPhone AS phone,
+        eb.billStatus AS billStatus,
+        DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+        DATE_FORMAT(eb.deadLine,'%Y-%m-%d') AS deadLine,
+        ei.itemType AS itemType,
+        eb.billAmount AS billAmount,
+        IFNULL(eb.overdueFine,'') AS overduefinePrice,
+        (eb.billAmount+IFNULL(eb.overdueFine,0)) AS totalAmount,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime,
+        eb.demandBillStatus,
+        eb.urgeCount,
+        ef.isOnline AS isOnline,
+        DATE_FORMAT(ef.payTime,'%Y-%m-%d %T') AS payTime
+        FROM expense_bill eb
+        LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+        LEFT JOIN expense_item ei ON ei.itemId = eb.itemId
+        LEFT JOIN expense_flow ef ON ef.flowNo = eb.flowNo
+        <where>
+            <if test="buildingId != null and buildingId != ''">
+                AND hh.buildingId =#{buildingId}
+            </if>
+            <if test="unitId != null and unitId != ''">
+                AND hh.unitId= #{unitId}
+            </if>
+            <if test="isOthers == 1">
+                AND hh.buildingId is NULL and hh.unitId is NULL
+            </if>
+            <if test="houseNum != null and houseNum != ''">
+                AND hh.houseNum LIKE CONCAT('%',#{houseNum},'%')
+            </if>
+            <if test="houseMaster != null and houseMaster != ''">
+                AND eb.houseOwnerName LIKE CONCAT('%',#{houseMaster},'%')
+            </if>
+            <if test="exportBillStartTime != null and exportBillStartTime != ''">
+                AND eb.createTime &gt;= #{exportBillStartTime}
+            </if>
+            <if test="exportBillEndTime != null and exportBillEndTime != ''">
+                AND eb.createTime &lt;= #{exportBillEndTime}
+            </if>
+            <if test="itemType != null and itemType != ''">
+                AND ei.itemType = #{itemType}
+            </if>
+            <if test="billStatus==1">
+                AND eb.billStatus = 1
+                AND DATE_FORMAT(eb.deadLine,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+            </if>
+            <if test="billStatus==2">
+                AND eb.billStatus = 2
+            </if>
+            <if test="billStatus==3">
+                AND eb.billStatus = 1
+                AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+            </if>
+            <if test="billStatus==4">
+                AND eb.billStatus = 1
+                AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt;= DATE_FORMAT(eb.deadLine,'%Y-%m-%d')
+                AND DATE_FORMAT(NOW(),'%Y-%m-%d') &gt;= DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+            </if>
+            <if test="demandBillStatus != null and demandBillStatus != ''">
+                AND eb.demandBillStatus = #{demandBillStatus}
+            </if>
+            <if test="isOnline != null and isOnline != ''">
+                AND ef.isOnline = #{isOnline}
+            </if>
+        </where>
+        ORDER BY eb.createTime DESC,eb.itemType ASC
+    </select>
+    <select id="findExpensesByBillNos" resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+        -- 费用管理模块的查询费用列表,发送短信
+        SELECT
+        eb.billNo,
+        aaa.houseInfo AS houseInfo,
+        aaa.buildingId,
+        aaa.unitId,
+        aaa.houseNum,
+        eb.houseOwnerName AS houseMaster,
+        eb.houseOwnerPhone AS phone,
+        eb.billStatus AS billStatus,
+        DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+        DATE_FORMAT(eb.deadLine,'%Y-%m-%d') AS deadLine,
+        ei.itemType AS itemType,
+        IFNULL(eb.billAmount,0) AS billAmount,
+        IFNULL(eb.overdueFine,0) AS overduefinePrice,
+        (IFNULL(eb.billAmount,0)+IFNULL(eb.overdueFine,0)) AS totalAmount,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime,
+        eb.demandBillStatus,
+        eb.urgeCount
+        FROM expense_bill eb
+        LEFT JOIN (
+        SELECT house.houseId,house.houseNum,build.buildingId,build.buildingName,unit.unitId,unit.unitName,concat_ws
+        ("",build.buildingName,unit.unitName,house.houseNum) AS houseInfo FROM house_house house LEFT JOIN
+        house_building build ON house.buildingId=build.buildingId
+        LEFT JOIN house_building_unit unit ON house.unitId=unit.unitId
+        ) aaa ON eb.houseId=aaa.houseId
+        LEFT JOIN expense_item ei ON eb.itemId=ei.itemId
+        WHERE eb.billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </select>
+
+    <select id="findExportExpensesByBillNos" resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+        -- 费用管理模块的查询费用列表,发送短信
+        SELECT
+        eb.billNo,
+        aaa.houseInfo AS houseInfo,
+        aaa.buildingId,
+        aaa.unitId,
+        aaa.houseNum,
+        eb.houseOwnerName AS houseMaster,
+        eb.houseOwnerPhone AS phone,
+        eb.billStatus AS billStatus,
+        DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+        ei.itemType AS itemType,
+        eb.billAmount AS billAmount,
+        eb.overdueFine AS overduefinePrice,
+        (eb.billAmount+eb.overdueFine) AS totalAmount,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime
+        FROM expense_bill eb
+        LEFT JOIN (
+        SELECT house.houseId,house.houseNum,build.buildingId,build.buildingName,unit.unitId,unit.unitName,concat_ws
+        ("",build.buildingName,unit.unitName,house.houseNum) AS houseInfo FROM house_house house LEFT JOIN
+        house_building build ON house.buildingId=build.buildingId
+        LEFT JOIN house_building_unit unit ON house.unitId=unit.unitId
+        ) aaa ON eb.houseId=aaa.houseId
+        LEFT JOIN expense_item ei ON eb.itemId=ei.itemId
+        WHERE eb.billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </select>
+    <select id="findPayDetail" resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+        -- 费用管理模块的查询费用列表
+        SELECT
+        ei.itemPrice,
+        aaa.floorArea,
+        ei.itemCycle,
+        eb.billNo,
+        aaa.houseInfo AS houseInfo,
+        aaa.buildingId,
+        aaa.unitId,
+        aaa.houseNum,
+        eb.houseOwnerName AS houseMaster,
+        eb.houseOwnerPhone AS phone,
+        eb.billStatus AS billStatus,
+        DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+        DATE_FORMAT(eb.deadLine,'%Y-%m-%d') AS deadLine,
+        ei.itemType AS itemType,
+        ei.overdueFine,
+        IFNULL(eb.billAmount,0) AS billAmount,
+        IFNULL(eb.overdueFine,0) AS overduefinePrice,
+        (IFNULL(eb.billAmount,0)+IFNULL(eb.overdueFine,0)) AS totalAmount,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime
+        FROM expense_bill eb
+        LEFT JOIN
+        (
+        SELECT house.houseId,house.houseNum,build.buildingId,build.buildingName,unit.unitId,unit.unitName,
+        concat_ws ("",build.buildingName,unit.unitName,house.houseNum) AS houseInfo,house.floorArea FROM house_house
+        house
+        LEFT JOIN house_building build ON house.buildingId=build.buildingId
+        LEFT JOIN house_building_unit unit ON house.unitId=unit.unitId
+        ) aaa ON eb.houseId=aaa.houseId
+        LEFT JOIN expense_item ei ON eb.itemId=ei.itemId
+        WHERE eb.billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+        ORDER BY eb.createTime DESC
+    </select>
+    <select id="exportBill" parameterType="com.betel.estatemgmt.business.web.expenses.model.ExpensesReq"
+            resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+        -- 费用管理模块的导出查询费用列表
+        SELECT
+        hh.houseId AS houseInfo,
+        IFNULL(eb.houseOwnerName,'') AS houseMaster,
+        IFNULL(eb.billStatus,'') AS billStatus,
+        IFNULL(eb.houseOwnerPhone,'') AS phone,
+        IFNULL(DATE_FORMAT(eb.startTime,'%Y-%m-%d'),'') AS billingStartTime,
+        IFNULL(DATE_FORMAT(eb.endTime,'%Y-%m-%d'),'') AS billingEndTime,
+        IFNULL(ei.itemType,'') AS itemType,
+        IFNULL(eb.billAmount,'') AS billAmount,
+        IFNULL(eb.overdueFine,'') AS overduefinePrice,
+        (eb.billAmount+IFNULL(eb.overdueFine,0)) AS totalAmount,
+        IFNULL(DATE_FORMAT(eb.createTime,'%Y-%m-%d'),'') AS createTime,
+        eb.demandBillStatus,
+        ef.isOnline AS isOnline,
+        ef.payTime
+        FROM expense_bill eb
+        LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+        LEFT JOIN expense_item ei ON ei.itemId = eb.itemId
+        LEFT JOIN expense_flow ef ON ef.flowNo = eb.flowNo
+        <where>
+            <if test="isOthers == 1">
+                AND hh.buildingId IS NULL AND hh.unitId IS NULL
+            </if>
+            <if test="buildingId != null and buildingId != ''">
+                AND hh.buildingId =#{buildingId}
+            </if>
+            <if test="unitId != null and unitId != ''">
+                AND hh.unitId= #{unitId}
+            </if>
+            <if test="houseNum != null and houseNum != ''">
+                AND hh.houseNum LIKE CONCAT('%',#{houseNum},'%')
+            </if>
+            <if test="houseMaster != null and houseMaster != ''">
+                AND eb.houseOwnerName LIKE CONCAT('%',#{houseMaster},'%')
+            </if>
+            <if test="exportBillStartTime != null and exportBillStartTime != ''">
+                AND eb.createTime &gt;= #{exportBillStartTime}
+            </if>
+            <if test="exportBillEndTime != null and exportBillEndTime != ''">
+                AND eb.createTime &lt;= #{exportBillEndTime}
+            </if>
+            <if test="itemType != null and itemType != ''">
+                AND ei.itemType = #{itemType}
+            </if>
+            <if test="billStatus==1">
+                AND eb.billStatus = 1
+                AND DATE_FORMAT(eb.deadLine,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+            </if>
+            <if test="billStatus==2">
+                AND eb.billStatus = 2
+            </if>
+            <if test="billStatus==3">
+                AND eb.billStatus = 1
+                AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+            </if>
+            <if test="billStatus==4">
+                AND eb.billStatus = 1
+                AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt;= DATE_FORMAT(eb.deadLine,'%Y-%m-%d')
+                AND DATE_FORMAT(NOW(),'%Y-%m-%d') &gt;= DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+            </if>
+            <if test="demandBillStatus != null and demandBillStatus != ''">
+                AND eb.demandBillStatus = #{demandBillStatus}
+            </if>
+            <if test="isOnline != null and isOnline != ''">
+                AND ef.isOnline = #{isOnline}
+            </if>
+        </where>
+        ORDER BY eb.createTime DESC,eb.itemType ASC
+    </select>
+    <select id="exportBillById" resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+        -- 费用管理模块的根据账单id查询导出费用列表
+        SELECT
+        hh.houseId AS houseInfo,
+        eb.houseOwnerName AS houseMaster,
+        eb.billStatus AS billStatus,
+        eb.houseOwnerPhone AS phone,
+        DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+        ei.itemType AS itemType,
+        eb.billAmount AS billAmount,
+        IFNULL(eb.overdueFine,'') AS overduefinePrice,
+        (eb.billAmount+IFNULL(eb.overdueFine,0)) AS totalAmount,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime,
+        ef.isOnline AS isOnline,
+        ef.payTime
+        FROM expense_bill eb
+        LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+        LEFT JOIN expense_item ei ON ei.itemId = eb.itemId
+        LEFT JOIN expense_flow ef ON ef.flowNo = eb.flowNo
+        WHERE eb.billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </select>
+    <select id="printReceipt" resultType="com.betel.estatemgmt.business.web.expenses.model.PrintNote">
+        -- 费用管理模块的打印收据查询费用列表
+        SELECT
+        ei.itemType AS itemType,
+        DATE_FORMAT(eb.startTime, '%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime, '%Y-%m-%d') AS billingEndTime,
+        ei.itemCycle,
+        eb.overdueFine AS overduefinePrice,
+        ef.chargeWay AS chargeWay,
+        eb.billAmount AS billAmount,
+        IFNULL(eb.overdueFine,0) AS overdueFine,
+        (
+        eb.billAmount + eb.overdueFine
+        ) AS totalAmount,
+        eb.billNo,
+        hh.houseId AS houseInfo,
+        eb.houseOwnerName AS houseMaster,
+        eb.houseOwnerPhone AS phone,
+        IFNULL(DATE_FORMAT( ef.payTime,'%Y-%m-%d'),'') AS payTime
+        FROM expense_bill eb
+        LEFT JOIN house_house hh ON eb.houseId = hh.houseId
+        INNER JOIN expense_item ei ON eb.itemId = ei.itemId
+        LEFT JOIN expense_flow ef ON eb.flowNo=ef.flowNo
+        WHERE eb.billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+        ORDER BY eb.createTime DESC
+    </select>
+    <select id="findExpenseBillByArraybillNo" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        -- 通过数组账单id查询账单
+        SELECT billNo, itemId, houseId, houseOwnerName, houseOwnerPhone, billAmount, deadLine, startTime,
+        endTime, billStatus, flowNo, overdueFine, isPrint, createTime,isDelete
+        FROM expense_bill WHERE billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </select>
+    <update id="updateBillFlow" parameterType="com.betel.estatemgmt.business.web.expenses.model.PayBillReq">
+        -- 更新缴费流水表的缴费状态为已支付 jians.z
+        update expense_flow ef SET ef.chargeWay=#{chargeWay},ef.flowStatus='3'
+        WHERE 1=1 AND (ef.flowStatus='2' OR ef.flowStatus='1') AND ef.flowNo =(SELECT DISTINCT(eb.flowNo) FROM
+        expense_bill eb WHERE eb.billNo IN
+        <foreach close=")" collection="billNos" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+        )
+    </update>
+    <update id="updateBillStatus" parameterType="com.betel.estatemgmt.business.web.expenses.model.PayBillReq">
+        -- 更新账单表的缴费状态为已支付 jians.z
+        update expense_bill eb SET eb.billStatus='2'
+        WHERE 1=1 AND (eb.billStatus='1' OR eb.billStatus IS NULL OR eb.billStatus='') AND eb.flowNo IS NOT NULL AND
+        eb.billNo IN
+        <foreach close=")" collection="billNos" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </update>
+    <select id="findExpenseBillAndFlowNoIsExist"
+            parameterType="com.betel.estatemgmt.business.web.expenses.model.PayBillReq"
+            resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        SELECT eb.* FROM expense_bill eb WHERE 1=1
+        AND EXISTS(SELECT ef.flowNo FROM expense_flow ef WHERE ef.flowNo=eb.flowNo) AND eb.billNo IN
+        <foreach close=")" collection="billNos" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </select>
+    <update id="insertBillFlowNoByBillNos" parameterType="com.betel.estatemgmt.business.web.expenses.model.PayBillReq">
+        update expense_bill eb SET eb.flowNo=#{flowNo} WHERE 1=1 AND (eb.flowNo IS NULL or eb.flowNo='') AND eb.billNo
+        IN
+        <foreach close=")" collection="billNos" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </update>
+    <update id="setOverdueFineOfupdateBill" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    UPDATE expense_bill eb SET eb.overdueFine = #{overdueFine} WHERE eb.billNo=#{billNo}
+  </update>
+    <!--=====================费用设置==========结束===========================================-->
+    <!--分页条件查询待缴费账单  zy-->
+    <select id="findAllPayList" parameterType="com.betel.estatemgmt.business.userapp.pay.model.PayPage"
+            resultType="com.betel.estatemgmt.business.userapp.pay.model.PayList">
+        SELECT
+        eb.billNo,
+        eb.itemId,
+        eb.deadLine,
+        date_format(eb.startTime,'%Y年%m月') startTime,
+        date_format(eb.endTime,'%Y年%m月') endTime,
+        eb.overdueFine,
+        eb.billAmount billTotelAmount,
+        eb.billStatus,
+        eb.itemType,
+        eb.demandBillStatus,
+        concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseInfo
+        FROM expense_bill eb
+        LEFT JOIN house_house hh ON eb.houseId = hh.houseId
+        LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+        LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+        WHERE
+          eb.isDelete = 1
+          <if test="expenseType==1">
+              AND eb.billStatus = 1
+              AND DATE_FORMAT(eb.deadLine,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+          </if>
+          <if test="expenseType==2">
+              AND eb.billStatus = 2
+          </if>
+          <if test="expenseType==3">
+              AND eb.billStatus = 1
+              AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+          </if>
+          <if test="expenseType==4">
+              AND eb.billStatus = 1
+              AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt;= DATE_FORMAT(eb.deadLine,'%Y-%m-%d')
+              AND DATE_FORMAT(NOW(),'%Y-%m-%d') &gt;= DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+          </if>
+          AND hh.houseId IN
+            <foreach close=")" collection="houseIds" index="index" item="houseIds" open="(" separator=",">
+              #{houseIds}
+            </foreach>
+        ORDER by eb.itemType ASC ,eb.startTime DESC
+    </select>
+    <!--根据房屋id查询全部未缴费的账单滞纳金和代缴金额 zy-->
+    <select id="findPayListByHouseIds" resultType="com.betel.estatemgmt.business.userapp.pay.model.PayList">
+        SELECT
+        eb.overdueFine,
+        eb.itemId,
+        eb.deadLine,
+        eb.billAmount billTotelAmount
+        FROM expense_bill eb
+        WHERE eb.billStatus = 1
+        AND eb.isDelete = 1
+        <if test="expenseType==1">
+            AND eb.billStatus = 1
+            AND DATE_FORMAT(eb.deadLine,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+        </if>
+        <if test="expenseType==2">
+            AND eb.billStatus = 2
+        </if>
+        <if test="expenseType==3">
+            AND eb.billStatus = 1
+            AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt; DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+        </if>
+        <if test="expenseType==4">
+            AND eb.billStatus = 1
+            AND DATE_FORMAT(NOW(),'%Y-%m-%d') &lt;= DATE_FORMAT(eb.deadLine,'%Y-%m-%d')
+            AND DATE_FORMAT(NOW(),'%Y-%m-%d') &gt;= DATE_FORMAT(eb.startTime,'%Y-%m-%d')
+        </if>
+        AND eb.houseId IN
+        <foreach close=")" collection="houseIds" index="index" item="houseIds" open="(" separator=",">
+            #{houseIds}
+        </foreach>
+    </select>
+    <!--根据账单编号查询账单信息 zy-->
+    <select id="findPayments" resultType="com.betel.estatemgmt.business.userapp.pay.model.Payment">
+    SELECT
+     eb.billNo,
+     eb.houseOwnerName houseOwner,
+     date_format(eb.createTime,'%Y年%m月') createTime,
+     date_format(eb.startTime,'%Y年%m月') startTime,
+     date_format(eb.endTime,'%Y年%m月') endTime,
+     eb.overdueFine,
+     eb.billAmount totalAmount,
+     eb.billStatus payStatus,
+     eb.itemType,
+     eb.overdueFine,
+     ef.createTime payTime,
+     concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseInfo
+     FROM expense_bill eb
+     JOIN expense_flow ef ON ef.flowNo = eb.flowNo
+     LEFT JOIN  house_house hh ON eb.houseId = hh.houseId
+     LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+     LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+     WHERE eb.billNo=#{0}
+     limit 1
+  </select>
+    <!-- zy 根据BIllNo  查询多个 账单-->
+    <select id="findExpenseBill" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        select
+        <include refid="Base_Column_List"/>
+        from expense_bill
+        WHERE billNo
+        in
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </select>
+    <!--设置流水单号 zy-->
+    <update id="updateFlowNoByBillNo">
+        UPDATE expense_bill SET flowNo = #{flowNo}
+        WHERE billNo in
+        <foreach close=")" collection="billNo" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+    </update>
+
+    <!--修改状态为已支付 zy-->
+    <update id="surePay">
+    UPDATE expense_bill SET  billStatus = 2
+    WHERE flowNo = #{0}
+  </update>
+
+    <!--zy 删除账单-->
+    <update id="deletePayment">
+     UPDATE expense_bill SET  isDelete = 2
+    WHERE billNo = #{0}
+  </update>
+
+    <select id="findByCreateTime" parameterType="java.util.Date"
+            resultType="com.betel.estatemgmt.business.web.remind.model.Payment">
+    SELECT
+    CONCAT(
+          IFNULL((SELECT hb.buildingName FROM house_building hb WHERE hb.buildingId = hh.buildingId),'')
+          ,IFNULL((SELECT hu.unitName FROM house_building_unit hu WHERE hu.unitId = hh.unitId),'')
+          ,hh.houseNum
+          ) AS houseNo,
+    eb.houseOwnerName,
+    eb.houseOwnerPhone,
+    (SELECT ho.userId FROM house_owner ho,house_owner_rela hor WHERE eb.houseId =hor.houseId AND hor.ownerId=ho.ownerId AND ho.ownerStatus!=3) AS userId,
+    CONCAT_WS("~",DATE_FORMAT(eb.startTime,'%Y-%m-%d'),DATE_FORMAT(eb.endTime,'%Y-%m-%d')) AS billingCycle,
+    eb.itemType,
+    eb.billAmount
+    FROM expense_bill eb
+    LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+    WHERE eb.billStatus = 1
+    AND DATE_FORMAT(eb.createTime,'%Y-%m-%d 00:00:00') = #{time} AND eb.isDelete = 1
+  </select>
+
+    <select id="findByDeadLine" parameterType="java.util.Date"
+            resultType="com.betel.estatemgmt.business.web.remind.model.OverDue">
+    SELECT
+    eb.billNo,
+    CONCAT(
+          IFNULL((SELECT hb.buildingName FROM house_building hb WHERE hb.buildingId = hh.buildingId),'')
+          ,IFNULL((SELECT hu.unitName FROM house_building_unit hu WHERE hu.unitId = hh.unitId),'')
+          ,hh.houseNum
+          ) AS houseNo,
+    eb.houseOwnerName,
+    eb.houseOwnerPhone,
+    eb.itemType,
+    eb.billAmount,
+    ei.overdueFine,
+    eb.urgeCount
+    FROM expense_bill eb
+    LEFT JOIN house_house hh ON hh.houseId = eb.houseId
+    LEFT JOIN expense_item ei ON ei.itemId = eb.itemId
+    WHERE eb.billStatus = 1 AND DATE_FORMAT(eb.deadLine,'%Y-%m-%d 00:00:00') = #{time} AND eb.isDelete = 1
+  </select>
+
+    <!--取消账单  zy-->
+    <update id="cancelPay">
+    UPDATE expense_bill SET flowNo = NULL,billStatus=1,overdueFine = NUll
+    WHERE flowNo = #{0} AND billStatus = 1
+  </update>
+
+    <!--保存滞纳金-->
+    <update id="saveOverdueFine" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+      UPDATE expense_bill SET overdueFine = #{overdueFine}
+      WHERE billNo = #{billNo} AND billStatus = 1
+  </update>
+    <select id="findNewestByHouseIdAndItemId" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        SELECT * FROM expense_bill
+        WHERE itemId = #{itemId}
+        <if test="houseId != null">
+            AND houseId = #{houseId}
+        </if>
+        ORDER BY startTime DESC LIMIT 1
+    </select>
+
+    <insert id="insertList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="billNo">
+        insert into expense_bill (billNo, itemId, houseId,
+        houseOwnerName, houseOwnerPhone, billAmount,
+        deadLine, startTime, endTime,
+        billStatus, flowNo, overdueFine,
+        isPrint, createTime, isDelete,
+        itemType,urgeCount,demandBillStatus)
+        values
+        <foreach collection="list" item="bill" index="index" separator=",">
+            (#{bill.billNo,jdbcType=VARCHAR}, #{bill.itemId,jdbcType=BIGINT}, #{bill.houseId,jdbcType=VARCHAR},
+            #{bill.houseOwnerName,jdbcType=VARCHAR}, #{bill.houseOwnerPhone,jdbcType=VARCHAR},
+            #{bill.billAmount,jdbcType=DOUBLE},
+            #{bill.deadLine,jdbcType=TIMESTAMP}, #{bill.startTime,jdbcType=TIMESTAMP},
+            #{bill.endTime,jdbcType=TIMESTAMP},
+            #{bill.billStatus,jdbcType=BIT}, #{bill.flowNo,jdbcType=VARCHAR}, #{bill.overdueFine,jdbcType=DOUBLE},
+            #{bill.isPrint,jdbcType=BIT}, #{bill.createTime,jdbcType=TIMESTAMP}, #{bill.isDelete,jdbcType=BIT},
+            #{bill.itemType,jdbcType=TINYINT},#{bill.urgeCount,jdbcType=INTEGER},#{bill.demandBillStatus,jdbcType=TINYINT})
+        </foreach>
+    </insert>
+
+    <select id="findByExpenseBill" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseBill"
+            resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    SELECT * FROM expense_bill
+    WHERE houseId = #{houseId}
+      AND itemId = #{itemId}
+      AND startTime = #{startTime}
+      AND endTime = #{endTime}
+  </select>
+
+    <select id="findAllByBillNos" resultType="com.betel.estatemgmt.business.web.expenses.model.PrePayPageResp">
+        SELECT
+        eb.billNo AS billNo,
+        aaa.houseInfo AS houseInfo,
+        eb.houseOwnerName AS houseMaster,
+        eb.houseOwnerPhone AS phone,
+        eb.billStatus AS billStatus,
+        DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+        DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+        DATE_FORMAT(eb.deadLine,'%Y-%m-%d') AS deadLine,
+        eb.itemType AS itemType,
+        eb.billAmount AS billAmount,
+        IFNULL(eb.overdueFine,'') AS overduefinePrice,
+        (eb.billAmount+IFNULL(eb.overdueFine,0)) AS totalAmount,
+        DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime,
+        ei.itemId AS itemId,
+        eb.demandBillStatus AS demandBillStatus,
+        eb.urgeCount AS urgeCount
+        FROM expense_bill eb
+        LEFT JOIN (
+        SELECT house.houseId,concat_ws ("",build.buildingName,unit.unitName,house.houseNum) AS houseInfo
+        FROM house_house house LEFT JOIN house_building build ON house.buildingId=build.buildingId
+        LEFT JOIN house_building_unit unit ON house.unitId=unit.unitId
+        ) aaa ON eb.houseId=aaa.houseId
+        LEFT JOIN expense_item ei ON eb.itemId=ei.itemId
+        WHERE eb.billNo IN
+        <foreach close=")" collection="array" index="index" item="billNo" open="(" separator=",">
+            #{billNo}
+        </foreach>
+        ORDER BY eb.itemType ASC ,eb.startTime DESC
+    </select>
+
+    <select id="findNewestByItemType" parameterType="java.lang.Integer"
+            resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    SELECT * FROM expense_bill
+    WHERE itemType = #{itemType}
+    ORDER BY startTime DESC LIMIT 1
+  </select>
+
+    <select id="findByFlowNo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.expenses.model.Expenses">
+    SELECT
+    eb.billNo,
+    aaa.houseInfo AS houseInfo,
+    aaa.buildingId,
+    aaa.unitId,
+    aaa.houseNum,
+    eb.houseOwnerName AS houseMaster,
+    eb.houseOwnerPhone AS phone,
+    eb.billStatus AS billStatus,
+    DATE_FORMAT(eb.startTime,'%Y-%m-%d') AS billingStartTime,
+    DATE_FORMAT(eb.endTime,'%Y-%m-%d') AS billingEndTime,
+    DATE_FORMAT(eb.deadLine,'%Y-%m-%d') AS deadLine,
+    ei.itemType AS itemType,
+    IFNULL(eb.billAmount,0) AS billAmount,
+    IFNULL(eb.overdueFine,0) AS overduefinePrice,
+    (IFNULL(eb.billAmount,0)+IFNULL(eb.overdueFine,0)) AS totalAmount,
+    DATE_FORMAT(eb.createTime,'%Y-%m-%d') AS createTime
+    FROM expense_bill eb
+    LEFT JOIN (
+    SELECT house.houseId,house.houseNum,build.buildingId,build.buildingName,unit.unitId,unit.unitName,concat_ws ("",build.buildingName,unit.unitName,house.houseNum) AS houseInfo FROM house_house house LEFT JOIN house_building build ON house.buildingId=build.buildingId
+    LEFT JOIN house_building_unit unit  ON house.unitId=unit.unitId
+    ) aaa ON eb.houseId=aaa.houseId
+    LEFT JOIN expense_item ei ON eb.itemId=ei.itemId
+    WHERE eb.flowNo = #{flowNo}
+  </select>
+
+    <select id="findByTimeAndItemId" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    SELECT * FROM expense_bill WHERE
+    startTime = #{0} AND endTime = #{1} AND itemId = #{2}
+  </select>
+    <!--索要收据-->
+    <select id="findSendReceipt" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill" parameterType="java.lang.String">
+        SELECT
+        billNo, itemId, houseId, houseOwnerName, houseOwnerPhone, billAmount, deadLine, startTime,
+        endTime, billStatus,urgeCount,lastUrgeTime,demandBillStatus,demandBillTime,
+        flowNo, overdueFine, isPrint, createTime, isDelete, itemType
+        FROM expense_bill WHERE demandBillStatus=#{demandBillStatus}
+    </select>
+
+    <select id="countAmountByParams" resultType="java.lang.Double">
+        SELECT SUM(billAmount)
+        FROM expense_bill
+        WHERE
+            DATE_FORMAT(startTime,'%Y-%m') = DATE_FORMAT(#{startTime},'%Y-%m')
+            AND DATE_FORMAT(endTime,'%Y-%m') = DATE_FORMAT(#{endTime},'%Y-%m')
+            AND billStatus = #{isPay}
+            AND itemId = #{itemId}
+    </select>
+
+    <select id="countOverFineByParams" resultType="java.lang.Double">
+        SELECT SUM(overdueFine)
+        FROM expense_bill
+        WHERE
+        DATE_FORMAT(startTime,'%Y-%m') = DATE_FORMAT(#{startTime},'%Y-%m')
+        AND DATE_FORMAT(endTime,'%Y-%m') = DATE_FORMAT(#{endTime},'%Y-%m')
+        AND billStatus = #{isPay}
+        AND itemId = #{itemId}
+    </select>
+    
+    <select id="countHouseByParams" resultType="java.lang.Integer">
+        SELECT count(*) FROM
+            (SELECT * FROM expense_bill
+                WHERE
+                DATE_FORMAT(startTime,'%Y-%m') = DATE_FORMAT(#{startTime},'%Y-%m')
+                AND DATE_FORMAT(endTime,'%Y-%m') = DATE_FORMAT(#{endTime},'%Y-%m')
+                AND billStatus = #{isPay}
+                AND itemId = #{itemId}
+                GROUP BY houseId) a
+    </select>
+
+    <select id="findByTimeBetween" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        SELECT * FROM expense_bill
+        WHERE
+          DATE_FORMAT(startTime,'%Y-%m') = DATE_FORMAT(#{startTime},'%Y-%m')
+          AND DATE_FORMAT(endTime,'%Y-%m') = DATE_FORMAT(#{endTime},'%Y-%m')
+          AND itemId = #{itemId}
+          <if test="isPay != null and isPay != ''">
+              AND billStatus = #{isPay}
+          </if>
+    </select>
+
+    <select id="findOverHousesByParams" resultType="java.lang.String">
+        SELECT houseId
+        FROM expense_bill
+        WHERE
+        DATE_FORMAT(startTime,'%Y-%m') = DATE_FORMAT(#{startTime},'%Y-%m')
+        AND DATE_FORMAT(endTime,'%Y-%m') = DATE_FORMAT(#{endTime},'%Y-%m')
+        AND itemId = #{itemId}
+        AND billStatus = 1
+        AND DATE_FORMAT(deadLine,'%Y-%m') &lt; DATE_FORMAT(NOW(),'%Y-%m')
+        GROUP BY houseId
+    </select>
+    <select id="findList" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+        SELECT  * FROM expense_bill WHERE demandBillStatus=2
+    </select>
+</mapper>

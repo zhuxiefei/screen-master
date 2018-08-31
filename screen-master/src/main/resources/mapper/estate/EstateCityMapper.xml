@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.estate.EstateCityMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.estate.EstateCity" >
+    <id column="cityId" property="cityId" jdbcType="VARCHAR" />
+    <result column="cityName" property="cityName" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cityId, cityName, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from estate_city
+    where cityId = #{cityId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from estate_city
+    where cityId = #{cityId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.estate.EstateCity" >
+    insert into estate_city (cityId, cityName, createTime
+      )
+    values (#{cityId,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.estate.EstateCity" >
+    insert into estate_city
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cityId != null" >
+        cityId,
+      </if>
+      <if test="cityName != null" >
+        cityName,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cityId != null" >
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.estate.EstateCity" >
+    update estate_city
+    <set >
+      <if test="cityName != null" >
+        cityName = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where cityId = #{cityId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.estate.EstateCity" >
+    update estate_city
+    set cityName = #{cityName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where cityId = #{cityId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByEstateIds" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.estate.EstateCity">
+    SELECT c.* FROM estate_city c
+    LEFT JOIN estate_estate e ON c.cityId = e.cityId
+    WHERE e.estateId IN
+    <foreach collection="estateIds" item="estateId" open="(" separator="," close=")">
+      #{estateId}
+    </foreach>
+    <if test="cityName != null and cityName != ''">
+      AND c.cityName like CONCAT('%',#{cityName},'%')
+    </if>
+  </select>
+</mapper>

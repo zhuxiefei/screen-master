@@ -1,0 +1,80 @@
+<style>
+    #addUnitFormLine .row-label{
+        width: 35%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow:visible;padding-top: 18px" data-toggle="ajaxform" id="addUnitFormLine">
+        <!--<div class="bjui-row col-2" style="margin-left: -17px;">-->
+            <!--<label class="row-label">单元名称 : </label>-->
+            <!--<div class="row-css">-->
+                <!--<input type="text" style="width:160px;" id="lineAddUnit_search" name="unitName"  data-rule="required,special,length(~3)" >-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="bjui-row col-1">
+            <label class="row-label">单元/楼座名称 : </label>
+            <div class="row-input required">
+                <input type="text" id="lineAddUnit_search" name="unitName"  data-rule="required,special,length(~3)" >
+            </div>
+            <label class="row-label">展示顺序 : </label>
+            <div class="row-input required">
+                <input type="text" id="displayOrder" name="displayOrder"  data-rule="required,number10000" >
+            </div>
+        </div>
+        <input type="text" id="buildingId" name="buildingId" style="display: none">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addLineAddUnit" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+    (function(){
+        $.CurrentDialog.find('button#addLineAddUnit').bind("click", function(){
+            var lineAddUnitInput =  $("#lineAddUnit_search").val().trim();
+            var buildingIdS = $.CurrentDialog.find('.dialogHeader .title span').attr('spanid');
+            $.CurrentDialog.find('#buildingId').val(buildingIdS);
+            var buildingName = $.CurrentDialog.find('.dialogHeader .title span').attr('spanName');
+            var editUnitG= {"buildingId":buildingIdS,"unitName":lineAddUnitInput};
+//            if (lineAddUnitInput == '' || lineAddUnitInput == null || lineAddUnitInput == undefined){
+//                BJUI.alertmsg('warn','单元名称不能为空！');
+//            }else {
+//
+//                var vkeyWords=/['"<>%\\]+/;
+//                if(lineAddUnitInput.length >20){
+//                    BJUI.alertmsg('warn','单元名称不能输入\'\"<>%\\且长度不超过20位');
+//                }else if(vkeyWords.test(lineAddUnitInput)){
+//                    BJUI.alertmsg('warn','单元名称不能输入\'\"<>%\\且长度不超过20位');
+//                }else{
+                    BJUI.ajax('ajaxform', {
+                        url: path + '/web/building/v1/addUnit',
+//                        data: JSON.stringify(editUnitG),
+                        form: $.CurrentDialog.find('form'),
+                        validate: true,
+                        loadingmask: true,
+                        callback: function(json) {
+                            if(json.code=="00000"){
+                                BJUI.alertmsg('ok','添加成功！');
+                                BJUI.dialog('closeCurrent');
+                                var treeObj = $.fn.zTree.getZTreeObj("ztreeBuilding");
+                                var nodes = treeObj.getNodes();
+                                for (var i = 0; i < nodes.length; i++) {
+                                    if (buildingName == nodes[i].buildingName) {
+                                        treeObj.expandNode(nodes[i], true, true);
+                                        return
+                                    }
+                                }
+                            }else {
+                                successBack(json);
+                            }
+                        }
+                    })
+//                }
+//            }
+        })
+    })()
+
+
+</script>

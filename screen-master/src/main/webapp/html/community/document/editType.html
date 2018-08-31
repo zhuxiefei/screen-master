@@ -1,0 +1,50 @@
+<style>
+    .row-css{
+        display: inline-block;
+        margin-bottom: 10px;
+        font-size: 14px;
+        letter-spacing: 0;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form"  data-toggle="ajaxform">
+        <div class="bjui-row col-2" style="margin-left: -17px;margin-top: 30px">
+            <label class="row-label" style="width: 100px">类别名称 : </label>
+            <div class="row-css">
+                <input type="text" style="width:200px;" id="addType_search" name="typeName"  data-rule="required,special,length(~6)" >
+            </div>
+            <br>
+        </div>
+        <input type="text" id="typeId" name="typeId" style="display: none">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addtypes" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+    var currentType= $.CurrentNavtab.data('typeName');
+    var currentId= $.CurrentNavtab.data('typeId');
+    $.CurrentDialog.find("#addType_search").val(currentType);
+    $.CurrentDialog.find("#typeId").val(currentId);
+
+    $.CurrentDialog.find('button#addtypes').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/document/v1/updateDocType',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function(json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','修改成功！');
+                    BJUI.dialog('closeCurrent');
+                    BJUI.navtab('refresh', 'documentManage');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+</script>

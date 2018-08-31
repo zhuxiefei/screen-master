@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseTenantMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseTenant">
+        <id column="tenantId" property="tenantId" jdbcType="VARCHAR"/>
+        <result column="houseId" property="houseId" jdbcType="VARCHAR"/>
+        <result column="tenantName" property="tenantName" jdbcType="VARCHAR"/>
+        <result column="phoneNum" property="phoneNum" jdbcType="VARCHAR"/>
+        <result column="ethnic" property="ethnic" jdbcType="VARCHAR"/>
+        <result column="residency" property="residency" jdbcType="VARCHAR"/>
+        <result column="religion" property="religion" jdbcType="BIT"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    tenantId, houseId, tenantName, phoneNum, ethnic, residency, religion, createTime, 
+    updateTime
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from house_tenant
+        where tenantId = #{tenantId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from house_tenant
+    where tenantId = #{tenantId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseTenant">
+    insert into house_tenant (tenantId, houseId, tenantName, 
+      phoneNum, ethnic, residency, 
+      religion, createTime, updateTime
+      )
+    values (#{tenantId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{tenantName,jdbcType=VARCHAR},
+      #{phoneNum,jdbcType=VARCHAR}, #{ethnic,jdbcType=VARCHAR}, #{residency,jdbcType=VARCHAR}, 
+      #{religion,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseTenant">
+        insert into house_tenant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null">
+                tenantId,
+            </if>
+            <if test="houseId != null">
+                houseId,
+            </if>
+            <if test="tenantName != null">
+                tenantName,
+            </if>
+            <if test="phoneNum != null">
+                phoneNum,
+            </if>
+            <if test="ethnic != null">
+                ethnic,
+            </if>
+            <if test="residency != null">
+                residency,
+            </if>
+            <if test="religion != null">
+                religion,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null">
+                #{tenantId,jdbcType=VARCHAR},
+            </if>
+            <if test="houseId != null">
+                #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantName != null">
+                #{tenantName,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="ethnic != null">
+                #{ethnic,jdbcType=VARCHAR},
+            </if>
+            <if test="residency != null">
+                #{residency,jdbcType=VARCHAR},
+            </if>
+            <if test="religion != null">
+                #{religion,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseTenant">
+        update house_tenant
+        <set>
+            <if test="houseId != null">
+                houseId = #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantName != null">
+                tenantName = #{tenantName,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                phoneNum = #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="ethnic != null">
+                ethnic = #{ethnic,jdbcType=VARCHAR},
+            </if>
+            <if test="residency != null">
+                residency = #{residency,jdbcType=VARCHAR},
+            </if>
+            <if test="religion != null">
+                religion = #{religion,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where tenantId = #{tenantId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseTenant">
+    update house_tenant
+    set houseId = #{houseId,jdbcType=VARCHAR},
+      tenantName = #{tenantName,jdbcType=VARCHAR},
+      phoneNum = #{phoneNum,jdbcType=VARCHAR},
+      ethnic = #{ethnic,jdbcType=VARCHAR},
+      residency = #{residency,jdbcType=VARCHAR},
+      religion = #{religion,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where tenantId = #{tenantId,jdbcType=VARCHAR}
+  </update>
+    <!--jian.z-->
+    <select id="findHouseStatusTenant" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusTenant">
+    SELECT
+	tenantId,
+	houseId,
+	tenantName,
+	phoneNum,
+	ethnic AS tenantEthnic,
+	residency AS tenantResidency,
+	religion AS tenantReligion
+    FROM
+	house_tenant
+    WHERE
+	houseId = #{houseId}
+	ORDER BY createTime DESC
+  </select>
+    <!--jian.z-->
+    <select id="isTenantExist" resultType="com.betel.estatemgmt.common.model.house.HouseTenant"
+            parameterType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusReq">
+    select  tenantId, houseId, tenantName, phoneNum, ethnic, residency, religion, createTime,
+    updateTime from house_tenant WHERE houseId = #{houseId} and phoneNum = #{phoneNum};
+  </select>
+
+    <select id="findInfoByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.house.model.MemberInfo">
+        select
+        tenantName AS name,
+        phoneNum AS phone,
+        residency,
+        ethnic,
+        religion,
+        3 AS flag
+        FROM house_tenant
+        WHERE
+        houseId = #{houseId}
+    </select>
+</mapper>

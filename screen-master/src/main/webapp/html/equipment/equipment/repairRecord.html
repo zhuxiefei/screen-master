@@ -1,0 +1,263 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#facilities_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add',
+        editMode: {
+            dialog: {
+                width: '450',
+                height: '510',
+                mask: true,
+                title: "添加巡检设备",
+                id: 'dialog_addHouse',
+                maxable: false,
+                resizable: false
+            }
+        },
+        editUrl: 'html/facility/equipment/addEquipment.html',
+        dataUrl: path + '/web/patrol/v1/findAllEquipmentList',
+        delUrl: path + '/web/patrol/v1/deleteEquipment',
+        delPK: 'equipmentId',
+        delPKKey: 'equipmentIds',
+        delConfirm: '确定要删除选中的设备吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#facilities_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {name: 'equipmentNo', label: '设备编号', align: 'center', nowrap: 'true'},
+            {name: 'equipmentName', label: '设备名称', align: 'center', nowrap: 'true'},
+            {name: 'equipmentName', label: '设备类型', align: 'center', nowrap: 'true'},
+            {name: 'equipmentLocation', label: '所在位置', align: 'center', nowrap: 'true'},
+            {name: 'equipmentLocation', label: '维修时间', align: 'center', nowrap: 'true'},
+            {
+                name: 'equipmentId', label: '操作', align: 'center', render: function (value, data) {
+                var html = '<button type="button" class="btn-blue" onclick=checkRepairRecord("' + value + '")>查看</button>'
+                        + '<button type="button" class="btn-blue"  onclick=editRepairRecord("' + value + '")>编辑</button>';
+                return html;
+            }
+            }
+        ]
+    })
+
+    //查看
+    function checkRepairRecord(val) {
+        BJUI.dialog({
+            id: 'dialog_checkRepairRecord',
+            url: 'html/equipment/repairRecord/checkRepairRecord.html',
+            title: '查看维保记录',
+            width: '800',
+            height: '450',
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+    }
+
+    //编辑
+    function editRepairRecord(val) {
+        BJUI.dialog({
+            id: 'dialog_checkRepairRecord',
+            url: 'html/equipment/repairRecord/editRepairRecord.html',
+            title: '编辑维保记录',
+            width: '800',
+            height: '450',
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+        /*BJUI.ajax('doajax', {
+         url: path + '/web/patrol/v1/findEquipmentDetail',
+         data: {'equipmentId': val},
+         loadingmask: true,
+         callback: function (json) {
+         if (json.code == "00000") {
+         $.CurrentNavtab.data("findEquipmentDetail", json.data);
+         BJUI.dialog({
+         id: 'dialog_editEquipment',
+         url: 'html/facility/equipment/editEquipment.html',
+         title: '编辑巡检设备',
+         width: '450',
+         height: '510',
+         mask: true,
+         maxable: false,
+         resizable: false
+         })
+         } else {
+         successBack(json)
+         }
+         }
+         })*/
+    }
+
+
+    //导出按钮
+    var exportData_pay = {"billNos": ""};
+    var exportPaymentBuildingId = "";
+    var exportPaymentUnitId = "";
+    var exportPaymentIsOthers = "";
+    function exportPayment() {
+        var paymentlist = $.CurrentNavtab.find("#datagrid-payment").data('selectedDatas');
+        if (paymentlist && paymentlist.length > 0) {  //批量
+            var paymentIds = [];
+            $.each(paymentlist, function (s, v) {
+                paymentIds.push(v.billNo);
+            });
+            exportData_pay.billNos = paymentIds.toString();
+        } else {
+            exportData_pay.billNos = "";
+        }
+        var preDataID = $.CurrentNavtab.data('preDataID');
+        if (preDataID && exportData_pay.billNos == "") {
+            var exportData_payment = {'billNos': preDataID};
+        } else {
+            var exportData_payment = JSON.stringify(exportData_pay);
+
+        }
+
+        BJUI.alertmsg('confirm', '确定要导出数据吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/expenses/v1/exportBill',
+                    loadingmask: false,
+                    data: exportData_payment,
+                    okCallback: function (json) {
+                        //画出表格
+                        var html = '';
+                        var infos = json;
+                        for (var i = 0; i < infos.length; i++) {
+                            var stateName = "";
+                            if (infos[i].itemType == 1) {
+                                stateName = "物业费";
+                            } else if (infos[i].itemType == 2) {
+                                stateName = "公摊水电费";
+                            } else if (infos[i].itemType == 3) {
+                                stateName = "停车费(购买)";
+                            } else if (infos[i].itemType == 4) {
+                                stateName = "停车费(租赁)";
+                            } else if (infos[i].itemType == 5) {
+                                stateName = "能耗费";
+                            }
+                            var billStatusName = "";
+                            if (infos[i].billStatus == 1) {
+                                billStatusName = "欠缴费";
+                            } else if (infos[i].billStatus == 2) {
+                                billStatusName = "已缴费";
+                            }
+                            if (!infos[i].houseMaster) {
+                                infos[i].houseMaster = ""
+                            }
+                            if (!infos[i].phone) {
+                                infos[i].phone = ""
+                            }
+                            if (!infos[i].houseInfo) {
+                                infos[i].houseInfo = ""
+                            }
+
+                            if (infos[i].demandBillStatus == 1) {
+                                infos[i].demandBillStatus = "未索要";
+                            } else if (infos[i].demandBillStatus == 2) {
+                                infos[i].demandBillStatus = "已索要";
+                            } else if (infos[i].demandBillStatus == 3) {
+                                infos[i].demandBillStatus = "已提供";
+                            }
+
+                            html += '<tr><td>' + infos[i].houseInfo + '</td><td>' + infos[i].houseMaster + '</td><td>'
+                                    + infos[i].phone + '</td><td style="mso-number-format:\'\@\';">' + infos[i].billingStartTime +
+                                    '</td><td style="mso-number-format:\'\@\';">' + infos[i].billingEndTime + '</td><td>' + stateName +
+                                    '</td><td>' + infos[i].billAmount + '</td><td>' + infos[i].overduefinePrice + '</td><td>' + infos[i].totalAmount +
+                                    '</td><td style="mso-number-format:\'\@\';">' + infos[i].createTime + '</td><td>' + billStatusName +
+                                    '</td><td>' + infos[i].demandBillStatus +
+                                    '</td></tr>';
+                        }
+                        $.CurrentNavtab.find("#paymentInfos").html(html);
+                        exportExcel('paymentList', '缴费信息表');
+//                       $.CurrentNavtab.find('#datagrid-payment').datagrid('refresh');
+                    }
+                });
+
+            }
+        })
+    }
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#facilities_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">设备类型:</label>
+                <div class="row-input">
+                    <select id="recordStatus" name="recordStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="2">否</option>
+                    </select>
+                </div>
+                <label class="row-label">设备编号:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">设备名称:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentName" name="equipmentName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">所在位置:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentName" name="equipmentName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label" >维修开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd"  data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label" >维修结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd"  data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <button type="button" class="btn-green btn-prohibit" onclick="exportPayment()" data-icon="sign-in" style=" left:67px;">导出</button>
+</div>
+<a id="dlink" href="" style="display: none ;">下载</a>
+<div class="bjui-pageContent">
+    <table id="facilities_datagrid" class="table table-bordered">
+    </table>
+</div>

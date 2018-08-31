@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betel.estatemgmt.common.mapper.expense.ExpenseItemHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.expense.ExpenseItemHistory">
+    <id column="historyId" jdbcType="BIGINT" property="historyId" />
+    <result column="itemId" jdbcType="BIGINT" property="itemId" />
+    <result column="adminName" jdbcType="VARCHAR" property="adminName" />
+    <result column="historyDesc" jdbcType="VARCHAR" property="historyDesc" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    historyId, itemId, adminName, historyDesc, createTime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from expense_item_history
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from expense_item_history
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemHistory">
+    insert into expense_item_history (historyId, itemId, adminName, 
+      historyDesc, createTime)
+    values (#{historyId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{adminName,jdbcType=VARCHAR}, 
+      #{historyDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemHistory">
+    insert into expense_item_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="historyId != null">
+        historyId,
+      </if>
+      <if test="itemId != null">
+        itemId,
+      </if>
+      <if test="adminName != null">
+        adminName,
+      </if>
+      <if test="historyDesc != null">
+        historyDesc,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="historyId != null">
+        #{historyId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="adminName != null">
+        #{adminName,jdbcType=VARCHAR},
+      </if>
+      <if test="historyDesc != null">
+        #{historyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemHistory">
+    update expense_item_history
+    <set>
+      <if test="itemId != null">
+        itemId = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="adminName != null">
+        adminName = #{adminName,jdbcType=VARCHAR},
+      </if>
+      <if test="historyDesc != null">
+        historyDesc = #{historyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItemHistory">
+    update expense_item_history
+    set itemId = #{itemId,jdbcType=BIGINT},
+      adminName = #{adminName,jdbcType=VARCHAR},
+      historyDesc = #{historyDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </update>
+  <!--收费项目操作日志-->
+  <select id="findAllOperationLogs" resultType="com.betel.estatemgmt.business.web.charges.model.ExpenseItemHistoryInfo"
+          parameterType="com.betel.estatemgmt.business.web.charges.model.ChargesItemReq">
+    -- jians.z  分页查询操作记录日志
+    select  eih.historyId, eih.itemId,IFNULL(eih.adminName,'') AS adminName, eih.historyDesc, DATE_FORMAT(eih.createTime,'%Y-%m-%d %T') AS createTime from expense_item_history eih ORDER BY createTime DESC
+  </select>
+  <insert id="insertBatchSelective">
+    --   jisns.z  批次插入操作日志
+    insert into expense_item_history ( itemId, adminName,
+    historyDesc, createTime)
+    values
+    <foreach collection="list" item="expenseItemHistory" index="index" separator="," >
+      ( #{expenseItemHistory.itemId}, #{expenseItemHistory.adminName},
+      #{expenseItemHistory.historyDesc}, #{expenseItemHistory.createTime})
+    </foreach>
+  </insert>
+</mapper>

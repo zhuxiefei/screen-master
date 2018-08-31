@@ -1,0 +1,72 @@
+<style>
+    #cleaningContent .td_left{
+        width: 10%;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;" id="cleaningContent">
+    <table class="patrolDetail">
+        <tr>
+            <td class="td_left">巡逻编号:</td>
+            <td class="td_right" id="contentNo"></td>
+        </tr>
+        <tr>
+            <td class="td_left">巡逻区域:</td>
+            <td class="td_right" id="areaName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">签到地点:</td>
+            <td class="td_right" id="signinAddress"></td>
+        </tr>
+        <tr>
+            <td class="td_left">定时发布时间:</td>
+            <td class="td_right" id="inspectionTime"></td>
+        </tr>
+        <tr>
+            <td class="td_left">创建时间:</td>
+            <td class="td_right" id="createTime"></td>
+        </tr>
+        <tr class="td_updateTime" style="display: none;">
+            <td class="td_left">编辑时间:</td>
+            <td class="td_right" id="updateTime"></td>
+        </tr>
+        <tr>
+            <td class="td_left" >巡逻内容:</td>
+            <td class="td_right" id="contentDesc"></td>
+        </tr>
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    //初始化
+    var securityContentSee = $.CurrentNavtab.data("securityContenInfo");
+    //内容编号
+    $.CurrentDialog.find("#contentNo").text(securityContentSee.contentNo);
+    //区域名称
+    $.CurrentDialog.find("#areaName").text(securityContentSee.areaName);
+    //签到地址
+    var signinAddress = [];
+    $.each(securityContentSee.signinAddressList,function (s,v) {
+        signinAddress.push(v.signinAddress)
+    })
+    $.CurrentDialog.find("#signinAddress").text(signinAddress.toString());
+    //定时发布时间
+    $.CurrentDialog.find("#inspectionTime").text(securityContentSee.inspectionTime);
+    //巡逻内容
+    $.CurrentDialog.find("#contentDesc").html(securityContentSee.contentDesc.replace(/\n/g,'</br>'));
+    //创建时间
+    $.CurrentDialog.find("#createTime").text(securityContentSee.createTime);
+    if(securityContentSee.updateTime){
+        //更新时间
+        $.CurrentDialog.find(".td_updateTime").show();
+        $.CurrentDialog.find("#updateTime").text(securityContentSee.updateTime);
+    }
+
+</script>

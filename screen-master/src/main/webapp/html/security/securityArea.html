@@ -1,0 +1,236 @@
+<script type="text/javascript">
+    var option = {
+        "parentUrl": "/web/securityArea/v1/findAreaList",
+        "childUrl": "/web/securityArea/v1/findSignList",
+        "parentParam": "",
+        "childParam": 'areaId',
+        "parentName": "areaName",
+        "childName": "signinAddress",
+        "id": "zdTree_securityArea",
+        "parentDesc": "createTime",
+        "parentDescStyle": {
+            'display': 'inline-block',
+            'width': "33%",
+            'text-overflow': 'ellipsis',
+            'padding-right': '50px',
+        },
+        "parentID": "areaId",
+        "childID": "signinId",
+        "checkbox": false,
+        "depth": 2,  //层级
+        "column": [
+            function render(value) {
+                return '<div style="width:33%;text-align:left;display: inline-block;margin-left:-20px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;" ' +
+                        'title="' + htmlEncode(value.createTime) + '">' + htmlEncode(value.createTime) + '</div>';
+            },
+            function render(value) {
+                var addStr = '<button type="button" class="btn btn-blue" id="add_' + value.areaId + '" onclick=lineAddSite(\'' + value.areaId + '\'' +
+                        ',\'' + value.areaName + '\')>添加</button>';
+                var editStr = '<button type="button" class="btn btn-blue" onclick=lineEditXArea(\'' + value.areaId + '\')>编辑</button>';
+                var delStr = '<button type="button" class="btn btn-red" onclick=delXArea(\'' + value.areaId + '\')>删除</button>';
+                var html = '<div style="display: inline-block;width:33%;text-align:right;padding-right:50px;position: relative;top: -4px;">' + addStr + editStr + delStr + '</div>';
+                return html
+            }
+        ],
+        "childColumn": [
+            function render(value) {
+                return '<div style="width:33%;text-align:left;display: inline-block;margin-left:-34px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;" ' +
+                        'title="' + htmlEncode(value.createTime) + '">' + htmlEncode(value.createTime) + '</div>';
+            },
+            function render(value) {
+                var editStr = '<button type="button" class="btn btn-blue" id="edit_' + value.signinId + '" onclick=lineEditSite(\'' + value.signinId + '\')>编辑</button>';
+                var delStr = '<button type="button" class="btn btn-red" onclick=delSite(\'' + value.signinId + '\',\''+value.areaId+ '\')>删除</button>';
+                var html = '<div style="display: inline-block;width:33%;text-align:right;padding-right:36px;position: relative;top: -4px;">' + editStr + delStr + '</div>';
+                return html
+            }
+        ],
+    };
+
+    zdTree(option);
+
+
+    //顶部添加区域
+    $.CurrentNavtab.find("#addArea").click(function () {
+        BJUI.dialog({
+            title: "添加巡逻区域",
+            width: '400',
+            height: '180',
+            mask: true,
+            url: 'html/security/securityArea/addArea.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+
+    //顶部添加类型
+    $.CurrentNavtab.find("#addSite").click(function () {
+        BJUI.dialog({
+            title: "添加签到地点",
+            width: '400',
+            height: '200',
+            mask: true,
+            url: 'html/security/securityArea/addSite.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+
+    //删除巡逻区域
+    function delXArea(value) {
+        var delArea = {"areaId": value};
+        BJUI.alertmsg('confirm', '确定删除该巡逻区域吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/securityArea/v1/deleteArea',
+                    data: JSON.stringify(delArea),
+                    loadingmask: true,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            BJUI.alertmsg('ok', '删除成功！');
+                            BJUI.navtab('refresh', 'securityArea');
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    //删除签到地点
+    function delSite(value,e) {
+        var delType = {"signinId": value};
+        BJUI.alertmsg('confirm', '确定删除该签到地点吗？', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/securityArea/v1/deleteSignin',
+                    data: JSON.stringify(delType),
+                    loadingmask: true,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            BJUI.alertmsg('ok', '删除成功！');
+//                            BJUI.navtab('refresh', 'securityArea');
+                            var that=$.CurrentNavtab.find('#'+e).find('span.zdSwitchNode');
+                            var boolean= that.hasClass('roots_close')||that.hasClass('bottom_close');
+                            if(boolean){
+                                that.click();
+                            }else{
+                                that.click();
+                                that.click();
+                            }
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    //行内添加签到地点
+    function lineAddSite(a, e) {
+        var cup = {
+            'areaId': a,
+            'areaName': e,
+        }
+        var dom = 'add_' + a;
+        $.CurrentNavtab.data('currentDomSite', dom);
+        $.CurrentNavtab.data('lineAddSite', cup);
+        BJUI.dialog({
+            title: "添加签到地点",
+            width: '400',
+            height: '200',
+            mask: true,
+            url: 'html/security/securityArea/lineAddSite.html',
+            maxable: false,
+            resizable: false
+        })
+    }
+
+    //编辑巡逻区域
+    function lineEditXArea(value) {
+        var lineEditArea = {"areaId": value};
+        BJUI.ajax('doajax', {
+            url: path + '/web/securityArea/v1/findArea',
+            data: JSON.stringify(lineEditArea),
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data('areaName', json.data.areaName);
+                    $.CurrentNavtab.data('areaId', value);
+                    BJUI.dialog({
+                        title: "编辑巡逻区域",
+                        width: '400',
+                        height: '180',
+                        mask: true,
+                        url: 'html/security/securityArea/editArea.html',
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+
+    //编辑签到地点
+    function lineEditSite(value) {
+        var lineEditType = {"signinId": value};
+        BJUI.ajax('doajax', {
+            url: path + '/web/securityArea/v1/findSignin',
+            data: JSON.stringify(lineEditType),
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data('siteName', json.data.signinAddress);
+                    $.CurrentNavtab.data('areaId', json.data.areaId);
+                    $.CurrentNavtab.data('siteId', value);
+                    BJUI.dialog({
+                        title: "编辑签到地点",
+                        width: '400',
+                        height: '180',
+                        mask: true,
+                        url: 'html/security/securityArea/editSite.html',
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+    ;
+    //鼠标悬停显示
+    $.CurrentNavtab.find('#zdTree_securityArea').on('mouseover', 'button', function () {
+        $(this).parent().parent('div').css({
+            'background-color': '#D9E7F2',
+        })
+    });
+
+    $.CurrentNavtab.find('#zdTree_securityArea').on('mouseout', 'button', function () {
+        $(this).parent().parent('div').css({
+            'background-color': '#fff',
+        })
+    });
+
+
+</script>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; padding-bottom: 10px;">
+    <form data-toggle="ajaxsearch">
+        <div>
+            <button type="button" class="btn-blue" data-icon="plus" id="addArea">添加巡逻区域</button>
+            <button type="button" class="btn-blue" data-icon="plus" id="addSite">添加签到地点</button>
+        </div>
+        <div style="padding-left: 22px; padding-top:16px; width: 98%;font-size: 14px;font-weight: bold; overflow: hidden;">
+            <span style="float: left;width:33%;text-align: left">巡逻区域与签到地点</span>
+            <span style="float: left;width:33%;text-align: left">创建时间</span>
+            <span style="float: right; width: 33%;text-align: right;padding-right: 100px">操作</span>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageContent" style="margin-top: 5px; top: 76px; bottom: 0;">
+    <ul class="ztree" id="zdTree_securityArea"></ul>
+</div>

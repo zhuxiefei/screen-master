@@ -1,0 +1,59 @@
+<div class="bjui-pageContent">
+    <div class="row-input" style=" padding-right: 0;text-align: center;margin-top: 40px">
+        交付时间:&nbsp&nbsp <input type="text" id="startTime" name="startTime" value="" data-toggle="datepicker"
+                               data-pattern="yyyy-MM-dd" placeholder="点击选择交付时间" readonly="readonly" data-rule="required">
+    </div>
+</div>
+
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="btn-ok">确认</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    //提交交付时间
+    $.CurrentDialog.find('#btn-ok').click(function () {
+        var currentTime = new Date().getTime();
+        if (new Date($.CurrentDialog.find('input').val()).getTime() > currentTime) {
+            BJUI.alertmsg('error', '交付时间不可大于当前时间', {
+                okCall: function () {
+                    return;
+                }
+            })
+            return;
+        }
+        var batchDeliverTime = $('body').data('batchDeliverTime');
+        $('body').removeAttr('deliverTimeId');
+        var idList=[];
+        for(var i=0;i<batchDeliverTime.length;i++){
+            idList.push(batchDeliverTime[i].houseId);
+        }
+        var cup={
+            deliverTime: $.CurrentDialog.find('input').val(),
+            houseIds: idList.join(','),
+        }
+        BJUI.ajax('doajax', {
+            data: JSON.stringify(cup),
+            url: path + '/web/house/v1/updateDeliverTime',
+            loadingmask: false,    // ajax请求时是否显示数据加载遮罩
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.alertmsg('ok', '操作成功', {
+                        displayPosition: 'middlecenter'
+                    });
+                    $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+                    BJUI.dialog('close', 'batchDeliverTime');
+                    $.CurrentNavtab.find('#q_datagrid').data('selectedDatas','');
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+</script>

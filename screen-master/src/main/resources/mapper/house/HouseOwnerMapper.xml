@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseOwnerMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseOwner">
+        <id column="ownerId" property="ownerId" jdbcType="VARCHAR"/>
+        <result column="userId" property="userId" jdbcType="VARCHAR"/>
+        <result column="realName" property="realName" jdbcType="VARCHAR"/>
+        <result column="phoneNum" property="phoneNum" jdbcType="VARCHAR"/>
+        <result column="idNum" property="idNum" jdbcType="VARCHAR"/>
+        <result column="idFrontSidePic" property="idFrontSidePic" jdbcType="BIGINT"/>
+        <result column="idBackSidePic" property="idBackSidePic" jdbcType="BIGINT"/>
+        <result column="realEstatePic" property="realEstatePic" jdbcType="VARCHAR"/>
+        <result column="ethnic" property="ethnic" jdbcType="VARCHAR"/>
+        <result column="residency" property="residency" jdbcType="VARCHAR"/>
+        <result column="religion" property="religion" jdbcType="BIT"/>
+        <result column="ownerStatus" property="ownerStatus" jdbcType="BIT"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ownerId, userId, realName, phoneNum, idNum, idFrontSidePic, idBackSidePic, realEstatePic, 
+    ethnic, residency, religion, ownerStatus, createTime, updateTime
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from house_owner
+        where ownerId = #{ownerId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from house_owner
+    where ownerId = #{ownerId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    insert into house_owner (ownerId, userId, realName, 
+      phoneNum, idNum, idFrontSidePic, 
+      idBackSidePic, realEstatePic, ethnic, 
+      residency, religion, ownerStatus, 
+      createTime, updateTime)
+    values (#{ownerId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{phoneNum,jdbcType=VARCHAR}, #{idNum,jdbcType=VARCHAR}, #{idFrontSidePic,jdbcType=BIGINT}, 
+      #{idBackSidePic,jdbcType=BIGINT}, #{realEstatePic,jdbcType=VARCHAR}, #{ethnic,jdbcType=VARCHAR}, 
+      #{residency,jdbcType=VARCHAR}, #{religion,jdbcType=BIT}, #{ownerStatus,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseOwner">
+        insert into house_owner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ownerId != null">
+                ownerId,
+            </if>
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="realName != null">
+                realName,
+            </if>
+            <if test="phoneNum != null">
+                phoneNum,
+            </if>
+            <if test="idNum != null">
+                idNum,
+            </if>
+            <if test="idFrontSidePic != null">
+                idFrontSidePic,
+            </if>
+            <if test="idBackSidePic != null">
+                idBackSidePic,
+            </if>
+            <if test="realEstatePic != null">
+                realEstatePic,
+            </if>
+            <if test="ethnic != null">
+                ethnic,
+            </if>
+            <if test="residency != null">
+                residency,
+            </if>
+            <if test="religion != null">
+                religion,
+            </if>
+            <if test="ownerStatus != null">
+                ownerStatus,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ownerId != null">
+                #{ownerId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="idNum != null">
+                #{idNum,jdbcType=VARCHAR},
+            </if>
+            <if test="idFrontSidePic != null">
+                #{idFrontSidePic,jdbcType=BIGINT},
+            </if>
+            <if test="idBackSidePic != null">
+                #{idBackSidePic,jdbcType=BIGINT},
+            </if>
+            <if test="realEstatePic != null">
+                #{realEstatePic,jdbcType=VARCHAR},
+            </if>
+            <if test="ethnic != null">
+                #{ethnic,jdbcType=VARCHAR},
+            </if>
+            <if test="residency != null">
+                #{residency,jdbcType=VARCHAR},
+            </if>
+            <if test="religion != null">
+                #{religion,jdbcType=BIT},
+            </if>
+            <if test="ownerStatus != null">
+                #{ownerStatus,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseOwner">
+        update house_owner
+        <set>
+            <if test="userId != null">
+                userId = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                realName = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                phoneNum = #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="idNum != null">
+                idNum = #{idNum,jdbcType=VARCHAR},
+            </if>
+            <if test="idFrontSidePic != null">
+                idFrontSidePic = #{idFrontSidePic,jdbcType=BIGINT},
+            </if>
+            <if test="idBackSidePic != null">
+                idBackSidePic = #{idBackSidePic,jdbcType=BIGINT},
+            </if>
+            <if test="realEstatePic != null">
+                realEstatePic = #{realEstatePic,jdbcType=VARCHAR},
+            </if>
+            <if test="ethnic != null">
+                ethnic = #{ethnic,jdbcType=VARCHAR},
+            </if>
+            <if test="residency != null">
+                residency = #{residency,jdbcType=VARCHAR},
+            </if>
+            <if test="religion != null">
+                religion = #{religion,jdbcType=BIT},
+            </if>
+            <if test="ownerStatus != null">
+                ownerStatus = #{ownerStatus,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ownerId = #{ownerId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    update house_owner
+    set userId = #{userId,jdbcType=VARCHAR},
+      realName = #{realName,jdbcType=VARCHAR},
+      phoneNum = #{phoneNum,jdbcType=VARCHAR},
+      idNum = #{idNum,jdbcType=VARCHAR},
+      idFrontSidePic = #{idFrontSidePic,jdbcType=BIGINT},
+      idBackSidePic = #{idBackSidePic,jdbcType=BIGINT},
+      realEstatePic = #{realEstatePic,jdbcType=VARCHAR},
+      ethnic = #{ethnic,jdbcType=VARCHAR},
+      residency = #{residency,jdbcType=VARCHAR},
+      religion = #{religion,jdbcType=BIT},
+      ownerStatus = #{ownerStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where ownerId = #{ownerId,jdbcType=VARCHAR}
+  </update>
+
+    <select id="selectByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    SELECT * FROM house_owner ho WHERE ho.ownerStatus != 3 AND
+    ho.ownerId IN (SELECT hor.ownerId FROM house_owner_rela hor WHERE hor.houseId = #{houseId})
+  </select>
+
+    <delete id="deleteOwnerList" parameterType="java.util.List">
+        UPDATE house_owner SET ownerStatus = 3
+        WHERE ownerId IN
+        <foreach close=")" collection="list" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+    <select id="findMemberByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.userapp.house.model.Member">
+    SELECT hm.ownerId AS hmId,hm.realName AS userName,1 AS type,hm.userId,hm.phoneNum AS  userAccount FROM house_owner_rela hmr
+    JOIN house_owner hm ON hmr.ownerId = hm.ownerId
+    WHERE hmr.houseId = #{houseId} AND hm.ownerStatus = 2
+  </select>
+    <!--查询户主-->
+    <select id="selectByUserIds" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.user.model.Members">
+        SELECT
+        hh.houseId AS houseId,
+        ho.userId AS userId,
+        hh.houseNum AS houseNum,
+        ho.ownerId AS ownerId,
+        ho.ownerStatus AS ownerStatus
+        FROM house_house hh
+        LEFT JOIN house_owner_rela hor ON hor.houseId = hh.houseId
+        LEFT JOIN house_owner ho ON ho.ownerId = hor.ownerId
+        WHERE ho.ownerStatus != 3 AND ho.userId IN
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId,jdbcType=BIGINT}
+        </foreach>
+    </select>
+    <!--jians.z 查询房屋户主信息-->
+    <select id="findHouseStatusOwner" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusOwner">
+    SELECT
+	h.houseId,
+	h.houseNum,
+	ho.ownerId,
+	ho.realName AS ownerName,
+	ho.phoneNum AS ownerPhoneNum,
+	ho.residency AS ownerResidency ,
+	ho.ethnic AS ownerEthnic,
+	ho.religion AS ownerReligion,
+	ho.ownerStatus
+    FROM
+	house_house h,
+	house_owner_rela hor,
+	house_owner ho
+    WHERE
+	h.houseId = hor.houseId
+    AND hor.ownerId = ho.ownerId
+    AND h.houseId=#{houseId}
+    ORDER BY ho.createTime DESC
+  </select>
+    <select id="selectBySmsReq" resultType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    SELECT ho.* FROM house_owner ho
+     LEFT JOIN house_owner_rela hor ON hor.ownerId = ho.ownerId
+     WHERE ho.realName = #{2} AND ho.phoneNum = #{0} AND hor.houseId = #{1} AND ho.ownerStatus = #{3}
+  </select>
+    <select id="findHouseStatusOwnerOnLine" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusOwner">
+   SELECT
+    ho.ownerId,
+    ho.userId AS ownerUserId,
+    ho.ownerStatus
+    FROM
+    house_house h,
+    house_owner_rela hor,
+    house_owner ho
+    WHERE
+    h.houseId = hor.houseId
+    AND hor.ownerId = ho.ownerId AND (ho.ownerStatus='2' OR  ho.ownerStatus='1')
+    AND h.houseId=#{houseId}
+  </select>
+    <!--jians.z   查询该房屋下的户主是否存在-->
+    <select id="isOwnerExist" parameterType="com.betel.estatemgmt.business.web.housestatus.model.HouseStatusReq"
+            resultType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    SELECT
+    ho.ownerId,
+    ho.realName
+    FROM
+	house_owner ho,
+	house_owner_rela hor
+    WHERE
+	ho.ownerId = hor.ownerId AND ho.ownerStatus &lt;&gt;'3'
+    AND ho.realName =#{ownerName} AND  ho.phoneNum=#{ownerPhoneNum} AND hor.houseId = #{houseId}
+    GROUP BY  ho.ownerId
+  </select>
+    <update id="setOldOwenerOver" parameterType="java.util.List">
+        update house_owner
+        set ownerStatus = '3',updateTime = NOW() where ownerStatus &lt;&gt;'3'AND ownerId IN
+        <foreach collection="list" item="ownerId" open="(" separator="," close=")">
+            #{ownerId}
+        </foreach>
+    </update>
+    <!--jian.z 只用户查询已经认证过的户主且有APP账号-->
+    <select id="findOwner" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    SELECT
+	 ho.ownerId, ho.userId
+    FROM
+	house_owner ho,
+	house_owner_rela hor
+    WHERE
+	ho.ownerId = hor.ownerId  AND  ho.userId IS NOT NULL AND ho.ownerStatus='2'
+    AND hor.houseId = #{houseId}
+  </select>
+
+    <select id="findMyHomeList" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.userapp.house.model.AuthHouse">
+    SELECT
+      hh.houseId,
+      concat_ws ("",hb.buildingName,hbu.unitName,hh.houseNum) houseName,
+      1 AS authType
+    FROM house_house hh
+    LEFT JOIN house_building_unit hbu ON hh.unitId = hbu.unitId
+    LEFT JOIN house_building hb ON hh.buildingId = hb.buildingId
+    JOIN house_owner_rela hor ON hh.houseId = hor.houseId
+    JOIN house_owner ho ON ho.ownerId = hor.ownerId
+    where ho.userId = #{userId} AND ho.ownerStatus = 2
+  </select>
+
+    <select id="findByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.house.HouseOwner">
+    SELECT * FROM house_owner ho
+    LEFT JOIN house_owner_rela hor ON hor.ownerId = ho.ownerId
+    WHERE ho.ownerStatus = 2 AND hor.houseId = #{houseId}
+    </select>
+
+    <select id="findInfoByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.house.model.MemberInfo">
+      select
+        ho.realName AS name,
+        ho.phoneNum AS phone,
+        ho.residency,
+        ho.ethnic,
+        ho.religion,
+        1 AS flag,
+        ho.ownerStatus AS status
+    from house_owner ho
+    where
+        ho.ownerStatus != 3
+        AND ho.ownerId IN
+          (SELECT hor.ownerId FROM house_owner_rela hor WHERE hor.houseId = #{houseId})
+    </select>
+</mapper>

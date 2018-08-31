@@ -1,0 +1,224 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">任务编号: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="taskNo"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">任务类型: </label>
+            <div class="row-input required" style="width: 75%;">
+                <select id="taskType" name="taskType" data-toggle="selectpicker" data-width="100%" data-rule="required">
+                <option value="">请选择</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">截止时间: </label>
+            <div class="row-input required" style="width: 75%;">
+                <input type="text" id="closeTime" placeholder="" readonly
+                       data-toggle="datepicker"
+                       data-pattern="yyyy-MM-dd HH:mm:ss" data-width="100%"
+                       data-rule="截止时间: required,matchE[datetime]" name="closeTime">
+            </div>
+            <label class="row-label" style="width: 25%;">任务概述: </label>
+            <div class="row-input required" style="width: 75%;">
+                <textarea name="taskDesc" id="taskDesc" style="height: 120px" data-rule="required,length(~5000)"></textarea>
+            </div>
+            <label class="row-label" style="width: 25%;">任务状态: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="taskStatus"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">发布人: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="createUserName"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">发布时间: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="createTime"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">更新时间: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="updateTime"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">更新人员: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="lastModifyName"></span>
+            </div>
+            <label class="row-label hideRefuse" style="width: 25%;display: none">拒绝时间: </label>
+            <div class="row-input hideRefuse" style="width: 75%;display: none">
+                <span id="refuseTime"></span>
+            </div>
+            <label class="row-label hideRefuse" style="width: 25%;display: none">拒绝原因: </label>
+            <div class="row-input hideRefuse detail-info-all" style="width: 75%;display: none">
+                <span id="refuseReason"></span>
+            </div>
+            <label class="row-label" style="width: 25%;position: relative;top: 10px;">接受人: </label>
+            <div class="row-input required" style="width: 75%;">
+                <div style="cursor: pointer;float: left" id="appointBtn">
+                    <img src="images/plus.png" alt="" width="50px">
+                </div>
+                <ul style="list-style: none;overflow: hidden;padding: 10px;display: inline-block;margin-top: -6px" id="executerListEdit"></ul>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="edittask" class="btn-default" data-icon="save">修改</button>
+        </li>
+    </ul>
+</div>
+<script>
+    //查询所有的类型
+    BJUI.ajax('doajax', {
+        url: path + '/web/task/v1/findTaskTypes',
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                var data = json.data;
+                var html = ""
+                for (var i = 0; i < data.length; i++) {
+                    html += '<option value="' + data[i].typeId + '">' + data[i].typeName + '</option>';
+                }
+                $.CurrentDialog.find('#taskType').append(html);
+                $.CurrentDialog.find('#taskType').selectpicker('refresh');
+
+                //页面赋值
+                var data = $.CurrentNavtab.data("findTask");
+                $.CurrentDialog.find('#taskType').val(data.taskType).selectpicker('refresh');
+                if (data.taskStatus == 1) {
+                    var StatusHtml = '待接受';
+                } else if (data.taskStatus == 2) {
+                    var StatusHtml = '进行中';
+                } else if (data.taskStatus == 3) {
+                    var StatusHtml = '已完成';
+                } else {
+                    var StatusHtml = '超时未完成';
+                };
+                $.CurrentDialog.find('#taskNo').html(data.taskNo);
+                $.CurrentDialog.find('#taskStatus').html(StatusHtml);
+                $.CurrentDialog.find('#createTime').html(data.createTime);
+                $.CurrentDialog.find('#updateTime').html(data.updateTime);
+                $.CurrentDialog.find('#closeTime').val(data.closeTime.substr(0,19));
+                $.CurrentDialog.find('#taskDesc').val(data.taskDesc);
+                $.CurrentDialog.find('#createUserName').html(data.createUserName);
+                $.CurrentDialog.find('#lastModifyName').html(data.lastModifyName);
+//                if (data.taskStatus == 4) {
+//                    $.CurrentDialog.find('#refuseTime').html(data.refuseTime);
+//                    $.CurrentDialog.find('#refuseReason').html(data.refuseReason);
+//                    $.CurrentDialog.find('.hideRefuse').show();
+//                }
+                var index = data.executorName.lastIndexOf('-');
+                var name = data.executorName.substr(index + 1);
+                var html11 = '<li class="tipWrap" id="' + data.executor + '" inf="' + data.executorName + '">'
+                        + '<div class="arrowTip"></div>'
+                        + '<div class="selectedTip">' + name + '<b>×</b></div>'
+                        + '</li>';
+                $.CurrentDialog.find('#executerListEdit').append(html11);
+            } else {
+                successBack(json);
+            }
+        }
+    });
+
+    //取消勾选事件
+    $('.bjui-pageContent ').on('click', 'b', function () {
+        var cup = $(this).parents('li').attr('id');
+        $(this).parents('li').remove();
+        $.CurrentDialog.find('input#' + cup).attr('checked', false).iCheck('uncheck');
+    })
+
+    function showListEdit() {
+        var html = $.CurrentNavtab.data('executorsHtml');
+        $('#executerListEdit').empty();
+        $('#executerListEdit').append(html);
+//        $('#executerListEdit b').hide();
+    }
+
+    $.CurrentDialog.find('#appointBtn').click(function () {
+//        debugger
+//        var selectedPeopleEdit=[];
+//        $('#executerListEdit li').each(function () {
+//            selectedPeopleEdit.push($(this).attr('id'))
+//        });
+        var html=$('#executerListEdit').html();
+        $.CurrentNavtab.data('selectedPeopleEdit',html);
+        BJUI.dialog({
+            id: "appointTask",
+            title: "指派人员",
+            width: '800',
+            height: '650',
+            mask: true,
+            url: 'html/task/content/appointTaskEdit.html',
+            maxable: false,
+            resizable: false
+        })
+    })
+
+    //修改确认
+    $.CurrentDialog.find('#edittask').click(function () {
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                var now=new Date().getTime();
+                var closeTime = $.CurrentDialog.find('#closeTime').val();
+                var closeTimeGetTime=new Date(Date.parse(closeTime.replace(/-/g, "/"))).getTime()
+                if(closeTimeGetTime<now){
+                    BJUI.alertmsg('error', "截止时间不能小于当前时间");
+                    return;
+                }
+                var executorsList = [],
+                        executorNamesList = [];
+                $.CurrentDialog.find('#executerListEdit li').each(function () {
+                    var id = $(this).attr('id');
+                    var inf = $(this).attr('inf');
+                    executorsList.push(id);
+                    executorNamesList.push(inf);
+                });
+                var pageData = $.CurrentNavtab.data("findTask");
+                var taskId = pageData.taskId;
+                var recordId = pageData.recordId;
+//                var type = pageData.taskStatus;
+                var type = 1;
+                var typeId = $.CurrentDialog.find('#taskType').val();
+                var taskDesc = $.CurrentDialog.find('#taskDesc').val();
+                var executors = executorsList.join(',');
+                var executorNames = executorNamesList.join(',');
+                var data = {
+                    'typeId': typeId,
+                    'taskDesc': taskDesc,
+                    'closeTime':closeTime,
+                    'executor': executors,
+                    'executorName': executorNames,
+                    'taskId': taskId,
+                    'recordId': recordId,
+                    'type': type,
+                }
+                if (executorNames == "") {
+                    BJUI.alertmsg('error', '指派人员不能为空');
+                    return;
+                }
+                $.CurrentDialog.find('#edittask').attr('disabled',true);
+                BJUI.ajax('doajax', {
+                    url: path + '/web/task/v1/updateTask',
+                    data: data,
+                    loadingmask: false,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            BJUI.alertmsg('ok', '操作成功');
+                            BJUI.dialog('closeCurrent');
+                            $.CurrentNavtab.find("#taskContent_datagrid").datagrid('filter');
+                        } else {
+                            $.CurrentDialog.find('#edittask').attr('disabled',false);
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        })
+    });
+</script>

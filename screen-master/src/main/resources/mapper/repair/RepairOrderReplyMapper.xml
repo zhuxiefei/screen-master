@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betel.estatemgmt.common.mapper.repair.RepairOrderReplyMapper">
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.repair.RepairOrderReply">
+    <id column="replyId" jdbcType="BIGINT" property="replyId" />
+    <result column="orderNo" jdbcType="VARCHAR" property="orderNo" />
+    <result column="serviceOnTime" jdbcType="INTEGER" property="serviceOnTime" />
+    <result column="serviceAttitude" jdbcType="INTEGER" property="serviceAttitude" />
+    <result column="serviceQuality" jdbcType="INTEGER" property="serviceQuality" />
+    <result column="serviceDesc" jdbcType="VARCHAR" property="serviceDesc" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    replyId, orderNo, serviceOnTime, serviceAttitude, serviceQuality, serviceDesc, createTime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from repair_order_reply
+    where replyId = #{replyId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from repair_order_reply
+    where replyId = #{replyId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderReply">
+    insert into repair_order_reply (replyId, orderNo, serviceOnTime, 
+      serviceAttitude, serviceQuality, serviceDesc, 
+      createTime)
+    values (#{replyId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{serviceOnTime,jdbcType=INTEGER}, 
+      #{serviceAttitude,jdbcType=INTEGER}, #{serviceQuality,jdbcType=INTEGER}, #{serviceDesc,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderReply">
+    insert into repair_order_reply
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="replyId != null">
+        replyId,
+      </if>
+      <if test="orderNo != null">
+        orderNo,
+      </if>
+      <if test="serviceOnTime != null">
+        serviceOnTime,
+      </if>
+      <if test="serviceAttitude != null">
+        serviceAttitude,
+      </if>
+      <if test="serviceQuality != null">
+        serviceQuality,
+      </if>
+      <if test="serviceDesc != null">
+        serviceDesc,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="replyId != null">
+        #{replyId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceOnTime != null">
+        #{serviceOnTime,jdbcType=INTEGER},
+      </if>
+      <if test="serviceAttitude != null">
+        #{serviceAttitude,jdbcType=INTEGER},
+      </if>
+      <if test="serviceQuality != null">
+        #{serviceQuality,jdbcType=INTEGER},
+      </if>
+      <if test="serviceDesc != null">
+        #{serviceDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderReply">
+    update repair_order_reply
+    <set>
+      <if test="orderNo != null">
+        orderNo = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceOnTime != null">
+        serviceOnTime = #{serviceOnTime,jdbcType=INTEGER},
+      </if>
+      <if test="serviceAttitude != null">
+        serviceAttitude = #{serviceAttitude,jdbcType=INTEGER},
+      </if>
+      <if test="serviceQuality != null">
+        serviceQuality = #{serviceQuality,jdbcType=INTEGER},
+      </if>
+      <if test="serviceDesc != null">
+        serviceDesc = #{serviceDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where replyId = #{replyId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrderReply">
+    update repair_order_reply
+    set orderNo = #{orderNo,jdbcType=VARCHAR},
+      serviceOnTime = #{serviceOnTime,jdbcType=INTEGER},
+      serviceAttitude = #{serviceAttitude,jdbcType=INTEGER},
+      serviceQuality = #{serviceQuality,jdbcType=INTEGER},
+      serviceDesc = #{serviceDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where replyId = #{replyId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findByOrderNo" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.repair.RepairOrderReply">
+    SELECT * FROM repair_order_reply
+    WHERE orderNo = #{orderNo}
+  </select>
+
+  <delete id="deleteReplyList" parameterType="java.util.List">
+    DELETE FROM repair_order_reply
+    WHERE replyId IN
+    <foreach item="item"  collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,694 @@
+<script type="text/javascript">
+    //展示页面
+    var conditionId_repair = "0";
+    if ($("body").data("conditionId_repair") != undefined) {
+        conditionId_repair = $("body").data("conditionId_repair");
+        $.CurrentNavtab.find("#orderStatus").val(conditionId_repair);
+        $("body").data("conditionId_repair", "0");
+    }
+    var isUrge = 0;
+    $.CurrentNavtab.find('#repair_datagrid').datagrid({
+        showToolbar: true,   //是否显示工具条
+        dataUrl: path + '/web/repair/v1/findAllOrders',
+        toolbarItem: 'add',   //显示工具条按钮  all显示所有按钮
+        paging: {pageSize: 10},
+        editMode: {
+            dialog: {
+                width: '500',
+                height: '450',
+                mask: true,
+                title: "新增报修单",
+                id: 'dialog_addRepair',
+                maxable: false,
+                resizable: false
+            }
+        },
+        postData: {"orderStatus": conditionId_repair, "isUrge": isUrge},
+        editUrl: 'html/repairManage/repair/addRepair.html',
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: false,  //是否显示行复选框
+        showLinenumber: true,
+        tableWidth: '110%',
+        height: '100%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+//        hScrollbar: false,  //允许出现横向滚动条。
+        loadingmask: true,
+        dialogFilterW: 0,
+        columns: [
+            {
+                name: 'orderNo', label: '报修单号', width: 230, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'houseNo', label: '房屋信息', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'userName', label: '客户名称', width: 80, align: 'center', render: function (value, data) {
+                stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                return stateName;
+            }
+            },
+            {
+                name: 'userPhone', label: '联系电话', width: 110, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else if (value == 1) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + "物业费" + "" + "</div>";
+                    return stateName;
+                } else if (value == 2) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + "公摊水电费" + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'createTime',
+                label: '报修时间',
+                width: 170,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd HH:mm:ss',
+                render: function (value) {
+                    return value ? value.substr(0, 20) : value
+                }
+            },
+            {
+                name: 'appointTime',
+                label: '预约时间',
+                width: 170,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd HH:mm:ss',
+                render: function (value) {
+                    if (value == '' || value == null || value == undefined) {
+                        stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                        return stateName;
+                    } else {
+                        return value ? value.substr(0, 20) : value
+                    }
+                }
+            },
+            {
+                name: 'orderArea', label: '维修区域', width: 100, align: 'center', render: function (value, data) {
+                if (value == 1) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>" + "个人区域" + "" + "" + "</div>";
+                    return stateName;
+                } else if (value == 2) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>" + "公共区域" + "" + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'orderType', label: '维修类别', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'orderDesc', label: '维修内容', width: 170, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'orderStatus', label: '报修状态', width: 100, align: 'center', render: function (value, data) {
+                if (value == 1) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "待维修" + "" + "" + "</div>";
+                    return stateName;
+                } else if (value == 2) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "已接单" + "" + "" + "</div>";
+                    return stateName;
+                } else if (value == 3) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "已完成" + "" + "" + "</div>";
+                    return stateName;
+                } else if (value == 4) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "已取消" + "" + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'operatorName', label: '维修人员', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    if (data.orderStatus == 1||data.orderStatus == 4) {
+                        stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                        return stateName;
+                    } else {
+                        stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>已被删除</i></div>";
+                        return stateName;
+                    }
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'urgeCount', label: '催单次数', width: 100, align: 'center',
+            },
+            {
+                name: 'orderNo', label: '操作', align: 'center', width: 170, render: function (value, data) {
+                if (data.orderStatus == 1) {
+                    var html = '<button type="button" class="btn-blue" onclick=appointRepair("' + value + '","' + data.operatorName + '","' + data.userPhone + '")>指派</button>'
+                            + '<button type="button" class="btn-red" onclick=cancelRepair("' + value + '")>取消</button>';
+                    return html;
+                } else if (data.orderStatus == 2) {
+                    var html = '<button type="button" class="btn-blue" onclick=printRepair("' + value + '")>打印</button>'
+                            + '<button type="button" class="btn-blue" onclick=uploadRepair("' + value + '")>完成</button>'
+                            + '<button type="button" class="btn-blue" onclick=appointRepair("' + value + '","' + data.operatorName + '","' + data.userPhone + '")>再次指派</button>'
+                            + '<button type="button" class="btn-red" onclick=cancelRepair("' + value + '")>取消</button>'
+
+                            + '<form enctype="multipart/form-data" formid="' + value + '" style="display: none"><input type="text" name="orderNo" ><input name="multipartfile" type="file" style=""  id="' + value + '"  upId="' + value + '" onchange="changeValue_repair(this.value)" ><input type="hidden" name="test"></form>';
+                    return html;
+                } else if (data.orderStatus == 3) {
+                    var html = '<button type="button" class="btn-blue"  onclick=seeDetailRepair("' + value + '")>查看确认单</button>'
+                            + '<div seeId="' + value + '" style="display: none"><img src="' + 'http://192.168.199.165:12222/upload/ad/b42ec702-1fea-4d77-93bd-8bcd347e74b7.jpg' + '" /></div>';
+
+                    return html;
+                } else if (data.orderStatus == 4) {
+                    var html = ""
+                    return html;
+                }
+            }
+            }
+        ],
+    });
+
+    //取消
+    function cancelRepair(e) {
+        BJUI.alertmsg('confirm', '确定取消该报修单吗？', {
+            okCall: function () {
+                var data = {
+                    'orderNo': e,
+                }
+                BJUI.ajax('doajax', {
+                    url: path + '/web/repair/v1/cancelRepair',
+                    data: data,
+                    loadingmask: false,
+                    okCallback: function (json) {
+                        BJUI.alertmsg('ok','操作成功');
+                        $.CurrentNavtab.find('#repair_datagrid').datagrid('refresh', true);
+                    }
+                })
+            }
+        })
+
+    }
+    ;
+
+    //打印
+    function printRepair(e) {
+        var data = {
+            'orderNo': e,
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/printOrder',
+            data: data,
+            loadingmask: true,
+            okCallback: function (json) {
+                $("body").data("printRepair", json);
+                BJUI.dialog({
+                    id: 'dialog_appointRepair',
+                    url: 'html/repairManage/repair/printOrder.html',
+                    title: '打印预览',
+                    width: '950',
+                    height: '350',
+                    minable: false,
+                    mask: true,
+                    maxable: false,
+                    resizable: false
+                })
+            }
+        })
+    }
+
+    //查看确认单
+    function seeDetailRepair(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/findOrderPic',
+            data: {'orderNo': val},
+            loadingmask: true,
+            okCallback: function (json) {
+                $.CurrentNavtab.data("seeDetailRepair", json);
+                BJUI.dialog({
+                    id: 'dialog_appointRepair',
+                    url: 'html/repairManage/repair/seeDetailRepair.html',
+                    title: '查看确认单',
+                    width: '700',
+                    height: '680',
+                    minable: false,
+                    mask: true,
+                    maxable: false,
+                    resizable: false
+                });
+//                var picUrl = json.picUrl;
+//                $.CurrentNavtab.find('[seeId=' + val + ']').attr({
+//                    'data-toggle': 'dialog',
+//                    'data-options': "{id:'bjui-dialog-view-upload-image', image:'" + picUrl + "', url:'" + picUrl + "',width:800, height:500, mask:true, title:'查看图片'}",
+//                })
+//                $.CurrentNavtab.find('[seeId=' + val + ']').trigger('click')
+            }
+        })
+    }
+
+    function changeValue_repair(val) {
+        //为维修单参数赋值
+        $.CurrentNavtab.find('[upId=' + orderNo + ']').siblings('input[name=orderNo]').val(orderNo);
+        var name = val.substring(val.lastIndexOf("\\") + 1, val.length);
+        var fileType = name.substring(name.lastIndexOf(".") + 1, name.length)
+        var cup = fileType.toLowerCase().trim();
+        if (cup != "png" && cup != "jpg" && cup != "jpeg" && cup != "bmp") {
+            BJUI.alertmsg('error', "请上传jpg,png,jpeg,bmp格式的文件");
+            $.CurrentNavtab.find('[upId=' + orderNo + ']').val("");
+            return;
+        }
+
+        if (name.length > 120) {
+            BJUI.alertmsg('error', "文件的名称不能超过120个字");
+            $.CurrentNavtab.find('[upId=' + orderNo + ']').val("");
+            return;
+        }
+//        var obj_file = $.CurrentNavtab.find('[upId=' + orderNo + ']');
+        var obj_file = document.getElementById(orderNo);
+        if (!checkFile(obj_file)) {
+            $.CurrentNavtab.find('[upId=' + orderNo + ']').val("");
+            return;
+        }
+//        $.CurrentDialog.find("#btn-add-role").click(function () {
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/repair/v1/uploadOrderPic',
+//                form: $.CurrentDialog.find('form#'+orderNo),
+            form: $.CurrentNavtab.find('[formid=' + orderNo + ']'),
+            validate: true,     //是否验证
+            loadingmask: false,    // ajax请求时是否显示数据加载遮罩
+            dataType: "",
+            contentType: false,
+            processData: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.dialog('closeCurrent')
+                    //刷新表单
+                    $.CurrentNavtab.find('#repair_datagrid').datagrid('refresh', true)
+                }
+                successBack(json);
+            }
+        })
+//        });
+
+    }
+    //判断文件的大小
+    function checkFile(obj_file) {
+        var maxsize = 20 * 1024 * 1024;  //20M       //2*1024*1024;//2M
+        var errMsg = "文件大小不能超过20M";
+        var tipMsg = "您的浏览器暂不支持计算上传文件的大小，确保上传文件不要超过20M，建议使用IE、FireFox、Chrome浏览器。";
+        var browserCfg = {};
+        var ua = window.navigator.userAgent;
+        if (ua.indexOf(" rv:") >= 1 || ua.indexOf(" MSIE") >= 1) {
+            browserCfg.ie = true;
+        } else if (ua.indexOf("Firefox") >= 1) {
+            browserCfg.firefox = true;
+        } else if (ua.indexOf("Chrome") >= 1) {
+            browserCfg.chrome = true;
+        } else if (ua.indexOf(" Safari") >= 1) {
+            browserCfg.safari = true;
+        }
+        var filesize = 0;
+        if (browserCfg.firefox || browserCfg.chrome || browserCfg.safari) {  //火狐、谷歌浏览器
+            filesize = obj_file.files[0].size;
+        } else if (browserCfg.ie) {    //ie浏览器
+            var obj_img = $.CurrentNavtab.find('[upId=' + orderNo + ']');
+            obj_img.dynsrc = obj_file.value;
+            filesize = obj_img.fileSize;
+        } else {   //其他浏览器
+            BJUI.alertmsg('error', tipMsg);
+            return false;
+        }
+        if (filesize == -1) {
+            BJUI.alertmsg('error', tipMsg);
+            return false;
+        } else if (filesize > maxsize) {
+            BJUI.alertmsg('error', errMsg);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    //上传确认单
+    var orderNo;
+    function uploadRepair(e) {
+        orderNo = e;
+//        $.CurrentNavtab.find('[upId=' + orderNo + ']').trigger('click');
+        $.CurrentNavtab.data('uploadRepairNo',e);
+        BJUI.dialog({
+            id: 'dialog_uploadRepair',
+            url: 'html/repairManage/repair/uploadRepair.html',
+            title: '完成维修单',
+            width: '700',
+            height: '450',
+            minable: false,
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+    }
+
+
+    //指派
+    function appointRepair(orderNo) {
+        var data = {
+            'orderNo': orderNo,
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/findOrder',
+            data: data,
+            loadingmask: true,
+            okCallback: function (json) {
+                $("body").data("appointRepairData", json);
+                BJUI.dialog({
+                    id: 'dialog_appointRepair',
+                    url: 'html/repairManage/repair/appointRepair.html',
+                    title: '指派',
+                    width: '750',
+                    height: '600',
+                    minable: false,
+                    mask: true,
+                    maxable: false,
+                    resizable: false
+                })
+            }
+        })
+    }
+
+    //出现滚动条
+    $.CurrentNavtab.find('.bjui-datagrid .datagrid-box-b').addClass('showScroll');
+
+    //左边树
+    function ztree_returnjson_repair() {
+        //  alert(11)
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/findBuildingList',
+            //url:"json/datagrid/datagrid-tree3.json",
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+                var str = {'isParent': true};
+                $.each(dataJson, function (i, n) {
+                    for (var key in str) {
+                        n[key] = str[key];
+                    }
+                });
+                var allArr = {"buildingName": "其他", "buildingId": -1};
+                dataJson.push(allArr);
+            }
+        });
+        return dataJson;
+    }
+
+    var repairData = {};
+
+    function zTreeOnCheck_repair(event, treeId, treeNode) {
+        var data = {};
+        var id;
+        var pId;
+        if (treeNode.checked) {  //勾选
+            var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_repair");
+            var nodes = treeObj.getCheckedNodes(true);
+            var isParent;
+            for (var i = 0; i < nodes.length; i++) {
+                id = nodes[i].buildingId;
+                isParent = nodes[i].isParent;
+                var searchName = $("#input_search").val();
+                if (!isParent && id != -1) {
+                    pId = nodes[i].getParentNode().buildingId;
+
+                    if (searchName == "") {
+                        data = {"buildingId": pId, "unitId": id};
+                    } else {
+                        data = {"buildingId": pId, "unitId": id, "keyWord": searchName};
+                    }
+
+                } else if (isParent) {
+                    if (searchName == "") {
+                        data = {"buildingId": id};
+                    } else {
+                        data = {"buildingId": id, "keyWord": searchName};
+                    }
+
+                } else {
+                    if (searchName == "") {
+                        data = {"isOthers": 1};
+                    } else {
+                        data = {"isOthers": 1, "keyWord": searchName};
+                    }
+                }
+            }
+//            ztreeCheckData
+        }
+
+        var orderStatus = $.CurrentNavtab.find('#orderStatus').val();
+        var startTime = $.CurrentNavtab.find('#startTime').val();
+        var endTime = $.CurrentNavtab.find('#endTime').val();
+        var userName = $.CurrentNavtab.find('#userName').val();
+        var houseNum = $.CurrentNavtab.find('#houseNum').val();
+        var orderNo = $.CurrentNavtab.find('#orderNo').val();
+        if (orderStatus) {
+            data.orderStatus = orderStatus
+        }
+        if (startTime) {
+            data.startTime = startTime
+        }
+        if (endTime) {
+            data.endTime = endTime
+        }
+        if (userName) {
+            data.userName = userName
+        }
+        if (houseNum) {
+            data.houseNum = houseNum
+        }
+        if (orderNo) {
+            data.orderNo = orderNo
+        }
+
+        //按类型查询房屋
+        data.clearOldPostData = true;
+        $.CurrentNavtab.find('#repair_datagrid').datagrid('filter', data);
+        repairData.buildingId = data.buildingId;
+        repairData.unitId = data.unitId;
+        if (data.isOthers) {
+            repairData.isOthers = data.isOthers;
+        }
+    }
+
+    function zTreeOnClick_repair(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_repair");
+        var nodes = treeObj.getSelectedNodes();
+    }
+    //添加子节点
+    function filterS_repair(treeId, parentNode, childNodes) {
+        if (childNodes.code == "00000") {
+            childNodes = childNodes.data;
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    var obj = {
+                        buildingId: childNodes[i].unitId,
+                        //pId: childNodes[i].unitName,
+                        buildingName: childNodes[i].unitName
+                    };
+                    if (repairData.unitId != undefined && repairData.unitId != null) {
+                        if (childNodes[i].unitId == repairData.unitId) {
+                            obj.checked = true;
+                        }
+                    }
+                    nodes.push(obj);
+                }
+                return nodes;
+            }
+        } else {
+            successBack(childNodes)
+        }
+    }
+    //选中节点 -- 暂时用不到
+    function zTreeOnClicks(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_repair");
+        var nodes = treeObj.getSelectedNodes();
+        for (var i = 0, l = nodes.length; i < l; i++) {
+        }
+    }
+    function addDiyDomS(treeId, treeNode) {
+    }
+
+    //编辑收费标准
+    $.CurrentNavtab.find('#standardBtn').click(function () {
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/findRepairCharge',
+            loadingmask: false,
+            data: {'confName': 'repairChargeStandard'},
+            okCallback: function (data) {
+                $('body').data('findRepairCharge', data)
+                BJUI.dialog({
+                    id: 'dialog_repairChargeStandard',
+                    url: 'html/repairManage/repair/repairChargeStandard.html',
+                    title: '编辑收费标准',
+                    width: '850',
+                    height: '500',
+                    minable: false,
+                    mask: true,
+                    maxable: false,
+                    resizable: false
+                })
+            }
+        });
+    })
+
+    //催单次数排序
+    $.CurrentNavtab.find('#isUrge').click(function () {
+        if (isUrge == 0) {
+            isUrge = 1
+            $.CurrentNavtab.find('#isUrge').text("报修时间排序").removeClass('btn-blue').addClass('btn-green');
+        } else {
+            isUrge = 0
+            $.CurrentNavtab.find('#isUrge').text("催单次数排序").removeClass('btn-green').addClass('btn-blue');
+        }
+        $.CurrentNavtab.find('#repair_datagrid').datagrid('filter', {'isUrge': isUrge});
+
+    })
+
+    //点击重置按钮
+    $.CurrentNavtab.find('#resetBtn').click(function () {
+        $.CurrentNavtab.find("#orderStatus").val("").find('[value=""]').attr('selected', "").siblings().removeAttr('selected');
+        $.CurrentNavtab.find("[data-id=orderStatus]").attr('title', '全部').find('span').first().text('全部');
+    })
+    changeDivHeight();
+
+    //操作记录
+    function repairLog_repair() {
+        BJUI.dialog({
+            id: 'dialog_repairLog',
+            url: 'html/repairManage/repair/repairLog.html',
+            title: '操作记录',
+            width: '1000',
+            height: '700',
+            minable: false,
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+    }
+</script>
+<style>
+    .showScroll {
+        overflow-x: scroll !important;
+    }
+</style>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#repair_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">报修状态:</label>
+                <div class="row-input">
+                    <select id="orderStatus" name="orderStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="0">全部</option>
+                        <option value="1">待维修</option>
+                        <option value="2">已接单</option>
+                        <option value="3">已完成</option>
+                        <option value="4">已取消</option>
+                    </select>
+                </div>
+                <label class="row-label">报修开始时间:</label>
+                <div class="row-input" style=" padding-right: 0;">
+                    <input type="text" id="startTime" name="startTime"
+                           data-rule="报修开始时间: matchE[lte, endTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <!--<label class="row-label" style=" padding: 0; width: 16px; text-align: center;">-</label>-->
+                <label class="row-label">报修结束时间:</label>
+                <div class="row-input">
+                    <input type="text" id="endTime" name="endTime" data-rule="报修结束时间: matchE[gte, startTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <label class="row-label">客户名称:</label>
+                <div class="row-input">
+                    <input type="text" id="userName" name="userName" value="" data-rule="special,length(~10)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">房号:</label>
+                <div class="row-input">
+                    <input type="text" id="houseNum" name="houseNum" value="" data-rule="special,length(~6)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">报修单编号:</label>
+                <div class="row-input">
+                    <input type="text" id="orderNo" name="orderNo" value="" data-rule="special,length(~22)"
+                           placeholder=""/>
+                </div>
+
+
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto">
+    <ul id="ztreeHouseList_repair" style="" class="ztree" data-toggle="ztree"
+        data-options="{nodes:ztree_returnjson_repair,async:true,url:path+'/web/repair/v1/findUnitList',contentType:'application/json; charset=UTF-8',dataType:'json',checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck_repair,onClick:zTreeOnClick_repair,showIcon: false,idKey:'buildingId',keyName:'buildingName',autoParam:['buildingId=buildingId'],filter:filterS_repair,addDiyDom:addDiyDomS}"></ul>
+
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <button type="button" class="btn-green btn-prohibit" data-icon="edit" style=" left: 68px;" id="standardBtn">编辑收费标准
+    </button>
+    <button type="button" class="btn-blue btn-prohibit" data-icon="" style=" left: 189px;" id="isUrge">催单次数排序</button>
+    <button type="button" class="btn-blue btn-prohibit" data-icon="" style=" left: 289px;" onclick=repairLog_repair()>操作记录
+    </button>
+    <table id="repair_datagrid" class="table table-bordered">
+    </table>
+</div>

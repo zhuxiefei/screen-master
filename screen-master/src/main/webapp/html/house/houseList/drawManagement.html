@@ -1,0 +1,453 @@
+<div class="bjui-pageContent" style="padding: 30px;">
+    <div class="divDrawTitle">
+        <!--<button type="button"  onclick="backHouseList()">返回</button>
+        <span style="display: inline-block;margin-left: 83px;">23栋23单元101室</span>-->
+        <span class="span_title"></span>
+    </div>
+    <div style="margin-top: 20px;" id="drawMange" class="divDrawManage">
+
+    </div>
+
+</div>
+<script type="text/javascript">
+    console.log($("body").data("houseName"));
+    $.CurrentNavtab.find(".divDrawTitle .span_title").text($("body").data("houseName"));
+
+    BJUI.ajax('doajax', {
+        url: path + '/web/house/v1/findPicture',
+        data: JSON.stringify({"houseId":$("body").data("houseListmkP")}),
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                //$("body").data("houseListmk",json);
+                loadInfo(json.data);
+            }else {
+                successBack(json);
+            }
+        }
+    });
+
+    //var json = $("body").data("houseListmk");
+    function loadInfo(data){
+    if(data.length>0){
+        var html = "";
+        $.each(data, function(i, n) {
+            html += '<div class="col-xs-6 divDrawBox" id="divDrawBox_'+i+'">';
+            html += '<div class="divDraw">';
+            html += '<span class="spanTitle">'+n.typeName+'</span>';
+            html += '<div class="divDrawPicture" style="overflow: hidden;">';
+            if(n.pictureId == undefined){   //无图
+                html += '<div class="col-xs-6">';
+                html += '<div class="divDrawPic"><img src="images/no_image.png" /></div>';
+                html += '</div>';
+                html += '<div class="col-xs-6">';
+                html += '<div class="divBtn">';
+                html += '<button type="button" class="btn-blue btn-uploadPicture btn" data-pictureType="'+n.typeName+'">上传图片</button>';
+                html += '</div>';
+                html += '<span class="spanNotice">图片格式：bmp,jpg,jpeg,png</span>';
+                html += '</div>';
+            }else{
+                html += '<div class="col-xs-6 " style=" cursor:pointer;" data-toggle="dialog" data-options="{id:\'bjui-dialog-view-upload-image\', image:\''+n.pictureUrl+'\', width:800, height:500, mask:true, title:\'查看已上传图片\'}">';
+                html += '<div class="divDrawPic"><div class="divDrawTable"><div class="divDrawTableContent"><img src="'+n.pictureUrl+'" /></div></div></div>';
+                html += '</div>';
+                html += '<div class="col-xs-6">';
+                html += '<div class="divBtn">';
+                html += '<button type="button" class="btn-blue btn-uploadPicture btn" data-pictureType="'+n.typeName+'">修改图片</button>';
+                html += '<button type="button" class="btn-blue btn-delFile btn" data-hpId="'+n.hpId+'" data-pictureFlag="0">删除</button>';
+                html += '<button type="button" class="btn-blue btn-downloadFile btn" data-hpId="'+n.hpId+'" data-pictureFlag="0">下载</button>';
+                html += '</div>';
+                html += '<span class="spanNotice">图片格式：bmp,jpg,jpeg,png</span>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+            html += '<div class="divDrawFile" style="overflow: hidden;">';
+            if(n.cadId == undefined){  //无文件
+                html += '<div class="col-xs-6">';
+                html += '<input type="text" class="form-control" readonly />';
+                html += '</div>';
+                html += '<div class="col-xs-6">';
+                html += '<div class="divBtn">';
+                html += '<button type="button" class="btn-blue btn-uploadFile btn" data-pictureType="'+n.typeName+'">上传文件</button>';
+                html += '</div>';
+                html += '<span class="spanNotice">上传CAD图纸，文件格式：dwt格式</span>';
+                html += '</div>';
+            }else{
+                html += '<div class="col-xs-6">';
+                html += '<input type="text" value="'+ n.cadName +'" class="form-control" readonly />';
+                html += '</div>';
+                html += '<div class="col-xs-6">';
+                html += '<div class="divBtn">';
+                html += '<button type="button" class="btn-blue btn-uploadFile btn"  data-pictureType="'+n.typeName+'">修改文件</button>';
+                html += '<button type="button" class="btn-blue btn-delFile btn" data-hpId="'+n.hpId+'" data-pictureFlag="1">删除</button>';
+                html += '<button type="button" class="btn-blue btn-downloadFile btn" data-hpId="'+n.hpId+'" data-pictureFlag="1">下载</button>';
+                html += '</div>';
+                html += '<span class="spanNotice">上传CAD图纸，文件格式：dwt格式</span>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            if( (i+1)%2 == 0){
+                html += '<div style=" clear: both; width: 100%;"></div>';
+            }
+        })
+        $.CurrentNavtab.find("#drawMange").html(html);
+    }else{
+
+    }
+    }
+
+    //上传图片
+    $.CurrentNavtab.find("#drawMange").off("click"," .btn-uploadPicture");
+    $.CurrentNavtab.find("#drawMange").on("click"," .btn-uploadPicture",function (event) {
+        //var fitmentId = $(event.currentTarget).attr("data-id");
+        /*var pictureType = $(event.currentTarget).attr("data-pictureType");
+        $("body").data("pictureType",pictureType);*/
+        var drawId = $(event.currentTarget).parents("div.divDrawBox").attr("id")
+        $("body").data("drawId",drawId);
+        BJUI.dialog({
+            id:'dialog_addPicture',
+            url:'html/house/houseList/addPicture.html',
+            title:"上传图片",
+            height:220,
+            mask:true,
+            maxable:false,
+            resizable:false,
+            onClose:function(){
+                /*if($.CurrentDialog.find("input[name='pictureUrl']")){
+                   //console.log($.CurrentDialog.find("input[name='pictureUrl']").val())
+                    $(event.currentTarget).parents("div.divDrawPicture").find("div.col-xs-6 img").attr("src",$("body").data("pictureUrl"));
+                    var html = '<button type="button" class="btn-blue btn-uploadFile btn" data-pictureType="'+pictureType+'">修改图片</button>';
+                        html += '<button type="button" class="btn-blue btn-delFile btn" data-hpId="'+$("body").data("hpId")+'" data-pictureFlag="0">删除</button>';
+                        html += '<button type="button" class="btn-blue btn-downloadFile btn" data-hpId="'+$("body").data("hpId")+'" data-pictureFlag="0">下载</button>';
+                    $(event.currentTarget).parent("div.divBtn").html(html);
+                    delete $("body").data("pictureUrl");
+                    delete $("body").data("hpId");
+                }*/
+            }
+        });
+    });
+
+    //上传文件
+    $.CurrentNavtab.find("#drawMange").off("click"," .btn-uploadFile");
+    $.CurrentNavtab.find("#drawMange").on("click"," .btn-uploadFile",function (event) {
+        /*var pictureType = $(event.currentTarget).attr("data-pictureType");
+        $("body").data("pictureType",pictureType);*/
+        var drawId = $(event.currentTarget).parents("div.divDrawBox").attr("id")
+        $("body").data("drawId",drawId);
+
+        BJUI.dialog({
+            id:'dialog_addFile',
+            url:'html/house/houseList/addFile.html',
+            title:"上传文件",
+            height:220,
+            mask:true,
+            maxable:false,
+            resizable:false,
+            onClose:function(){
+
+                /*if($.CurrentDialog.find("#file_upload_1-queue").find("a.uploadbtn").length < 1){
+                    $(event.currentTarget).parents("div.divDrawFile").find("div.col-xs-6 input[type='text']").val($("body").data("pictureName"));
+                    var html = '<button type="button" class="btn-blue btn-uploadFile btn"  data-pictureType="'+pictureType+'">修改文件</button>';
+                    html += '<button type="button" class="btn-blue btn-downloadFile btn" data-hpId="'+$("body").data("hpId")+'" data-pictureFlag="1">下载</button>';
+                    $(event.currentTarget).parent("div.divBtn").html(html);
+                    delete $("body").data("pictureName");
+                    delete $("body").data("hpId");
+                    html += '<button type="button" class="btn-blue btn-delFile btn" data-hpId="'+$("body").data("hpId")+'" data-pictureFlag="1">删除</button>';
+
+                }*/
+            }
+        });
+    });
+
+    //删除
+    $.CurrentNavtab.find("#drawMange").off("click"," .btn-delFile");
+    $.CurrentNavtab.find("#drawMange").on("click"," .btn-delFile",function (event) {
+        BJUI.alertmsg('confirm', '您确定要删除吗？',{
+            okCall: function() {
+                var pictureFlag = $(event.currentTarget).attr("data-pictureFlag");
+                var hpId = $(event.currentTarget).attr("data-hpId");
+                BJUI.ajax('doajax', {
+                    url: path + '/web/house/v1/deletePicture',
+                    loadingmask: true,
+                    data: JSON.stringify({"hpId": hpId,"pictureFlag":pictureFlag}),
+                    callback: function (json) {
+                        if(json.code=="00000"){
+                            if(pictureFlag == "0"){
+                                $(event.currentTarget).parents("div.divDrawPicture").find("div.col-xs-6 img").attr("src","images/no_image.png");
+                                $(event.currentTarget).parent("div.divBtn").find("button.btn-uploadPicture").text("上传图片");
+                            }else if(pictureFlag == "1"){
+                                $(event.currentTarget).parents("div.divDrawFile").find("div.col-xs-6 input[type='text']").val("");
+                                $(event.currentTarget).parent("div.divBtn").find("button.btn-uploadFile").text("上传文件");
+                            }
+                            $(event.currentTarget).parent("div.divBtn").find("button.btn-downloadFile").remove();
+                            $(event.currentTarget).parent("div.divBtn").find("button.btn-delFile").remove();
+                            BJUI.alertmsg('ok','操作成功');
+                        }else{
+                            successBack(json);
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    //下载
+    $.CurrentNavtab.find("#drawMange").off("click"," .btn-downloadFile");
+    $.CurrentNavtab.find("#drawMange").on("click"," .btn-downloadFile",function (event) {
+        var pictureFlag = $(event.currentTarget).attr("data-pictureFlag");
+        var hpId = $(event.currentTarget).attr("data-hpId");
+        window.location.href =  path + '/web/house/v1/downloadPicture?hpId='+hpId+'&pictureFlag='+pictureFlag+'&userId='+$.cookie("l_userId")+'&token='+$.cookie("l_token");
+        /*BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/downloadPicture',
+            loadingmask: false,
+            data: JSON.stringify({"hpId": hpId,"pictureFlag":pictureFlag}),
+            okCallback: function (json) {
+                BJUI.alertmsg('confirm', '您确定要下载吗？<a href="'+json.fileUrl+'" download="'+json.fileName+'" class="btn btn-green a_btn_dowmload"><i class="fa fa-check"></i> 确定</a>');
+
+                //window.location.href = json.fileUrl;
+            }
+        });*/
+    })
+
+
+   /* var houseId = $("body").data("houseListmkP");
+    //$("body").data("houseListlddmk",houseId);
+    var json = $("body").data("houseListmk");
+    console.log(json);
+
+    $.each(json.data, function(i, n) {
+        $("#drawMange").append('<div id="drawName_'+i+'" style="margin-bottom: 15px;" spanHpid="'+n.hpId+'" spanTypeName="'+n.typeName+'" spanPictureId="'+n.pictureId+'" spanPictureUrl="'+n.pictureUrl+'" spancCadId="'+n.cadId+'" spanCadName="'+n.cadName+'"><span>'+n.typeName+'</span></div>');
+        var pictureUrls = $("#drawName_"+i).attr("spanPictureUrl");
+        console.log("===="+pictureUrls);
+        if (pictureUrls == undefined ||  pictureUrls == "" ||   pictureUrls == null){
+            $("#drawNameA").append('<span style="display: inline-block;margin-left: 20px;">图片格式：bmp,jpg,jpeg,png</span>');
+        }else {
+            $("#drawName_"+i).append('<button type="button" style="margin-left: 10px;" class="drawDownLoad" onclick="drawDownQ(this)">下载</button>');
+            $("#drawName_"+i).append('<button type="button" style="margin-left: 10px;" class="drawDelete" onclick="drawDeleteQ(this)">删除</button>');
+            $("#drawName_"+i).append('<span style="display: inline-block;margin-left: 20px;">图片格式：bmp,jpg,jpeg,png</span>');
+        }
+    });
+
+    $("#drawName_0").append('<div id="drawNameA" class="row-input divAdUploadImage"></div>');
+
+    //下载
+    function drawDownQ(t) {
+        console.log(11)
+        var hpId = $(t).parents("#drawName_0").attr("spanHpid");
+        var downLL = {"hpId":hpId,"pictureFlag":0};
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/downloadPicture',
+            data: JSON.stringify(downLL),
+            loadingmask: true,
+            callback: function (json) {
+                if(json == '' || json == null || json == undefined){
+                    console.log(111);
+                    BJUI.alertmsg('ok','下载成功！');
+                }else {
+                    console.log(222);
+                    successBack(json);
+                }
+            }
+        });
+    }
+    //删除
+    function drawDeleteQ(t) {
+        console.log(11)
+        var hpId = $(t).parents("#drawName_0").attr("spanHpid");
+        var downLL = {"hpId":hpId,"pictureFlag":0};
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/deletePicture',
+            data: JSON.stringify(downLL),
+            loadingmask: true,
+            callback: function (json) {
+                console.log(json);
+                if (json.code == "00000") {
+                    BJUI.alertmsg('ok',"删除成功！");
+                }else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+
+    //上传图片
+    //var html ='<input style="display: none" type="file" data-name="pictureUrl" data-id="pictureId" data-toggle="webuploader" data-options="{pick: {label:\'点击选择图片\'},server:'+path+ '/ web/house/v1/uploadPicture,fileNumLimit: 1,formData: {dir:\'pictureUrl\'},required: false,uploaded: \'\',basePath: \'\',fileVal:\'multipartFile\',accept: {title: \'图片\',extensions: \'jpg,png,bmp,jpeg\', mimeTypes: \'.jpg,.png,.bmp,.jpeg\'}}" />';
+    //$("#drawNameA").append(html);
+    /!*$("#drawNameA").append(' <input type="file" data-name="pictureUrl" data-toggle="webuploader" data-options="{'+
+     'pick: {label: "点击选择图片"},'+
+     'server:path+"/web/house/v1/uploadPicture",'+
+     'fileNumLimit: 1,'+
+     'formData: {dir:"pictureUrl"},'+
+     'required: false,'+
+     'upload: '+'""'+','+
+     'basepath: '+'""'+','+
+     'fileVal:'+"multipartFile"+','+
+     'accept: {'+
+     'title: "图片",'+
+     ' extensions: "jpg,png,bmp,jpeg",'+
+     ' mimeTypes: ".jpg,.png,.bmp,.jpeg"'+'}"/>');*!/
+
+    // $("#drawNameA").append(' <input type="file" data-name="pictureUrl" data-toggle="webuploader" data-options="{'+'server:path+"/web/house/v1/uploadPicture",'+'}"/>');
+    //$("#drawNameA").append('<img src="" id="imageviews" style="width: 100px;height: auto;"/>');
+    // $("#drawNameA").append('<form action="localhost:8080/smartre/web/ad/v1/uploadPic" method="post" id="uploadForms" enctype="multipart/form-data"></form>');
+
+    //$("#uploadForms").append('<p>指定文件名：<img id="kjksk" style="width: 20px;height: auto;" src="'+($('img').attr('src','file/'+path))+'"/></p>')
+    //  .append('<p>上传文件：<input type="file" name="file" id="uploading"/></p>')
+    //   .append('<input type="button" value="上传" style="    width: 100px;position: absolute;left: 50px;top: 50px;height: 30px;" onclick="doUpload(this)" />')
+
+
+
+    /!* function doUpload(t) {
+     var formData = new FormData($( "#uploadForms" )[0]);
+     console.log(houseId);
+     var pictureTypeS = $(t).parents("#drawName_0").find("span").eq(0).text();
+     console.log(pictureTypeS);
+     var uploadX = {"multipartFile":formData,"houseId":houseId,"pictureType":pictureTypeS,"pictureFlag":0}
+     $.ajax({
+     url: path+'/web/house/v1/uploadPicture',  //这是处理文件上传的servlet
+     type: 'POST',
+     data: uploadX,
+     async: false,
+     cache: false,
+     processData: false,
+     contentType:false,
+     headers:{"userId":$.cookie("l_userId"),"token":$.cookie("l_token")},
+     success: function (json) {
+     if (json.code == "00000"){
+     var dataURL = json.data.pictureUrl;
+     $("#imageview").prop("src",dataURL);
+     //document.getElementById("showpic").src="<%=basePath%>UploadImage?picture=showpic";/!*这是预览图片用的，自己在文件上传表单外添加*!/
+     }else {
+     successBack(json);
+     }
+
+     },
+     error: function (returndata) {
+     // alert(returndata);
+     }
+     });
+     }*!/
+
+    /!*
+     function backHouseList() {
+     $(this).navtab('closeCurrentTab');//关闭页面1
+     BJUI.navtab('switchTab', 'houseManage');
+     }
+
+     //上传图片
+     var uploaded = '';
+     var basePath = '';
+     var pictureId = '';
+     var pictureUrl = '';
+     if( pictureUrls == undefined ||  pictureUrls == "" ||   pictureUrls == null){
+     uploaded = 'person_image.png';
+     basePath = 'images/';
+     }else{
+
+     uploaded = pictureUrls.substring(pictureUrls.lastIndexOf('/')+1,pictureUrls.length);
+     basePath = pictureUrls.substring(0,pictureUrls.lastIndexOf('/')+1);
+     pictureId = pictureIds;
+     pictureUrl = pictureUrls;
+     }
+     $.CurrentNavtab.find(".divAdUploadImages input[type='file']").data("uploaded",uploaded);
+     $.CurrentNavtab.find(".divAdUploadImages input[type='file']").data("basePath",basePath);
+     $.CurrentNavtab.find(".divAdUploadImages input[type='file']").data("pictureId",pictureId);
+     $.CurrentNavtab.find(".divAdUploadImages input[type='file']").data("pictureUrl",pictureUrl);*!/
+
+    // $("#drawNameA").append('<div id="uploader" class="wu-example"><div class="queueList"><div id="dndArea" class="placeholder"></div></div></div>');
+
+
+
+
+    //上传文件
+    $("#drawNameA").append(' <div class="row-input" style=" width: 100%; padding-right: 0;margin-top: 20px; "><div id="upload"></div></div>');
+    $.CurrentNavtab.find('#upload').Huploadify({
+        auto:false,       //是否自动上传
+        fileTypeExts:'*.dwt',
+        multi:false,    //是否允许选择多个文件
+        //formData:{key:123456,key2:'vvvv'},
+        fileObjName:'multipartFile',
+        fileSizeLimit:15*1024*1024,
+        showUploadedPercent:true,//是否实时显示上传的百分比，如20%
+        showUploadedSize:true,
+        removeTimeout:9999999,
+        uploader:path + '/web/house/v1/importHouse',
+        //uploader:'json/datagrid/datagrid-tree-error.json',
+        onUploadStart:function(){
+            //alert('开始上传');
+        },
+        onInit:function(){
+            //alert('初始化');
+        },
+        onUploadComplete:function(file,json){  //上传完成  //json:接口返回的数据
+            $("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .uploadbtn").hide();  //移除上传的按钮
+            $("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .delfilebtn").hide(); //移除删除的按钮
+            var data = JSON.parse(json);
+            if(data.code=="00000"){
+                console.log(data);
+                if(data.data =='' || data.data==undefined){
+                    BJUI.alertmsg('ok',"导入成功！");
+                }else{
+                    var filenum = data.data.length;
+                    if(filenum >0){
+                        $.CurrentDialog.find(".span-success").html('&nbsp;<B>'+filenum+'</B>&nbsp;个用户没有成功导入：').show();
+
+                        //画出表格
+                        var html = '';
+                        var infos = data.data;
+                        for(var i=0;i<filenum;i++){
+                            if(!infos[i].buildingName){
+                                infos[i].buildingName = '';
+                            }
+                            if(!infos[i].unitName){
+                                infos[i].unitName = '';
+                            }
+                            if(!infos[i].houseNum){
+                                infos[i].houseNum = '';
+                            }
+                            if(!infos[i].typeName){
+                                infos[i].typeName = '';
+                            }
+                            if(!infos[i].houseDesc){
+                                infos[i].houseDesc = '';
+                            }
+                            if(!infos[i].failureMsg){
+                                infos[i].failureMsg = '';
+                            }
+
+                            html += '<tr><td style="mso-number-format:\'\@\';">'+infos[i].buildingName+'</td><td>'+infos[i].unitName+'</td><td>'
+                                    +infos[i].houseNum+'</td><td style="mso-number-format:\'\@\';">'+infos[i].typeName+'</td><td style="mso-number-format:\'\@\';">'+infos[i].houseDesc+
+                                    '</td><td style="mso-number-format:\'\@\';">'+infos[i].failureMsg+'</td></tr>';
+                        }
+                        $("#fileUserInfos").html(html);
+                        $("#divErrorList").css("display","block");
+                        $("#downBtnFail").css("display","inline-block");
+                    }
+                }
+            }else if(data.code=="11111"){
+                window.location.href=path+'/login.html'
+            }else{
+                successBack(data);
+            }
+        },onSelect:function(file){  //选择文件后的回调函数
+            //console.log(file.index)
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index).siblings('div').remove();
+
+            $("#divErrorList").css("display","none");
+            $("#downBtnFail").css("display","none");
+        },
+        onDelete:function(file){
+            console.log('删除的文件：'+file);
+            console.log(file);
+        }
+    });
+
+    //下载excel
+    $("#downBtnFail").click(function(){
+        method1('customers');
+    });*/
+</script>

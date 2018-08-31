@@ -1,0 +1,144 @@
+<div class="bjui-pageContent">
+    <form action="" data-toggle="ajaxform" style="margin-top: 20px;" id="addCharge_form">
+        <div class="bjui-row col-2">
+            <label class="row-label">项目名称:</label>
+            <div class="row-input required">
+                <input type="text" value="" name="itemName" size="12" id="itemName"
+                       style="height: 22px;margin-bottom: 7px;border: 1px solid #AAA;"
+                       data-rule="required,special,length(~10)">
+            </div>
+
+            <label class="row-label">计费方式:</label>
+            <div class="row-input">
+                <select id="chargeType" name="chargeType" data-toggle="selectpicker" data-width="120px" >
+                    <option value="1">建面计算</option>
+                </select>
+            </div>
+            <label class="row-label">收费项目:</label>
+            <div class="row-input">
+                <select id="itemType" name="itemType" data-toggle="selectpicker" data-width="120px" onchange="itemTypeChange()"
+                        style="width: 120px;" >
+                    <option value="1">物业费</option>
+                    <option value="2">公摊水电费</option>
+                    <option value="3">停车费(购买)</option>
+                    <option value="4">停车费(租赁)</option>
+                    <option value="5">能耗费</option>
+                </select>
+            </div>
+
+            <label class="row-label" id="itemPrice_label">单价:</label>
+            <div class="row-input required" id="itemPriceDiv">
+                <input type="text" value="" name="itemPrice" size="12" id="itemPrice"
+                       style="height: 22px;margin-bottom: 7px;border: 1px solid #AAA;"
+                       data-rule="required,itemPrice,notZero1"><i>元</i>
+            </div>
+            <label class="row-label">计费周期:</label>
+            <div class="row-input required">
+                <input type="text" value="" name="itemCycle" size="12" id="itemCycle"
+                       style="height: 22px;margin-bottom: 7px;border: 1px solid #AAA;"
+                       data-rule="required,itemCycle"><i>月</i>
+            </div>
+            <label class="row-label">滞纳金率:</label>
+            <div class="row-input required">
+                <input type="text" value="" name="overdueFine" size="12" id="overdueFine"
+                       style="height: 22px;margin-bottom: 7px;border: 1px solid #AAA;"
+                       data-rule="required,overdueFine,overdueFine1"><i>%</i>
+            </div>
+
+            <label class="row-label">缴费周期:</label>
+            <div class="row-input required" style=" padding-right: 0;">
+                <input type="text" value="" name="chargeCycle" size="12" id="chargeCycle"
+                       style="height: 22px;margin-bottom: 7px;border: 1px solid #AAA;"
+                       data-rule="required,chargeCycle"><i>天</i>
+            </div>
+            <!--<label class="row-label" style=" padding: 0; width: 16px; text-align: center;">-</label>-->
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="btn-addCharge">确认</button>
+        </li>
+    </ul>
+</div>
+<style>
+
+     #addCharge_form i {
+       font-style: normal;
+         color: #666;
+         position: relative;
+         left: 5px;
+    }
+</style>
+<script>
+    function itemTypeChange() {
+        var item=$.CurrentDialog.find('#itemType').val()
+        if(item==1||item==3||item==4){
+            $.CurrentDialog.find('#itemPrice').removeAttr('disabled');
+            $.CurrentDialog.find('#itemPrice').attr('data-rule',"required,itemPrice,notZero1");
+            $.CurrentDialog.find('#itemPrice').val('');
+
+        }else{
+            $.CurrentDialog.find('#itemPrice').attr('disabled',true);
+            $.CurrentDialog.find('#itemPrice').attr('data-rule',"itemPrice,notZero1");
+            $.CurrentDialog.find('.msg-box.n-bottom').remove();
+            $.CurrentDialog.find('.form-control.n-invalid').css({
+                'border':'1px solid rgb(170, 170, 170)',
+                'box-shadow':'inset 0 1px 1px rgba(0, 0, 0, 0.075)',
+            });
+//            $.CurrentDialog.find('#itemPrice').focus().blur();
+            $.CurrentDialog.find('#itemPrice').val('');
+
+        }
+    }
+    //确认提交
+    $.CurrentDialog.find("#btn-addCharge").click(function () {
+        var item=$.CurrentDialog.find('#itemType').val()
+        if(item==1||item==3||item==4){
+            var itemPrice=$.CurrentDialog.find('#itemPrice').val()
+            if(item==1){
+                var cup="物业费";
+            }
+            if(item==3){
+                var cup="停车费(购买)";
+            }
+            if(item==4){
+                var cup="停车费(租赁)";
+            }
+            if(itemPrice.trim()==""){
+                BJUI.alertmsg('error', cup+'单价不能为空');
+                return;
+            }
+        }
+        var data = {
+            'chargeType': $.CurrentDialog.find('#chargeType').val(),
+            'itemName': $.CurrentDialog.find('#itemName').val(),
+            'itemPrice': $.CurrentDialog.find('#itemPrice').val(),
+            'itemCycle': $.CurrentDialog.find('#itemCycle').val(),
+            'overdueFine': $.CurrentDialog.find('#overdueFine').val(),
+            'itemType': $.CurrentDialog.find('#itemType').val(),
+            'chargeCycle': $.CurrentDialog.find('#chargeCycle').val(),
+        };
+            BJUI.ajax('ajaxform', {
+                url: path + '/web/charges/v1/addChargesItem',
+//                data: data,
+                validate:true,
+                form:$.CurrentDialog.find('form'),
+                loadingmask: false,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        BJUI.dialog('closeCurrent', true);
+                        BJUI.navtab('refresh', 'itemSetting');
+                        BJUI.alertmsg('ok', '操作成功')
+                    } else {
+                        successBack(json);
+                    }
+                }
+            });
+    })
+</script>

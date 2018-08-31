@@ -1,0 +1,345 @@
+<div class="bjui-pageContent" style="background-color:#fefefe; border-bottom:none;">
+    <form action="">
+        <div class="bjui-row col-4">
+
+            <label class="row-label">员工编号:</label>
+            <div class="row-input">
+                <input type="text" id="empNo" name="empNo" value="" data-rule="length(~4),numberOnly1"
+                       placeholder=""/>
+            </div>
+            <label class="row-label">姓名:</label>
+            <div class="row-input">
+                <input type="text" id="empName" name="empName" value="" data-rule="length(~10),special"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">手机号码:</label>
+            <div class="row-input">
+                <input type="text" id="phone" name="phone" value="" data-rule="numberOnly1,length(~11)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">部门:</label>
+            <div class="row-input  zdSelectArea">
+                <button type="button" class="MultiLayerSelect btn dropdown-toggle selectpicker btn-default"
+                        value=""  style="width: 100%;text-align: left" id="depIdBtn">
+                    <span style="display: inline-block;width: 100px;overflow: hidden;text-overflow: ellipsis" id="depId" >请选择</span>
+                    <span class="caret" style="vertical-align: super;"></span>
+                </button>
+                <input type="hidden" name="departmentId">
+            </div>
+
+            <!--<label class="row-label">职位:</label>-->
+            <!--<div class="row-input">-->
+                <!--<select id="positionId" name="positionId" data-toggle="selectpicker" data-width="100%">-->
+                    <!--<option value="">请选择</option>-->
+                <!--</select>-->
+            <!--</div>-->
+
+
+        </div>
+
+    </form>
+    <div style="position: absolute;top: 54px;right: 53px;">
+        <button class="btn-blue" id="search" data-icon="search">搜索</button>
+        <button type="reset" class="btn-blue btnReset" data-icon="times" id="resetBtn">重置</button>
+    </div>
+    <!--</div>-->
+    <!--<div class="bjui-pageContent" style="top: 82px">-->
+    <ul id="selectedArea">
+
+    </ul>
+    <div id="histroyBox" style="margin-left: 27px;margin-right:27px;"></div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addBtn" class="btn-default" data-icon="save">指派</button>
+        </li>
+    </ul>
+</div>
+<style>
+    .CJJ-Table th {
+        text-align: center;
+    }
+
+    .CJJ-Table input {
+        position: static !important;
+        margin-left: 0 !important;
+    }
+
+    /*.CJJ-Table td{*/
+    /*overflow: hidden;*/
+    /*text-overflow:ellipsis;*/
+    /*white-space: nowrap;*/
+    /*width: 90%;*/
+    /*}*/
+    #selectedArea {
+        width: 760px;
+        overflow: hidden;
+        list-style: none;
+    }
+
+    .selectedTip {
+        display: inline-block;
+        background-color: #D9E7F2;
+        height: 22px;
+        color: #16669E;
+        font-size: 13px;
+        line-height: 22px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .selectedTip b {
+        display: inline-block;
+        margin-left: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        color: black;
+    }
+
+    .arrowTip {
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-right: 10px solid #D9E7F2;
+        border-bottom: 10px solid transparent;
+        border-left: 10px solid transparent;
+        display: inline-block;
+        position: relative;
+        top: 4px;
+    }
+
+    .tipWrap {
+        float: left;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+</style>
+<script>
+//    var pathcup = window.location.href.substring(0, window.location.href.lastIndexOf('/smartre'));
+//    var pathAll=window.location.href;
+//    var pathPort=window.location.port;
+//    var pathPortLength=pathPort.length;
+//    var pathIndex=pathAll.indexOf(pathPort);
+//    var pathEx=pathAll.slice(0,pathIndex+pathPortLength);
+//    var pathOA = pathEx + '/' + "oa/";
+    var option = {
+        'parentUrl':path + '/web/repair/v1/findDeptLists',
+        'id':'depIdBtn',
+        'parentContent': 'departmentName',
+        'parentId': 'departmentId',
+        'childKey': 'departmentId',
+        'childpostValue': 'departmentId',
+        'childUrl': path + '/web/repair/v1/findPositions',
+        'childId': 'departmentId',
+        'childContent': 'departmentName',
+        'depth': 'depth',
+        'optionWidth': '100%',
+        'selectCallBack':function (value) {
+            $.CurrentDialog.find('#depId').text(value.departmentName);
+            $.CurrentDialog.find('[name=departmentId]').val(value.departmentId);
+        }
+    };
+    multiLayerSelect(option);
+    $.CurrentDialog.click(function () {
+        $('.zdSelectArea .zdul').remove();
+    });
+    //    var pathOA=path.replace('smartre','oa');
+
+    //获得部门
+//    BJUI.ajax('doajax', {
+//        url: pathOA + '/web/task/v1/findDeptLists',
+////        url: 'http://192.168.199.188:8098/oa/web/task/v1/findDeptLists',
+//        loadingmask: false,
+//        callback: function (json) {
+//            if (json.code == "00000") {
+//                var data = json.data;
+//                $.CurrentDialog.find('#depId option').not(':eq(0)').remove();
+//                var html = ""
+//                for (var i = 0; i < data.length; i++) {
+//                    html += '<option value="' + data[i].departmentId + '">' + data[i].departmentName + '</option>';
+//                }
+//                $.CurrentDialog.find('#depId').append(html);
+//                $.CurrentDialog.find('#depId').selectpicker('refresh');
+//            } else {
+//                successBack(json)
+//            }
+//        }
+//    })
+
+    //获得部门职位
+    function getPosition_appoint(e) {
+        if (e == "") {
+            $.CurrentDialog.find('#positionId option').not(':eq(0)').remove();
+            $.CurrentDialog.find('#positionId').selectpicker('refresh');
+            return
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/findPositions',
+            data: {
+                'departmentId': e
+            },
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    var data = json.data;
+                    $.CurrentDialog.find('#positionId option').not(':eq(0)').remove();
+                    var html = ""
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<option value="' + data[i].positionId + '">' + data[i].positionName + '</option>';
+                    }
+                    $.CurrentDialog.find('#positionId').append(html);
+                    $.CurrentDialog.find('#positionId').selectpicker('refresh');
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    }
+
+    //勾选事件
+    $('#histroyBox ').on('click', ':checkbox:not(#allSeleted)', function () {
+        var cup = $(this).attr('id');
+        var inf = $(this).attr('inf');
+        var phone = $(this).attr('phone');
+        var head = $(this).attr('head');
+        var depName = $(this).attr('depName');
+        var name = $(this).parent().siblings(".empName").html();
+        if ($(this).is(':checked')) {
+            $('.CJJ-Table input:checkbox').iCheck('uncheck');
+            $(this).iCheck('check');
+            var html11 = '<li class="tipWrap" id="' + cup + '" inf="' + inf + '" phone="' + phone + '" head="' + head + '" depName="' + depName + '">'
+                    + '<div class="arrowTip"></div>'
+                    + '<div class="selectedTip">' + name + '<b>×</b></div>'
+                    + '</li>';
+            $.CurrentDialog.find('#selectedArea').empty();
+            $.CurrentDialog.find('#selectedArea').append(html11);
+        } else {
+            $.CurrentDialog.find('li#' + cup).remove();
+        }
+    });
+
+    //取消勾选事件
+    $('.bjui-pageContent ').on('click', 'b', function () {
+        var cup = $(this).parents('li').attr('id');
+        $(this).parents('li').remove();
+        $.CurrentDialog.find('input#' + cup).attr('checked', false).iCheck('uncheck');
+    })
+
+    //搜索事件
+    $.CurrentDialog.find('#search').click(function () {
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                var empName = $.CurrentDialog.find('#empName').val();
+                var phone = $.CurrentDialog.find('#phone').val();
+                var empNo = $.CurrentDialog.find('#empNo').val();
+                var departmentId = $.CurrentDialog.find('[name=departmentId]').val();
+//                var positionId = $.CurrentDialog.find('#positionId').val();
+                var data = {
+                    'empName': empName,
+                    'phone': phone,
+                    'empNo': empNo,
+                    'departmentId': departmentId,
+//                    'positionId': positionId,
+                }
+
+                BJUI.ajax('doajax', {
+                    url: path + '/web/repair/v1/findExecutors',
+                    data: data,
+                    loadingmask: false,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            var data = json.data;
+                            for (var i = 0; i < data.length; i++) {
+                                var inf = [];
+                                inf.push(data[i].depName);
+//                                inf.push(data[i].positionName);
+                                inf.push(data[i].empName);
+                                inf = inf.join('-');
+                                data[i].checkbox = '&nbsp;<input type="checkbox" id="' + data[i].empId + '" inf="' + inf + '" phone="' + data[i].phone + '" head="' + data[i].head + '" depName="' + data[i].depName + '">';
+                            }
+                            $('#histroyBox').CJJTable({
+//                                'title': ["<input type='checkbox' id='allSeleted'>", "员工编号", "姓名", "手机号", "部门", "职位"],//thead中的标题 必填
+                                'title': ["", "员工编号", "姓名", "手机号", "部门"],//thead中的标题 必填
+                                'body': ["checkbox", "empNo", "empName", "phone", "depName"],//tbody td 取值的字段 必填
+                                'display': [1, 1, 1, 1, 1],//隐藏域，1显示，2隐藏 必填
+                                'pageNUmber': 10,//每页显示的条数 选填
+                                'pageLength': data.length,//选填
+                                'url': data,//数据源 必填
+                                dbTrclick: function (e) {//双击tr事件
+                                    e.find('input:checkbox').click();
+                                }
+                            });
+                            var selectedPeople = $.CurrentNavtab.data('selectedPeopleEdit');
+                            $.CurrentDialog.find('#selectedArea').html(selectedPeople);
+                            //勾选选中的内容
+                            if($('li.tipWrap').length!=0){
+                                var liId=[];
+                                $('li.tipWrap').each(function () {
+                                    liId.push($(this).attr('id'));
+                                })
+                                $('.CJJ-Table input:checkbox').each(function () {
+                                    var curID= $(this).attr('id');
+                                    for(var i=0;i<liId.length;i++){
+                                        if(curID==liId[i]){
+                                            $(this).attr('checked',true);
+                                        }
+                                    }
+                                })
+                            }
+
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        })
+    });
+    $.CurrentDialog.find('#search').click();
+
+    //重置
+    $.CurrentDialog.find('#resetBtn').click(function () {
+        $.CurrentDialog.find("#depId").text('请选择');
+        $.CurrentDialog.find("[name=departmentId]").val('');
+        $.CurrentDialog.find("#empNo").val("");
+        $.CurrentDialog.find("#empName").val("");
+        $.CurrentDialog.find("#phone").val("");
+        $.CurrentDialog.find('form').isValid();
+    });
+
+    //enter事件
+    $.CurrentDialog.find('form').keypress(function (event) {
+        if (event.keyCode == 13) {
+            $.CurrentDialog.find('#search').click();
+        }
+    });
+    $.CurrentDialog.on('keypress', '.tfootRight input', function () {
+        if (event.keyCode == 13) {
+            $.CurrentDialog.find('.tfootRight button').click();
+        }
+    })
+
+    $.CurrentDialog.find('#addBtn').click(function () {
+        var condition = [];
+        $.CurrentDialog.find('#selectedArea li').each(function () {
+            condition.push($(this).attr('id'));
+        })
+        if (condition.length == 0) {
+            BJUI.alertmsg('error', '请选择指派人员');
+        } else {
+            var html = $.CurrentDialog.find('#selectedArea').html();
+            $.CurrentNavtab.data('executors', condition);
+            $.CurrentNavtab.data('executorsHtml', html);
+            BJUI.dialog('closeCurrent');
+            showListEdit();
+        }
+    });
+</script>

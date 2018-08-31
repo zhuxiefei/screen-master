@@ -1,0 +1,93 @@
+<style>
+    #editBuildingForm .row-label{
+        width: 25%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;" data-toggle="ajaxform" id="editBuildingForm">
+        <!--<div class="bjui-row col-2" style="margin-left: -17px;">-->
+            <!--<label class="row-label">楼宇名称 : </label>-->
+            <!--<div class="row-css">-->
+                <!--<input type="text" style="width:430px;" id="editBuild_search" name="buildingName"  data-rule="required,special,length(~4)" >-->
+            <!--</div>-->
+            <!--<br>-->
+            <!--<span class="row-label">描述 : </span>-->
+            <!--<div class="row-css " >-->
+                <!--<textarea cols="43"  id="editBuild" name="buildingDesc" style="width:430px;resize: vertical" rows="6" data-toggle="autowidth" data-rule="length(~512)"></textarea>-->
+            <!--</div>-->
+            <!--<input type="text" id="buildingId" name="buildingId" style="display: none">-->
+        <!--</div>-->
+        <div class="bjui-row col-1">
+            <label class="row-label">楼宇名称 : </label>
+            <div class="row-input required">
+                <input type="text" id="editBuild_search" name="buildingName"  data-rule="required,special,length(~4)" >
+            </div>
+            <label class="row-label">展示顺序 : </label>
+            <div class="row-input required">
+                <input type="text" id="displayOrder" name="displayOrder"  data-rule="required,number10000">
+            </div>
+            <span class="row-label">描述 : </span>
+            <div class="row-input" >
+                <textarea   id="editBuild" name="buildingDesc" data-toggle="autowidth" data-rule="length(~512)"></textarea>
+            </div>
+        </div>
+        <input type="text" id="buildingId" name="buildingId" style="display: none">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addNotice" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+        var descName = $.CurrentDialog.find('.dialogHeader .title span').attr('spanDesc');
+        var displayOrder = $.CurrentDialog.find('.dialogHeader .title span').attr('displayOrder');
+        if (descName == '' || descName == null || descName == undefined){
+            $.CurrentDialog.find("#editBuild").val('');
+        }else {
+            $.CurrentDialog.find("#editBuild").val(descName);
+        }
+
+        if (displayOrder == '' || displayOrder == null || displayOrder == 'undefined'){
+            $.CurrentDialog.find("#displayOrder").val('');
+        }else {
+            $.CurrentDialog.find("#displayOrder").val(displayOrder);
+        }
+        $.CurrentDialog.find("#editBuild_search").val($.CurrentDialog.find('.dialogHeader .title span').attr('spanName'));
+
+        var buildingIdL = $.CurrentDialog.find('.dialogHeader .title span').attr('spanId');
+        $.CurrentDialog.find('#buildingId').val(buildingIdL);
+        $.CurrentDialog.find('button#addNotice').bind("click", function(){
+
+                        BJUI.ajax('ajaxform', {
+                            url: path + '/web/building/v1/updateBuilding',
+//                            data: JSON.stringify(editBuildFG),
+                            form: $.CurrentDialog.find('form'),
+                            validate: true,
+                            loadingmask: true,
+                            callback: function(json) {
+                                if(json.code=="00000"){
+                                    BJUI.alertmsg('ok','修改成功！');
+                                    BJUI.dialog('closeCurrent');
+                                    BJUI.navtab('refresh', 'buildingManage');
+                                    //$("#"+$.CurrentDialog.find('.dialogHeader .title span').attr('spanTag')).text(editUnitNameInput);
+                                    var buildingName = $.CurrentDialog.find('.dialogHeader .title span').attr('spanName');
+                                    var treeObj = $.fn.zTree.getZTreeObj("ztreeBuilding");
+                                    var nodes = treeObj.getNodes();
+                                    for (var i = 0; i < nodes.length; i++) {
+                                        if (buildingName == nodes[i].buildingName) {
+                                            treeObj.expandNode(nodes[i], true, true);
+                                            return
+                                        }
+                                    }
+                                }else {
+                                    successBack(json);
+                                }
+                            }
+                        })
+        })
+
+
+
+</script>

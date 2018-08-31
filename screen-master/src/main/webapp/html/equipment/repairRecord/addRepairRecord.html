@@ -1,0 +1,240 @@
+<div class="bjui-pageContent" style="overflow-y: auto;">
+    <form class="datagrid-edit-form" data-toggle="ajaxform">
+        <table class="patrolDetail patrolDetail_border" style=" margin-top: 0;">
+            <tr>
+                <td class="td_left">设备编号:</td>
+                <td class="td_right required" id="equipmentNoListDiv" style=" position: relative;" >
+                    <input type="text" id="equipmentNo" name="equipmentNo" data-rule="required" onkeyup="checkEquipmentNos(this.value)" />
+                    <ul style=" display: none;" id="equipmentNoList"></ul>
+                </td>
+                <td class="td_left">设备名称: </td>
+                <td class="td_right">
+                    <input type="text" id="equipmentName" readonly="readonly">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">设备类型: </td>
+                <td class="td_right">
+                    <input type="text" id="typeName" readonly="readonly">
+                </td>
+                <td class="td_left">是否需要巡检: </td>
+                <td class="td_right">
+                    <input type="text" id="isCheck" readonly="readonly">
+                </td>
+                <!--<td class="td_left">巡检周期: </td>
+                <td class="td_right">
+                    <input type="text" id="checkCycle" readonly="readonly">
+                </td>-->
+            </tr>
+            <tr>
+                <td class="td_left">所在位置: </td>
+                <td class="td_right">
+                    <input type="text" id="equipmentLocation" readonly="readonly">
+                </td>
+                <td class="td_left">设备生产日期: </td>
+                <td class="td_right">
+                    <input type="text" id="equipmentCreateTime" readonly="readonly">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">质保期: </td>
+                <td class="td_right">
+                    <input type="text" id="qualityPeriod" readonly="readonly">
+                </td>
+                <td class="td_left">保修截止日期: </td>
+                <td class="td_right">
+                    <input type="text" id="deadline" readonly="readonly">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">设备生产厂商: </td>
+                <td class="td_right">
+                    <input type="text" id="equipmentProducer" readonly="readonly">
+                </td>
+                <td class="td_left">生产厂商电话: </td>
+                <td class="td_right">
+                    <input type="text" id="producerPhone" readonly="readonly">
+                </td>
+            </tr>
+        </table>
+        <table class="patrolDetail patrolDetail_border">
+            <input type="hidden" id="equipmentId" name="equipmentId">
+            <tr>
+                <td class="td_left">维修厂商: </td>
+                <td class="td_right required">
+                    <input type="text" id="equipmentOperator" name="equipmentOperator" data-rule="required,special,length(~15)"  >
+                </td>
+                <td class="td_left td_left2">维修厂商电话: </td>
+                <td class="td_right required">
+                    <input type="text" id="operatorPhone" name="operatorPhone" data-rule="required,special,length(~15)">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">维修时间: </td>
+                <td class="td_right required">
+                    <input type="text" id="repairTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd"  data-rule="required" name="repairTime">
+                </td>
+                <td class="td_left td_left2">维修费用: </td>
+                <td class="td_right required">
+                    <input type="text" id="repairExpense" name="repairExpense" data-rule="required,itemPriceBig" style=" width: 90%;">&nbsp;元
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">质保期: </td>
+                <td class="td_right required">
+                    <input type="text" id="qualityPeriod_record" name="qualityPeriod" data-rule="required,number1000" style=" width: 77%;">
+                    <select id="unit" name="unit" data-toggle="selectpicker"  data-width="20%" data-rule="required" >
+                        <option value="2">月</option>
+                        <option value="1">天</option>
+                        <option value="3">年</option>
+                    </select>
+                </td>
+                <td class="td_left"></td>
+                <td class="td_right">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">维修内容: </td>
+                <td class="td_right required" colspan="3">
+                    <textarea style="resize: none; height: 120px; " placeholder="请输入维修内容(最多500个字)" data-rule="required,length(~500)"
+                              id="repairDesc" name="repairDesc"></textarea>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" id="addRepairRecord" class="btn-default" data-icon="save">确认新建</button></li>
+    </ul>
+</div>
+<script>
+    $.CurrentDialog.find("#equipmentNoListDiv").hover(function () {
+       if($.CurrentDialog.find("#equipmentNoList li").length > 0){
+           $.CurrentDialog.find("#equipmentNoList").show();
+       }else{
+           $.CurrentDialog.find("#equipmentNoList").hide();
+       }
+    },function(){
+        $.CurrentDialog.find("#equipmentNoList").hide();
+    });
+
+    //模糊查询设备编号
+    function checkEquipmentNos(val) {
+        var equipmentNo = val.trim();
+        if(equipmentNo == ""){
+            $.CurrentDialog.find("#equipmentNoList").html("").hide();
+            return;
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/maintenance/v1/findEquipmentNos',
+            data: JSON.stringify({"equipmentNo":equipmentNo}),
+            loadingmask: false,
+            okCallback: function (data) {
+                if(data.length>0){
+                    var html = "";
+                    $.each(data,function (s,v) {
+                        html += '<li onclick="selectByEquipment(\''+v+'\')">'+v+'</li>';
+                    });
+                    $.CurrentDialog.find("#equipmentNoList").html(html).show();
+                }else {
+                    $.CurrentDialog.find("#equipmentNoList").html("").hide();
+                }
+            }
+        })
+    }
+
+    //查询设备信息
+    function selectByEquipment(id) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/maintenance/v1/selectByEquipment',
+            data: JSON.stringify({"equipmentNo":id}),
+            loadingmask: false,
+            okCallback: function (data) {
+                $.CurrentDialog.find("#equipmentNoList").html('<li onclick="selectByEquipment(\''+id+'\')">'+id+'</li>').hide();
+                //设备id
+                $.CurrentDialog.find("#equipmentId").val(data.equipmentId);
+                //设备编号
+                $.CurrentDialog.find("#equipmentNo").val(id);
+                //设备名称
+                $.CurrentDialog.find("#equipmentName").val(data.equipmentName);
+                //设备类型
+                $.CurrentDialog.find("#typeName").val(data.equipmentType);
+                //巡检周期
+                if (data.isCheck == undefined || data.isCheck == null || data.isCheck == "") {
+                    data.isCheck = '';
+                }else if(data.isCheck == 1) {
+                    data.isCheck = "是";
+                }else if(data.isCheck == 2) {
+                    data.isCheck = "否";
+                }
+                $.CurrentDialog.find("#isCheck").val(data.isCheck);
+
+                /*if (data.checkCycle == undefined || data.checkCycle == null || data.checkCycle == "") {
+                    data.checkCycle = '<i>已被删除</i>';
+                }else if(data.checkCycle == 1) {
+                    data.checkCycle = "每日巡检";
+                } else if(data.checkCycle == 2) {
+                    data.checkCycle = "每周巡检";
+                } else if(data.checkCycle == 3) {
+                    data.checkCycle = "月度巡检";
+                } else if(data.checkCycle == 4) {
+                    data.checkCycle = "季度巡检";
+                } else if(data.checkCycle == 3) {
+                    data.checkCycle = "年度巡检";
+                }
+                $.CurrentDialog.find("#checkCycle").val(data.checkCycle);*/
+                //所属位置
+                $.CurrentDialog.find("#equipmentLocation").val(data.equipmentLocation);
+                //生产日期
+                $.CurrentDialog.find("#equipmentCreateTime").val(data.equipmentCreateTime.substring(0,10));
+                //质  保  期
+                if(data.qualityPeriod == undefined || data.qualityPeriod == null || data.qualityPeriod == ""){
+                    data.qualityPeriod = ""
+                }
+                if (data.unit == undefined || data.unit == null || data.unit == "") {
+                    data.unit = '';
+                }else if(data.unit == 1) {
+                    data.unit = "天";
+                } else if(data.unit == 2) {
+                    data.unit = "个月";
+                } else if(data.unit == 3) {
+                    data.unit = "年";
+                }
+                $.CurrentDialog.find("#qualityPeriod").val(data.qualityPeriod+data.unit);
+                //保修截止日期
+                $.CurrentDialog.find("#deadline").val(data.deadline.substring(0,10));
+                //生产厂家
+                $.CurrentDialog.find("#equipmentProducer").val(data.equipmentProducer);
+                //生产厂商电话
+                $.CurrentDialog.find("#producerPhone").val(data.producerPhone);
+
+            }
+        })
+    }
+
+
+    //新建维保记录
+    $.CurrentDialog.find('#addRepairRecord').click(function(){
+        var equipmentNo = $.CurrentDialog.find("#equipmentNo").val().trim();
+        var equipmentId = $.CurrentDialog.find("#equipmentId").val().trim();
+        if( equipmentId == "" && equipmentNo != ""){
+            BJUI.alertmsg('error','请正确输入并选择设备编号');
+            return;
+        }
+
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/maintenance/v1/addRecord',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            okCallback: function (data) {
+                BJUI.alertmsg('ok','操作成功');
+                BJUI.dialog('closeCurrent');
+                $.CurrentNavtab.find("#j_datagrid_repairRecord").datagrid('filter');
+            }
+        })
+    })
+</script>

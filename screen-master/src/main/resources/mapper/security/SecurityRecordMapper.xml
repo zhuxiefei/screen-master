@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.security.SecurityRecordMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.security.SecurityRecord">
+        <id column="recordId" property="recordId" jdbcType="VARCHAR"/>
+        <result column="contentId" property="contentId" jdbcType="VARCHAR"/>
+        <result column="employeeId" property="employeeId" jdbcType="VARCHAR"/>
+        <result column="employeeName" property="employeeName" jdbcType="VARCHAR"/>
+        <result column="isPatrol" property="isPatrol" jdbcType="BIT"/>
+        <result column="signinNum" property="signinNum" jdbcType="INTEGER"/>
+        <result column="finishTime" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recordId, contentId, employeeId, employeeName, isPatrol, signinNum, finishTime, createTime, 
+    updateTime,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from security_record
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from security_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.security.SecurityRecord">
+    insert into security_record (recordId, contentId, employeeId, 
+      employeeName, isPatrol, signinNum, 
+      finishTime, createTime, updateTime,estateId
+      )
+    values (#{recordId,jdbcType=VARCHAR}, #{contentId,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, 
+      #{employeeName,jdbcType=VARCHAR}, #{isPatrol,jdbcType=BIT}, #{signinNum,jdbcType=INTEGER}, 
+      #{finishTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},#{estateId,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityRecord">
+        insert into security_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                recordId,
+            </if>
+            <if test="contentId != null">
+                contentId,
+            </if>
+            <if test="employeeId != null">
+                employeeId,
+            </if>
+            <if test="employeeName != null">
+                employeeName,
+            </if>
+            <if test="isPatrol != null">
+                isPatrol,
+            </if>
+            <if test="signinNum != null">
+                signinNum,
+            </if>
+            <if test="finishTime != null">
+                finishTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                #{recordId,jdbcType=VARCHAR},
+            </if>
+            <if test="contentId != null">
+                #{contentId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeId != null">
+                #{employeeId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeName != null">
+                #{employeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="isPatrol != null">
+                #{isPatrol,jdbcType=BIT},
+            </if>
+            <if test="signinNum != null">
+                #{signinNum,jdbcType=INTEGER},
+            </if>
+            <if test="finishTime != null">
+                #{finishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityRecord">
+        update security_record
+        <set>
+            <if test="contentId != null">
+                contentId = #{contentId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeId != null">
+                employeeId = #{employeeId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeName != null">
+                employeeName = #{employeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="isPatrol != null">
+                isPatrol = #{isPatrol,jdbcType=BIT},
+            </if>
+            <if test="signinNum != null">
+                signinNum = #{signinNum,jdbcType=INTEGER},
+            </if>
+            <if test="finishTime != null">
+                finishTime = #{finishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.security.SecurityRecord">
+    update security_record
+    set contentId = #{contentId,jdbcType=VARCHAR},
+      employeeId = #{employeeId,jdbcType=VARCHAR},
+      employeeName = #{employeeName,jdbcType=VARCHAR},
+      isPatrol = #{isPatrol,jdbcType=BIT},
+      signinNum = #{signinNum,jdbcType=INTEGER},
+      finishTime = #{finishTime,jdbcType=TIMESTAMP},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      estateId=#{estateId,jdbcType=VARCHAR}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+
+    <select id="findAllSecurityList" resultType="com.betel.estatemgmt.business.propertyapp.security.model.SecurityInfo"
+            parameterType="java.lang.String">
+        select sr.estateId,sr.recordId,sc.contentNo,sa.areaName,sr.createTime as
+        inspectionTime,sr.finishTime,sc.contentDesc,
+        sr.employeeName,sr.signinNum
+        from security_record sr
+        left join security_content sc on sr.contentId = sc.contentId
+        left join security_area sa on sc.areaId = sa.areaId
+        <where>
+            1=1 AND sr.estateId=#{estateId}
+            <if test="status != null and status ==1">
+                AND sr.isPatrol = 1 AND DATE_FORMAT(NOW(),'%m-%d-%Y') = DATE_FORMAT(sr.createTime,'%m-%d-%Y')
+            </if>
+            <if test="status != null and status ==2">
+                AND sr.isPatrol = 2
+            </if>
+            <if test="status != null and status ==3">
+                AND sr.isPatrol = 1 AND DATE_FORMAT(NOW(),'%m-%d-%Y') &gt; DATE_FORMAT(sr.createTime,'%m-%d-%Y')
+            </if>
+        </where>
+        ORDER BY sr.createTime desc
+    </select>
+
+    <select id="countUnfinish" parameterType="java.lang.String" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM security_record
+    WHERE isPatrol=1 AND (DATE_FORMAT(NOW(),'%m-%d-%Y') = DATE_FORMAT(createTime,'%m-%d-%Y'))
+    AND estateId = #{estateId}
+  </select>
+    <select id="findAllRecordList" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp">
+        SELECT
+        aaa.recordId,
+        aaa.createTime,
+        aaa.contentId,
+        aaa.isPatrol,sc.contentNo,sc.areaId,sa.areaName,scas.signinId
+        FROM (
+        SELECT sr.recordId,
+        DATE_FORMAT(sr.createTime,'%Y-%m-%d %T') AS createTime,
+        sr.contentId,
+        (
+        CASE
+        WHEN sr.isPatrol =1 AND date_format(sr.createTime,'%Y-%m-%d')!= date_format(now(),'%Y-%m-%d') THEN 3
+        WHEN sr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        ) AS isPatrol,
+        sr.estateId
+        FROM security_record sr
+        ) aaa LEFT JOIN security_content sc ON aaa.contentId=sc.contentId
+        LEFT JOIN security_content_signin scas ON scas.contentId=sc.contentId
+        LEFT JOIN security_area sa ON sc.areaId = sa.areaId
+        WHERE 1=1  AND aaa.estateId=#{estateId}
+        <if test="areaId != null and areaId !=''">
+            AND sc.areaId = #{areaId}
+        </if>
+        <if test="signinId != null and signinId != ''">
+            AND scas.signinId = #{signinId}
+        </if>
+        <if test="contentNo != null and contentNo !=''">
+            AND sc.contentNo LIKE concat(concat('%',#{contentNo,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="isPatrol != null and isPatrol !=''">
+            AND aaa.isPatrol = #{isPatrol}
+        </if>
+        <if test="startTime != null and startTime !=''">
+            AND aaa.createTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND aaa.createTime &lt;=#{endTime}
+        </if>
+        GROUP BY aaa.recordId, aaa.contentId ORDER BY aaa.createTime DESC
+    </select>
+    <select id="findRecord" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp">
+       SELECT
+        aaa.recordId,
+        aaa.createTime,
+        aaa.contentId,
+        aaa.isPatrol,
+        sc.contentNo,sc.areaId,sc.contentDesc,
+        sa.areaName,scas.signinId,
+				aaa.finishTime,
+				aaa.employeeName,aaa.signinNum
+        FROM (
+        SELECT sr.recordId,
+        DATE_FORMAT(sr.createTime,'%Y-%m-%d %T') AS createTime,
+        sr.contentId,
+        DATE_FORMAT(sr.finishTime,'%Y-%m-%d %T') AS finishTime,
+        sr.employeeName,sr.signinNum,
+        (
+        CASE
+        WHEN sr.isPatrol =1 AND date_format(sr.createTime,'%Y-%m-%d')!= date_format(now(),'%Y-%m-%d') THEN 3
+        WHEN sr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        ) AS isPatrol
+        FROM security_record sr
+        ) aaa LEFT JOIN security_content sc ON aaa.contentId=sc.contentId
+        LEFT JOIN security_content_signin scas ON scas.contentId=sc.contentId
+        LEFT JOIN security_area sa ON sc.areaId = sa.areaId
+        WHERE 1=1 AND aaa.recordId=#{recordId}
+        GROUP BY aaa.recordId, aaa.contentId ORDER BY aaa.createTime DESC
+    </select>
+    <select id="exportListByRecordId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp">
+        SELECT sc.estateId,
+        aaa.recordId,
+        aaa.createTime,
+        aaa.contentId,
+        aaa.isPatrol,
+        sc.contentNo,sc.areaId,sc.contentDesc,
+        sa.areaName,scas.signinId,
+        aaa.finishTime,
+        aaa.employeeName,aaa.signinNum
+        FROM (
+        SELECT sr.recordId,
+        DATE_FORMAT(sr.createTime,'%Y-%m-%d %T') AS createTime,
+        sr.contentId,sr.finishTime,sr.employeeName,sr.signinNum,
+        (
+        CASE
+        WHEN sr.isPatrol =1 AND date_format(sr.createTime,'%Y-%m-%d')!= date_format(now(),'%Y-%m-%d') THEN 3
+        WHEN sr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        ) AS isPatrol
+        FROM security_record sr
+        ) aaa LEFT JOIN security_content sc ON aaa.contentId=sc.contentId
+        LEFT JOIN security_content_signin scas ON scas.contentId=sc.contentId
+        LEFT JOIN security_area sa ON sc.areaId = sa.areaId
+        WHERE 1=1 AND aaa.recordId in
+        <foreach collection="array" index="index" item="recordId" open="(" close=")" separator=",">
+            #{recordId}
+        </foreach>
+        GROUP BY aaa.recordId, aaa.contentId ORDER BY aaa.createTime DESC
+    </select>
+    <select id="exportList" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp">
+        SELECT sc.estateId,
+        aaa.recordId,
+        aaa.createTime,
+        aaa.contentId,
+        aaa.isPatrol,
+        sc.contentNo,sc.areaId,sc.contentDesc,
+        sa.areaName,scas.signinId,
+        aaa.finishTime,
+        aaa.employeeName,aaa.signinNum
+        FROM (
+        SELECT sr.recordId,
+        DATE_FORMAT(sr.createTime,'%Y-%m-%d %T') AS createTime,
+        sr.contentId,sr.finishTime,sr.employeeName,sr.signinNum,
+        (
+        CASE
+        WHEN sr.isPatrol =1 AND date_format(sr.createTime,'%Y-%m-%d')!= date_format(now(),'%Y-%m-%d') THEN 3
+        WHEN sr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        ) AS isPatrol
+        FROM security_record sr
+        ) aaa LEFT JOIN security_content sc ON aaa.contentId=sc.contentId
+        LEFT JOIN security_content_signin scas ON scas.contentId=sc.contentId
+        LEFT JOIN security_area sa ON sc.areaId = sa.areaId
+        WHERE 1=1 AND sc.estateId=#{estateId}
+        <if test="areaId != null and areaId !=''">
+            AND sc.areaId = #{areaId}
+        </if>
+        <if test="signinId != null and signinId != ''">
+            AND scas.signinId = #{signinId}
+        </if>
+        <if test="contentNo != null and contentNo !=''">
+            AND sc.contentNo = #{contentNo}
+        </if>
+        <if test="isPatrol != null and isPatrol !=''">
+            AND aaa.isPatrol = #{isPatrol}
+        </if>
+        <if test="startTime != null and startTime !=''">
+            AND aaa.createTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND aaa.createTime &lt;=#{endTime}
+        </if>
+        GROUP BY aaa.recordId, aaa.contentId ORDER BY aaa.createTime DESC
+    </select>
+
+    <select id="findRecords" parameterType="com.betel.estatemgmt.business.web.task.model.TaskCountReq"
+            resultType="com.betel.estatemgmt.common.model.security.SecurityRecord">
+        SELECT * FROM security_record
+        WHERE estateId = #{estateId}
+        <if test="startTime != null and startTime != ''">
+            and createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and createTime &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

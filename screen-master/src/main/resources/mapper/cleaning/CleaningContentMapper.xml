@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.cleaning.CleaningContentMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.cleaning.CleaningContent" >
+    <id column="contentId" property="contentId" jdbcType="VARCHAR" />
+    <result column="contentNo" property="contentNo" jdbcType="VARCHAR" />
+    <result column="areaId" property="areaId" jdbcType="VARCHAR" />
+    <result column="typeId" property="typeId" jdbcType="VARCHAR" />
+    <result column="location" property="location" jdbcType="VARCHAR" />
+    <result column="cycle" property="cycle" jdbcType="BIT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="estateId" property="estateId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    contentId, contentNo, areaId, typeId, location, cycle, content, createTime, updateTime,estateId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cleaning_content
+    where contentId = #{contentId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cleaning_content
+    where contentId = #{contentId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningContent" >
+    insert into cleaning_content (contentId, contentNo, areaId, 
+      typeId, location, cycle, 
+      content, createTime, updateTime,estateId
+      )
+    values (#{contentId,jdbcType=VARCHAR}, #{contentNo,jdbcType=VARCHAR}, #{areaId,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{cycle,jdbcType=BIT}, 
+      #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},#{estateId}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningContent" >
+    insert into cleaning_content
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      contentId,
+      <if test="contentNo != null" >
+        contentNo,
+      </if>
+      <if test="areaId != null" >
+        areaId,
+      </if>
+      <if test="typeId != null" >
+        typeId,
+      </if>
+      <if test="location != null" >
+        location,
+      </if>
+      <if test="cycle != null" >
+        cycle,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+      <if test="estateId != null" >
+        estateId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      uuid(),
+      <if test="contentNo != null" >
+        #{contentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="cycle != null" >
+        #{cycle,jdbcType=BIT},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        #{estateId},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningContent" >
+    update cleaning_content
+    <set >
+      <if test="contentNo != null" >
+        contentNo = #{contentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        areaId = #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        typeId = #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="cycle != null" >
+        cycle = #{cycle,jdbcType=BIT},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        estateId = #{estateId},
+      </if>
+    </set>
+    where contentId = #{contentId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningContent" >
+    update cleaning_content
+    set contentNo = #{contentNo,jdbcType=VARCHAR},
+      areaId = #{areaId,jdbcType=VARCHAR},
+      typeId = #{typeId,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      cycle = #{cycle,jdbcType=BIT},
+      content = #{content,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      estateId = #{estateId},
+    where contentId = #{contentId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByTypeId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.cleaning.CleaningContent">
+    SELECT * FROM cleaning_content WHERE typeId = #{typeId}
+  </select>
+
+  <select id="findAllCleaningList" resultType="com.betel.estatemgmt.business.propertyapp.cleaning.model.CleaningInfo" parameterType="com.betel.estatemgmt.business.propertyapp.cleaning.model.FindCleaningListReq" >
+    select cc.contentId,cc.contentNo,ca.areaName,ct.typeName,cc.location,cc.cycle,cc.content from cleaning_content cc
+    left join cleaning_area ca on cc.areaId = ca.areaId
+    left join cleaning_type ct on cc.typeId = ct.typeId
+    where cc.estateId = #{estateId}
+    <if test="areaId != null" >
+      AND ca.areaId = #{areaId}
+    </if>
+    <if test="typeId != null" >
+      AND ct.typeId = #{typeId}
+    </if>
+    <if test="cycle != null" >
+      AND cc.cycle = #{cycle}
+    </if>
+    <if test="keyword != null" >
+      AND (cc.contentNo like CONCAT('%',#{keyword},'%') or cc.location like CONCAT('%',#{keyword},'%'))
+    </if>
+    ORDER BY cc.createTime desc
+  </select>
+
+  <select id="findAllContent" resultType="com.betel.estatemgmt.business.web.cleaning.model.FindAllContentResp">
+    SELECT
+    cc.contentId,
+    cc.contentNo,
+    ca.areaName,
+    ct.typeName,
+    cc.location,
+    cc.cycle,
+    cc.createTime
+    FROM cleaning_content cc
+    left join cleaning_area ca on cc.areaId = ca.areaId
+    left join cleaning_type ct on cc.typeId = ct.typeId
+    where cc.estateId = #{estateId}
+    <if test="areaId != null and areaId != ''" >
+      AND ca.areaId = #{areaId}
+    </if>
+    <if test="typeId != null and typeId != ''" >
+      AND ct.typeId = #{typeId}
+    </if>
+    <if test="cycle != null and cycle != ''" >
+      AND cc.cycle = #{cycle}
+    </if>
+    <if test="contentNo != null and contentNo != ''" >
+      AND cc.contentNo like CONCAT('%',#{contentNo},'%')
+    </if>
+    <if test="location != null and location != ''" >
+      AND cc.location like CONCAT('%',#{location},'%')
+    </if>
+    <if test="startTime != null and startTime != ''">
+      AND DATE_FORMAT(cc.createTime,'%Y-%m-%d %T') &gt;= DATE_FORMAT(#{startTime},'%Y-%m-%d %T')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      AND DATE_FORMAT(cc.createTime,'%Y-%m-%d %T') &lt;= DATE_FORMAT(#{endTime},'%Y-%m-%d %T')
+    </if>
+    ORDER BY cc.createTime desc
+  </select>
+
+  <select id="findByContentId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.cleaning.model.FindContentResp">
+    SELECT
+    cc.contentId,
+    cc.contentNo,
+    ca.areaName,
+    ct.typeName,
+    cc.location,
+    cc.cycle,
+    cc.content,
+    cc.createTime,
+    cc.updateTime,
+    cc.areaId,
+    cc.typeId
+    FROM cleaning_content cc
+    left join cleaning_area ca on cc.areaId = ca.areaId
+    left join cleaning_type ct on cc.typeId = ct.typeId
+    where cc.contentId = #{contentId}
+  </select>
+
+  <delete id="deleteByContentIds" parameterType="java.lang.String">
+    delete from cleaning_content
+    where contentId in
+    <foreach collection="array" item="contentId" open="(" separator="," close=")">
+      #{contentId}
+    </foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.work.TaskRecordMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.work.TaskRecord">
+        <id column="recordId" property="recordId" jdbcType="VARCHAR"/>
+        <result column="taskId" property="taskId" jdbcType="VARCHAR"/>
+        <result column="executor" property="executor" jdbcType="VARCHAR"/>
+        <result column="executorName" property="executorName" jdbcType="VARCHAR"/>
+        <result column="refuseTime" property="refuseTime" jdbcType="TIMESTAMP"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="acceptTime" property="acceptTime" jdbcType="TIMESTAMP"/>
+        <result column="finishTime" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="taskStatus" property="taskStatus" jdbcType="BIT"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="executorDelete" property="executorDelete" jdbcType="BIT"/>
+        <result column="createUserDelete" property="createUserDelete" jdbcType="BIT"/>
+        <result column="departmentId" property="departmentId" jdbcType="VARCHAR"/>
+        <result column="depId" property="depId" jdbcType="VARCHAR"/>
+        <result column="executorPhone" property="executorPhone" jdbcType="VARCHAR"/>
+        <result column="closeTime" property="closeTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recordId, taskId, executor, executorName, refuseTime, reason, acceptTime, finishTime, 
+    taskStatus, createTime, updateTime, executorDelete, createUserDelete,departmentId,depId,executorPhone,closeTime
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from work_task_record
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from work_task_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.work.TaskRecord">
+    insert into work_task_record (recordId, taskId, executor, 
+      executorName, refuseTime, reason, 
+      acceptTime, finishTime, taskStatus, 
+      createTime, updateTime, executorDelete, createUserDelete,departmentId,depId,executorPhone,closeTime
+      )
+    values (#{recordId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR}, #{executor,jdbcType=VARCHAR}, 
+      #{executorName,jdbcType=VARCHAR}, #{refuseTime,jdbcType=TIMESTAMP}, #{reason,jdbcType=VARCHAR}, 
+      #{acceptTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, #{taskStatus,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{executorDelete,jdbcType=BIT},
+      #{createUserDelete,jdbcType=BIT}, #{departmentId,jdbcType=VARCHAR}, #{depId,jdbcType=VARCHAR},
+      #{executorPhone,jdbcType=VARCHAR}, #{closeTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.work.TaskRecord">
+        <selectKey keyProperty="recordId" resultType="String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into work_task_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            recordId,
+            <if test="taskId != null">
+                taskId,
+            </if>
+            <if test="executor != null">
+                executor,
+            </if>
+            <if test="executorName != null">
+                executorName,
+            </if>
+            <if test="refuseTime != null">
+                refuseTime,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="acceptTime != null">
+                acceptTime,
+            </if>
+            <if test="finishTime != null">
+                finishTime,
+            </if>
+            <if test="taskStatus != null">
+                taskStatus,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="executorDelete != null">
+                executorDelete,
+            </if>
+            <if test="createUserDelete != null">
+                createUserDelete,
+            </if>
+            <if test="departmentId != null">
+                departmentId,
+            </if>
+            <if test="depId != null">
+                depId,
+            </if>
+            <if test="executorPhone != null">
+                executorPhone,
+            </if>
+            <if test="closeTime != null">
+                closeTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{recordId},
+            <if test="taskId != null">
+                #{taskId,jdbcType=VARCHAR},
+            </if>
+            <if test="executor != null">
+                #{executor,jdbcType=VARCHAR},
+            </if>
+            <if test="executorName != null">
+                #{executorName,jdbcType=VARCHAR},
+            </if>
+            <if test="refuseTime != null">
+                #{refuseTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="acceptTime != null">
+                #{acceptTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="finishTime != null">
+                #{finishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="taskStatus != null">
+                #{taskStatus,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="executorDelete != null">
+                #{executorDelete,jdbcType=BIT},
+            </if>
+            <if test="createUserDelete != null">
+                #{createUserDelete,jdbcType=BIT},
+            </if>
+            <if test="departmentId != null">
+                #{departmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="depId != null">
+                #{depId,jdbcType=VARCHAR},
+            </if>
+            <if test="executorPhone != null">
+                #{executorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="closeTime != null">
+                #{closeTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.work.TaskRecord">
+        update work_task_record
+        <set>
+            <if test="taskId != null">
+                taskId = #{taskId,jdbcType=VARCHAR},
+            </if>
+            <if test="executor != null">
+                executor = #{executor,jdbcType=VARCHAR},
+            </if>
+            <if test="executorName != null">
+                executorName = #{executorName,jdbcType=VARCHAR},
+            </if>
+            <if test="refuseTime != null">
+                refuseTime = #{refuseTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="acceptTime != null">
+                acceptTime = #{acceptTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="finishTime != null">
+                finishTime = #{finishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="taskStatus != null">
+                taskStatus = #{taskStatus,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="executorDelete != null">
+                executorDelete = #{executorDelete,jdbcType=BIT},
+            </if>
+            <if test="createUserDelete != null">
+                createUserDelete = #{createUserDelete,jdbcType=BIT},
+            </if>
+            <if test="departmentId != null">
+                departmentId = #{departmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="depId != null">
+                depId = #{depId,jdbcType=VARCHAR},
+            </if>
+            <if test="executorPhone != null">
+                executorPhone = #{executorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="closeTime != null">
+                closeTime = #{closeTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.work.TaskRecord">
+    update work_task_record
+    set taskId = #{taskId,jdbcType=VARCHAR},
+      executor = #{executor,jdbcType=VARCHAR},
+      executorName = #{executorName,jdbcType=VARCHAR},
+      refuseTime = #{refuseTime,jdbcType=TIMESTAMP},
+      reason = #{reason,jdbcType=VARCHAR},
+      acceptTime = #{acceptTime,jdbcType=TIMESTAMP},
+      finishTime = #{finishTime,jdbcType=TIMESTAMP},
+      taskStatus = #{taskStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      executorDelete = #{executorDelete,jdbcType=BIT},
+      createUserDelete = #{createUserDelete,jdbcType=BIT},
+      departmentId = #{departmentId,jdbcType=VARCHAR},
+      depId = #{depId,jdbcType=VARCHAR},
+      executorPhone = #{executorPhone,jdbcType=VARCHAR},
+      closeTime = #{closeTime,jdbcType=TIMESTAMP}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+    <select id="countUnreceived" resultType="java.lang.Integer">
+    SELECT COUNT(*) from work_task_record r
+    LEFT JOIN work_task t ON t.taskId = r.taskId
+    WHERE r.taskStatus = 1 and r.executor = #{userId} and t.estateId = #{estateId}
+  </select>
+    <insert id="insertList">
+        insert into work_task_record (recordId, taskId, executor,
+        executorName, taskStatus, createTime, updateTime,closeTime)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (uuid(), #{item.taskId}, #{item.executor}, #{item.executorName}, #{item.taskStatus}, #{item.createTime},
+            #{item.updateTime},#{item.closeTime})
+        </foreach>
+    </insert>
+
+    <select id="findTaskByRecordId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.task.model.FindTaskResp">
+    SELECT
+    wt.taskId AS taskId,
+    wt.taskNo AS taskNo,
+    wtr.recordId AS recordId,
+    wt.taskType AS taskType,
+    wtr.taskStatus AS taskStatus,
+    wtr.executorName AS executorName,
+    wtr.updateTime AS updateTime,
+    wt.taskDesc AS taskDesc,
+    wt.createUserName AS createUserName,
+    wtr.refuseTime AS refuseTime,
+    wtr.acceptTime AS acceptTime,
+    wtr.finishTime AS finishTime,
+    wtr.reason AS refuseReason,
+    wt.createTime AS createTime,
+    wt.lastModifyName AS lastModifyName,
+    wtr.executor AS executor,
+    wtt.typeName AS typeName,
+    wtr.closeTime AS closeTime
+    FROM work_task_record wtr
+    LEFT JOIN work_task wt ON wt.taskId = wtr.taskId
+    LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+    WHERE wtr.recordId = #{recordId}
+  </select>
+
+    <select id="findByTaskId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.work.TaskRecord">
+    SELECT * FROM work_task_record WHERE taskId = #{taskId}
+  </select>
+
+    <select id="findAllAppTasks" resultType="com.betel.estatemgmt.business.propertyapp.task.model.FindAllTasksResp">
+        SELECT wt.estateId,
+        wtr.taskId AS taskId,
+        wtr.recordId AS recordId,
+        wtr.taskStatus AS taskStatus,
+        wtr.updateTime AS updateTime,
+        wtt.typeName AS taskType,
+        wt.createUserName AS createUserName,
+        wtr.executorName AS executorName,
+        wt.taskNo AS taskNo,
+        wt.createUserPhone,
+        wtr.executorPhone, wtr.closeTime AS closeTime
+        FROM work_task_record wtr
+        LEFT JOIN work_task wt ON wt.taskId = wtr.taskId
+        LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+        WHERE wt.isDelete != 1 AND wt.estateId=#{estateId}
+        <if test="type == 1">
+            AND wt.createUser = #{userId}
+            AND wtr.createUserDelete != 1
+        </if>
+        <if test="type == 2">
+            AND wtr.executor = #{userId}
+            AND wtr.executorDelete != 1
+        </if>
+        <if test="taskStatus != null and taskStatus != '' and taskStatus != 0 ">
+            AND wtr.taskStatus = #{taskStatus}
+        </if>
+        ORDER BY wtr.updateTime DESC
+    </select>
+
+    <select id="findAppByRecordId" resultType="com.betel.estatemgmt.business.propertyapp.task.model.FindTaskResp"
+            parameterType="java.lang.String">
+    SELECT
+    wtr.taskId AS taskId,
+    wtr.recordId AS recordId,
+    wtt.typeId AS typeId,
+    wtt.typeName AS typeName,
+    wtr.taskStatus AS taskStatus,
+    wtr.updateTime AS updateTime,
+    wt.taskDesc AS taskDesc,
+    wtr.executorName AS executorName,
+    wt.createUserName AS createUserName,
+    wtr.refuseTime AS refuseTime,
+    wtr.acceptTime AS acceptTime,
+    wtr.finishTime AS finishTime,
+    wtr.reason AS refuseReason,
+    wtr.executor AS executor,
+    wt.taskNo AS taskNo, wtr.closeTime AS closeTime
+    FROM work_task_record wtr
+    LEFT JOIN work_task wt ON wt.taskId = wtr.taskId
+    LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+    WHERE wt.isDelete != 1 AND wtr.recordId = #{recordId}
+  </select>
+    <update id="deleteAppRecord" parameterType="com.betel.estatemgmt.common.model.work.TaskRecord">
+        UPDATE work_task_record SET
+        <if test=" executorDelete== 1">
+            executorDelete = 1
+        </if>
+        <if test=" createUserDelete== 1">
+            createUserDelete = 1
+        </if>
+        WHERE recordId = #{recordId}
+    </update>
+
+    <select id="findTodayTaskData" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.screen.model.TodayTaskData">
+    SELECT
+      (SELECT COUNT(*) FROM work_task_record WHERE unix_timestamp(createTime) BETWEEN unix_timestamp(#{startTime})
+AND unix_timestamp(#{endTime})) AS todayTasks,
+      (SELECT COUNT(*) FROM work_task_record WHERE taskStatus in(1,2,4)
+        AND (DATE_FORMAT(createTime,'%y-%m-%d %T') &lt;= DATE_FORMAT(#{endTime},'%y-%m-%d %T'))) AS unfinishTasks,
+      (SELECT COUNT(*) FROM work_task_record WHERE unix_timestamp(createTime) BETWEEN unix_timestamp(#{startTime})
+AND unix_timestamp(#{endTime}) AND taskStatus=3) AS todayFinishTasks,
+      (SELECT COUNT(*) FROM work_task_record WHERE unix_timestamp(createTime) BETWEEN unix_timestamp(#{startTime})
+AND unix_timestamp(#{endTime}) AND taskStatus in(1,2,4)) AS todayUnFinishTasks
+    FROM work_task_record LIMIT 1
+  </select>
+
+    <select id="findDepTaskData" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.screen.model.DepTaskData">
+    SELECT
+      (SELECT count(*)
+          FROM work_task_record r
+          WHERE r.depId LIKE CONCAT(#{depId},"%") AND TO_DAYS(r.createTime) = TO_DAYS(NOW())) AS allTasks,
+      (SELECT count(*)
+          FROM work_task_record r
+          WHERE r.depId LIKE CONCAT(#{depId},"%") AND TO_DAYS(r.createTime) = TO_DAYS(NOW()) AND r.taskStatus=3) AS finishTasks,
+      (SELECT count(*)
+          FROM work_task_record r
+          WHERE r.depId LIKE CONCAT(#{depId},"%") AND TO_DAYS(r.createTime) = TO_DAYS(NOW()) AND r.taskStatus in(1,2,4)) AS unFinishTasks
+    FROM DUAL limit 1
+  </select>
+
+    <!--今日我发出的我收到的任务列表：updateTime 一直不变-->
+    <select id="queryAllAppTasks" resultType="com.betel.estatemgmt.business.propertyapp.task.model.FindAllTasksResp"
+            parameterType="com.betel.estatemgmt.business.oa.task.model.HomeReq">
+        SELECT
+        wtr.taskId AS taskId,
+        wtr.recordId AS recordId,
+        wtr.taskStatus AS taskStatus,
+        wtr.updateTime AS updateTime,
+        wtt.typeName AS taskType,
+        wt.createUserName AS createUserName,
+        wtr.executorName AS executorName,
+        wt.taskNo AS taskNo, wtr.closeTime AS closeTime
+        FROM work_task_record wtr
+        LEFT JOIN work_task wt ON wt.taskId = wtr.taskId
+        LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+        WHERE 1=1
+        <if test="type == 1">
+            AND wt.createUser = #{userId}
+            AND wtr.createTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="type == 2">
+            AND wtr.executor = #{userId}
+            AND wtr.updateTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        ORDER BY wtr.updateTime DESC
+    </select>
+
+    <!--今日我接受的任务：进行中，已完成-->
+    <select id="queryAppTasksToMe" resultType="com.betel.estatemgmt.business.propertyapp.task.model.FindAllTasksResp"
+            parameterType="com.betel.estatemgmt.business.oa.task.model.HomeReq">
+        SELECT
+        wtr.taskId AS taskId,
+        wtr.recordId AS recordId,
+        wtr.taskStatus AS taskStatus,
+        wtr.updateTime AS updateTime,
+        wtt.typeName AS taskType,
+        wt.createUserName AS createUserName,
+        wtr.executorName AS executorName,
+        wt.taskNo AS taskNo, wtr.closeTime AS closeTime
+        FROM work_task_record wtr
+        LEFT JOIN work_task wt ON wt.taskId = wtr.taskId
+        LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+        WHERE wtr.executor = #{userId}
+        <if test="taskStatus == 2">
+            AND wtr.acceptTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="taskStatus == 3">
+            AND wtr.finishTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        ORDER BY wtr.updateTime DESC
+    </select>
+
+    <!--接受任务中已完成的任务-->
+    <select id="hasFinishInAcceptToMe"
+            resultType="com.betel.estatemgmt.business.propertyapp.task.model.FindAllTasksResp"
+            parameterType="com.betel.estatemgmt.business.oa.task.model.HomeReq">
+    SELECT
+    wtr.taskId AS taskId,
+    wtr.recordId AS recordId,
+    wtr.taskStatus AS taskStatus,
+    wtr.updateTime AS updateTime,
+    wtt.typeName AS taskType,
+    wt.createUserName AS createUserName,
+    wtr.executorName AS executorName,
+    wt.taskNo AS taskNo, wtr.closeTime AS closeTime
+    FROM work_task_record wtr
+    LEFT JOIN work_task wt ON wt.taskId = wtr.taskId
+    LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+    WHERE wtr.executor = #{userId}
+    AND wtr.acceptTime IS NOT NULL AND wtr.acceptTime BETWEEN #{startTime} AND #{endTime}
+    AND wtr.taskStatus = 3
+  </select>
+</mapper>

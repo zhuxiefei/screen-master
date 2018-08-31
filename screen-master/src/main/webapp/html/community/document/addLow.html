@@ -1,0 +1,75 @@
+<div class="bjui-pageContent">
+    <form>
+        <div class="bjui-row col-1">
+            <div class="row-input" style=" width: 100%; padding-right: 0; ">
+                <div id="upload"></div>
+            </div>
+        </div>
+    </form>
+    <div class="bjui-pageFooter">
+    </div>
+</div>
+
+<script>
+    var docId=$.CurrentNavtab.data('docId');
+    var typeId=$.CurrentNavtab.data('typeId');
+    $.CurrentDialog.find('#upload').Huploadify({
+        auto: false,       //是否自动上传
+        fileTypeExts: '*.pdf;*.doc;*.docx',
+        multi: false,    //是否允许选择多个文件
+        formData:{'docId':docId},
+        fileObjName: 'multipartFile',
+        fileSizeLimit: 20 * 1024,
+        showUploadedPercent: true,//是否实时显示上传的百分比，如20%
+        showUploadedSize: true,
+        removeTimeout: 9999999,
+        uploader: path + '/web/document/v1/uploadFile',
+        //uploader:'json/datagrid/datagrid-tree-error.json',
+        onUploadStart: function () {
+            //alert('开始上传');
+        },
+        onInit: function () {
+            //alert('初始化');
+        },
+        onUploadComplete: function (file, json) {  //上传完成  //json:接口返回的数据
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_" + file.index + " .uploadbtn").hide();  //移除上传的按钮
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_" + file.index + " .delfilebtn").hide(); //移除删除的按钮
+            var data = JSON.parse(json);
+            if (data.code == "00000") {
+                if (data.data == '' || data.data == undefined) {
+                    BJUI.dialog('close', "dialog_doc");
+                    BJUI.alertmsg('ok', "操作成功！", {
+                        okCall: function () {
+                        }
+                    });
+                } else {
+                    console.log('upload error')
+                }
+//                BJUI.navtab('refresh', 'documentManage');
+                var treeObj = $.fn.zTree.getZTreeObj("ztreeDocument");
+                var nodes = treeObj.getNodes();
+                for (var i = 0; i < nodes.length; i++) {
+                    if (typeId == nodes[i].typeId) {
+                        treeObj.expandNode(nodes[i], true, true);
+                        return
+                    }
+                }
+            } else if (data.code == "11111") {
+                window.location.href = path + '/login.html'
+            } else {
+                successBack(data);
+            }
+        }, onSelect: function (file) {  //选择文件后的回调函数
+            //console.log(file.index)
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_" + file.index).siblings('div').remove();
+
+            $.CurrentDialog.find("#divErrorList").css("display", "none");
+            $.CurrentDialog.find("#downBtnFail").css("display", "none");
+        },
+        onDelete: function (file) {
+            console.log('删除的文件：' + file);
+            console.log(file);
+        }
+    });
+
+</script>

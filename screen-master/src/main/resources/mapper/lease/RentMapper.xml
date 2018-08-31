@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.lease.RentMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.lease.Rent" >
+    <id column="rentId" property="rentId" jdbcType="VARCHAR" />
+    <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+    <result column="tenant" property="tenant" jdbcType="VARCHAR" />
+    <result column="tenantPhone" property="tenantPhone" jdbcType="VARCHAR" />
+    <result column="houseId" property="houseId" jdbcType="VARCHAR" />
+    <result column="acreage" property="acreage" jdbcType="DOUBLE" />
+    <result column="rentUnitPrice" property="rentUnitPrice" jdbcType="DOUBLE" />
+    <result column="signTime" property="signTime" jdbcType="TIMESTAMP" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="rentCycle" property="rentCycle" jdbcType="INTEGER" />
+    <result column="endTime" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="propertyCompany" property="propertyCompany" jdbcType="VARCHAR" />
+    <result column="propertyUnitPrice" property="propertyUnitPrice" jdbcType="DOUBLE" />
+    <result column="propertyPhone" property="propertyPhone" jdbcType="VARCHAR" />
+    <result column="isUpload" property="isUpload" jdbcType="TINYINT" />
+    <result column="fileId" property="fileId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="rentNo" property="rentNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    rentId, companyName, tenant, tenantPhone, houseId, acreage, rentUnitPrice, signTime, 
+    startTime, rentCycle, endTime, propertyCompany, propertyUnitPrice, propertyPhone, 
+    isUpload, fileId, createTime, rentNo
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from rent_info
+    where rentId = #{rentId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from rent_info
+    where rentId = #{rentId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.lease.Rent" >
+    insert into rent_info (rentId, companyName, tenant, 
+      tenantPhone, houseId, acreage, 
+      rentUnitPrice, signTime, startTime, 
+      rentCycle, endTime, propertyCompany, 
+      propertyUnitPrice, propertyPhone, isUpload, 
+      fileId, createTime,rentNo)
+    values (#{rentId,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{tenant,jdbcType=VARCHAR}, 
+      #{tenantPhone,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{acreage,jdbcType=DOUBLE}, 
+      #{rentUnitPrice,jdbcType=DOUBLE}, #{signTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{rentCycle,jdbcType=INTEGER}, #{endTime,jdbcType=TIMESTAMP}, #{propertyCompany,jdbcType=VARCHAR}, 
+      #{propertyUnitPrice,jdbcType=DOUBLE}, #{propertyPhone,jdbcType=VARCHAR}, #{isUpload,jdbcType=TINYINT}, 
+      #{fileId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{rentNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.lease.Rent" >
+    insert into rent_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rentId != null" >
+        rentId,
+      </if>
+      <if test="companyName != null" >
+        companyName,
+      </if>
+      <if test="tenant != null" >
+        tenant,
+      </if>
+      <if test="tenantPhone != null" >
+        tenantPhone,
+      </if>
+      <if test="houseId != null" >
+        houseId,
+      </if>
+      <if test="acreage != null" >
+        acreage,
+      </if>
+      <if test="rentUnitPrice != null" >
+        rentUnitPrice,
+      </if>
+      <if test="signTime != null" >
+        signTime,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="rentCycle != null" >
+        rentCycle,
+      </if>
+      <if test="endTime != null" >
+        endTime,
+      </if>
+      <if test="propertyCompany != null" >
+        propertyCompany,
+      </if>
+      <if test="propertyUnitPrice != null" >
+        propertyUnitPrice,
+      </if>
+      <if test="propertyPhone != null" >
+        propertyPhone,
+      </if>
+      <if test="isUpload != null" >
+        isUpload,
+      </if>
+      <if test="fileId != null" >
+        fileId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="rentNo != null">
+        rentNo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rentId != null" >
+        #{rentId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="tenant != null" >
+        #{tenant,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantPhone != null" >
+        #{tenantPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="acreage != null" >
+        #{acreage,jdbcType=DOUBLE},
+      </if>
+      <if test="rentUnitPrice != null" >
+        #{rentUnitPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="signTime != null" >
+        #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rentCycle != null" >
+        #{rentCycle,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="propertyCompany != null" >
+        #{propertyCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyUnitPrice != null" >
+        #{propertyUnitPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="propertyPhone != null" >
+        #{propertyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="isUpload != null" >
+        #{isUpload,jdbcType=TINYINT},
+      </if>
+      <if test="fileId != null" >
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rentNo != null">
+        #{rentNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.lease.Rent" >
+    update rent_info
+    <set >
+      <if test="companyName != null" >
+        companyName = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="tenant != null" >
+        tenant = #{tenant,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantPhone != null" >
+        tenantPhone = #{tenantPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="houseId != null" >
+        houseId = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="acreage != null" >
+        acreage = #{acreage,jdbcType=DOUBLE},
+      </if>
+      <if test="rentUnitPrice != null" >
+        rentUnitPrice = #{rentUnitPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="signTime != null" >
+        signTime = #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rentCycle != null" >
+        rentCycle = #{rentCycle,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="propertyCompany != null" >
+        propertyCompany = #{propertyCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyUnitPrice != null" >
+        propertyUnitPrice = #{propertyUnitPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="propertyPhone != null" >
+        propertyPhone = #{propertyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="isUpload != null" >
+        isUpload = #{isUpload,jdbcType=TINYINT},
+      </if>
+      <if test="fileId != null" >
+        fileId = #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rentNo != null">
+        #{rentNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rentId = #{rentId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.lease.Rent" >
+    update rent_info
+    set companyName = #{companyName,jdbcType=VARCHAR},
+      tenant = #{tenant,jdbcType=VARCHAR},
+      tenantPhone = #{tenantPhone,jdbcType=VARCHAR},
+      houseId = #{houseId,jdbcType=VARCHAR},
+      acreage = #{acreage,jdbcType=DOUBLE},
+      rentUnitPrice = #{rentUnitPrice,jdbcType=DOUBLE},
+      signTime = #{signTime,jdbcType=TIMESTAMP},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      rentCycle = #{rentCycle,jdbcType=INTEGER},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      propertyCompany = #{propertyCompany,jdbcType=VARCHAR},
+      propertyUnitPrice = #{propertyUnitPrice,jdbcType=DOUBLE},
+      propertyPhone = #{propertyPhone,jdbcType=VARCHAR},
+      isUpload = #{isUpload,jdbcType=TINYINT},
+      fileId = #{fileId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      rentNo = #{rentNo,jdbcType=VARCHAR}
+    where rentId = #{rentId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findAllLease" parameterType="com.betel.estatemgmt.business.propertyapp.lease.model.FindAllLeaseReq"
+          resultType="com.betel.estatemgmt.business.propertyapp.lease.model.FindAllLeaseResp">
+    select CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) address,
+    hoh.houseId houseId, hoh.houseStatus houseStatus, ri.endTime endTime,ri.rentId rentId
+    from house_office_house hoh LEFT JOIN rent_info ri on hoh.houseId = ri.houseId
+    LEFT JOIN house_building hb on hoh.buildingId = hb.buildingId
+    LEFT JOIN house_building_unit hbu on hoh.unitId = hbu.unitId where 1=1
+    <if test="houseNumber != null">
+      and CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) like CONCAT('%',#{houseNumber,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="houseNumber == null">
+      <if test="houseStatus != 0">
+        and hoh.houseStatus = #{houseStatus,jdbcType=TINYINT}
+      </if>
+      <if test="endTime != null">
+        and ri.endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
+      </if>
+    </if>
+    order by hoh.createTime desc
+  </select>
+
+  <select id="findLeaseInfoFree" parameterType="java.lang.String"
+          resultType="com.betel.estatemgmt.business.propertyapp.lease.model.LeaseInfoResp">
+    select CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) address,
+    hoh.interFloorArea acreage, hoh.houseStatus houseStatus
+    from rent_info ri LEFT JOIN house_office_house hoh on ri.houseId = hoh.houseId
+    LEFT JOIN house_building hb on hoh.buildingId = hb.buildingId
+    LEFT JOIN house_building_unit hbu on hoh.unitId = hbu.unitId
+    where ri.rentId = #{rentId,jdbcType=VARCHAR} and (hoh.houseStatus = '1' or hoh.houseStatus = '2')
+  </select>
+
+  <select id="findLeaseInfo" parameterType="java.lang.String"
+          resultType="com.betel.estatemgmt.business.propertyapp.lease.model.LeaseInfoResp">
+    select
+    ri.companyName companyName, ri.tenant tenant ,ri.tenantPhone tenantPhone,
+    CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) address ,
+    ri.acreage acreage, ri.rentUnitPrice rentUnitPrice,
+    hoh.houseStatus houseStatus, ri.signTime signTime,
+    ri.startTime startTime, ri.rentCycle rentCycle,
+    ri.endTime endTime, ri.propertyCompany propertyCompany,
+    ri.propertyUnitPrice propertyUnitPrice, ri.propertyPhone propertyPhone
+    from rent_info ri LEFT JOIN house_office_house hoh on ri.houseId = hoh.houseId
+    LEFT JOIN house_building hb on hoh.buildingId = hb.buildingId
+    LEFT JOIN house_building_unit hbu on hoh.unitId = hbu.unitId
+    where ri.rentId = #{rentId,jdbcType=VARCHAR} and hoh.houseStatus = '3'
+  </select>
+
+  <select id="isLeaseTimeConflict" parameterType="com.betel.estatemgmt.business.web.lease.model.TimeConflict"
+           resultType="com.betel.estatemgmt.common.model.lease.Rent">
+    select
+    <include refid="Base_Column_List" />
+    from rent_info where
+    houseId = #{houseId,jdbcType=VARCHAR} and (
+    (startTime <![CDATA[ <= ]]> #{startTime,jdbcType=TIMESTAMP} and endTime >= #{startTime,jdbcType=TIMESTAMP}) or
+    (startTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP} and endTime >= #{endTime,jdbcType=TIMESTAMP}) or
+    (startTime >= #{startTime,jdbcType=TIMESTAMP} and endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}))
+  </select>
+
+  <select id="findAllWebList" parameterType="com.betel.estatemgmt.business.web.lease.model.WebFindAllLeaseReq"
+          resultType="com.betel.estatemgmt.business.web.lease.model.WebLeaseList">
+    select
+    ri.rentId rentId,
+    ri.rentNo rentNo, ri.companyName companyName,
+    CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) address ,
+    ri.tenant tenant ,ri.tenantPhone tenantPhone,
+    ri.isUpload isUpload, ri.endTime endTime, ri.startTime startTime
+    from rent_info ri LEFT JOIN house_office_house hoh on ri.houseId = hoh.houseId
+    LEFT JOIN house_building hb on hoh.buildingId = hb.buildingId
+    LEFT JOIN house_building_unit hbu on hoh.unitId = hbu.unitId where 1=1
+    <if test="companyName != null">
+      and ri.companyName like concat(concat('%',#{companyName,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="startTime != null">
+      and ri.endTime >= #{startTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="endTime != null">
+      and ri.endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="address != null">
+      and CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) like concat(concat('%',#{address,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="isUpload != 3">
+      and ri.isUpload = #{isUpload, jdbcType=TINYINT}
+    </if>
+    <if test="isInvalid == 1">
+      and ri.endTime >= now() and ri.startTime <![CDATA[ <= ]]> now()
+    </if>
+    <if test="isInvalid == 2">
+      and ri.endTime <![CDATA[ < ]]> now()
+    </if>
+    <if test="isInvalid == 3">
+      and ri.startTime > now()
+    </if>
+    <if test="buildingId != null">
+      and hb.buildingId = #{buildingId,jdbcType=BIGINT}
+    </if>
+    <if test="unitId != null">
+      and hbu.unitId = #{unitId,jdbcType=BIGINT}
+    </if>
+    order by ri.createTime desc
+  </select>
+
+  <select id="findWebLeaseInfo" parameterType="java.lang.String"
+           resultType="com.betel.estatemgmt.business.web.lease.model.WebLeaseInfo">
+    select
+    ri.companyName companyName, ri.tenant tenant ,ri.tenantPhone tenantPhone,
+    CONCAT_WS("",hb.buildingName,hbu.unitName,hoh.houseNum) address,
+    hb.buildingId buildingId, hbu.unitId unitId, hoh.houseId houseId,
+    ri.acreage acreage, ri.rentUnitPrice rentUnitPrice,
+    hoh.houseStatus houseStatus, ri.signTime signTime,
+    ri.startTime startTime, ri.rentCycle rentCycle,
+    ri.endTime endTime, ri.propertyCompany propertyCompany,
+    ri.propertyUnitPrice propertyUnitPrice, ri.propertyPhone propertyPhone,
+    ri.rentNo rentNo,ri.isUpload isUpload, hoh.houseStatus houseStatus
+    from rent_info ri LEFT JOIN house_office_house hoh on ri.houseId = hoh.houseId
+    LEFT JOIN house_building hb on hoh.buildingId = hb.buildingId
+    LEFT JOIN house_building_unit hbu on hoh.unitId = hbu.unitId
+    where ri.rentId = #{rentId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findNowRent" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.lease.Rent">
+    SELECT * FROM rent_info
+    WHERE DATE_FORMAT(startTime,'%Y-%m-%d') &lt;= DATE_FORMAT(NOW(),'%Y-%m-%d')
+    AND DATE_FORMAT(endTime,'%Y-%m-%d') &gt;= DATE_FORMAT(NOW(),'%Y-%m-%d')
+    AND houseId = #{houseId}
+    limit 1
+  </select>
+
+  <select id="findOutRent" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.lease.Rent">
+    SELECT * FROM rent_info
+    WHERE
+    DATE_FORMAT(endTime,'%Y-%m-%d') &lt;= DATE_FORMAT(NOW(),'%Y-%m-%d')
+    AND houseId = #{houseId}
+    limit 1
+  </select>
+
+  <delete id="deleteByHouseIds">
+    DELETE FROM rent_info WHERE
+    houseId IN
+    <foreach collection="array" item="houseId" open="(" separator="," close=")">
+      #{houseId}
+    </foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseTypeMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseType">
+        <id column="typeId" property="typeId" jdbcType="BIGINT"/>
+        <result column="typeName" property="typeName" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    typeId, typeName, createTime
+  </sql>
+
+    <select id="findAllMaterialNotInFunction" resultType="com.betel.estatemgmt.common.model.house.HouseMaterial"
+            parameterType="com.betel.estatemgmt.business.web.housetype.model.NotInFunctionReq">
+        SELECT
+        m.materialId materialId, m.materialName materialName,
+        m.materialBrand materialBrand, m.materialModel materialModel,
+        m.createTime createTime
+        FROM
+        house_material m
+        WHERE
+        <if test="materialType != null">
+            m.materialType = #{materialType,jdbcType=VARCHAR}
+            AND
+        </if>
+        m.materialId NOT IN (
+        SELECT
+        tm.materialId
+        FROM
+        house_type_material tm
+        WHERE
+        tm.typeId = #{typeId,jdbcType=BIGINT}
+        <if test="functionId != null">
+            AND tm.functionId = #{functionId,jdbcType=BIGINT}
+        </if>
+        <if test="functionId == null">
+            AND ISNULL(tm.functionId)
+        </if>
+        )
+        ORDER BY m.createTime DESC
+    </select>
+
+
+    <select id="findAllMaterialByTypeFunction"
+            resultType="com.betel.estatemgmt.business.web.housetype.model.FunctionMaterialVo"
+            parameterType="com.betel.estatemgmt.common.model.house.HouseTypeMaterial">
+        SELECT
+        tm.tmId tmId,
+        tm.materialId materialId,
+        m.materialName materialName,
+        m.materialType materialType,
+        m.materialBrand materialBrand,
+        m.materialModel materialModel,
+        tm.functionId functionId,
+        htf.functionName functionName
+        FROM
+        house_type_material tm
+        LEFT JOIN house_material m ON tm.materialId = m.materialId
+        LEFT JOIN house_type_function htf ON tm.functionId = htf.functionId
+        WHERE
+        tm.typeId = #{typeId,jdbcType=BIGINT}
+        <if test="functionId == null">
+            AND ISNULL(tm.functionId)
+        </if>
+        <if test="functionId != null and functionId != 0">
+            AND tm.functionId = #{functionId,jdbcType=BIGINT}
+        </if>
+        ORDER BY tm.tmId DESC
+    </select>
+
+
+    <select id="findHouseTypeBasic" resultType="com.betel.estatemgmt.business.web.housetype.model.BasicHouseType"
+            parameterType="java.lang.Long">
+    select typeId, typeName
+    from house_type
+    where typeId = #{typeId,jdbcType=BIGINT}
+  </select>
+
+
+    <select id="findHouseByHouseType" resultType="com.betel.estatemgmt.common.model.house.House" parameterType="java.lang.Long">
+    select houseNum from house_house where typeId = #{typeId,jdbcType=BIGINT}
+  </select>
+
+    <delete id="deleteHouseTypes">
+        delete from house_type
+        where typeId in
+        <foreach collection="array" index="index" item="typeId" open="(" close=")" separator=",">
+            #{typeId,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
+
+    <select id="findHouseTypeByTypeName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from house_type
+        where typeName = #{typeName,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="findAllHouseType" resultType="com.betel.estatemgmt.business.web.housetype.model.HouseTypeVo"
+            parameterType="com.betel.estatemgmt.business.web.housetype.model.PageKeyWord">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        house_type
+        <where>
+            <if test="typeName != null and typeName !=''">
+                AND typeName like concat(concat('%',#{typeName}),'%')
+            </if>
+            <if test="startTime != null and startTime !=''">
+                AND createTime &gt;=#{startTime}
+            </if>
+            <if test="endTime != null and endTime !=''">
+                AND createTime &lt;=#{endTime}
+            </if>
+        </where>
+        order by createTime desc
+    </select>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from house_type
+        where typeId = #{typeId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from house_type
+    where typeId = #{typeId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseType">
+    insert into house_type (typeId, typeName, createTime
+      )
+    values (#{typeId,jdbcType=BIGINT}, #{typeName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseType"
+            useGeneratedKeys="true" keyProperty="typeId">
+        insert into house_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeId != null">
+                typeId,
+            </if>
+            <if test="typeName != null">
+                typeName,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeId != null">
+                #{typeId,jdbcType=BIGINT},
+            </if>
+            <if test="typeName != null">
+                #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseType">
+        update house_type
+        <set>
+            <if test="typeName != null">
+                typeName = #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where typeId = #{typeId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseType">
+    update house_type
+    set typeName = #{typeName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where typeId = #{typeId,jdbcType=BIGINT}
+  </update>
+
+    <select id="selectHouseTypeResp" resultType="com.betel.estatemgmt.business.web.house.model.HouseTypeResp">
+    select typeId,typeName FROM house_type
+  </select>
+</mapper>

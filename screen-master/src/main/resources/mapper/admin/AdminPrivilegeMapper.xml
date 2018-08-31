@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.admin.AdminPrivilegeMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.admin.AdminPrivilege" >
+    <id column="privilegeId" property="privilegeId" jdbcType="BIGINT" />
+    <result column="privilegeName" property="privilegeName" jdbcType="VARCHAR" />
+    <result column="privilegeDesc" property="privilegeDesc" jdbcType="VARCHAR" />
+    <result column="parentId" property="parentId" jdbcType="BIGINT" />
+    <result column="privilegeType" property="privilegeType" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    privilegeId, privilegeName, privilegeDesc, parentId, privilegeType, createTime
+  </sql>
+
+  <select id="findPrivilegesByParentId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.common.model.admin.AdminPrivilege">
+    select
+    <include refid="Base_Column_List" />
+    from admin_privilege
+    where  parentId = #{0}
+  </select>
+  <!--根据ids 查询权限-->
+  <select id="findfindPrivilegesByIds" resultType="com.betel.estatemgmt.common.model.admin.AdminPrivilege">
+    select
+    <include refid="Base_Column_List" />
+    from admin_privilege
+    where privilegeId in
+    <foreach collection="array" index="index" item="privileges" open="(" close=")" separator=",">
+      #{privileges,jdbcType=BIGINT}
+    </foreach>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_privilege
+    where privilegeId = #{privilegeId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from admin_privilege
+    where privilegeId = #{privilegeId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.admin.AdminPrivilege" >
+    insert into admin_privilege (privilegeId, privilegeName, privilegeDesc, 
+      parentId, privilegeType, createTime
+      )
+    values (#{privilegeId,jdbcType=BIGINT}, #{privilegeName,jdbcType=VARCHAR}, #{privilegeDesc,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=BIGINT}, #{privilegeType,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminPrivilege" >
+    insert into admin_privilege
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="privilegeId != null" >
+        privilegeId,
+      </if>
+      <if test="privilegeName != null" >
+        privilegeName,
+      </if>
+      <if test="privilegeDesc != null" >
+        privilegeDesc,
+      </if>
+      <if test="parentId != null" >
+        parentId,
+      </if>
+      <if test="privilegeType != null" >
+        privilegeType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="privilegeId != null" >
+        #{privilegeId,jdbcType=BIGINT},
+      </if>
+      <if test="privilegeName != null" >
+        #{privilegeName,jdbcType=VARCHAR},
+      </if>
+      <if test="privilegeDesc != null" >
+        #{privilegeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="privilegeType != null" >
+        #{privilegeType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminPrivilege" >
+    update admin_privilege
+    <set >
+      <if test="privilegeName != null" >
+        privilegeName = #{privilegeName,jdbcType=VARCHAR},
+      </if>
+      <if test="privilegeDesc != null" >
+        privilegeDesc = #{privilegeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parentId = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="privilegeType != null" >
+        privilegeType = #{privilegeType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where privilegeId = #{privilegeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.AdminPrivilege" >
+    update admin_privilege
+    set privilegeName = #{privilegeName,jdbcType=VARCHAR},
+      privilegeDesc = #{privilegeDesc,jdbcType=VARCHAR},
+      parentId = #{parentId,jdbcType=BIGINT},
+      privilegeType = #{privilegeType,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where privilegeId = #{privilegeId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findChildMenu" resultType="com.betel.estatemgmt.business.oa.admin.model.PrivilegeInfo">
+    select
+    privilegeId, privilegeDesc privilegeName, parentId parentId
+    from admin_privilege
+    where privilegeType = 1 AND parentId IN
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item.privilegeId}
+    </foreach>
+    ORDER BY privilegeId ASC
+  </select>
+
+  <select id="findSystems" resultType="com.betel.estatemgmt.business.oa.admin.model.PrivilegeInfo">
+    SELECT p.privilegeId, p.privilegeDesc privilegeName, p.parentId parentId,p.privilegeName AS name
+    FROM admin_privilege p
+    LEFT JOIN admin_role_privilege_rela r ON r.privilegeId = p.privilegeId
+    WHERE p.privilegeType = 4 AND r.roleId = #{roleId}
+  </select>
+</mapper>

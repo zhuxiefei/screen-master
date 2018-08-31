@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.patrol.PatrolEquipmentMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+        <id column="equipmentId" property="equipmentId" jdbcType="VARCHAR"/>
+        <result column="equipmentNo" property="equipmentNo" jdbcType="VARCHAR"/>
+        <result column="equipmentType" property="equipmentType" jdbcType="VARCHAR"/>
+        <result column="equipmentName" property="equipmentName" jdbcType="VARCHAR"/>
+        <result column="equipmentLocation" property="equipmentLocation" jdbcType="VARCHAR"/>
+        <result column="equipmentDesc" property="equipmentDesc" jdbcType="VARCHAR"/>
+        <result column="isCheck" property="isCheck" jdbcType="BIT"/>
+        <result column="checkCycle" property="checkCycle" jdbcType="BIT"/>
+        <result column="equipmentCreateTime" property="equipmentCreateTime" jdbcType="TIMESTAMP"/>
+        <result column="qualityPeriod" property="qualityPeriod" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deadline" property="deadline" jdbcType="TIMESTAMP"/>
+        <result column="equipmentProducer" property="equipmentProducer" jdbcType="VARCHAR"/>
+        <result column="producerPhone" property="producerPhone" jdbcType="VARCHAR"/>
+        <result column="equipmentOperator" property="equipmentOperator" jdbcType="VARCHAR"/>
+        <result column="operatorPhone" property="operatorPhone" jdbcType="VARCHAR"/>
+        <result column="repairNumber" property="repairNumber" jdbcType="INTEGER"/>
+        <result column="unit" property="unit" jdbcType="INTEGER"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.betel.estatemgmt.common.model.patrol.PatrolEquipment"
+               extends="BaseResultMap">
+        <result column="equipmentQRCode" property="equipmentQRCode" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    equipmentId, equipmentNo, equipmentType, equipmentName, equipmentLocation, equipmentDesc, 
+    isCheck, checkCycle, equipmentCreateTime, qualityPeriod, createTime, updateTime, 
+    deadline, equipmentProducer, producerPhone, equipmentOperator, operatorPhone, repairNumber,unit,estateId
+  </sql>
+    <sql id="Blob_Column_List">
+    equipmentQRCode
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from patrol_equipment
+        where equipmentId = #{equipmentId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from patrol_equipment
+    where equipmentId = #{equipmentId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+    insert into patrol_equipment (equipmentId, equipmentNo, equipmentType, 
+      equipmentName, equipmentLocation, equipmentDesc, 
+      isCheck, checkCycle, equipmentCreateTime, 
+      qualityPeriod, createTime, updateTime, 
+      deadline, equipmentProducer, producerPhone, 
+      equipmentOperator, operatorPhone, repairNumber,unit,
+      equipmentQRCode,estateId)
+    values (#{equipmentId,jdbcType=VARCHAR}, #{equipmentNo,jdbcType=VARCHAR}, #{equipmentType,jdbcType=VARCHAR}, 
+      #{equipmentName,jdbcType=VARCHAR}, #{equipmentLocation,jdbcType=VARCHAR}, #{equipmentDesc,jdbcType=VARCHAR}, 
+      #{isCheck,jdbcType=BIT}, #{checkCycle,jdbcType=BIT}, #{equipmentCreateTime,jdbcType=TIMESTAMP}, 
+      #{qualityPeriod,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+      #{deadline,jdbcType=TIMESTAMP}, #{equipmentProducer,jdbcType=VARCHAR}, #{producerPhone,jdbcType=VARCHAR}, 
+      #{equipmentOperator,jdbcType=VARCHAR}, #{operatorPhone,jdbcType=VARCHAR}, #{repairNumber,jdbcType=INTEGER},#{unit,jdbcType=INTEGER},
+      #{equipmentQRCode,jdbcType=LONGVARCHAR},#{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+        insert into patrol_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentId != null">
+                equipmentId,
+            </if>
+            <if test="equipmentNo != null">
+                equipmentNo,
+            </if>
+            <if test="equipmentType != null">
+                equipmentType,
+            </if>
+            <if test="equipmentName != null">
+                equipmentName,
+            </if>
+            <if test="equipmentLocation != null">
+                equipmentLocation,
+            </if>
+            <if test="equipmentDesc != null">
+                equipmentDesc,
+            </if>
+            <if test="isCheck != null">
+                isCheck,
+            </if>
+            <if test="checkCycle != null">
+                checkCycle,
+            </if>
+            <if test="equipmentCreateTime != null">
+                equipmentCreateTime,
+            </if>
+            <if test="qualityPeriod != null">
+                qualityPeriod,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="deadline != null">
+                deadline,
+            </if>
+            <if test="equipmentProducer != null">
+                equipmentProducer,
+            </if>
+            <if test="producerPhone != null">
+                producerPhone,
+            </if>
+            <if test="equipmentOperator != null">
+                equipmentOperator,
+            </if>
+            <if test="operatorPhone != null">
+                operatorPhone,
+            </if>
+            <if test="repairNumber != null">
+                repairNumber,
+            </if>
+            <if test="unit != null">
+                unit,
+            </if>
+            <if test="equipmentQRCode != null">
+                equipmentQRCode,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentId != null">
+                #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentNo != null">
+                #{equipmentNo,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentType != null">
+                #{equipmentType,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentName != null">
+                #{equipmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentLocation != null">
+                #{equipmentLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentDesc != null">
+                #{equipmentDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="isCheck != null">
+                #{isCheck,jdbcType=BIT},
+            </if>
+            <if test="checkCycle != null">
+                #{checkCycle,jdbcType=BIT},
+            </if>
+            <if test="equipmentCreateTime != null">
+                #{equipmentCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="qualityPeriod != null">
+                #{qualityPeriod,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deadline != null">
+                #{deadline,jdbcType=TIMESTAMP},
+            </if>
+            <if test="equipmentProducer != null">
+                #{equipmentProducer,jdbcType=VARCHAR},
+            </if>
+            <if test="producerPhone != null">
+                #{producerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentOperator != null">
+                #{equipmentOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorPhone != null">
+                #{operatorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="repairNumber != null">
+                #{repairNumber,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null">
+                #{unit,jdbcType=INTEGER},
+            </if>
+            <if test="equipmentQRCode != null">
+                #{equipmentQRCode,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+        update patrol_equipment
+        <set>
+            <if test="equipmentNo != null">
+                equipmentNo = #{equipmentNo,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentType != null">
+                equipmentType = #{equipmentType,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentName != null">
+                equipmentName = #{equipmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentLocation != null">
+                equipmentLocation = #{equipmentLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentDesc != null">
+                equipmentDesc = #{equipmentDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="isCheck != null">
+                isCheck = #{isCheck,jdbcType=BIT},
+            </if>
+            <if test="checkCycle != null">
+                checkCycle = #{checkCycle,jdbcType=BIT},
+            </if>
+            <if test="equipmentCreateTime != null">
+                equipmentCreateTime = #{equipmentCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="qualityPeriod != null">
+                qualityPeriod = #{qualityPeriod,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deadline != null">
+                deadline = #{deadline,jdbcType=TIMESTAMP},
+            </if>
+            <if test="equipmentProducer != null">
+                equipmentProducer = #{equipmentProducer,jdbcType=VARCHAR},
+            </if>
+            <if test="producerPhone != null">
+                producerPhone = #{producerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentOperator != null">
+                equipmentOperator = #{equipmentOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorPhone != null">
+                operatorPhone = #{operatorPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="repairNumber != null">
+                repairNumber = #{repairNumber,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null">
+                unit = #{unit,jdbcType=INTEGER},
+            </if>
+            <if test="equipmentQRCode != null">
+                equipmentQRCode = #{equipmentQRCode,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where equipmentId = #{equipmentId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+    update patrol_equipment
+    set equipmentNo = #{equipmentNo,jdbcType=VARCHAR},
+      equipmentType = #{equipmentType,jdbcType=VARCHAR},
+      equipmentName = #{equipmentName,jdbcType=VARCHAR},
+      equipmentLocation = #{equipmentLocation,jdbcType=VARCHAR},
+      equipmentDesc = #{equipmentDesc,jdbcType=VARCHAR},
+      isCheck = #{isCheck,jdbcType=BIT},
+      checkCycle = #{checkCycle,jdbcType=BIT},
+      equipmentCreateTime = #{equipmentCreateTime,jdbcType=TIMESTAMP},
+      qualityPeriod = #{qualityPeriod,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      deadline = #{deadline,jdbcType=TIMESTAMP},
+      equipmentProducer = #{equipmentProducer,jdbcType=VARCHAR},
+      producerPhone = #{producerPhone,jdbcType=VARCHAR},
+      equipmentOperator = #{equipmentOperator,jdbcType=VARCHAR},
+      operatorPhone = #{operatorPhone,jdbcType=VARCHAR},
+      repairNumber = #{repairNumber,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=INTEGER},
+      equipmentQRCode = #{equipmentQRCode,jdbcType=LONGVARCHAR},estateId = #{estateId,jdbcType=VARCHAR},
+    where equipmentId = #{equipmentId,jdbcType=VARCHAR}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+    update patrol_equipment
+    set equipmentNo = #{equipmentNo,jdbcType=VARCHAR},
+      equipmentType = #{equipmentType,jdbcType=VARCHAR},
+      equipmentName = #{equipmentName,jdbcType=VARCHAR},
+      equipmentLocation = #{equipmentLocation,jdbcType=VARCHAR},
+      equipmentDesc = #{equipmentDesc,jdbcType=VARCHAR},
+      isCheck = #{isCheck,jdbcType=BIT},
+      checkCycle = #{checkCycle,jdbcType=BIT},
+      equipmentCreateTime = #{equipmentCreateTime,jdbcType=TIMESTAMP},
+      qualityPeriod = #{qualityPeriod,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      deadline = #{deadline,jdbcType=TIMESTAMP},
+      equipmentProducer = #{equipmentProducer,jdbcType=VARCHAR},
+      producerPhone = #{producerPhone,jdbcType=VARCHAR},
+      equipmentOperator = #{equipmentOperator,jdbcType=VARCHAR},
+      operatorPhone = #{operatorPhone,jdbcType=VARCHAR},
+      repairNumber = #{repairNumber,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=INTEGER},
+      estateId = #{estateId,jdbcType=VARCHAR},
+    where equipmentId = #{equipmentId,jdbcType=VARCHAR}
+  </update>
+    <!--=====================设施巡检==============开始=============-->
+    <!--app分页查询巡检设备列表jians.z-->
+    <select id="findAllEquipmentList" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.PatrolEquipmentResp">
+        SELECT
+        pe.equipmentId,
+        pe.equipmentNo,
+        et.typeName AS typeName ,
+        pe.equipmentName,
+        pe.equipmentLocation,
+        DATE_FORMAT(pe.createTime, '%Y-%m-%d %T') AS createTime,
+        pe.checkCycle,
+        pe.estateId
+        FROM
+        patrol_equipment pe
+        LEFT JOIN equipment_type et ON pe.equipmentType =et.typeId
+        WHERE
+        1 = 1 AND pe.isCheck=1 AND  pe.estateId=#{estateId}
+        <if test="keyWord != null">
+            AND (pe.equipmentLocation LIKE concat(concat('%',#{keyWord,jdbcType=VARCHAR}),'%') OR pe.equipmentNo LIKE
+            concat(concat('%',#{keyWord,jdbcType=VARCHAR}),'%') OR pe.equipmentName LIKE
+            concat(concat('%',#{keyWord,jdbcType=VARCHAR}),'%'))
+        </if>
+        <if test="typeId != null and typeId != ''">
+            AND et.typeId = #{typeId}
+        </if>
+        <if test="checkCycle != null and checkCycle != ''">
+            AND pe.checkCycle = #{checkCycle}
+        </if>
+        <if test="checkCycle != null and checkCycle != ''">
+            AND pe.checkCycle = #{checkCycle}
+        </if>
+        ORDER BY pe.createTime DESC
+    </select>
+    <!--web分页查询巡检设备列表jians.z-->
+    <select id="findAllWebEquipmentList" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.PatrolEquipmentResp">
+        select pe.equipmentId, pe.equipmentNo, pe.equipmentName,pe.repairNumber,pe.createTime,pe.isCheck,
+        pe.equipmentLocation,et.typeName,pe.estateId from patrol_equipment pe LEFT JOIN equipment_type et ON  pe.equipmentType=et.typeId where 1=1
+        <if test="equipmentNo != null and equipmentNo != ''">
+            AND pe.equipmentNo LIKE concat(concat('%',#{equipmentNo,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="equipmentName != null and equipmentName != ''">
+            AND pe.equipmentName LIKE concat(concat('%',#{equipmentName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="equipmentLocation != null and equipmentLocation != ''">
+            AND pe.equipmentLocation LIKE concat(concat('%',#{equipmentLocation,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="isCheck != null and isCheck !=''">
+            AND pe.isCheck = #{isCheck}
+        </if>
+        <if test="startTime != null and startTime !=''">
+            AND pe.createTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND pe.createTime &lt;=#{endTime}
+        </if>
+        <if test="typeId != null and typeId != ''">
+            AND pe.equipmentType = #{typeId}
+        </if>
+        <if test="estateId != null and estateId != ''">
+            AND pe.estateId = #{estateId}
+        </if>
+        ORDER BY pe.createTime DESC
+    </select>
+    <!--批量删除巡检设备jians.z-->
+    <delete id="deleteBatchEquipment">
+        DELETE FROM patrol_equipment WHERE equipmentId IN
+        <foreach collection="array" index="index" item="equipmentId" open="(" close=")" separator=",">
+            #{equipmentId}
+        </foreach>
+    </delete>
+    <!--查询巡检设备详情，判断设备编号是否重复  jians.z-->
+    <select id="selectByEquipment" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+        select * from patrol_equipment
+        WHERE 1=1 AND estateId=#{estateId}
+        <if test="equipmentNo != null and equipmentNo != ''">
+            AND equipmentNo =#{equipmentNo}
+        </if>
+        <if test="equipmentId != null and equipmentId != ''">
+            AND equipmentId &lt;&gt; #{equipmentId}
+        </if>
+    </select>
+    <!-- 批量查询巡检设备信息jians.z-->
+    <select id="findBatchEquipmentByIds" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+        SELECT
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        FROM patrol_equipment WHERE equipmentId IN
+        <foreach collection="array" index="index" item="equipmentId" open="(" close=")" separator=",">
+            #{equipmentId}
+        </foreach>
+    </select>
+    <!--=====================设施巡检==============结束=============-->
+    <!--所有设备总数-->
+    <select id="queryAllEquipmentNum" resultType="java.lang.Integer">
+    select COUNT(*) AS allEquipmentNum from patrol_equipment
+  </select>
+
+    <select id="findTodayFinishEquips" resultType="java.lang.String">
+    SELECT e.equipmentId
+    FROM patrol_equipment e
+    WHERE e.equipmentId IN
+    (SELECT r.equipmentId FROM patrol_record r WHERE TO_DAYS(r.createTime) = TO_DAYS(NOW()) AND r.isPatrol = 2 GROUP BY r.equipmentId)
+  </select>
+    <select id="findEqpmtListByCycle" resultType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment"
+            parameterType="java.lang.String">
+        SELECT * FROM patrol_equipment WHERE 1=1
+        <if test="checkCycle != null and checkCycle != ''">
+            AND checkCycle = #{checkCycle}
+        </if>
+    </select>
+
+    <select id="findEquipNos" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT equipmentNo FROM patrol_equipment WHERE  estateId=#{estateId} AND equipmentNo LIKE CONCAT("%",#{equipNo},"%")
+    </select>
+
+    <select id="findByEquipmentIdAndEstateId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolEquipment">
+        SELECT * FROM patrol_equipment WHERE estateId=#{estateId} AND equipmentId = #{equipmentId}
+    </select>
+</mapper>

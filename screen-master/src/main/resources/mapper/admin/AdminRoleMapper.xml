@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.admin.AdminRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.admin.AdminRole" >
+    <id column="roleId" property="roleId" jdbcType="BIGINT" />
+    <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+    <result column="roleDesc" property="roleDesc" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="estateId" property="estateId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    roleId, roleName, roleDesc, createTime,estateId
+  </sql>
+
+  <select id="findRoleIsExistence" resultType="com.betel.estatemgmt.common.model.admin.AdminRole" parameterType="java.lang.String">
+  select
+    <include refid="Base_Column_List" />
+  from admin_role
+  where binary roleName = #{roleName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_role
+    where roleId = #{roleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from admin_role
+    where roleId = #{roleId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.admin.AdminRole" >
+    insert into admin_role (roleId, roleName, roleDesc, 
+      createTime,estateId)
+    values (#{roleId,jdbcType=BIGINT}, #{roleName,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{estateId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminRole"
+          useGeneratedKeys="true" keyProperty="roleId">
+    insert into admin_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="roleName != null" >
+        roleName,
+      </if>
+      <if test="roleDesc != null" >
+        roleDesc,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="estateId != null" >
+        estateId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDesc != null" >
+        #{roleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        #{estateId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminRole" >
+    update admin_role
+    <set >
+      <if test="roleName != null" >
+        roleName = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDesc != null" >
+        roleDesc = #{roleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        estateId = #{estateId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where roleId = #{roleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.AdminRole" >
+    update admin_role
+    set roleName = #{roleName,jdbcType=VARCHAR},
+      roleDesc = #{roleDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where roleId = #{roleId,jdbcType=BIGINT}
+  </update>
+</mapper>

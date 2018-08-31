@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.patrol.PatrolRecordMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        <id column="recordId" property="recordId" jdbcType="VARCHAR"/>
+        <result column="equipmentId" property="equipmentId" jdbcType="VARCHAR"/>
+        <result column="employeeId" property="employeeId" jdbcType="VARCHAR"/>
+        <result column="employeeName" property="employeeName" jdbcType="VARCHAR"/>
+        <result column="recordStatus" property="recordStatus" jdbcType="BIT"/>
+        <result column="recordDesc" property="recordDesc" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="isDelete" property="isDelete" jdbcType="INTEGER"/>
+        <result column="isPatrol" property="isPatrol" jdbcType="INTEGER"/>
+        <result column="serialNo" property="serialNo" jdbcType="VARCHAR"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recordId, equipmentId, employeeId,employeeName, recordStatus, recordDesc, createTime, updateTime,isDelete,isPatrol,serialNo,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from patrol_record
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from patrol_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        <selectKey keyProperty="recordId" resultType="String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into patrol_record (recordId, equipmentId,employeeName, employeeId,
+        recordStatus, recordDesc, createTime,
+        updateTime,isDelete,isPatrol,serialNo,estateId)
+        values (#{recordId}, #{equipmentId,jdbcType=VARCHAR},
+        #{employeeName,jdbcType=VARCHAR},#{employeeId,jdbcType=VARCHAR},
+        #{recordStatus,jdbcType=BIT}, #{recordDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP},#{isDelete,jdbcType=INTEGER},#{isPatrol,jdbcType=INTEGER},#{serialNo,jdbcType=VARCHAR},#{estateId,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        insert into patrol_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                recordId,
+            </if>
+            <if test="equipmentId != null">
+                equipmentId,
+            </if>
+            <if test="employeeId != null">
+                employeeId,
+            </if>
+            <if test="employeeName != null">
+                employeeName,
+            </if>
+            <if test="recordStatus != null">
+                recordStatus,
+            </if>
+            <if test="recordDesc != null">
+                recordDesc,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="isDelete != null">
+                isDelete,
+            </if>
+            <if test="isPatrol != null">
+                isPatrol,
+            </if>
+            <if test="serialNo != null">
+                serialNo,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                #{recordId,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentId != null">
+                #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeId != null">
+                #{employeeId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeName != null">
+                #{employeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="recordStatus != null">
+                #{recordStatus,jdbcType=BIT},
+            </if>
+            <if test="recordDesc != null">
+                #{recordDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="isPatrol != null">
+                #{isPatrol,jdbcType=INTEGER},
+            </if>
+            <if test="serialNo != null">
+                #{serialNo,jdbcType=VARCHAR},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        update patrol_record
+        <set>
+            <if test="equipmentId != null">
+                equipmentId = #{equipmentId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeId != null">
+                employeeId = #{employeeId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeName != null">
+                employeeName = #{employeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="recordStatus != null">
+                recordStatus = #{recordStatus,jdbcType=BIT},
+            </if>
+            <if test="recordDesc != null">
+                recordDesc = #{recordDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                isDelete = #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="isPatrol != null">
+                isPatrol = #{isPatrol,jdbcType=INTEGER},
+            </if>
+            <if test="serialNo != null">
+                serialNo = #{serialNo,jdbcType=VARCHAR},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+    update patrol_record
+    set equipmentId = #{equipmentId,jdbcType=VARCHAR},
+      employeeId = #{employeeId,jdbcType=VARCHAR},
+      employeeName = #{employeeName,jdbcType=VARCHAR},
+      recordStatus = #{recordStatus,jdbcType=BIT},
+      recordDesc = #{recordDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      isDelete = #{isDelete,jdbcType=INTEGER},
+      isPatrol = #{isPatrol,jdbcType=INTEGER},
+      serialNo= #{serialNo,jdbcType=VARCHAR},
+      estateId = #{estateId,jdbcType=VARCHAR},
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+    <!--=================巡检设置==============开始=================-->
+    <!--查询已巡检的任务正常和非正常-->
+    <select id="findAllRecordList" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.Record">
+        SELECT
+        pr.recordId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,pr.employeeName,pr.isPatrol,
+        DATE_FORMAT(pr.updateTime,'%Y-%m-%d %T') AS createTime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN
+        patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE 1=1 AND pr.isDelete &lt;&gt;1 AND pr.isPatrol=2 AND pe.estateId=#{estateId}
+        <if test="tab2 != null and tab2 !=''">
+            AND pr.recordStatus=#{tab2}
+        </if>
+        ORDER BY pr.updateTime DESC
+    </select>
+    <!--待巡检-->
+    <select id="findNotPostList"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.Record"
+            parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq">
+         SELECT NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 DAY) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete  &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 1 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 1,DATE_ADD(pr.createTime,INTERVAL 1 DAY) &gt;= NOW(),'1=1')
+
+        UNION ALL
+
+        SELECT NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 WEEK) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 2 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 2,DATE_ADD(pr.createTime,INTERVAL 1 WEEK) &gt;= NOW(),'1=1')
+
+        UNION ALL
+
+        SELECT
+        NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 MONTH) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 3 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 3,DATE_ADD(pr.createTime,INTERVAL 1 MONTH) &gt;= NOW(),'1=1')
+
+        UNION ALL
+
+        SELECT
+        NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 quarter) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 4 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 4,DATE_ADD(pr.createTime,INTERVAL 1 quarter) &gt;= NOW(),'1=1')
+
+        UNION ALL
+        SELECT
+        NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 year) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 5 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 5,DATE_ADD(pr.createTime,INTERVAL 1 year) &gt;= NOW(),'1=1') ORDER BY createTime DESC,checkCycle ASC,equipmentNo DESC
+    </select>
+    <select id="findPostList"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.Record"
+            parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq">
+
+        SELECT NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 DAY) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete  &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 1 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 1,DATE_ADD(pr.createTime,INTERVAL 1 DAY) &lt; NOW(),'1=1')
+
+        UNION ALL
+
+        SELECT NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 WEEK) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 2 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 2,DATE_ADD(pr.createTime,INTERVAL 1 WEEK) &lt; NOW(),'1=1')
+
+        UNION ALL
+        SELECT
+        NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 MONTH) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 3 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 3,DATE_ADD(pr.createTime,INTERVAL 1 MONTH) &lt; NOW(),'1=1')
+
+        UNION ALL
+
+        SELECT
+        NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 quarter) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 4 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 4,DATE_ADD(pr.createTime,INTERVAL 1 quarter) &lt; NOW(),'1=1')
+
+        UNION ALL
+        SELECT
+        NOW(),pe.equipmentId,pr.isPatrol,
+        pr.recordId,pe.checkCycle,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,
+        DATE_FORMAT(pr.createTime,'%Y-%m-%d') AS createTime,DATE_ADD(pr.createTime,INTERVAL 1 year) AS maxtime,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE  pe.isCheck=1 AND pr.isDelete &lt;&gt; 1 AND pr.isPatrol=1 AND pe.checkCycle = 5 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 5,DATE_ADD(pr.createTime,INTERVAL 1 year) &lt; NOW(),'1=1') ORDER BY createTime DESC,checkCycle ASC,equipmentNo DESC
+    </select>
+    <select id="selectCheckList" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.Record">
+          SELECT aaa.* FROM (SELECT
+        pr.recordId,pr.employeeName,pr.equipmentId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pe.checkCycle,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName,
+        pr.recordStatus,pr.employeeId,DATE_FORMAT(pr.createTime,'%Y-%m-%d %T') AS createTime,pr.estateId,
+        (
+         CASE
+        WHEN pe.checkCycle = 1 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 DAY) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 2 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 WEEK) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 3 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 MONTH) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 4 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 quarter) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 5 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 YEAR) <![CDATA[ < ]]> NOW() THEN 3
+
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 DAY) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 WEEK) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 MONTH) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 quarter) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 YEAR) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        ) AS isPatrol
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId) aaa
+        WHERE 1=1  AND aaa.isPatrol = 1 AND aaa.estateId=#{estateId}
+    </select>
+    <select id="findAllWebRecordList" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.Record">
+        SELECT aaa.* FROM (SELECT
+        pr.recordId,pr.employeeName,pr.equipmentId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pe.checkCycle,
+        (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName,
+        pr.recordStatus,pr.employeeId,DATE_FORMAT(pr.createTime,'%Y-%m-%d %T') AS createTime,
+        DATE_FORMAT(pr.updateTime,'%Y-%m-%d %T') AS updateTime,pr.estateId,
+        (
+        CASE
+        WHEN pe.checkCycle = 1 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 DAY) <![CDATA[ < ]]> NOW() THEN
+        3
+        WHEN pe.checkCycle = 2 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 WEEK) <![CDATA[ < ]]> NOW() THEN
+        3
+        WHEN pe.checkCycle = 3 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 MONTH) <![CDATA[ < ]]> NOW()
+        THEN 3
+        WHEN pe.checkCycle = 4 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 quarter) <![CDATA[ < ]]> NOW()
+        THEN 3
+        WHEN pe.checkCycle = 5 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 YEAR) <![CDATA[ < ]]> NOW() THEN
+        3
+
+        WHEN pe.checkCycle is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 DAY) <![CDATA[ < ]]> NOW()
+        THEN 3
+        WHEN pe.checkCycle is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 WEEK) <![CDATA[ < ]]> NOW()
+        THEN 3
+        WHEN pe.checkCycle is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 MONTH) <![CDATA[ < ]]> NOW()
+        THEN 3
+        WHEN pe.checkCycle is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 quarter) <![CDATA[ < ]]>
+        NOW() THEN 3
+        WHEN pe.checkCycle is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 YEAR) <![CDATA[ < ]]> NOW()
+        THEN 3
+        WHEN pr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        ) AS isPatrol
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId ) aaa
+        WHERE 1=1 AND aaa.estateId=#{estateId}
+        <if test="recordStatus != null and recordStatus != ''">
+            AND aaa.recordStatus = #{recordStatus}
+        </if>
+        <if test="checkCycle != null and checkCycle != ''">
+            AND aaa.checkCycle = #{checkCycle}
+        </if>
+        <if test="employeeName != null and employeeName != ''">
+            AND aaa.employeeName like concat(concat('%',#{employeeName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="isPatrol != null and isPatrol != ''">
+            AND aaa.isPatrol = #{isPatrol}
+        </if>
+        <if test="equipmentNo != null and equipmentNo != ''">
+            AND aaa.equipmentNo like concat(concat('%',#{equipmentNo,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="equipmentType != null and equipmentType != ''">
+            AND aaa.typeName like concat(concat('%',#{equipmentType,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="equipmentName != null and equipmentName != ''">
+            AND aaa.equipmentName like concat(concat('%',#{equipmentName,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="startTime != null and startTime !=''">
+            AND aaa.updateTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND aaa.updateTime &lt;=#{endTime}
+        </if>
+        ORDER BY aaa.createTime DESC,aaa.recordId DESC
+    </select>
+    <select id="findRecordDetail" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq"
+            resultType="com.betel.estatemgmt.business.web.patrol.model.Record">
+        SELECT
+        pr.recordId,pe.equipmentId,pe.equipmentNo,pe.equipmentName,pe.equipmentLocation,pr.recordStatus,pe.checkCycle,
+         (SELECT et.typeName FROM equipment_type et WHERE pe.equipmentType =et.typeId) AS typeName,
+         DATE_FORMAT(pr.createTime,'%Y-%m-%d %T') AS createTime,
+         DATE_FORMAT(pe.equipmentCreateTime,'%Y-%m-%d') AS equipmentCreateTime,pe.qualityPeriod,pe.unit,
+         DATE_FORMAT(pe.deadline,'%Y-%m-%d') AS deadline, pe.equipmentProducer,
+         pe.producerPhone,
+         pe.equipmentOperator,pe.operatorPhone,
+        (
+        CASE
+        WHEN pe.checkCycle = 1 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 DAY) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 2 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 WEEK) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 3 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 MONTH) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 4 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 quarter) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle = 5 AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 YEAR) <![CDATA[ < ]]> NOW() THEN 3
+
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 DAY) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 WEEK) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 MONTH) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 quarter) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pe.checkCycle  is NULL AND pr.isPatrol =1 AND DATE_ADD(pr.createTime,INTERVAL 1 YEAR) <![CDATA[ < ]]> NOW() THEN 3
+        WHEN pr.isPatrol = 2 THEN 2
+        ELSE 1 END
+        )  AS isPatrol,pe.equipmentDesc,pr.recordDesc,pr.employeeName,
+        DATE_FORMAT(pr.updateTime,'%Y-%m-%d %T') AS updateTime
+        FROM
+        patrol_record pr LEFT JOIN
+        patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE pr.recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+    <!--批量删除巡检设备jians.z-->
+    <delete id="deleteBatchRecord" parameterType="com.betel.estatemgmt.business.web.patrol.model.PatrolReq">
+        UPDATE patrol_record SET isDelete=#{isDelete} WHERE recordId IN
+        <foreach collection="arrIds" index="index" item="recordId" open="(" close=")" separator=",">
+            #{recordId}
+        </foreach>
+    </delete>
+    <!--=================巡检设置==============开始=================-->
+    <select id="findList" parameterType="com.betel.estatemgmt.common.model.patrol.PatrolRecord"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM patrol_record pr WHERE serialNo= #{serialNo}
+    </select>
+
+    <select id="findNewestByEquipId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        SELECT * FROM patrol_record
+        WHERE equipmentId = #{equipId} AND TO_DAYS(createTime) = TO_DAYS(NOW())
+        AND isPatrol = 2
+        ORDER BY createTime DESC limit 1
+    </select>
+
+    <select id="findRecords" parameterType="com.betel.estatemgmt.business.web.task.model.TaskCountReq"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        SELECT * FROM patrol_record
+        WHERE
+        estateId = #{estateId}
+        AND isDelete != 2
+        <if test="startTime != null and startTime != ''">
+            and createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and createTime &lt;= #{endTime}
+        </if>
+        AND equipmentId IN (
+        SELECT e.equipmentId FROM patrol_equipment e
+        )
+    </select>
+
+    <select id="findOverRecords" parameterType="com.betel.estatemgmt.business.web.task.model.TaskCountReq"
+            resultType="com.betel.estatemgmt.common.model.patrol.PatrolRecord">
+        SELECT pr.*
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE pr.isDelete != 2 AND pr.isPatrol=1 AND pe.checkCycle = 1 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 1,DATE_ADD(pr.createTime,INTERVAL 1 DAY) &lt; NOW(),'1=1')
+		AND pr.equipmentId IN (SELECT e.equipmentId FROM patrol_equipment e)
+        <if test="startTime != null and startTime != ''">
+            and pr.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and pr.createTime &lt;= #{endTime}
+        </if>
+
+        UNION ALL
+
+        SELECT pr.*
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE pr.isDelete != 2 AND pr.isPatrol=1 AND pe.checkCycle = 2 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 2,DATE_ADD(pr.createTime,INTERVAL 1 WEEK) &lt; NOW(),'1=1')
+		AND pr.equipmentId IN (SELECT e.equipmentId FROM patrol_equipment e)
+        <if test="startTime != null and startTime != ''">
+            and pr.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and pr.createTime &lt;= #{endTime}
+        </if>
+
+        UNION ALL
+        SELECT pr.*
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE pr.isDelete != 2 AND pr.isPatrol=1 AND pe.checkCycle = 3 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 3,DATE_ADD(pr.createTime,INTERVAL 1 MONTH) &lt; NOW(),'1=1')
+        AND pr.equipmentId IN (SELECT e.equipmentId FROM patrol_equipment e)
+        <if test="startTime != null and startTime != ''">
+            and pr.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and pr.createTime &lt;= #{endTime}
+        </if>
+
+        UNION ALL
+
+        SELECT pr.*
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE pr.isDelete != 2 AND pr.isPatrol=1 AND pe.checkCycle = 4 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 4,DATE_ADD(pr.createTime,INTERVAL 1 quarter) &lt; NOW(),'1=1')
+        AND pr.equipmentId IN (SELECT e.equipmentId FROM patrol_equipment e)
+        <if test="startTime != null and startTime != ''">
+            and pr.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and pr.createTime &lt;= #{endTime}
+        </if>
+
+        UNION ALL
+        SELECT pr.*
+        FROM
+        patrol_record pr LEFT JOIN patrol_equipment pe ON pr.equipmentId = pe.equipmentId
+        WHERE pr.isDelete != 2 AND pr.isPatrol=1 AND pe.checkCycle = 5 AND pe.estateId=#{estateId} AND
+        if(pe.checkCycle = 5,DATE_ADD(pr.createTime,INTERVAL 1 year) &lt; NOW(),'1=1')
+        AND pr.equipmentId IN (SELECT e.equipmentId FROM patrol_equipment e)
+        <if test="startTime != null and startTime != ''">
+            and pr.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and pr.createTime &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

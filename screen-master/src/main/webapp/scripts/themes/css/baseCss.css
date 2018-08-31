@@ -1,0 +1,300 @@
+.divTopNotice{display: inline-block; position: relative;}
+.divTopNotice span{ color: #fff;}
+.divTopNotice .spanTopNotice{display: block; line-height: 20px; padding:8px 15px; text-align: center; cursor:pointer;}
+.divTopNotice .spanTopNotice img{ width:22px;}
+.divTopNotice .spanTopNoticeNum{
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width:8px;
+    height: 8px;
+    background-color: #ff0000;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;}
+#j_datagrid tr td .user-image{vertical-align: middle; width: 30px; height: 30px; border-radius: 50%;}
+
+.divConfiguration{ padding-top: 25px;}
+.divConfiguration .table_config  tr td:first-of-type{ width: 120px; text-align: right;}
+.divConfiguration .table_config  tr td:nth-of-type(2){  width:480px;}
+.divConfiguration .table_config .equip_text{  width: 200px; height: 26px;}
+.divConfiguration .table_config .spanNotice{ color: #a5a5a5;}
+
+.datagrid-filter{ display:none;}
+.fa-card{
+    margin-left: 5px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #fff;}
+
+.divSearchBox{position: absolute; top: 6px; right: 30px; z-index: 10;}
+.divSearchBox .textSearch{ border: 0;}
+.textSearch{}
+
+.bjui-pageFooter{ left:0;}
+
+#uploader .filelist li p.imgWrap{ background-color: #fff !important;}
+
+.divFitmentType{ word-break: break-all; width:14%;}
+.mainFitmentContent{  right:0; width:85%; }
+.divLabel{ position: relative;}
+.divLabel .a_delParameter{ position: absolute; top:0;  right:-10px;}
+.divLabel2{ float: left; padding-right:22px; margin-left: 40px; margin-bottom: 10px;}
+.divLabel2 input{  width:160px;}
+.divLabel2 .a_delParameter{ position: static; right: 0;}
+#divAuthenticationInfo .divNew,#divAuthenticationInfo .divOld{ width:50%; float: left;}
+#divAuthenticationInfo .input-width{ width:100%; text-align: center;}
+
+#divEditFunctions .divLabel2{ margin-left: 0;}
+#divEditFunctions .divLabel2 .btn{ margin-right: 2px;}
+#divFunctions .divLabel2{ margin-left: 24px; padding-right: 0;}
+#divFunctions .divLabel2 .btn{ margin-left: 2px; float: right;}
+
+
+.divFitmentName{ font-size: 14px; /*padding: 8px 0; border-bottom: #ccc 1px solid;*/}
+
+.divLabelTitle{ float: left; color: #777;font-weight: 100;     padding: 0 8px;}
+
+.datagrid-add-tr{ display: none;}
+
+.divDrawTitle{}
+.divDrawTitle .span_title{ display: block; text-align: center; font-size: 16px;}
+.divDrawManage{}
+.divDrawManage .divDrawBox{ margin-bottom:30px;}
+.divDrawManage .divDraw{ border: solid #d2dde6 1px;}
+.divDrawManage .divDraw .spanTitle{ text-align:left; display: block; background:#d2dde6; line-height: 2.5; text-align: center;}
+.divDrawManage .divDraw .spanNotice{ text-align:left; display: block; margin-top: 10px;}
+.divDrawManage .divDraw .divDrawPicture{ padding-top: 15px;}
+.divDrawManage .divDraw .divDrawPicture .col-xs-6{ text-align: center;}
+.divDrawManage .divDraw .divDrawPicture .col-xs-6 .divDrawPic{ display: inline-block; width: 140px; height: 140px;}
+.divDrawManage .divDraw .divDrawPicture .col-xs-6 .divDrawPic img{ max-width: 100%; max-height: 140px;}
+.divDrawManage .divDraw .divDrawPicture .col-xs-6 .divDrawPic .divDrawTable{display:table; width:100%; height:100%;}
+.divDrawManage .divDraw .divDrawPicture .col-xs-6 .divDrawPic .divDrawTable .divDrawTableContent{ display:table-cell; text-align:center; vertical-align:middle;}
+.divDrawManage .divDraw .divDrawPicture .col-xs-6 .divBtn{ text-align:left;}
+.divDrawManage .divDraw .divDrawFile{ margin-top: 20px; padding-bottom: 15px;}
+.divDrawManage .divDraw .btn-blue{ margin-right: 10px;}
+
+.divTableHouse{}
+.divTableHouse .row-label,.divTableHouse .row-input{ width: 100% !important;}
+.divTableHouse img{ margin-right: 10px;}
+.divUserName_new img,.divUserName_old img{ margin-right: 0;}
+
+.houseTypeFitmentInfo span{word-wrap: break-word;}
+
+#ztreeFunctions li a{ width:76%;    overflow: hidden;  text-overflow: ellipsis;}
+#ztreeHouseList li a{ width:76%;    overflow: hidden;  text-overflow: ellipsis;}
+
+.divUpload{letter-spacing: normal;}
+
+.a_btn_dowmload{ position: absolute; bottom: 2px; right: 82px;z-index: 2;}
+
+#ztreeBuilding li{}
+#ztreeBuilding li a{ width: 97%; padding: 2px 0;}
+#ztreeBuilding li a:hover{font-weight: normal; background-color:#ecf1f5;}
+#ztreeBuilding li a span{float: left;}
+#ztreeBuilding li a .divBuildingDesc{ width: 54% !important; margin-right: 5%;}
+
+.transactionDetailTitle {margin-bottom:10px;font-weight: bold;text-overflow: ellipsis;white-space: nowrap; overflow: hidden;}
+.transactionDetailStickTop {position: relative;float: right;bottom: 25px;}
+.transactionDetailDesc {margin:10px 0; text-align:justify; text-justify:inter-ideograph; word-wrap:break-word;}
+.transactionDetailPic {list-style-type:none;}
+.transactionDetailPic:after {content:'';clear:both;display:block;}
+.transactionDetailPic li {float:left;}
+.tdReply {border-top: 1px solid #d4cfcf; padding: 10px 0}
+.trrToTop {position: absolute;right: 30px;bottom: 70px;display: none}
+.row-label-manageRole{ width: 28% !important;}
+.row-input-manageRole{ width: 72% !important;}
+
+/*index*/
+.divIndex{}
+.divIndex .indexTitle{ display: block; font-size: 18px; font-weight: bold; color: #333333; padding:20px;}
+.divIndex .divPending{ overflow: hidden; padding-bottom: 10px;  border-bottom: #eee 1px solid;}
+.divIndex .divPending .divBox{ float: left; width:20%; box-sizing: content-box; margin-bottom:20px; cursor: pointer; display: none; }
+.divIndex .divPending .divBox .divBoxContent{ border-left:#5cb85c 2px solid; padding-left: 10px; margin: 0 20px;
+    width:120px;}
+.divIndex .divPending .divBox .divBoxContent:hover .name{ font-size: 28px;}
+.divIndex .divPending .divBox .name{ display: block; font-size: 24px; line-height: 24px;}
+.divIndex .divPending .divBox .title{ display: block; font-size: 14px; color: #999;  padding-top: 8px; line-height:14px; padding-top: 8px;}
+/*.divIndex .divPending .divAuditContent{ float: left; width: 60%;}
+.divIndex .divPending .divAuditContent .divBox{ width: 33.33%;}
+
+.divIndex .divPending .divReport{ float: left; width: 20%;}
+.divIndex .divPending .divReport .divBox{ width:100%;}
+
+.divIndex .divPending .divApprove{ float: left; width: 20%;}
+.divIndex .divPending .divApprove .divBox{ width:100%;}*/
+
+.divIndex .divPending .divBox .divPost{ border-left:#97c774 2px solid; }
+.divIndex .divPending .divBox .divFloor{ border-left:#297d7d 2px solid; }
+.divIndex .divPending .divBox .divReply{ border-left:#97c774 2px solid; }
+.divIndex .divPending .divBox .divActivty{ border-left:#f15822 2px solid; }
+.divIndex .divPending .divBox .divGoods{ border-left:#97c774 2px solid; }
+.divIndex .divPending .divBox .divMessage{ border-left:#03a9f4 2px solid; }
+
+.divIndex .divPending .divBox .divPostReported{ border-left:#f15822 2px solid; }
+.divIndex .divPending .divBox .divFloorReported{ border-left:#297d7d 2px solid; }
+
+.divIndex .divPending .divBox .divCheck{ border-left:#21c05d 2px solid; }
+.divIndex .divPending .divBox .divfix{ border-left:#9D1FBF 2px solid; }
+/*index*/
+
+/*user*/
+.btn-prohibit{ position: absolute; left: 67px; z-index: 2; top: 6px;}
+/*user*/
+
+/*report*/
+.clear{ clear: both; width: 100%; height: 0;}
+
+.divTopicInfo .topic_Title{display: block; font-size: 16px;   font-weight: bold;  color: #333;  padding-bottom: 12px;}
+.divTopicInfo .userInfo{  overflow: hidden;}
+.divTopicInfo .userInfo .userPicture{  float: left; width:56px;}
+.divTopicInfo .userInfo .userPicture img{ width:46px; border-radius: 23px;}
+.divTopicInfo .userInfo .userFloor{  float: left; margin-bottom: 12px; width: 90%;}
+.divTopicInfo .userInfo .userFloor .divReviewStatue{ float: right; color: #fff; background: #FF0000; padding: 0 8px; border-radius: 2px;}
+.divTopicInfo .userInfo .userFloor .userName{ font-size: 14px; line-height: 24px;}
+.divTopicInfo .userInfo .userFloor .userName .span{ margin-left: 8px; font-size: 12px; color:#03a9f4;}
+.divTopicInfo .userInfo .userFloor .floorInfo{ color:#666;}
+.divTopicInfo .userInfo .userFloor .floorInfo .spanFloor,.divTopicInfo .userInfo .userFloor .floorInfo .spanTime,.divTopicInfo .userInfo .userFloor .floorInfo .span{ margin-right: 15px;}
+.divTopicInfo .topicInfo{ padding-left: 56px;}
+.divTopicInfo .topicInfo .topicContent{ font-size: 14px; color:#3b3b3b; margin-bottom: 12px;}
+.divTopicInfo .topicInfo .imgList{ overflow: hidden; margin-bottom: 0; padding-bottom: 12px;;}
+.divTopicInfo .topicInfo .imgList dd{float: left; width: 20%; padding:3px; box-sizing: border-box;}
+.divTopicInfo .topicInfo .imgList dd img{ width: 100%;}
+.divTopicInfo .topicInfo .line{ width:100%; height: 0; border-bottom: #efefef 1px solid}
+.divTopicInfo .reportInfo{ overflow: hidden;}
+.divTopicInfo .reportInfo .bjui-row{ padding-bottom: 0;}
+.divTopicInfo .reportInfo .divLeft,.divTopicInfo .reportInfo .divRight{ width: 50%; float: left;}
+.divTopicInfo .reportInfo .divRight .row-label{ width: 38% !important;}
+.divTopicInfo .reportInfo .divRight .row-input{ width: 62% !important;}
+.divTopicInfo .reportInfo .row-input{word-wrap: break-word;}
+/*.divTopicInfo .disposeReport{ padding-top: 0;}*/
+.divTopicInfo .disposeReport .row-label{ width: 25% !important;}
+.divTopicInfo .disposeReport .row-input{ width: 75% !important;}
+.divTopicInfo .disposeReport .divDisposeReport{ text-align: center; width:100% !important;}
+.divTopicInfo .disposeReport .divPunishment{/* display: none;*/ background-color: #f0f0f0; padding: 20px 0 10px 0;}
+/*report*/
+
+/**/
+.bjui-dialog > .resizable_h_l{ cursor: default;}
+.bjui-dialog > .resizable_h_r{ cursor: default;}
+.bjui-dialog > .resizable_h_c{ cursor: default;}
+.bjui-dialog > .resizable_c_l{ cursor: default;}
+.bjui-dialog > .resizable_c_r{ cursor: default;}
+.bjui-dialog > .resizable_f_l{ cursor: default;}
+.bjui-dialog > .resizable_f_r{ cursor: default;}
+.bjui-dialog > .resizable_f_c{ cursor: default;}
+/**/
+
+
+/*横向滚动条*/
+.bjui-datagrid .datagrid-box-b{ overflow-y: auto; overflow-x: hidden;}
+
+.payment_table{ width:100%; text-align: center; border-top:#f3f3f3 1px solid; border-left:#f3f3f3 1px solid;}
+.payment_table .payment_table_thead{ background-color: #f6f6f6;}
+.payment_table .payment_table_thead tr th{text-align: center; padding:  6px; box-sizing: content-box; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;}
+.payment_table .payment_table_tbody tr td{ padding: 6px; box-sizing: content-box; border-bottom:#f3f3f3 1px solid; border-right:#f3f3f3 1px solid;}
+
+.divHouseStatus{  width:100%; height: 94%; text-align: center; padding-right: 10px; box-sizing: border-box;}
+.divHouseStatus .buildingTitle{  width:100%;font-size: 16px; color: #333333; margin-bottom: 18px; margin-top:18px; font-weight: bold;}
+.divHouseStatus .divBuildingContent{ height: 90%;}
+.divHouseStatus .divBuildingContent .divUnitTitle{ text-align: left;}
+.divHouseStatus .divBuildingContent .divUnitTitle .unitTitle{  float: left; display:block; font-size: 14px; color: #8f8f8f;
+    padding:5px 19px; border: 1px solid #fff; cursor: pointer;}
+.divHouseStatus .divBuildingContent .divHouseBox{ height:94%; padding: 22px 18px; border: 1px solid #CAD4DA;}
+.divHouseStatus .divBuildingContent .divHouseBox .divHouseTitle{ height:100%; overflow-y: auto;}
+.divHouseStatus .divBuildingContent .divUnitTitle .on{color: #333; border: 1px solid #CAD4DA;  border-bottom: 2px solid #fff;  font-weight: bold;  position: relative; top:1px;}
+.divHouseStatus .divBuildingContent .divHouseTitle{ /*border: 1px solid #CAD4DA; padding: 22px 18px; */display: none;}
+.divHouseStatus .divBuildingContent .divHouseTitle .houseTitle{  display: block; float: left; width: 76px; height: 35px; line-height: 35px; border-radius: 8px; margin: 10px;
+    background: #B9B9B8; color: #fff;font-size: 14px; cursor: pointer;}
+.divHouseStatus .divBuildingContent .divHouseTitle .onHouseTitle{background: #4EAFEA;}
+.divHouseStatus .divBuildingContent .divHouseTitle .outHouseTitle{background: #D8A149;}
+
+.divHouseStatus .divBuildingContent .divRightReminder {font-size: 14px;  color: #333333; text-align: right; position: absolute;  right: 20px;}
+.divHouseStatus .divBuildingContent .divRightReminder span{ margin-left: 15px;}
+.divHouseStatus .divBuildingContent .divRightReminder span b{ display:inline-block; margin-right: 5px; background: #B9B9B8; width:10px; height: 10px; border-radius: 50%;}
+.divHouseStatus .divBuildingContent .divRightReminder .span1 b{ background: #4EAFEA;}
+.divHouseStatus .divBuildingContent .divRightReminder .span2 b{ background: #D8A149;}
+/*#divLeaseholder{ display: none;}*/
+
+/*设备巡检的详情*/
+.patrolDetail{ width:100%; border-top: #ddd 1px solid; border-left: #ddd 1px solid; table-layout:fixed; /*使水平布局不受单元格的内容的影响*/  }
+.patrolDetail tr td{ width: 25%; padding: 8px 5px; box-sizing: border-box; border-right: #ddd 1px solid; border-bottom: #ddd 1px solid; word-break: break-all;}
+.patrolDetail tr td.td_left{ width:20%; text-align: right;}
+.patrolDetail tr td.td_right{ width:30%;}
+.patrolDetail tr td.editBg{ background: #fff8e1;}
+
+.patrolDetail_border{  border: 0; margin-top: 30px;}
+.patrolDetail_border tr td{ border: 0;}
+.patrolDetail_border tr td.td_left{ width:15%; text-align: right;}
+.patrolDetail_border tr td.td_left2{ width:16%; padding-left: 3%; box-sizing: border-box; text-align: right;}
+.patrolDetail_border tr td.td_right{ width:35%; padding-right: 5%; box-sizing: border-box;}
+.patrolDetail_border tr td.td_right .wrap_bjui_btn_box{ width: 100%;}
+
+.patrolDetail_border .required{background: url(img/error-bg.png) no-repeat center right 16px;}
+/*设备巡检的详情里面嵌套的表格*/
+.patrolDetail_center{width:100%; border-bottom: #ddd 1px solid;}
+.patrolDetail_center:last-of-type{ border-bottom: 0;}
+.patrolDetail_center tr td{width:50%;  border: 0; }
+
+.patrolDetail_center2 tr td{width:33.33%;  border: 0; padding: 5px;}
+.patrolDetail_center2 tr td:nth-child(n){ width: 28%;}
+.patrolDetail_center2 tr td:nth-child(2n){ width: 22%;}
+.patrolDetail_center2 tr td:nth-child(3n){ width: 50%;}
+
+.patrolDetail .patrolDetail_tr{ display: none;}
+
+
+
+/*输入框的下拉*/
+#equipmentNoListDiv:hover ul#equipmentNoList{ display: block;}
+#equipmentNoListDiv ul#equipmentNoList{ display: none; max-height: 262px;  overflow-y: auto; position: absolute; top: 31px; right:39px; width: 84%; padding:10px 0; border: #CCCCCC 1px solid; background-color: #fff; box-sizing: border-box; z-index: 10;}
+#equipmentNoListDiv ul#equipmentNoList li{ padding: 5px 7px; cursor: pointer;}
+#equipmentNoListDiv ul#equipmentNoList li:hover { background-color: #428bca; color: #fff;}
+
+
+/*手机预览*/
+.divCheckInPhoneBg{ background-color: rgba(0,0,0,0.5); position: fixed; left: 0; top:0; width: 100%; height: 100%; z-index:32;text-align: center;}
+.divCheckInPhone{ position: fixed; left: 50%; top: 50%; z-index: 33; width: 284px; height: 580px; margin-left: -142px; margin-top: -300px; box-sizing: border-box; /*position: fixed; left: 50%; top:5%; width: 34%; max-width: 380px; margin-left: -185px; height: 90%; max-height: 770px; *//*background:url(../../../images/icon_phone_bg.png) no-repeat center center; background-size: 100% 100%; z-index:3;*/}
+.divCheckInPhone img{ width:auto; /*height: 100%; */vertical-align: middle; }
+.divCheckInPhone .divCheckInPhoneMain{ position: absolute; left: 0; top:0; width: 100%; height: 100%; padding: 26% 6%; box-sizing: border-box; /* width: 300px; height: 80%;*/}
+.divCheckInPhone .divCheckInPhoneMainScroll{ overflow-y: auto; height: 100%;}
+.divCheckInPhone .divCheckInPhoneMain .divCheckInPhoneMainContent{ /*height: 100%; overflow-y: auto;*/ padding: 10px 4px 10px 6px; text-align: center;}
+.divCheckInPhone .divCheckInPhoneMain .divCheckInPhoneMainContent .divCheckInPhone_title{ font-size: 18px;}
+.divCheckInPhone .divCheckInPhoneMain .divCheckInPhoneMainContent .divCheckInPhone_time{ font-size: 14px; color:#999; padding: 6px 0;}
+.divCheckInPhone .divCheckInPhoneMain .divCheckInPhoneMainContent .divCheckInPhone_content{ text-align: left; word-break: break-all; word-wrap: break-word;}
+.divCheckInPhone .divCheckInPhoneMain .divCheckInPhoneMainContent .divCheckInPhone_content img{ max-width: 100%; max-height: 355px!important;}
+/*滚动条*/
+.divCheckInPhone .divCheckInPhoneMainScroll::-webkit-scrollbar{
+    width:4px;
+    height:4px;
+}
+.divCheckInPhone .divCheckInPhoneMainScroll::-webkit-scrollbar-track{
+    background: #f6f6f6;
+    border-radius:2px;
+}
+.divCheckInPhone .divCheckInPhoneMainScroll::-webkit-scrollbar-thumb{
+    background: #aaa;
+    border-radius:2px;
+}
+.divCheckInPhone .divCheckInPhoneMainScroll::-webkit-scrollbar-thumb:hover{
+    background: #747474;
+}
+.divCheckInPhone .divCheckInPhoneMainScroll::-webkit-scrollbar-corner{
+    background: #f6f6f6;
+}
+/*滚动条*/
+
+
+/*巡逻内容--定时发布时间*/
+.divTimeList{}
+.divTimeList .divTimeInput{ display: inline-block; width: 102px; padding-right:20px; position: relative; margin-right: 14px; margin-top: 5px; margin-bottom: 5px;}
+.divTimeList .divTimeInput:nth-child(3n){ margin-right: 0;}
+.divTimeList .divTimeInput .spanDelete{ cursor: pointer; position: absolute;top: 0;right: 0;width: 20px;height: 100%;color: #F00;display: block;text-align: center;line-height: 24px;font-weight: bold;}
+.divTimeList .divTimeInput input{background-color: #eee;  opacity: 1;  display: inline-block;  color: #222;  background-image: none;  border: 1px solid #cccccc;  position: relative;  display: inline-block;  padding: 2px 5px;  width: 100%;  height: 24px;  font-size: 14px;  vertical-align: middle;  border-radius: 2px;  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;}
+
+
+
+

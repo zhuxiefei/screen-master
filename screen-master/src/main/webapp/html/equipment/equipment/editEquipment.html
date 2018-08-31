@@ -1,0 +1,322 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow: visible;" data-toggle="ajaxform">
+        <!--<div class="bjui-row col-1" style="margin-left: -58px">-->
+            <!--<label class="row-label">设备编号:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入设备编号"/>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">设备名称:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="equipmentName" name="equipmentName" value="" data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入设备名称"/>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">设备位置:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="equipmentLocation" name="equipmentLocation" value=""-->
+                       <!--data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入所在位置"/>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">巡查内容:</label>-->
+            <!--<div class="row-input required">-->
+         <!--<textarea placeholder="请输入巡查内容（最多500个字）" data-rule="required,length(~500)" style="height: 120px" id="equipmentDesc"-->
+                   <!--name="equipmentDesc"></textarea>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">保修截止日期:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="deadline" name="deadline"-->
+                       <!--data-rule="required" value="" placeholder="请输入保修截止日期"-->
+                       <!--data-toggle="datepicker" data-pattern="yyyy-MM-dd"-->
+                       <!--readonly="readonly">-->
+            <!--</div>-->
+
+            <!--<label class="row-label">生产厂商:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="equipmentProducer" name="equipmentProducer" value=""-->
+                       <!--data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入生产厂商"/>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">生产厂商电话:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="producerPhone" name="producerPhone" value=""-->
+                       <!--data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入生产厂商电话"/>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">维修厂商:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="equipmentOperator" name="equipmentOperator" value=""-->
+                       <!--data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入维修厂商"/>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">维修厂商电话:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<input type="text" id="operatorPhone" name="operatorPhone" value=""-->
+                       <!--data-rule="required,special,length(~15)"-->
+                       <!--placeholder="请输入维修厂商电话"/>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="bjui-row col-1" style="margin-left: -58px">
+            <label class="row-label">设备类型:</label>
+            <div class="row-input required">
+                <select id="equipmentType" name="equipmentType" data-toggle="selectpicker" data-rule="required" data-width="100%">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <label class="row-label">设备编号:</label>
+            <div class="row-input required">
+                <input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">设备名称:</label>
+            <div class="row-input required">
+                <input type="text" id="equipmentName" name="equipmentName" value="" data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">所在位置:</label>
+            <div class="row-input required">
+                <input type="text" id="equipmentLocation" name="equipmentLocation" value=""
+                       data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+            <label class="row-label">是否需要巡检:</label>
+            <div class="row-input required">
+                <select id="isCheck" name="isCheck" data-rule="required" data-toggle="selectpicker" data-width="100%" onchange="isCheckChange(this.value)">
+                    <option value="">--请选择--</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+            <div id="checkArea">
+
+            </div>
+            <!--<label class="row-label">巡检周期:</label>-->
+            <!--<div class="row-input required">-->
+                <!--<select id="checkCycle" name="checkCycle" data-toggle="selectpicker" data-width="100%">-->
+                    <!--<option value="1">每天</option>-->
+                    <!--<option value="2">每月</option>-->
+                    <!--<option value="3">每周</option>-->
+                    <!--<option value="4">季度</option>-->
+                    <!--<option value="5">年度</option>-->
+                <!--</select>-->
+            <!--</div>-->
+
+            <!--<label class="row-label">巡查内容:</label>-->
+            <!--<div class="row-input required">-->
+         <!--<textarea placeholder="请输入巡查内容（最多500个字）" data-rule="required,length(~500)" style="height: 120px" id="equipmentDesc"-->
+                   <!--name="equipmentDesc"></textarea>-->
+            <!--</div>-->
+
+            <label class="row-label">生产日期:</label>
+            <div class="row-input required">
+                <input type="text" id="equipmentCreateTime" name="equipmentCreateTime"
+                       data-rule="required" value="" placeholder=""
+                       data-toggle="datepicker" data-pattern="yyyy-MM-dd"
+                       readonly="readonly" onchange="createTimeChange()">
+            </div>
+
+            <label class="row-label">质保期:</label>
+            <div class="row-input required">
+                <input type="text" id="qualityPeriod" name="qualityPeriod" value=""
+                       data-rule="required,number1000"
+                       placeholder="" style="width: 68%" onblur="getDeadLine(this.value)">
+                <select id="unit" name="unit" data-toggle="selectpicker" data-width="29%" onchange="triggerDeadLine()">
+                    <option value="2">月</option>
+                    <option value="1">天</option>
+                    <option value="3">年</option>
+                </select>
+            </div>
+
+            <label class="row-label">保修截止日期:</label>
+            <div class="row-input">
+                <input type="text" id="deadline" name="deadline"
+                       data-rule="required" value=""
+                       readonly="readonly">
+            </div>
+
+            <label class="row-label">生产厂商:</label>
+            <div class="row-input required">
+                <input type="text" id="equipmentProducer" name="equipmentProducer" value=""
+                       data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">生产厂商电话:</label>
+            <div class="row-input required">
+                <input type="text" id="producerPhone" name="producerPhone" value=""
+                       data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">维修厂商:</label>
+            <div class="row-input required">
+                <input type="text" id="equipmentOperator" name="equipmentOperator" value=""
+                       data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+
+            <label class="row-label">维修厂商电话:</label>
+            <div class="row-input required">
+                <input type="text" id="operatorPhone" name="operatorPhone" value=""
+                       data-rule="required,special,length(~15)"
+                       placeholder=""/>
+            </div>
+        </div>
+
+        <input type="hidden" id="equipmentId" name="equipmentId" value="">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addEquipment" class="btn-default" data-icon="save">提交</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    var data=$.CurrentNavtab.data("findEquipmentDetail");
+    BJUI.ajax('doajax', {
+        url: path + '/web/patrol/v1/findTypeList',
+        data:{
+            'equipmentType':""
+        },
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                console.log(json.data)
+                var typeData=json.data;
+                for(var i=0;i<typeData.length;i++){
+                    var html='<option value="'+typeData[i].typeId+'">'
+                            +typeData[i].typeName
+                            +'</option>'
+                    $.CurrentDialog.find('#equipmentType').append(html);
+                }
+                $.CurrentDialog.find('#equipmentType').val(data.equipmentType).selectpicker('refresh');
+
+            } else {
+                successBack(json)
+            }
+        }
+    });
+    $.CurrentDialog.find('#equipmentNo').val(data.equipmentNo);
+    $.CurrentDialog.find('#equipmentName').val(data.equipmentName);
+    $.CurrentDialog.find('#equipmentLocation').val(data.equipmentLocation);
+    $.CurrentDialog.find('#equipmentDesc').val(data.equipmentDesc);
+    $.CurrentDialog.find('#equipmentId').val(data.equipmentId);
+    $.CurrentDialog.find('#deadline').val(data.deadline.substr(0,10));
+    $.CurrentDialog.find('#equipmentProducer').val(data.equipmentProducer);
+    $.CurrentDialog.find('#producerPhone').val(data.producerPhone);
+    $.CurrentDialog.find('#equipmentOperator').val(data.equipmentOperator);
+    $.CurrentDialog.find('#operatorPhone').val(data.operatorPhone);
+    $.CurrentDialog.find('#operatorPhone').val(data.operatorPhone);
+    $.CurrentDialog.find('#equipmentCreateTime').val(data.equipmentCreateTime.substr(0,10));
+    $.CurrentDialog.find('#qualityPeriod').val(data.qualityPeriod);
+    $.CurrentDialog.find('#unit').val(data.unit).selectpicker('refresh');
+    $.CurrentDialog.find('#isCheck').val(data.isCheck).selectpicker('refresh');
+
+    isCheckChange(data.isCheck,"init");
+    function isCheckChange(e,a) {
+        var  html=[' <label class="row-label">巡检周期:</label>',
+            '            <div class="row-input required">',
+            '                <select id="checkCycle" name="checkCycle" data-toggle="selectpicker" data-width="100%" style="width: 100%">',
+            '                    <option value="1">每日巡检</option>',
+            '                    <option value="2">每周巡检</option>',
+            '                    <option value="3">月度巡检</option>',
+            '                    <option value="4">季度巡检</option>',
+            '                    <option value="5">年度巡检</option>',
+            '                </select>',
+            '            </div>',
+            '            <label class="row-label">巡查内容:</label>',
+            '            <div class="row-input required">',
+            '         <textarea placeholder="请输入巡查内容（最多500个字）" data-rule="required,length(~500)" style="width:100%" id="equipmentDesc"',
+            '                   name="equipmentDesc"></textarea>',
+            '            </div>'].join("");
+        if(e==1){
+            $.CurrentDialog.find('#checkArea').append(html);
+            $.CurrentDialog.find('#checkCycle').selectpicker('refresh');
+            if(a=="init"){
+                $.CurrentDialog.find('#checkCycle').val(data.checkCycle).selectpicker('refresh');
+                $.CurrentDialog.find('#equipmentDesc').val(data.equipmentDesc);
+            }
+        }else{
+            $.CurrentDialog.find('#checkArea').empty();
+        }
+    }
+
+    $.CurrentDialog.find('button#addEquipment').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/patrol/v1/updateEquipment',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','操作成功，设备信息已更新请重新打印二维码!');
+                    BJUI.dialog('closeCurrent');
+                    $.CurrentNavtab.find("#facilities_datagrid").datagrid('refresh',true);
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+
+    function triggerDeadLine() {
+        $.CurrentDialog.find('#qualityPeriod').blur();
+    }
+
+    function createTimeChange() {
+        $.CurrentDialog.find('#qualityPeriod').blur();
+    }
+    function getDeadLine(AddDayCount) {
+        if(!AddDayCount||AddDayCount.trim()==""){
+            $.CurrentDialog.find('#deadline').val("");
+            return
+        }
+        var createTime=$.CurrentDialog.find('#equipmentCreateTime').val();
+        if(createTime==""||createTime==undefined||createTime==null){
+            BJUI.alertmsg('error','请填写生产日期');
+            return
+        }
+        var dd = new Date(createTime);
+        var unit=$.CurrentDialog.find('#unit').val();
+        if(unit==1){
+            dd.setDate(dd.getDate()+parseFloat(AddDayCount));
+            var y = dd.getFullYear();
+            var m = (dd.getMonth()+1)<10?"0"+(dd.getMonth()+1):(dd.getMonth()+1);
+            var d = dd.getDate()<10?"0"+dd.getDate():dd.getDate();
+            var deadLineDate= y+"-"+m+"-"+d;
+        }else if(unit==2){
+//            var d = new Date();
+            dd.setMonth(dd.getMonth() + parseFloat(AddDayCount));
+            var yy1 = dd.getFullYear();
+            var mm1 = dd.getMonth()+1;
+            var dd1 = dd.getDate();
+            if (mm1 < 10 ) {
+                mm1 = '0'+ mm1;
+            }
+            if (dd1 < 10) {
+                dd1 = '0' + dd1;
+            }
+            var deadLineDate=yy1 + '-' + mm1 + '-' + dd1
+        }else{
+            var y = dd.getFullYear()+parseFloat(AddDayCount);
+            var m = (dd.getMonth()+1)<10?"0"+(dd.getMonth()+1):(dd.getMonth()+1);
+            var d = dd.getDate()<10?"0"+dd.getDate():dd.getDate();
+            var deadLineDate= y+"-"+m+"-"+d;
+        }
+        $.CurrentDialog.find('#deadline').val(deadLineDate);
+    }
+</script>

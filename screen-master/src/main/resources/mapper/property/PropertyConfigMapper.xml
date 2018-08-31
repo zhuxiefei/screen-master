@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.property.PropertyConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.property.PropertyConfig" >
+    <id column="confName" property="confName" jdbcType="VARCHAR" />
+    <id column="estateId" property="estateId" jdbcType="VARCHAR" />
+    <result column="confValue" property="confValue" jdbcType="VARCHAR" />
+    <result column="confType" property="confType" jdbcType="VARCHAR" />
+    <result column="confDesc" property="confDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    confName,estateId, confValue, confType, confDesc
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from property_config
+    where confName = #{confName,jdbcType=VARCHAR}
+    AND estateId = #{estateId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from property_config
+    where confName = #{confName,jdbcType=VARCHAR}
+    AND estateId = #{estateId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.property.PropertyConfig" >
+    insert into property_config (confName,estateId, confValue, confType,
+      confDesc)
+    values (#{confName,jdbcType=VARCHAR},#{estateId,jdbcType=VARCHAR}, #{confValue,jdbcType=VARCHAR}, #{confType,jdbcType=VARCHAR},
+      #{confDesc,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyConfig" >
+    insert into property_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="confName != null" >
+        confName,
+      </if>
+      <if test="estateId != null" >
+        estateId,
+      </if>
+      <if test="confValue != null" >
+        confValue,
+      </if>
+      <if test="confType != null" >
+        confType,
+      </if>
+      <if test="confDesc != null" >
+        confDesc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="confName != null" >
+        #{confName,jdbcType=VARCHAR},
+      </if>
+      <if test="estateId != null" >
+        #{estateId,jdbcType=VARCHAR},
+      </if>
+      <if test="confValue != null" >
+        #{confValue,jdbcType=VARCHAR},
+      </if>
+      <if test="confType != null" >
+        #{confType,jdbcType=VARCHAR},
+      </if>
+      <if test="confDesc != null" >
+        #{confDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.property.PropertyConfig" >
+    update property_config
+    <set >
+      <if test="confValue != null" >
+        confValue = #{confValue,jdbcType=VARCHAR},
+      </if>
+      <if test="confType != null" >
+        confType = #{confType,jdbcType=VARCHAR},
+      </if>
+      <if test="confDesc != null" >
+        confDesc = #{confDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where confName = #{confName,jdbcType=VARCHAR}
+            AND estateId = #{estateId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.property.PropertyConfig" >
+    update property_config
+    set confValue = #{confValue,jdbcType=VARCHAR},
+      confType = #{confType,jdbcType=VARCHAR},
+      confDesc = #{confDesc,jdbcType=VARCHAR}
+    where confName = #{confName,jdbcType=VARCHAR}
+          AND estateId = #{estateId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateRemindDays" parameterType="com.betel.estatemgmt.business.web.remind.model.AddRemindDaysReq">
+    UPDATE property_config
+    SET confValue = #{remindDays}
+    WHERE confName = #{confName}
+    AND estateId = #{estateId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByConfNames" parameterType="java.lang.String"
+          resultType="com.betel.estatemgmt.business.web.remind.model.RemindDays">
+    SELECT
+    confName,
+    confValue
+    FROM property_config
+    WHERE confName IN
+    <foreach collection="confNames" item="confName" open="(" separator="," close=")">
+      #{confName}
+    </foreach>
+    AND estateId = #{estateId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByConfName" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.repair.model.RepairCharge">
+    SELECT
+    confName,
+    confValue
+    FROM property_config
+    WHERE confName = #{name}
+    AND estateId = #{estateId,jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -1,0 +1,41 @@
+<div class="bjui-pageContent" style="overflow: visible">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label">定时发布时间: </label>
+            <div class="row-input required">
+                <input type="text" id="inspectionTime" name="inspectionTime" placeholder="" readonly data-toggle="datepicker"
+                       data-pattern="HH:mm" data-rule="定时发布时间: required,matchE[datetime]" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addTime" class="btn-default" data-icon="save">新增</button></li>
+    </ul>
+</div>
+<script>
+    //$.CurrentDialog.find('button#addTime').bind("click", function(){
+    $.CurrentDialog.find('button#addTime').click(function(){
+        var time = $.CurrentDialog.find('#inspectionTime').val();
+        if(time == ""){
+            BJUI.alertmsg('error', '定时发布时间不能为空！');
+        }else{
+            var equalNum = 0;
+            if($('.divTimeList .divTimeInput').length > 0){
+                $('.divTimeList .divTimeInput').each(function (i) {
+                    if(time == $(this).find("input").val()){
+                        equalNum++;
+                    }
+                })
+            }
+            if(equalNum == 0){
+                $.CurrentNavtab.data("securityContentAddTime",time);
+                BJUI.dialog('close','dialog_addTime');
+            }else{
+                BJUI.alertmsg('error', '该时间点已存在！');
+            }
+        }
+    })
+</script>

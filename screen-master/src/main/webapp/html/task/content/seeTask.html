@@ -1,0 +1,178 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;" data-toggle="ajaxform">
+        <table class="patrolDetail">
+            <tr>
+                <td class="td_left">任务编号:</td>
+                <td class="td_right" id="taskNo"></td>
+                <td class="td_left">任务类型: </td>
+                <td class="td_right" id="typeName"></td>
+            </tr>
+            <tr>
+                <td class="td_left">任务状态:</td>
+                <td class="td_right" id="taskStatus"></td>
+                <td class="td_left">截止时间: </td>
+                <td class="td_right" id="closeTime"></td>
+            </tr>
+            <tr>
+                <td class="td_left">发布人:</td>
+                <td class="td_right" id="createUserName"></td>
+                <td class="td_left">发布时间: </td>
+                <td class="td_right" id="createTime"></td>
+            </tr>
+            <tr>
+                <td class="td_left">更新人员:</td>
+                <td class="td_right" id="lastModifyName"></td>
+                <td class="td_left">更新时间: </td>
+                <td class="td_right" id="updateTime"></td>
+            </tr>
+            <tr>
+                <td class="td_left">接受人:</td>
+                <td class="td_right" id="executer"></td>
+                <td class="td_left hideRefuseAccept">接受时间:</td>
+                <td class="td_right hideRefuseAccept" id="acceptTime"></td>
+                <td class="td_left rejectTime">拒绝时间:</td>
+                <td class="td_right rejectTime" id="refuseTime"></td>
+            </tr>
+            <tr class="rejectTime">
+                <td class="td_left">拒绝原因:</td>
+                <td class="td_right" colspan="3" id="refuseReason"></td>
+            </tr>
+            <tr>
+                <td class="td_left">任务概述: </td>
+                <td class="td_right" colspan="3" id="taskDesc"></td>
+            </tr>
+            <tr class="taskPic">
+                <td class="td_left">完成任务图片: </td>
+                <td class="td_right" colspan="3" id="activity_detail_info"></td>
+            </tr>
+        </table>
+        <!--<div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">任务编号: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="taskNo"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">任务类型: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="typeName"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">任务概述: </label>
+            <div class="row-input " style="width: 75%;">
+                <span id="taskDesc" class="detail-info-all"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">任务状态: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="taskStatus"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">发布人: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="createUserName"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">发布时间: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="createTime"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">更新时间: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="updateTime"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">更新人员: </label>
+            <div class="row-input" style="width: 75%;">
+                <span id="lastModifyName"></span>
+            </div>
+            <label class="row-label hideRefuseAccept" style="width: 25%;display: none">接受时间: </label>
+            <div class="row-input hideRefuseAccept" style="width: 75%;display: none">
+                <span id="acceptTime"></span>
+            </div>
+            <label class="row-label hideRefuse" style="width: 25%;display: none">拒绝时间: </label>
+            <div class="row-input hideRefuse" style="width: 75%;display: none">
+                <span id="refuseTime"></span>
+            </div>
+            <label class="row-label hideRefuse" style="width: 25%;display: none">拒绝原因: </label>
+            <div class="row-input hideRefuse detail-info-all" style="width: 75%;display: none">
+                <span id="refuseReason"></span>
+            </div>
+            <label class="row-label" style="width: 25%;">接受人: </label>
+            <div class="row-input " style="width: 75%;">
+                <span id="executer"></span>
+            </div>
+            <label class="row-label hidePic" style="width: 25%;display: none">任务图片: </label>
+            <div id="activity_detail_info" class="hidePic" style="margin-left: 5px;display: none"></div>
+        </div>-->
+    </form>
+    <ul style="list-style: none;overflow: hidden;padding: 10px" id="executerListEdit"></ul>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    //页面赋值
+    var data = $.CurrentNavtab.data("findTask");
+    if(data.typeName==""||data.typeName==null||data.typeName==undefined){
+        data.typeName="<i>已被删除</i>"
+    }
+    $.CurrentDialog.find('#typeName').html(data.typeName);
+    if (data.taskStatus == 1) {
+        var StatusHtml = '待接受';
+
+        $.CurrentDialog.find('.rejectTime').hide();  //拒绝时间、拒绝原因
+        $.CurrentDialog.find('.taskPic').hide(); //任务图片
+    } else if (data.taskStatus == 2) {
+        var StatusHtml = '进行中';
+
+        $.CurrentDialog.find('.rejectTime').hide();   //拒绝时间、拒绝原因
+        $.CurrentDialog.find('.taskPic').hide(); //任务图片
+    } else if (data.taskStatus == 3) {
+        var StatusHtml = '已完成';
+
+        $.CurrentDialog.find('.rejectTime').hide();   //拒绝时间、拒绝原因
+        $.CurrentDialog.find('.taskPic').show(); //任务图片
+    } else {
+        var StatusHtml = '超时未完成';
+//        $.CurrentDialog.find('.hideRefuseAccept').hide();  //接受时间
+        $.CurrentDialog.find('.rejectTime').hide();  //拒绝时间、拒绝原因
+        $.CurrentDialog.find('.taskPic').hide();   //任务图片
+    }
+    $.CurrentDialog.find('#taskStatus').html(StatusHtml);
+    $.CurrentDialog.find('#taskNo').html(data.taskNo);
+    $.CurrentDialog.find('#createTime').html(data.createTime);
+    $.CurrentDialog.find('#updateTime').html(data.updateTime);
+    $.CurrentDialog.find('#closeTime').html(data.closeTime);
+    $.CurrentDialog.find('#taskDesc').text(data.taskDesc);
+    $.CurrentDialog.find('#createUserName').html(data.createUserName);
+    $.CurrentDialog.find('#lastModifyName').html(data.lastModifyName);
+    if (data.taskStatus == 4) {
+        $.CurrentDialog.find('#refuseTime').html(data.refuseTime);
+        $.CurrentDialog.find('#refuseReason').html(data.refuseReason);
+        $.CurrentDialog.find('.hideRefuse').show();
+    }
+    if (data.taskStatus == 2 || data.taskStatus == 3) {
+        $.CurrentDialog.find('#acceptTime').html(data.acceptTime);
+        $.CurrentDialog.find('.hideRefuseAccept').show();
+    }
+    $.CurrentDialog.find('#executer').append(data.executorName);
+
+    if (data.taskStatus == 3) {
+        if (data.pictures.length > 0) {
+            $.CurrentDialog.find('#activity_detail_info').html("");
+            var html = "";
+            for (var i = 0; i < data.pictures.length; i++) {
+                html = html + '<li  style="width: 20%;height:49%" ><a class="" href="' + data.pictures[i] + '" ><img src="' + data.pictures[i] + '" /></a></li>'
+                if (i == 4) {
+                    html = html + '<div class="clear"></div>';
+                }
+            }
+            $.CurrentDialog.find('#activity_detail_info').append(html);
+        }
+
+        $.CurrentDialog.find("#activity_detail_info").each(function () {
+            $(this).find("a").touchTouch();
+        });
+        $.CurrentDialog.find('.hidePic').show();
+    }
+
+
+</script>

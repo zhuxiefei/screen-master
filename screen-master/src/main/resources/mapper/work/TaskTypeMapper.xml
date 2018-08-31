@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.work.TaskTypeMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.work.TaskType">
+        <id column="typeId" property="typeId" jdbcType="VARCHAR"/>
+        <result column="typeName" property="typeName" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    typeId, typeName, createTime, updateTime,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from work_task_type
+        where typeId = #{typeId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from work_task_type
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.work.TaskType">
+    insert into work_task_type (typeId, typeName, createTime, 
+      updateTime,estateId)
+    values (#{typeId,jdbcType=VARCHAR}, #{typeName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.work.TaskType">
+        insert into work_task_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            typeId,
+            <if test="typeName != null">
+                typeName,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            uuid(),
+            <if test="typeName != null">
+                #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.work.TaskType">
+        update work_task_type
+        <set>
+            <if test="typeName != null">
+                typeName = #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where typeId = #{typeId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.work.TaskType">
+    update work_task_type
+    set typeName = #{typeName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where typeId = #{typeId,jdbcType=VARCHAR}
+  </update>
+
+    <select id="findByTypeName" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.work.TaskType">
+    SELECT * FROM work_task_type WHERE typeName = #{typeName} AND estateId=#{estateId}
+  </select>
+
+    <delete id="deleteByTypeIdArray" parameterType="java.lang.String">
+        DELETE FROM work_task_type WHERE typeId IN
+        <foreach collection="array" item="typeId" open="(" separator="," close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+
+    <select id="findAllTaskTypes" resultType="com.betel.estatemgmt.common.model.work.TaskType"
+            parameterType="java.lang.String">
+    SELECT * FROM work_task_type WHERE estateId =#{estateId} ORDER BY createTime DESC
+  </select>
+
+    <select id="findTaskTypes" resultType="com.betel.estatemgmt.common.model.work.TaskType"
+            parameterType="java.lang.String">
+    SELECT * FROM work_task_type WHERE  estateId=#{estateId}
+    ORDER BY createTime DESC
+  </select>
+</mapper>

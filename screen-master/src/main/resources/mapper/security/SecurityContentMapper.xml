@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.security.SecurityContentMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.security.SecurityContent">
+        <id column="contentId" property="contentId" jdbcType="VARCHAR"/>
+        <result column="contentNo" property="contentNo" jdbcType="VARCHAR"/>
+        <result column="areaId" property="areaId" jdbcType="VARCHAR"/>
+        <result column="inspectionTime" property="inspectionTime" jdbcType="VARCHAR"/>
+        <result column="contentDesc" property="contentDesc" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    contentId, contentNo, areaId, inspectionTime, contentDesc, createTime,
+    updateTime,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from security_content
+        where contentId = #{contentId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from security_content
+    where contentId = #{contentId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.security.SecurityContent">
+    insert into security_content (contentId, contentNo, areaId, inspectionTime, contentDesc,
+      createTime, updateTime,estateId)
+    values (#{contentId,jdbcType=VARCHAR}, #{contentNo,jdbcType=VARCHAR}, #{areaId,jdbcType=VARCHAR}, 
+       #{inspectionTime,jdbcType=VARCHAR}, #{contentDesc,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityContent">
+        insert into security_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="contentId != null">
+                contentId,
+            </if>
+            <if test="contentNo != null">
+                contentNo,
+            </if>
+            <if test="areaId != null">
+                areaId,
+            </if>
+            <if test="inspectionTime != null">
+                inspectionTime,
+            </if>
+            <if test="contentDesc != null">
+                contentDesc,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="contentId != null">
+                #{contentId,jdbcType=VARCHAR},
+            </if>
+            <if test="contentNo != null">
+                #{contentNo,jdbcType=VARCHAR},
+            </if>
+            <if test="areaId != null">
+                #{areaId,jdbcType=VARCHAR},
+            </if>
+            <if test="inspectionTime != null">
+                #{inspectionTime,jdbcType=VARCHAR},
+            </if>
+            <if test="contentDesc != null">
+                #{contentDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityContent">
+        update security_content
+        <set>
+            <if test="contentNo != null">
+                contentNo = #{contentNo,jdbcType=VARCHAR},
+            </if>
+            <if test="areaId != null">
+                areaId = #{areaId,jdbcType=VARCHAR},
+            </if>
+            <if test="inspectionTime != null">
+                inspectionTime = #{inspectionTime,jdbcType=VARCHAR},
+            </if>
+            <if test="contentDesc != null">
+                contentDesc = #{contentDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where contentId = #{contentId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.security.SecurityContent">
+    update security_content
+    set contentNo = #{contentNo,jdbcType=VARCHAR},
+      areaId = #{areaId,jdbcType=VARCHAR},
+      inspectionTime = #{inspectionTime,jdbcType=VARCHAR},
+      contentDesc = #{contentDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      estateId = #{estateId,jdbcType=VARCHAR},
+    where contentId = #{contentId,jdbcType=VARCHAR}
+  </update>
+    <select id="findAllContentList" resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp"
+            parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq">
+        SELECT
+        sc.contentId,
+        sc.contentNo,
+        sa.areaName,
+        DATE_FORMAT(sc.createTime,'%Y-%m-%d %T') AS createTime,
+        sc.areaId,
+        scas.signinId,sc.estateId
+        FROM
+        security_content sc
+        LEFT JOIN security_area sa ON sc.areaId = sa.areaId
+        LEFT JOIN security_content_signin scas ON sc.contentId = scas.contentId
+        WHERE 1=1 AND sc.estateId=#{estateId}
+        <if test="areaId != null and areaId !=''">
+            AND sc.areaId = #{areaId}
+        </if>
+        <if test="signinId != null and signinId != ''">
+            AND scas.signinId = #{signinId}
+        </if>
+        <if test="contentNo != null and contentNo !=''">
+            AND sc.contentNo LIKE concat(concat('%',#{contentNo,jdbcType=VARCHAR}),'%')
+        </if>
+        <if test="startTime != null and startTime !=''">
+            AND sc.createTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND sc.createTime &lt;=#{endTime}
+        </if>
+        GROUP BY sc.contentId
+        ORDER BY sc.createTime DESC
+    </select>
+    <select id="findContent" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp">
+       SELECT
+        sc.contentId,
+        sc.contentNo,
+        sc.areaId,
+        sa.areaName,
+        sc.inspectionTime,
+        sc.contentDesc,
+        DATE_FORMAT(sc.createTime,'%Y-%m-%d %T') AS createTime,
+        DATE_FORMAT(sc.updateTime,'%Y-%m-%d %T') AS updateTime
+        FROM
+        security_content sc
+        LEFT JOIN security_area sa ON sc.areaId = sa.areaId
+        WHERE sc.contentId=#{contentId}
+    </select>
+    <select id="findSigninByContentId" resultType="com.betel.estatemgmt.common.model.security.SecuritySigninAddress"
+            parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq">
+        SELECT
+	    ssa.signinId,
+	    ssa.signinAddress
+        FROM
+	      security_content_signin scas,
+	      security_signin_address ssa
+        WHERE
+	    scas.signinId = ssa.signinId
+        AND scas.contentId=#{contentId}
+    </select>
+    <select id="findSigninById" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.security.SecuritySigninAddress">
+        SELECT * FROM security_signin_address WHERE signinId IN
+        <foreach collection="array" index="index" item="signinId" open="(" close=")" separator=",">
+            #{signinId}
+        </foreach>
+    </select>
+    <delete id="deleteBatchContent" parameterType="java.lang.String">
+        DELETE FROM security_content WHERE contentId IN
+        <foreach collection="array" index="index" item="contentId" open="(" close=")" separator=",">
+            #{contentId}
+        </foreach>
+    </delete>
+    <select id="findAllRecord" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.business.web.security.model.SecurityResp">
+        SELECT
+        recordId, contentId, employeeName, signinNum, DATE_FORMAT(finishTime,'%Y-%m-%d %T') AS finishTime
+        FROM security_record sr WHERE sr.contentId=#{contentId} AND sr.isPatrol=2
+        <if test="startTime != null and startTime !=''">
+            AND sr.finishTime &gt;=#{startTime}
+        </if>
+        <if test="endTime != null and endTime !=''">
+            AND sr.finishTime &lt;=#{endTime}
+        </if>
+        ORDER BY sr.finishTime DESC
+    </select>
+    <select id="selectList" resultType="com.betel.estatemgmt.common.model.security.SecurityContent">
+        SELECT * FROM  security_content
+    </select>
+    <select id="findBySigninAndAreaAndTime" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.business.web.security.model.ContextInfo">
+        SELECT
+        sc.*, scs.signinId
+        FROM
+        security_content sc,
+        security_content_signin scs
+        WHERE
+        sc.contentId = scs.contentId
+        AND sc.areaId = #{areaId}
+        AND sc.inspectionTime = #{inspectionTime}
+        <if test="contentId != null and contentId != ''">
+            AND sc.contentId != #{contentId}
+        </if>
+    </select>
+    <select id="selectContent" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.common.model.security.SecurityContent">
+        SELECT * FROM security_content sc WHERE 1=1
+        <if test="contentId != null and contentId != ''">
+            AND sc.contentId != #{contentId}
+        </if>
+    </select>
+</mapper>

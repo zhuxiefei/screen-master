@@ -1,0 +1,306 @@
+<script type="text/javascript">
+
+  $.CurrentNavtab.find("#y_datagrid").datagrid({
+      height: '100%',
+      tableWidth: '98%',
+      showToolbar: true,
+      toolbarItem: 'add, del, |',
+      dataUrl: path + '/web/ad/v1/findAllAds',
+      editMode: {dialog:{width:'850',height:'440',mask:true, title:"添加工作日志",id:'dialog_createAd',maxable:false,resizable:false}},
+      editUrl: 'html/community/activityRepair/createHomeAc.html?id={adId}',
+      delUrl: path + '/web/ad/v1/deleteAd',
+      delPK: 'adId',
+      delCallback: function(json, option){
+          if(json.code == "00000"){
+              BJUI.alertmsg('ok', '删除成功', {
+                  displayPosition:'middlecenter'
+              })
+              $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+          }else{
+              successBack(json);
+          }
+      },
+      delPKKey: 'adIds',
+      //jsonPrefix: 'obj',
+      delConfirm:'确定要删除选中的工作日志吗？',
+      linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+      paging: {pageSize:10},
+      showCheckboxcol: true,
+      fieldSortable: false,
+      filterThead: false,
+      showLinenumber: true,
+      columnMenu: false,
+      columnShowhide: false,
+      columnFilter: false,
+      columnLock: false,
+      contextMenuH: false,
+      loadingmask:true,
+      columnResize: false,
+      columns: [
+          {name:'adTitle',label:'标题', align:'center',render:function(value, data) {
+             stateName =  "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='"+value+"'>"+""+value+""+"</div>";
+              return stateName;
+          }},
+          {name:'userName',label:'发布人', align:'center',render:function(value, data) {
+              if (value == null || value == undefined || value == "") {
+                  var stateName = "<i>已被删除</i>"
+              } else {
+                  var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>"
+              }
+              return stateName;
+          }},
+          {name:'createTime',label:'发布时间', align:'center'},
+          {name:'adId',label:'操作',  align:'center',render:function(value){
+              var html = '<button type="button" class="btn-blue btn-edits"  onclick="adsees('+value+')"   data-id="'+value+'">查看</button>'
+                      +'<button type="button" class="btn-blue"   onclick="repairAd('+value+')">编辑</button>'
+                      +'<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+              return html
+          }}
+      ]
+  });
+
+    //修改广告
+  function repairAd(adId){
+      BJUI.ajax('doajax', {
+          url: path + '/web/ad/v1/findAd',
+          data: JSON.stringify({adId:adId}),
+          loadingmask: true,
+          okCallback: function(json) {
+             /* var seeTitle = json.adTitle;
+              var seeTime = json.createTime;
+              var seeContent = json.adContent;
+              var seePic = json.adPic;
+              var seeId = json.adId;
+              var seePicId = json.adPicId;
+              $("body").data("kinda",seeTitle);
+              $("body").data("kindb",seeTime);
+              $("body").data("kindc",seeContent);
+              $("body").data("kindd",seePic);
+              $("body").data("kinde",seeId);
+              $("body").data("kindf",seePicId);
+              BJUI.dialog('refresh', 'dialog_editAd');*/
+              $.CurrentNavtab.data('editAdData', json);
+              BJUI.dialog({
+                  id:'dialog_editAd',
+                  url:'html/community/activityRepair/editAd.html',
+                  title:'编辑工作日志',
+                  width:'850',
+                  height:'485',
+                  minable:false,
+                  mask:true,
+                  maxable:false,
+                  resizable:false
+              })
+          }
+      })
+
+  }
+
+
+    //展示
+  function adTopA(adId,status) {
+      var typeState =status;
+      if ( typeState == 1 ){
+          var types = 1;
+          var comId={"adId":adId,"status":types};
+          if(adId=="" || adId==null){
+              BJUI.alertmsg('warn','请先选择需要展示的广告！');
+          }else{
+              BJUI.alertmsg('confirm', '您确定要首页展示该广告吗？', {
+                  okCall: function() {
+                      BJUI.ajax('doajax', {
+                          url: path+'/web/ad/v1/setAdTop',
+                          data:JSON.stringify(comId),
+                          okCallback: function(json, options) {
+                              BJUI.alertmsg('ok', '首页展示成功', {
+                                  displayPosition:'middlecenter'
+                              });
+                              $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+                          },
+                          errCallback: function(json, options) {
+                              successBack(json);
+                          }
+                      })
+                  }
+              });
+          }
+      }else if(typeState == 0){
+          var typest = 0;
+          var comIds={"adId":adId,"status":typest};
+          if(adId=="" || adId==null){
+              BJUI.alertmsg('warn','请先选择需要展示的广告！');
+          }else{
+              BJUI.alertmsg('confirm', '您确定要首页展示该广告吗？', {
+                  okCall: function() {
+                      BJUI.ajax('doajax', {
+                          url: path+'/web/ad/v1/setAdTop',
+                          data:JSON.stringify(comIds),
+                          okCallback: function(json, options) {
+                              BJUI.alertmsg('ok', '首页展示成功', {
+                                  displayPosition:'middlecenter'
+                              });
+                              $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+                          },
+                          errCallback: function(json, options) {
+                              successBack(json);
+                          }
+                      })
+                  }
+              });
+          }
+      }
+  }
+
+    //取消展示
+  function adTopB(adId,status) {
+      var typeState =status;
+      if ( typeState == 1 ){
+          var types = 1;
+          var comId={"adId":adId,"status":types};
+          if(adId=="" || adId==null){
+              BJUI.alertmsg('warn','请先选择需要取消展示的广告！');
+          }else{
+              BJUI.alertmsg('confirm', '您确定要取消展示该广告吗？', {
+                  okCall: function() {
+                      BJUI.ajax('doajax', {
+                          url: path+'/web/ad/v1/setAdTop',
+                          data:JSON.stringify(comId),
+                          okCallback: function(json, options) {
+                              BJUI.alertmsg('ok', '取消展示成功', {
+                                  displayPosition:'middlecenter'
+                              });
+                              $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+                          },
+                          errCallback: function(json, options) {
+                              successBack(json);
+                          }
+                      })
+                  }
+              });
+          }
+      }else if(typeState == 0){
+          var typest = 0;
+          var comIds={"adId":adId,"status":typest};
+          if(adId=="" || adId==null){
+              BJUI.alertmsg('warn','请先选择需要取消展示的广告！');
+          }else{
+              BJUI.alertmsg('confirm', '您确定要取消展示该广告吗？', {
+                  okCall: function() {
+                      BJUI.ajax('doajax', {
+                          url: path+'/web/ad/v1/setAdTop',
+                          data:JSON.stringify(comIds),
+                          okCallback: function(json, options) {
+                              BJUI.alertmsg('ok', '取消展示成功', {
+                                  displayPosition:'middlecenter'
+                              });
+                              $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+                          },
+                          errCallback: function(json, options) {
+                              successBack(json);
+                          }
+                      })
+                  }
+              });
+          }
+      }
+  }
+
+    //查看
+  function adsees(adId) {
+      var advertId={"adId":adId};
+      if(adId=="" || adId==null){
+          BJUI.alertmsg('warn','请先选择需要查看的工作日志！');
+      }else{
+          BJUI.ajax('doajax', {
+              url: path+'/web/ad/v1/findAd',
+              data:JSON.stringify(advertId),
+              loadingmask: true,
+              callback:function (json) {
+                  if(json.code=="00000"){
+                      //shield(json)
+                      //手机预览
+                      checkInPhone(json.data.adTitle,json.data.createTime,json.data.adContent)
+
+                  }else {
+                      successBack(json);
+                  }
+              }
+          })
+      }
+  }
+
+  //预览遮罩
+  function shield(json){
+      //$("body").data("seea");
+          var s = document.getElementById("previewMask");
+          s.style.display = "block";
+          var l = document.getElementById("adPreviewHead");
+          l.style.display = "block";
+          $("#adPreviewContent").html(json.data.adContent);
+          $("#previewH2").text(json.data.adTitle);
+          $("#bjui-date").text(json.data.createTime);
+  }
+
+  function cancel_shield(){
+      var s = document.getElementById("previewMask");
+      s.style.display = "none";
+
+      var l = document.getElementById("adPreviewHead");
+      l.style.display = "none";
+  }
+  var wid =  window.parent.parent.document.body.width;
+  var hei = window.screen.height;
+  $("#previewMask").css("width",wid);
+  $("#previewMask").css("height",hei);
+
+  //重置搜索条件--select
+  $.CurrentNavtab.find(".btnReset").click(function () {
+      $.CurrentNavtab.find("select#status").selectpicker('val', "");
+  });
+</script>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#y_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">标题:</label>
+                <div class="row-input">
+                    <input type="text" id="adTitle" name="adTitle" value="" data-rule="special,length(~60)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">发布人:</label>
+                <div class="row-input">
+                    <input type="text" id="userName" name="userName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">开始时间:</label>
+                <div class="row-input" style=" padding-right: 0;">
+                    <input type="text" id="startTime" name="startTime"
+                           data-rule="开始时间: matchE[lte, endTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <label class="row-label">结束时间:</label>
+                <div class="row-input">
+                    <input type="text" id="endTime" name="endTime" data-rule="结束时间: matchE[gte, startTime, datetime]"
+                           value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd HH:mm:ss" placeholder=""
+                           readonly="readonly">
+                </div>
+                <!--<div  style=" text-align: center;  margin-bottom: 8px;     padding-top: 4px;">-->
+                <label class="row-label">&nbsp;</label>
+                    <div class="btn-group row-input">
+                        <button type="submit" class="btn-green" id="btn-searchH" data-icon="search">开始搜索！</button>
+                        <button type="reset" class="btn-orange btnReset" data-icon="times">重置</button>
+                    </div>
+                <!--</div>-->
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent" >
+    <table id="y_datagrid" class="table table-bordered" >
+    </table>
+</div>
+
+

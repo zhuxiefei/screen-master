@@ -1,0 +1,370 @@
+<style>
+    #seeHouseForm .col-1 .row-label {
+        width: 20%;
+    }
+
+    #seeHouseForm .col-1 .row-span {
+        width: 80%;
+        font-size: 14px;
+    }
+
+    #seeHouseForm .col-2 .row-label {
+        width: 19%;
+    }
+
+    #seeHouseForm .col-2 .row-span {
+        width: 28%;
+        font-size: 14px;
+    }
+
+    #seeHouseForm .row-span {
+        display: inline-block;
+        vertical-align: bottom;
+        margin-bottom: 10px;
+    }
+
+    .detailTitle {
+        font-weight: bold;
+        background-color: #b0d3f7;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;">
+    <table class="patrolDetail">
+        <tr>
+            <td colspan="4" align="center" class="detailTitle">
+                房屋信息
+            </td>
+        </tr>
+        <tr>
+            <td class="td_left">房屋:</td>
+            <td class="td_right" id="house"></td>
+            <td class="td_left">户型:</td>
+            <td class="td_right" id="typeId"></td>
+        </tr>
+        <tr>
+            <td class="td_left">交付时间:</td>
+            <td class="td_right" id="deliverTime"></td>
+            <td class="td_left">是否饲养宠物:</td>
+            <td class="td_right" id="petStatus"></td>
+        </tr>
+        <tr>
+            <td class="td_left">建筑面积:</td>
+            <td class="td_right" id="floorArea"></td>
+            <td class="td_left">套内面积:</td>
+            <td class="td_right" id="interFloorArea"></td>
+        </tr>
+        <tr id="descTr">
+            <td class="td_left">房屋状态:</td>
+            <td class="td_right" id="houseStatus"></td>
+            <td class="td_left">展示顺序:</td>
+            <td class="td_right" id="displayOrder"></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="center" class="detailTitle">
+                车位信息
+            </td>
+        </tr>
+        <tr id="buyParkDetail">
+            <td class="td_left">购买车位:</td>
+            <td class="td_right" colspan="3" id="buyPark"></td>
+
+        </tr>
+
+        <tr style=" " id="rentalParkDetail">
+            <td class="td_left">租赁车位:</td>
+            <td class="td_right" colspan="3" id="rentalPark"></td>
+        </tr>
+
+        <tr id="hostDetail">
+            <td colspan="4" align="center" class="detailTitle">
+                户主信息
+            </td>
+        </tr>
+
+        <tr id="memberDetail">
+            <td colspan="4" align="center" class="detailTitle">
+                成员信息
+            </td>
+        </tr>
+
+        <tr id="rentDetail">
+            <td colspan="4" align="center" class="detailTitle">
+                租客信息
+            </td>
+        </tr>
+        <tr id="decorationDetail">
+            <td colspan="4" align="center" class="detailTitle">
+                装修信息
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var houseData = $.CurrentNavtab.data("houseDetail");
+    if (houseData.displayOrder) {
+        $.CurrentDialog.find("#displayOrder").html(houseData.displayOrder);
+    } else {
+        $.CurrentDialog.find("#displayOrder").html("");
+    }
+    $.CurrentDialog.find("#floorArea").html(houseData.floorArea+'㎡');
+    $.CurrentDialog.find("#interFloorArea").html(houseData.interFloorArea+'㎡');
+    $.CurrentDialog.find("#typeId").html(houseData.typeName);
+    $.CurrentDialog.find("#buyPark").html(houseData.buyPark + "个");
+    $.CurrentDialog.find("#rentalPark").html(houseData.rentalPark + "个");
+    if (houseData.unitName) {
+        $.CurrentDialog.find("#unitId").html(houseData.unitName);
+    } else {
+        houseData.unitName = "";
+    }
+
+    if (!houseData.buildingName) {
+        houseData.buildingName = "";
+    }
+
+    $.CurrentDialog.find("#house").html(houseData.buildingName + " " + houseData.unitName + " " + houseData.houseNum);
+
+    if (houseData.deliverTime) {
+        $.CurrentDialog.find("#deliverTime").html(houseData.deliverTime.substr(0, 10));
+    } else {
+        $.CurrentDialog.find("#deliverTime").html("");
+    }
+
+    if (houseData.petStatus == 0) {
+        houseData.petStatus = "否"
+    } else if (houseData.petStatus == 1) {
+        houseData.petStatus = "是"
+    } else {
+        houseData.petStatus = "否"
+    }
+    $.CurrentDialog.find("#petStatus").html(houseData.petStatus);
+
+    if (houseData.houseStatus == 1) {
+        houseData.houseStatus = "自住"
+    } else if (houseData.houseStatus == 2) {
+        houseData.houseStatus = "空置"
+    } else {
+        houseData.houseStatus = "出租"
+    }
+    $.CurrentDialog.find("#houseStatus").html(houseData.houseStatus);
+    buyChange(houseData.buyPark);
+    function buyChange(e) {
+        for (var i = 0; i < e; i++) {
+            var html = ['        <tr>',
+                '            <td class="td_left">车位号: </td>',
+                '            <td class="td_right" id="carSeatNumBuy" name="carSeatNumBuy' + i + '"></td>',
+                '            <td class="td_left">车牌号: </td>',
+                '            <td class="td_right" id="plateNumBuy" name="plateNumBuy' + i + '"></td>',
+                '        </tr>'].join("");
+            $.CurrentDialog.find('#buyParkDetail').after(html);
+        }
+        for (var i = 0; i < houseData.carSeatNumBuy.length; i++) {
+            $.CurrentDialog.find('[name=carSeatNumBuy' + i + ']').text(houseData.carSeatNumBuy[i]);
+            $.CurrentDialog.find('[name=plateNumBuy' + i + ']').text(houseData.plateNumBuy[i]);
+        }
+    }
+
+    rentalChange(houseData.rentalPark);
+    function rentalChange(e) {
+//        $.CurrentDialog.find('#rentalParkDetail').empty();
+
+        for (var i = 0; i < e; i++) {
+            var html = ['        <tr>',
+                '            <td class="td_left">车位号: </td>',
+                '            <td class="td_right" id="carSeatNumRent" name="carSeatNumRent' + i + '"></td>',
+                '            <td class="td_left">车牌号: </td>',
+                '            <td class="td_right" id="plateNumRent" name="plateNumRent' + i + '"></td>',
+                '        </tr>'].join("");
+            $.CurrentDialog.find('#rentalParkDetail').after(html);
+        }
+        for (var i = 0; i < houseData.carSeatNumRent.length; i++) {
+            $.CurrentDialog.find('[name=carSeatNumRent' + i + ']').text(houseData.carSeatNumRent[i]);
+            $.CurrentDialog.find('[name=plateNumRent' + i + ']').text(houseData.plateNumRent[i]);
+        }
+    }
+    ;
+
+    var haveHost = false, haveMember = false, haveRent = false;
+    var hostDetail = {};
+    var memberDetail = [];
+    var rentDetail = [];
+    if (houseData.memberInfoList) {
+        for (var i = 0; i < houseData.memberInfoList.length; i++) {
+            if (houseData.memberInfoList[i].flag == 1) {
+                haveHost = true;
+                hostDetail = houseData.memberInfoList[i];
+            }
+            if (houseData.memberInfoList[i].flag == 2) {
+                haveMember = true;
+                memberDetail.push(houseData.memberInfoList[i]);
+            }
+            if (houseData.memberInfoList[i].flag == 3) {
+                haveRent = true;
+                rentDetail.push(houseData.memberInfoList[i]);
+            }
+        }
+    }
+    ;
+    if (haveHost) {
+        var html = ['<tr style="">',
+            '            <td class="td_left">户主姓名: </td>',
+            '            <td class="td_right" name="nameHost"></td>',
+            '            <td class="td_left">手机号码:</td>',
+            '            <td class="td_right" name ="phoneHost"></td>',
+            '        </tr>',
+            '        <tr style="">',
+            '            <td class="td_left">籍贯: </td>',
+            '            <td class="td_right" name ="residencyHost"></td>',
+            '            <td class="td_left">民族: </td>',
+            '            <td class="td_right" name ="rethnicHost"></td>',
+            '        </tr>',
+            '        <tr style="">',
+            '            <td class="td_left">宗教信仰: </td>',
+            '            <td class="td_right" name="religionHost" ></td>',
+            '            <td class="td_left">认证状态: </td>',
+            '            <td class="td_right" name ="statusHost"></td>',
+            '        </tr>'].join("");
+        $.CurrentDialog.find('#hostDetail').after(html);
+        $.CurrentDialog.find('[name=nameHost]').text(hostDetail.name);
+        $.CurrentDialog.find('[name=phoneHost]').text(hostDetail.phone);
+        $.CurrentDialog.find('[name=residencyHost]').text(hostDetail.residency);
+        $.CurrentDialog.find('[name=rethnicHost]').text(hostDetail.rethnic);
+        if(hostDetail.status==1){
+            hostDetail.status='待激活';
+        }
+        if(hostDetail.status==2){
+            hostDetail.status='已激活';
+        }
+        if(hostDetail.status==3){
+            hostDetail.status='已失效';
+        }
+        $.CurrentDialog.find('[name=statusHost]').text(hostDetail.status);
+        if (hostDetail.religion) {
+            $.CurrentDialog.find('[name=religionHost]').text(hostDetail.religion);
+        }
+
+    } else {
+        var html = ['  <tr>',
+            '            <td align="center" colspan="4" style="font-style:italic">暂无信息</td>',
+            '        </tr>'].join("");
+        $.CurrentDialog.find('#hostDetail').after(html);
+    }
+    if (haveMember) {
+        for (var k = 0; k < memberDetail.length; k++) {
+            var html = ['<tr style="">',
+                '            <td class="td_left">成员姓名: </td>',
+                '            <td class="td_right" name="nameMember' + k + '"></td>',
+                '            <td class="td_left">手机号码:</td>',
+                '            <td class="td_right" name ="phoneMember' + k + '"></td>',
+                '        </tr>',
+                '        <tr style="">',
+                '            <td class="td_left">籍贯: </td>',
+                '            <td class="td_right" name ="residencyMember' + k + '"></td>',
+                '            <td class="td_left">民族: </td>',
+                '            <td class="td_right" name ="rethnicMember' + k + '"></td>',
+                '        </tr>',
+                '        <tr style="">',
+                '            <td class="td_left">宗教信仰: </td>',
+                '            <td class="td_right" name="religionMember' + k + '" ></td>',
+                '            <td class="td_left">认证状态: </td>',
+                '            <td class="td_right" name ="statusMember' + k + '" ></td>',
+                '        </tr>'].join("");
+            $.CurrentDialog.find('#memberDetail').after(html);
+            $.CurrentDialog.find('[name=nameMember' + k + ']').text(memberDetail[k].name);
+            $.CurrentDialog.find('[name=phoneMember' + k + ']').text(memberDetail[k].phone);
+            $.CurrentDialog.find('[name=residencyMember' + k + ']').text(memberDetail[k].residency);
+            $.CurrentDialog.find('[name=rethnicMember' + k + ']').text(memberDetail[k].rethnic);
+            if(memberDetail[k].status==1){
+                memberDetail[k].status='待激活';
+            }
+            if(memberDetail[k].status==2){
+                memberDetail[k].status='已激活';
+            }
+            if(memberDetail[k].status==3){
+                memberDetail[k].status='已失效';
+            }
+            $.CurrentDialog.find('[name=statusMember' + k + ']').text(memberDetail[k].status);
+            if (memberDetail[k].religion) {
+                $.CurrentDialog.find('[name=religionMember' + k + ']').text(memberDetail[k].religion);
+            }
+        }
+    } else {
+        var html = ['  <tr>',
+            '            <td align="center" colspan="4" style="font-style:italic">暂无信息</td>',
+            '        </tr>'].join("");
+        $.CurrentDialog.find('#memberDetail').after(html);
+    }
+
+    if (haveRent) {
+        for (var k = 0; k < rentDetail.length; k++) {
+            var html = ['<tr style="">',
+                '            <td class="td_left">租客姓名: </td>',
+                '            <td class="td_right" name="nameRent' + k + '"></td>',
+                '            <td class="td_left">手机号码:</td>',
+                '            <td class="td_right" name ="phoneRent' + k + '"></td>',
+                '        </tr>',
+                '        <tr style="">',
+                '            <td class="td_left">籍贯: </td>',
+                '            <td class="td_right" name ="residencyRent' + k + '"></td>',
+                '            <td class="td_left">民族: </td>',
+                '            <td class="td_right" name ="rethnicRent' + k + '"></td>',
+                '        </tr>',
+                '        <tr style="">',
+                '            <td class="td_left">宗教信仰: </td>',
+                '            <td class="td_right" id="religionRent' + k + '" colspan="3"></td>',
+                '        </tr>'].join("");
+            $.CurrentDialog.find('#rentDetail').after(html);
+            $.CurrentDialog.find('[name=nameRent' + k + ']').text(rentDetail[k].name);
+            $.CurrentDialog.find('[name=phoneRent' + k + ']').text(rentDetail[k].phone);
+            $.CurrentDialog.find('[name=residencyRent' + k + ']').text(rentDetail[k].residency);
+            $.CurrentDialog.find('[name=rethnicRent' + k + ']').text(rentDetail[k].rethnic);
+            if (rentDetail[k].religion) {
+                $.CurrentDialog.find('[name=religionRent' + k + ']').text(rentDetail[k].religion);
+            }
+        }
+    } else {
+        var html = ['  <tr>',
+            '            <td align="center" colspan="4" style="font-style:italic">暂无信息</td>',
+            '        </tr>'].join("");
+        $.CurrentDialog.find('#rentDetail').after(html);
+    }
+
+    if (houseData.decorationApply.length != 0) {
+        for (var i = 0; i < houseData.decorationApply.length; i++) {
+            var html = [' <tr style="">',
+                '            <td class="td_left">装修公司:</td>',
+                '            <td class="td_right" id="decorationCompany' + i + '"></td>',
+                '            <td class="td_left">装修周期:</td>',
+                '            <td class="td_right" id="decorationCycle' + i + '"></td>',
+                '        </tr>',
+                '        <tr style="">',
+                '            <td class="td_left">装修开始时间:</td>',
+                '            <td class="td_right" id="startTime' + i + '"></td>',
+                '            <td class="td_left">装修结束时间:</td>',
+                '            <td class="td_right" id="endTime' + i + '" ></td>',
+                '        </tr>',
+                '        <tr style="">',
+                '            <td class="td_left">申请时间:</td>',
+                '            <td class="td_right" id="createTime' + i + '" colspan="3"></td>',
+                '        </tr>'].join("");
+            $.CurrentDialog.find('#decorationDetail').after(html);
+            $.CurrentDialog.find('#decorationCompany' + i).text(houseData.decorationApply[i].decorationCompany);
+            $.CurrentDialog.find('#decorationCycle' + i).text(houseData.decorationApply[i].decorationCycle);
+            $.CurrentDialog.find('#startTime' + i).text(houseData.decorationApply[i].startTime.substr(0, 10));
+            $.CurrentDialog.find('#endTime' + i).text(houseData.decorationApply[i].endTime.substr(0, 10));
+            $.CurrentDialog.find('#createTime' + i).text(houseData.decorationApply[i].createTime);
+        }
+    } else {
+        var html = ['  <tr>',
+            '            <td align="center" colspan="4" style="font-style:italic">暂无信息</td>',
+            '        </tr>'].join("");
+        $.CurrentDialog.find('#decorationDetail').after(html);
+    }
+
+</script>

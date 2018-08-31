@@ -1,0 +1,58 @@
+<style>
+    #editTypeForm .row-label{
+        width: 25%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="padding-top: 15px" data-toggle="ajaxform" id="editTypeForm">
+        <div class="bjui-row col-1">
+            <label class="row-label">签到地点 : </label>
+            <div class="row-input required">
+                <input type="text" id="signinAddress" name="signinAddress"  data-rule="required,special,length(~50)" >
+            </div>
+        </div>
+        <input type="hidden" id="areaId" name="areaId">
+        <input type="hidden" id="signinId" name="signinId">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="editSiteBtn" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+    var siteName=$.CurrentNavtab.data('siteName');
+    var areaId=$.CurrentNavtab.data('areaId');
+    var siteId=$.CurrentNavtab.data('siteId');
+    $.CurrentDialog.find('#signinAddress').val(siteName);
+    $.CurrentDialog.find('#areaId').val(areaId);
+    $.CurrentDialog.find('#signinId').val(siteId);
+    $.CurrentDialog.find('button#editSiteBtn').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/securityArea/v1/updateSignin',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function(json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','修改成功！');
+                    BJUI.dialog('closeCurrent');
+                    var that=$.CurrentNavtab.find('#'+areaId).find('span.zdSwitchNode');
+                    var boolean= that.hasClass('roots_close')||that.hasClass('bottom_close');
+                    if(boolean){
+                        that.click();
+                    }else{
+                        that.click();
+                        that.click();
+                    }
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+
+
+
+</script>

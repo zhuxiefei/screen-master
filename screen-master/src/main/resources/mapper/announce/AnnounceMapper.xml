@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.announce.AnnounceMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.announce.Announce" >
+    <id column="announceId" property="announceId" jdbcType="BIGINT" />
+    <result column="authorId" property="authorId" jdbcType="VARCHAR" />
+    <result column="announceTitle" property="announceTitle" jdbcType="VARCHAR" />
+    <result column="announceStatus" property="announceStatus" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="lastModifyId" property="lastModifyId" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="isTop" property="isTop" jdbcType="INTEGER" />
+    <result column="topTime" property="topTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.betel.estatemgmt.common.model.announce.Announce" extends="BaseResultMap" >
+    <result column="announceContent" property="announceContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <resultMap id="PointResultMap" type="com.betel.estatemgmt.business.web.announce.model.AnnouncePoint" >
+    <id column="announceId" property="announceId" jdbcType="BIGINT" />
+    <result column="adminName" property="userName" jdbcType="VARCHAR" />
+    <result column="announceTitle" property="announceTitle" jdbcType="VARCHAR" />
+    <result column="announceStatus" property="announceStatus" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="isTop" property="isTop" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    announceId, authorId, announceTitle, announceStatus, createTime, lastModifyId, updateTime, isTop, topTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    announceContent
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from system_announce
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from system_announce
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.announce.Announce" >
+    insert into system_announce (announceId, authorId, announceTitle, 
+      announceStatus, createTime, lastModifyId, 
+      updateTime, announceContent, isTop, topTime)
+    values (#{announceId,jdbcType=BIGINT}, #{authorId,jdbcType=VARCHAR}, #{announceTitle,jdbcType=VARCHAR}, 
+      #{announceStatus,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{lastModifyId,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{announceContent,jdbcType=LONGVARCHAR}, #{isTop,jdbcType=INTEGER},
+      #{topTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.announce.Announce"  useGeneratedKeys="true" keyProperty="announceId">
+    insert into system_announce
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="announceId != null" >
+        announceId,
+      </if>
+      <if test="authorId != null" >
+        authorId,
+      </if>
+      <if test="announceTitle != null" >
+        announceTitle,
+      </if>
+      <if test="announceStatus != null" >
+        announceStatus,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="lastModifyId != null" >
+        lastModifyId,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+      <if test="announceContent != null" >
+        announceContent,
+      </if>
+      <if test="isTop != null" >
+        isTop,
+      </if>
+      <if test="topTime != null" >
+        topTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="announceId != null" >
+        #{announceId,jdbcType=BIGINT},
+      </if>
+      <if test="authorId != null" >
+        #{authorId,jdbcType=VARCHAR},
+      </if>
+      <if test="announceTitle != null" >
+        #{announceTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="announceStatus != null" >
+        #{announceStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifyId != null" >
+        #{lastModifyId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="announceContent != null" >
+        #{announceContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isTop != null" >
+        #{isTop,jdbcType=INTEGER},
+      </if>
+      <if test="topTime != null" >
+        #{topTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.announce.Announce" >
+    update system_announce
+    <set >
+      <if test="authorId != null" >
+        authorId = #{authorId,jdbcType=VARCHAR},
+      </if>
+      <if test="announceTitle != null" >
+        announceTitle = #{announceTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="announceStatus != null" >
+        announceStatus = #{announceStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifyId != null" >
+        lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="announceContent != null" >
+        announceContent = #{announceContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isTop != null" >
+        isTop = #{isTop,jdbcType=INTEGER},
+      </if>
+      <if test="topTime != null" >
+        topTime = #{topTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.betel.estatemgmt.common.model.announce.Announce" >
+    update system_announce
+    set authorId = #{authorId,jdbcType=VARCHAR},
+      announceTitle = #{announceTitle,jdbcType=VARCHAR},
+      announceStatus = #{announceStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      announceContent = #{announceContent,jdbcType=LONGVARCHAR},
+      isTop = #{isTop,jdbcType=INTEGER},
+      topTime = #{topTime,jdbcType=TIMESTAMP}
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.announce.Announce" >
+    update system_announce
+    set authorId = #{authorId,jdbcType=VARCHAR},
+      announceTitle = #{announceTitle,jdbcType=VARCHAR},
+      announceStatus = #{announceStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      isTop = #{isTop,jdbcType=INTEGER},
+      topTime = #{topTime,jdbcType=TIMESTAMP}
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selAnnounce" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.business.userapp.index.model.SystemAnnounce">
+    SELECT announceId,announceTitle,announceContent,createTime FROM system_announce WHERE announceId =#{announceId,jdbcType=BIGINT}
+  </select>
+
+  <select id="findAllAnnounces" resultType="com.betel.estatemgmt.business.userapp.index.model.SystemAnnounce">
+   SELECT announceId,announceTitle,createTime,isTop,announceContent
+   FROM system_announce
+   WHERE announceStatus != 3
+   ORDER BY  isTop DESC , topTime DESC , createTime DESC
+  </select>
+
+  <select id="announceTotal" resultType="java.lang.Integer">
+    SELECT COUNT(announceId) FROM  system_announce
+  </select>
+
+  <update id="deleteByAnnounceIds"  parameterType="java.lang.Long">
+    UPDATE system_announce SET announceStatus = 3
+    where announceId in
+    <foreach collection="array" item="announceId" open="(" separator="," close=")">
+      #{announceId,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+  <select id="findAllAnnounce" resultMap="PointResultMap" parameterType="java.lang.String">
+    SELECT * from (select
+    sa.announceId,
+    sa.announceTitle,
+    (select adminName from admin_admin a where a.adminId=sa.authorId) as userName,
+    sa.createTime,
+    sa.isTop,
+    sa.topTime,
+    sa.announceStatus
+    from system_announce sa
+    where sa.announceStatus != 3) aaa
+    <where> 1=1
+      <if test="announceTitle != null and announceTitle != ''">
+        AND aaa.announceTitle like CONCAT('%',#{announceTitle},'%')
+      </if>
+      <if test="userName != null and userName != ''">
+        AND aaa.userName like CONCAT('%',#{userName},'%')
+      </if>
+      <if test="startTime != null and startTime !=''">
+        AND aaa.createTime &gt;=#{startTime}
+      </if>
+      <if test="endTime != null and endTime !=''">
+        AND aaa.createTime &lt;=#{endTime}
+      </if>
+      <if test="isTop != null and isTop != ''" >
+        AND aaa.isTop = #{isTop}
+      </if>
+      <if test="announceStatus != null and announceStatus !=''" >
+        AND aaa.announceStatus = #{announceStatus}
+      </if>
+    </where>
+    ORDER BY aaa.isTop DESC , aaa.topTime DESC , aaa.createTime DESC
+  </select>
+
+  <select id="findByPrimaryKey" resultType="com.betel.estatemgmt.business.web.announce.model.AnnounceInfo" parameterType="java.lang.Long">
+    select
+    announceId,announceTitle,announceContent,createTime
+    from system_announce
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByAnnounceId" resultType="com.betel.estatemgmt.business.web.announce.model.AppAnnounceInfo" parameterType="java.lang.Long">
+    select
+      announceId as sendId,announceTitle as sendTitle,announceContent as sendContent
+    from system_announce
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </select>
+
+  <select id="findTopAnnounces" resultType="com.betel.estatemgmt.common.model.announce.Announce">
+    SELECT * FROM system_announce WHERE isTop = 1
+  </select>
+
+  <select id="findByAnnounceId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.common.model.announce.Announce">
+    SELECT * FROM system_announce WHERE announceId = #{announceId}
+  </select>
+
+  <update id="setAnnounceTop" parameterType="com.betel.estatemgmt.common.model.announce.Announce">
+    update system_announce
+    set
+    lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+    updateTime = #{updateTime,jdbcType=TIMESTAMP},
+    topTime = #{topTime,jdbcType=TIMESTAMP},
+    isTop = #{isTop,jdbcType=BIT}
+    where announceId = #{announceId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findLastBetelTip" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.announce.Announce">
+    SELECT * FROM system_announce
+    WHERE isTop = 1 AND DATE_FORMAT(createTime,'%Y-%m-%d') = #{date} AND announceTitle = "社区小贴"
+  </select>
+</mapper>

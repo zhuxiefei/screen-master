@@ -1,0 +1,92 @@
+<script>
+    $(function(){
+        loadRemindDays();
+
+        //提醒天数
+        $.CurrentNavtab.find("#btn_save_paymentRemindDays").click(function () {
+            var paymentRemindDays = $.CurrentNavtab.find("select#paymentRemindDays").val();
+            var data = {"confName":"paymentRemindDays","remindDays":paymentRemindDays};
+            BJUI.ajax('doajax', {
+                url: path + '/web/remind/v1/addRemindDays',
+                //url: 'json/ajaxDone.json',
+                data:data,
+                loadingmask: false,
+                okCallback: function (json) {
+                    BJUI.navtab('refresh', 'paymentRemind');
+                    BJUI.alertmsg('ok', '操作成功');
+                }
+            })
+        });
+        //催缴天数
+        $.CurrentNavtab.find("#btn_save_overdueRemindDays").click(function () {
+            var overdueRemindDays = $.CurrentNavtab.find("select#overdueRemindDays").val();
+            var data = {"confName":"overdueRemindDays","remindDays":overdueRemindDays};
+            BJUI.ajax('doajax', {
+                url: path + '/web/remind/v1/addRemindDays',
+                //url: 'json/ajaxDone.json',
+                data:data,
+                loadingmask: false,
+                okCallback: function (json) {
+                    BJUI.navtab('refresh', 'paymentRemind');
+                    BJUI.alertmsg('ok', '操作成功');
+                }
+            })
+        });
+
+    });
+
+
+    function loadRemindDays() {
+        var data = {"confName":"paymentRemindDays,overdueRemindDays"}
+        BJUI.ajax('doajax', {
+            url: path + '/web/remind/v1/findRemindDays',
+            //url: 'json/ajaxDone.json',
+            data:data,
+            loadingmask: true,
+            okCallback: function (json) {
+                $.each(json,function (s,v) {
+                    if(v.confName == "paymentRemindDays"){
+                        $.CurrentNavtab.find("select#paymentRemindDays").selectpicker('val', v.confValue)
+                    }else if(v.confName == "overdueRemindDays"){
+                        $.CurrentNavtab.find("select#overdueRemindDays").selectpicker('val', v.confValue)
+                    }
+                })
+            }
+        })
+    }
+</script>
+
+<div class="bjui-pageContent" style=" padding-top: 15px;">
+    <div class="bjui-row col-3">
+        <label class="row-label">缴费提醒天数:</label>
+        <div class="row-input">
+            <select id="paymentRemindDays" name="paymentRemindDays" data-toggle="selectpicker"  data-width="100%">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+        </div>
+        <button type="button" class="btn-blue" id="btn_save_paymentRemindDays">保存</button>
+    </div>
+    <div class="bjui-row col-3" style="padding-top: 0;">
+        <label class="row-label">逾期催缴提醒天数:</label>
+        <div class="row-input">
+            <select id="overdueRemindDays" name="overdueRemindDays" data-toggle="selectpicker"  data-width="100%">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+            </select>
+        </div>
+        <button type="button" class="btn-blue" id="btn_save_overdueRemindDays">保存</button>
+    </div>
+</div>

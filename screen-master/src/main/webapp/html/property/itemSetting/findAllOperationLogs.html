@@ -1,0 +1,39 @@
+<div class="bjui-pageContent">
+    <table class="table table-bordered" id="datagrid-ChargesItem-log" data-toggle="datagrid">
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    $.CurrentDialog.find("#datagrid-ChargesItem-log").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        paging: {pageSize: 10},
+        dataUrl: path + '/web/charges/v1/findAllOperationLogs',
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        columns: [
+            {name: 'adminName', label: '操作人姓名', nowrap:true, align: 'center', width:150,render: function (value) {
+                return parse(value);
+            }},
+            {name: 'createTime', label: '操作时间', nowrap:true, width:200,align: 'center'},
+            {name: 'historyDesc', label: '操作描述', nowrap:true, align: 'center'},
+        ]
+    })
+</script>

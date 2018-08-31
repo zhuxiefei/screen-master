@@ -1,0 +1,474 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find('#income_datagrid').datagrid({
+        showToolbar: true,   //是否显示工具条
+        dataUrl: path + '/web/income/v1/findAllIncome',
+        paging: {pageSize: 10},
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: false,  //是否显示行复选框
+        showLinenumber: true,
+        tableWidth: '98%',
+        height: '100%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+        hScrollbar: false,  //允许出现横向滚动条。
+        loadingmask: true,
+        dialogFilterW: 0,
+        columns: [
+            {
+                name: 'flowNo', label: '流水号', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'houseNo', label: '房屋信息', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'payer', label: '客户名称', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                }else{
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'itemType', label: '收费项目', width: 100, align: 'center', render: function (value, data) {
+                if (value == 1) {
+                    stateName = "物业费";
+                } else if (value == 2) {
+                    stateName = "公摊水电费";
+                }else if (value == 3) {
+                    stateName = "停车费(购买)";
+                }else if (value == 4) {
+                    stateName = "停车费(租赁)";
+                }else if (value == 5) {
+                    stateName = "能耗费";
+                }
+                return stateName
+            }
+            },
+            {
+                name: 'payTime',
+                label: '收费时间',
+                width: 100,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd HH:mm:ss',
+                render: function (value) {
+                    return value ? value.substr(0, 20) : value
+                }
+            },{
+                name: 'createTime',
+                label: '出账时间',
+                width: 100,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd',
+                render: function (value) {
+                    return value ? value.substr(0, 10) : value
+                }
+            },
+            {
+                name: 'billInterval', label: '计费区间', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'billAmount', label: '应收金额', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>0.00</div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'overdueFine', label: '滞纳金', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>0.00</div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'chargeWay', label: '收费方式', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' ><i>暂无信息</i></div>";
+                    return stateName;
+                } else if(value==1){
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "现金" + "" + "" + "</div>";
+                    return stateName;
+                }else if(value==2){
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "刷卡" + "" + "" + "</div>";
+                    return stateName;
+                }else if(value==3){
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "支付宝" + "" + "" + "</div>";
+                    return stateName;
+                }else if(value==4){
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "微信" + "" + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'totalAmount', label: '应收合计', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>0.00</div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+
+        ],
+    });
+
+    //左边树
+    function ztree_returnjson_income() {
+        //  alert(11)
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/income/v1/findBuildingList',
+            //url:"json/datagrid/datagrid-tree3.json",
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+                var str = {'isParent': true};
+                $.each(dataJson, function (i, n) {
+                    for (var key in str) {
+                        n[key] = str[key];
+                    }
+                });
+                var allArr = {"buildingName": "其他", "buildingId": -1};
+                dataJson.push(allArr);
+            }
+        });
+        return dataJson;
+    }
+    function zTreeOnCheck_income(event, treeId, treeNode) {
+        var data = {};
+        var id;
+        var pId;
+        if (treeNode.checked) {  //勾选
+            var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_income");
+            var nodes = treeObj.getCheckedNodes(true);
+            var isParent;
+            for (var i = 0; i < nodes.length; i++) {
+                id = nodes[i].buildingId;
+                isParent = nodes[i].isParent;
+                var searchName = $("#input_search").val();
+                if (!isParent && id != -1) {
+                    pId = nodes[i].getParentNode().buildingId;
+
+                    if (searchName == "") {
+                        data = {"isOthers": 0,"buildingId": pId, "unitId": id};
+                    } else {
+                        data = {"isOthers": 0,"buildingId": pId, "unitId": id, "keyWord": searchName};
+                    }
+
+                } else if (isParent) {
+                    if (searchName == "") {
+                        data = {"isOthers": 0,"buildingId": id};
+                    } else {
+                        data = {"isOthers": 0,"buildingId": id, "keyWord": searchName};
+                    }
+
+                } else {
+                    if (searchName == "") {
+                        data = {"isOthers": 1};
+                    } else {
+                        data = {"isOthers": 1, "keyWord": searchName};
+                    }
+                }
+            }
+//            ztreeCheckData
+        }
+
+        var itemType =  $.CurrentNavtab.find('#itemType').val();
+        var startTime =  $.CurrentNavtab.find('#startTime').val();
+        var endTime =  $.CurrentNavtab.find('#endTime').val();
+        var userName =  $.CurrentNavtab.find('#userName').val();
+        var houseNum =  $.CurrentNavtab.find('#houseNum').val();
+        if (itemType) {
+            data.itemType = itemType
+        }
+        if (startTime) {
+            data.startTime = startTime
+        }
+        if (endTime) {
+            data.endTime = endTime
+        }
+        if (userName) {
+            data.userName = userName
+        }
+        if (houseNum) {
+            data.houseNum = houseNum
+        }
+
+
+        //按类型查询房屋
+        data.clearOldPostData = true;
+        $.CurrentNavtab.find('#income_datagrid').datagrid('filter', data);  //exportData
+        incomeNodeData.buildingId=data.buildingId;
+        incomeNodeData.unitId=data.unitId;
+        exportData.buildingId=data.buildingId;
+        exportData.unitId=data.unitId;
+//        if(data.isOthers){
+            incomeNodeData.isOthers=data.isOthers;
+            exportData.isOthers=data.isOthers;
+//        }
+    }
+    var incomeNodeData={}
+
+    function zTreeOnClick_income(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_income");
+        var nodes = treeObj.getSelectedNodes();
+    }
+    //添加子节点
+    function filterS_income(treeId, parentNode, childNodes) {
+        if(childNodes.code == "00000"){
+            childNodes = childNodes.data;
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    var obj = {
+                        buildingId: childNodes[i].unitId,
+                        //pId: childNodes[i].unitName,
+                        buildingName: childNodes[i].unitName
+                    };
+                    if (incomeNodeData.unitId != undefined && incomeNodeData.unitId != null) {
+                        if(childNodes[i].unitId == incomeNodeData.unitId){
+                            obj.checked = true;
+                        }
+                    }
+                    nodes.push(obj);
+                }
+                return nodes;
+            }
+        }else{
+            successBack(childNodes)
+        }
+    }
+    //选中节点 -- 暂时用不到
+    function zTreeOnClicks(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList_income");
+        var nodes = treeObj.getSelectedNodes();
+        for (var i = 0, l = nodes.length; i < l; i++) {
+        }
+    }
+    function addDiyDomS(treeId, treeNode) {
+    }
+
+    //导出明细
+    var exportData={
+        'buildingId':'',
+        'unitId':'',
+        'houseNum':'',
+        'userName':'',
+        'startTime':'',
+        'endTime':'',
+        'itemType':'',
+        'isOthers':''
+    };
+    $.CurrentNavtab.find('#exportBtn').click(function () {
+        exportData.itemType=$.CurrentNavtab.find('#itemType').val();
+        exportData.startTime=$.CurrentNavtab.find('#startTime').val();
+        exportData.endTime=$.CurrentNavtab.find('#endTime').val();
+        exportData.userName=$.CurrentNavtab.find('#userName').val();
+        exportData.houseNum=$.CurrentNavtab.find('#houseNum').val();
+
+        BJUI.alertmsg('confirm', '确定导出查询到的收入明细吗?', {
+            okCall: function() {
+                $('#bjui-alertMsgBox').hide();
+                BJUI.ajax('doajax', {
+                    url: path + '/web/income/v1/findExportIncome',
+                    loadingmask: false,
+                    data:exportData,
+                    asyn:false,
+                    okCallback: function (json) {
+                        //画出表格
+                        var html = '';
+                        for (var i = 0; i < json.length; i++) {
+                            //收费项目
+                            if(json[i].itemType==1){
+                                json[i].itemType="物业费";
+                            }else if(json[i].itemType==2){
+                                json[i].itemType="公摊水电费";
+                            }else if(json[i].itemType==3){
+                                json[i].itemType="停车费(购买)";
+                            }else if(json[i].itemType==4){
+                                json[i].itemType="停车费(租赁)";
+                            }else if(json[i].itemType==5){
+                                json[i].itemType="能耗费";
+                            }
+                            //收费方式
+                            if(json[i].chargeWay==1){
+                                json[i].chargeWay="现金";
+                            }else if(json[i].chargeWay==2){
+                                json[i].chargeWay="刷卡";
+                            }else if(json[i].chargeWay==3){
+                                json[i].chargeWay="支付宝";
+                            }else if(json[i].chargeWay==4){
+                                json[i].chargeWay="微信";
+                            }
+                            //滞纳金
+                            if(json[i].overdueFine ==undefined||json[i].overdueFine ==null){
+                                json[i].overdueFine=""
+                            }
+                            //客户名称
+                            if(json[i].payer ==undefined||json[i].payer ==null){
+                                json[i].payer=""
+                            }
+                            //房屋信息
+                            if(json[i].houseNo ==undefined||json[i].houseNo ==null){
+                                json[i].houseNo=""
+                            }
+
+                            //出账时间
+                            json[i].createTime=json[i].createTime.substr(0,10);
+
+                            html += '<tr><td style="mso-number-format:\'\@\';">' + json[i].flowNo + '</td>'
+                                    + '<td>' + json[i].houseNo + '</td>'
+                                    + '<td>' + json[i].payer + '</td>'
+                                    + '<td>' + json[i].itemType + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';"><span>&nbsp;</span>' + json[i].payTime + '</td>'
+                                    + '<td style="mso-number-format:\'\@\';"><span>&nbsp;</span>' + json[i].createTime + '</td>'
+                                    + '<td>' + json[i].billInterval + '</td>'
+                                    + '<td>' + json[i].billAmount + '</td>'
+                                    + '<td>' + json[i].overdueFine + '</td>'
+                                    + '<td>' + json[i].chargeWay + '</td>'
+                                    + '<td>' + json[i].totalAmount + '</td></tr>'
+                        }
+                        $.CurrentNavtab.find("#exportDetail tr:not(:first)").remove();
+                        $.CurrentNavtab.find("#exportDetail").append(html);
+                        exportExcel('incomelList','收入明细');
+                    }
+                });
+
+            }
+        })
+    })
+
+    //点击重置按钮
+    $.CurrentNavtab.find('#resetBtn').click(function () {
+        $.CurrentNavtab.find("#itemType").val("").find('[value=""]').attr('selected', "").siblings().removeAttr('selected');
+        $.CurrentNavtab.find("[data-id=itemType]").attr('title', '全部').find('span').first().text('全部');
+    })
+    changeDivHeight();
+</script>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#income_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">收费项目:</label>
+                <div class="row-input">
+                    <select id="itemType" name="itemType" data-toggle="selectpicker" data-width="100%">
+                        <option value="0">全部</option>
+                        <option value="1">物业费</option>
+                        <option value="2">公摊水电费</option>
+                        <option value="3">停车费(购买)</option>
+                        <option value="4">停车费(租赁)</option>
+                        <option value="5">能耗费</option>
+                    </select>
+                </div>
+                <label class="row-label">出账开始时间:</label>
+                <div class="row-input" style=" padding-right: 0;">
+                    <input type="text" id="startTime" name="startTime" data-rule="出账开始时间: matchE[lte, endTime, datetime]" value="" data-toggle="datepicker"  data-pattern="yyyy-MM-dd" placeholder="" readonly="readonly">
+                </div>
+                <!--<label class="row-label" style=" padding: 0; width: 16px; text-align: center;">-</label>-->
+                <label class="row-label">出账结束时间:</label>
+                <div class="row-input">
+                    <input type="text" id="endTime" name="endTime" data-rule="出账结束时间: matchE[gte, startTime, datetime]" value="" data-toggle="datepicker"  data-pattern="yyyy-MM-dd" placeholder="" readonly="readonly">
+                </div>
+                <label class="row-label">客户名称:</label>
+                <div class="row-input">
+                    <input type="text" id="userName" name="userName" value="" data-rule="special,length(~10)" m placeholder="" />
+                </div>
+                <label class="row-label">房号:</label>
+                <div class="row-input">
+                    <input type="text" id="houseNum" name="houseNum" value="" data-rule="special,length(~6)"  placeholder="" />
+                </div>
+
+
+
+                <!--<label class="row-label">&nbsp;</label>-->
+                <div class="btn-group ">
+                    <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="height: 568px;overflow-y: auto">
+    <ul id="ztreeHouseList_income" style="" class="ztree" data-toggle="ztree"
+        data-options="{nodes:ztree_returnjson_income,async:true,url:path+'/web/income/v1/findUnitList',contentType:'application/json; charset=UTF-8',dataType:'json',checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck_income,onClick:zTreeOnClick_income,showIcon: false,idKey:'buildingId',keyName:'buildingName',autoParam:['buildingId=buildingId'],filter:filterS_income,addDiyDom:addDiyDomS}"></ul>
+
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <button type="button" class="btn-green btn-prohibit"  style=" left: 5px;" id="exportBtn"><i class="fa fa-sign-out"></i>导出</button>
+    <table id="income_datagrid" class="table table-bordered">
+    </table>
+</div>
+<!--导出模板-->
+<a id="dlink" href="" style="display: none;">下载</a></button>
+<div id="ieExport_income">
+    <table id="incomelList" style="display:none;">
+
+        <tbody id="exportDetail">
+        <tr>
+            <th>流水号</th>
+            <th>房屋信息</th>
+            <th>客户名称</th>
+            <th>收费项目</th>
+            <th>收费时间</th>
+            <th>出账时间</th>
+            <th>计费区间</th>
+            <th>应收金额</th>
+            <th>滞纳金</th>
+            <th>收费方式</th>
+            <th>应收合计</th>
+        </tr>
+        </tbody>
+    </table>
+</div>

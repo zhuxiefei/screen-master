@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.repair.RepairHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.repair.RepairHistory" >
+    <id column="historyId" property="historyId" jdbcType="BIGINT" />
+    <result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+    <result column="operatorId" property="operatorId" jdbcType="VARCHAR" />
+    <result column="operatorType" property="operatorType" jdbcType="BIT" />
+    <result column="historyType" property="historyType" jdbcType="BIT" />
+    <result column="operatorDepartment" property="operatorDepartment" jdbcType="VARCHAR" />
+    <result column="operatorName" property="operatorName" jdbcType="VARCHAR" />
+    <result column="operatorHead" property="operatorHead" jdbcType="VARCHAR" />
+    <result column="receiver" property="receiver" jdbcType="VARCHAR" />
+    <result column="receiverPhone" property="receiverPhone" jdbcType="VARCHAR" />
+    <result column="receiverHead" property="receiverHead" jdbcType="VARCHAR" />
+    <result column="receiverDepartment" property="receiverDepartment" jdbcType="VARCHAR" />
+    <result column="receiverName" property="receiverName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="historyDesc" property="historyDesc" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    historyId, orderNo, operatorId, operatorType, historyType, operatorDepartment, operatorName, operatorHead,
+    receiver, receiverPhone, receiverHead, receiverDepartment, receiverName, description, historyDesc,
+    createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from repair_history
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </select>
+  <select id="findOperatorInfo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from repair_history
+    where orderNo = #{orderNo} and historyType = 3 order by createTime desc limit 0,1
+  </select>
+
+  <select id="findRecordsByOrderNo" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.repair.RepairHistory" >
+    SELECT * FROM  repair_history WHERE orderNo = #{orderNo,jdbcType=VARCHAR} and historyType = 3 order by createTime desc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from repair_history
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.repair.RepairHistory" >
+    insert into repair_history (historyId, orderNo, operatorId, 
+      operatorType, historyType, operatorDepartment, 
+      operatorName, receiver, receiverPhone, 
+      receiverHead, receiverDepartment, receiverName, operatorHead,
+      description, createTime,historyDesc)
+    values (#{historyId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, 
+      #{operatorType,jdbcType=BIT}, #{historyType,jdbcType=BIT}, #{operatorDepartment,jdbcType=VARCHAR}, 
+      #{operatorName,jdbcType=VARCHAR}, #{receiver,jdbcType=VARCHAR}, #{receiverPhone,jdbcType=VARCHAR}, 
+      #{receiverHead,jdbcType=VARCHAR}, #{receiverDepartment,jdbcType=VARCHAR}, #{receiverName,jdbcType=VARCHAR},
+      #{operatorHead,jdbcType=VARCHAR},
+      #{description,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{historyDesc,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairHistory" >
+    insert into repair_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="historyId != null" >
+        historyId,
+      </if>
+      <if test="orderNo != null" >
+        orderNo,
+      </if>
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="operatorType != null" >
+        operatorType,
+      </if>
+      <if test="historyType != null" >
+        historyType,
+      </if>
+      <if test="operatorDepartment != null" >
+        operatorDepartment,
+      </if>
+      <if test="operatorName != null" >
+        operatorName,
+      </if>
+      <if test="operatorHead != null" >
+        operatorHead,
+      </if>
+      <if test="receiver != null" >
+        receiver,
+      </if>
+      <if test="receiverPhone != null" >
+        receiverPhone,
+      </if>
+      <if test="receiverHead != null" >
+        receiverHead,
+      </if>
+      <if test="receiverDepartment != null" >
+        receiverDepartment,
+      </if>
+      <if test="receiverName != null" >
+        receiverName,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="historyDesc != null" >
+        historyDesc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="historyId != null" >
+        #{historyId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null" >
+        #{operatorType,jdbcType=BIT},
+      </if>
+      <if test="historyType != null" >
+        #{historyType,jdbcType=BIT},
+      </if>
+      <if test="operatorDepartment != null" >
+        #{operatorDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorName != null" >
+        #{operatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorHead != null" >
+        #{operatorHead,jdbcType=VARCHAR},
+      </if>
+      <if test="receiver != null" >
+        #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverPhone != null" >
+        #{receiverPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverHead != null" >
+        #{receiverHead,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverDepartment != null" >
+        #{receiverDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverName != null" >
+        #{receiverName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="historyDesc != null" >
+        #{historyDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairHistory" >
+    update repair_history
+    <set >
+      <if test="orderNo != null" >
+        orderNo = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        operatorId = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null" >
+        operatorType = #{operatorType,jdbcType=BIT},
+      </if>
+      <if test="historyType != null" >
+        historyType = #{historyType,jdbcType=BIT},
+      </if>
+      <if test="operatorDepartment != null" >
+        operatorDepartment = #{operatorDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorName != null" >
+        operatorName = #{operatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorHead != null" >
+        operatorHead = #{operatorHead,jdbcType=VARCHAR},
+      </if>
+      <if test="receiver != null" >
+        receiver = #{receiver,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverPhone != null" >
+        receiverPhone = #{receiverPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverHead != null" >
+        receiverHead = #{receiverHead,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverDepartment != null" >
+        receiverDepartment = #{receiverDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverName != null" >
+        receiverName = #{receiverName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="historyDesc != null" >
+        historyDesc = #{historyDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.repair.RepairHistory" >
+    update repair_history
+    set orderNo = #{orderNo,jdbcType=VARCHAR},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      operatorType = #{operatorType,jdbcType=BIT},
+      historyType = #{historyType,jdbcType=BIT},
+      operatorDepartment = #{operatorDepartment,jdbcType=VARCHAR},
+      operatorName = #{operatorName,jdbcType=VARCHAR},
+      operatorHead = #{operatorHead,jdbcType=VARCHAR},
+      receiver = #{receiver,jdbcType=VARCHAR},
+      receiverPhone = #{receiverPhone,jdbcType=VARCHAR},
+      receiverHead = #{receiverHead,jdbcType=VARCHAR},
+      receiverDepartment = #{receiverDepartment,jdbcType=VARCHAR},
+      receiverName = #{receiverName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      historyDesc = #{historyDesc,jdbcType=VARCHAR}
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findAllRecords" parameterType="com.betel.estatemgmt.business.web.repair.model.FindAllRecordReq"
+          resultType="com.betel.estatemgmt.common.model.repair.RepairHistory">
+    SELECT h.* FROM repair_history h
+    LEFT JOIN repair_order o ON o.orderNo = h.orderNo
+    <where>
+      o.estateId = #{estateId}
+      <if test="orderNo != null and orderNo != ''">
+        AND  h.orderNo LIKE CONCAT('%',#{orderNo},'%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        AND h.createTime &gt;= #{startTime}
+      </if>
+      <if test="endTime !=null and endTime !=''">
+        AND h.createTime &lt;= #{endTime}
+      </if>
+      <if test="historyType != '' and historyType != null">
+        AND h.historyType = #{historyType}
+      </if>
+    </where>
+    ORDER BY h.createTime DESC
+  </select>
+</mapper>

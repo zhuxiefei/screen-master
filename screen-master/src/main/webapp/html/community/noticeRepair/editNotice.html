@@ -1,0 +1,88 @@
+<div class="bjui-pageContent" >
+<form class="datagrid-edit-form" style="overflow: visible;" data-toggle="ajaxform">
+    <div class="bjui-row col-2" style="margin-left: -17px;">
+        <label class="row-label">公告标题 : </label>
+        <div class="row-css ">
+            <input type="text" style="width:430px;" name="" id="input_searchsaw" placeholder="请输入标题"  data-rule="required,special,length(~60)" >
+            <input type="text" style="width:430px;" name="announceTitle" id="hideTitle" placeholder="请输入标题"  style="display: none" >
+        </div>
+        <br>
+       <span class="row-label">公告内容 : </span>
+        <div class="row-css " >
+            <textarea cols="43"  rows="6"  placeholder="请输入内容" name="announceContent" style="width:430px;resize: vertical" id="editore" data-rule="required,length(~1500)"></textarea>
+        </div>
+        <div class="row-css required" style="display: none" >
+            <input type="text" style="width:430px;" name="announceId" placeholder="请输入标题" >
+        </div>
+
+    </div>
+    <!--<div style="display: none;color:red;margin-left: 110px;" id="notice_tip">号码通公告内容请严格按照"文本：电话号码"格式填写</div>-->
+</form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="moidfyNotice" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+(function(){
+    var noticeInfo = $.CurrentNavtab.data('opNoctice')
+    $.CurrentDialog.find("#input_searchsaw").val(noticeInfo.announceTitle)
+    $.CurrentDialog.find("textarea[name='announceContent']").val(noticeInfo.announceContent)
+    $.CurrentDialog.find("input[name='announceId']").val(noticeInfo.announceId)
+    $.CurrentDialog.find("#hideTitle").hide();
+//   var isTopTip= $.CurrentNavtab.data('isTopTip');
+//    if(isTopTip==1){
+//        $.CurrentDialog.find("#input_searchsaw").attr('disabled',true);
+//    }else{
+//        $.CurrentDialog.find("#hideTitle").remove();
+//    }
+//    if(noticeInfo.announceTitle=="号码通"){
+//        $.CurrentDialog.find('#notice_tip').show();
+//    }
+
+    $.CurrentDialog.find('button#moidfyNotice').bind("click", function(){
+        var noticeInput =  $("#input_searchsaw").val().trim();
+        var noticeInputs =  $("#editore").val();
+        $.CurrentDialog.find("#hideTitle").val($.CurrentDialog.find("#input_searchsaw").val());
+
+//        if (noticeInput == '' || noticeInput == null || noticeInput == undefined){
+//            BJUI.alertmsg('warn','标题不能为空！');
+//        }else if (noticeInputs == '' || noticeInputs == null || noticeInputs == undefined){
+//            BJUI.alertmsg('warn','内容不能为空！');
+//        }else {
+            checkSearchsabsb(noticeInput);
+            function checkSearchsabsb(str) {
+                var vkeyWords = /['"<>%\\]+/;
+//                if (str.length > 120) {
+//                    BJUI.alertmsg('warn', '公告标题不能输入\'\"<>%\\且长度不超过120位');
+//                } else if (vkeyWords.test(str)) {
+//                    BJUI.alertmsg('warn', '公告标题不能输入\'\"<>%\\且长度不超过120位');
+//                } else if (noticeInputs.length >= 1500) {
+//                    BJUI.alertmsg('warn', '公告内容不能超过1500个字！');
+//                    event.returnValue = false;
+//                } else {
+                    BJUI.ajax('ajaxform', {
+                        url: path + '/web/announce/v1/updateAnnounce',
+                        form: $.CurrentDialog.find('form'),
+                        validate: true,
+                        loadingmask: true,
+                        okCallback: function(json, options) {
+                            BJUI.alertmsg('ok','修改成功！');
+                            BJUI.dialog('closeCurrent')
+                            $.CurrentNavtab.find('#datagrid-notice-list').datagrid('refresh', true);
+                            // $('#atagrid-notice-list').datagird('refresh', true);
+                        },
+                        errCallback:function (json, options) {
+                            successBack(json);
+                        }
+                    })
+//                }
+//            }
+        }
+    })
+})()
+
+
+</script>

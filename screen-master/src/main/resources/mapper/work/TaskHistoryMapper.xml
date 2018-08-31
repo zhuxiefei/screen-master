@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.work.TaskHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.work.TaskHistory" >
+    <id column="historyId" property="historyId" jdbcType="BIGINT" />
+    <result column="taskId" property="taskId" jdbcType="VARCHAR" />
+    <result column="operatorId" property="operatorId" jdbcType="VARCHAR" />
+    <result column="operatorType" property="operatorType" jdbcType="BIT" />
+    <result column="historyType" property="historyType" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="historyDesc" property="historyDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    historyId, taskId, operatorId, operatorType, historyType, createTime, historyDesc
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from work_task_history
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from work_task_history
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.work.TaskHistory" >
+    insert into work_task_history (historyId, taskId, operatorId, 
+      operatorType, historyType, createTime, historyDesc
+      )
+    values (#{historyId,jdbcType=BIGINT}, #{taskId,jdbcType=VARCHAR}, #{operatorId,jdbcType=VARCHAR}, 
+      #{operatorType,jdbcType=BIT}, #{historyType,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}
+      , #{historyDesc,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.work.TaskHistory" >
+    insert into work_task_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="historyId != null" >
+        historyId,
+      </if>
+      <if test="taskId != null" >
+        taskId,
+      </if>
+      <if test="operatorId != null" >
+        operatorId,
+      </if>
+      <if test="operatorType != null" >
+        operatorType,
+      </if>
+      <if test="historyType != null" >
+        historyType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="historyDesc != null" >
+        historyDesc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="historyId != null" >
+        #{historyId,jdbcType=BIGINT},
+      </if>
+      <if test="taskId != null" >
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null" >
+        #{operatorType,jdbcType=BIT},
+      </if>
+      <if test="historyType != null" >
+        #{historyType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="historyDesc != null" >
+        #{historyDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.work.TaskHistory" >
+    update work_task_history
+    <set >
+      <if test="taskId != null" >
+        taskId = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        operatorId = #{operatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null" >
+        operatorType = #{operatorType,jdbcType=BIT},
+      </if>
+      <if test="historyType != null" >
+        historyType = #{historyType,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="historyDesc != null" >
+        historyDesc = #{historyDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.work.TaskHistory" >
+    update work_task_history
+    set taskId = #{taskId,jdbcType=VARCHAR},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      operatorType = #{operatorType,jdbcType=BIT},
+      historyType = #{historyType,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      historyDesc = #{historyDesc,jdbcType=VARCHAR}
+    where historyId = #{historyId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findAllRecords" parameterType="com.betel.estatemgmt.business.web.task.model.FindAllRecordReq"
+          resultType="com.betel.estatemgmt.common.model.work.TaskHistory">
+    SELECT h.* FROM work_task_history h
+    LEFT JOIN work_task t ON t.taskId = h.taskId
+    <where>
+      t.estateId = #{estateId}
+      <if test="taskNo != null and taskNo != ''">
+        AND t.taskNo LIKE CONCAT('%',#{taskNo},'%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        AND h.createTime &gt;= #{startTime}
+      </if>
+      <if test="endTime !=null and endTime !=''">
+        AND h.createTime &lt;= #{endTime}
+      </if>
+      <if test="historyType != '' and historyType != null">
+        AND h.historyType = #{historyType}
+      </if>
+    </where>
+    ORDER BY h.createTime DESC
+  </select>
+</mapper>

@@ -1,0 +1,135 @@
+<div class="bjui-pageContent">
+        <div class="bjui-row col-1">
+            <form id="TypeNameFrom">
+                <input type="hidden" id="typeId" name="typeId">
+                <label class="row-label divUserName" style=" width: 20%;">户型名称:</label>
+                <div class="row-input required" style=" width: 80%;">
+                    <input type="text" id="typeName" name="typeName" value="" data-rule="required,special,length(~20)" />
+                </div>
+            </form>
+            <label class="row-label divUserName" style=" width: 20%;">功能区域:</label>
+            <div class="row-input" style=" width: 80%;">自定义功能区域，如（卧室、厨房等）<a href="javascript:void(0);" class="btn btn-blue" id="a_addFunction" style=" margin-left: 10px;">添加</a></div>
+            <div class="row-input" style=" width: 100%; padding-right: 0;" id="divEditFunctions">
+
+            </div>
+        </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-edit-houseType" >确认修改</button></li>
+    </ul>
+</div>
+<script>
+    $(function() {
+
+        BJUI.ajax('doajax', {
+            url: path + '/web/houseType/v1/findHouseType',
+            loadingmask: false,
+            data: JSON.stringify({"typeId": $.CurrentNavtab.data('houseTypeInfoId')}),
+            callback: function (json) {
+                if(json.code == "00000") {
+
+                    var jsonData = json.data;
+                    $.CurrentDialog.find("#typeId").val(jsonData.typeId);
+                    $.CurrentDialog.find("#typeName").val(jsonData.typeName);
+
+                    if (jsonData.BasicFunctions !== undefined) {
+                        $.each(jsonData.BasicFunctions, function (s, v) {
+                            var html = '<div class="divLabel divLabel2" style="float: left;"><span id="functionNames' + v.functionId + '" name="functionNames" style="display: inline-block; padding-right: 10px; line-height: 24px;">' + v.functionName + '</span></span><a href="javascript:void(0);" class="btn btn-blue  a_editParameter" data-id="' + v.functionId + '" data-name="'+v.functionName+'"><i class="fa fa-pencil"></i></a><a href="javascript:void(0);" class="btn btn-red  a_delParameter" data-id="' + v.functionId + '"><b>X</b></a></div>';
+                            $.CurrentDialog.find("#divEditFunctions").append(html);
+                        })
+                    }
+                }else{
+                    if(json.code == "G0009"){
+                        BJUI.dialog('close', 'dialog_houseTypeEdit');  //当前弹窗
+                        BJUI.navtab('refresh', 'houseTypeManage');    //刷新户型列表
+                    }
+                    successBack(json)
+                }
+            }
+        });
+
+
+        //添加功能区域
+        $.CurrentDialog.find("#a_addFunction").click(function () {
+            BJUI.dialog({
+                id: 'dialog_houseTypeAddFunction',
+                url: 'html/house/houseTypeList/houseTypeAddFunction.html',
+                title: "添加功能区域",
+                height: 150,
+                mask: true,
+                maxable:false,
+                resizable:false
+            });
+        })
+
+        //编辑功能区域
+        $.CurrentDialog.find("#divEditFunctions").delegate(".a_editParameter", "click", function (event) {
+            var functionId = $(event.currentTarget).attr("data-id");
+            var functionName = $(event.currentTarget).attr("data-name");
+            $.CurrentNavtab.data('houseTypeFunctionId', functionId);
+            $.CurrentNavtab.data('houseTypeFunctionName', functionName);
+            BJUI.dialog({
+                id: 'dialog_houseTypeEditFunction',
+                url: 'html/house/houseTypeList/houseTypeEditFunction.html',
+                title: "编辑功能区域",
+                height: 150,
+                mask: true,
+                maxable:false,
+                resizable:false
+            })
+        });
+
+        //删除自定义参数
+        $.CurrentDialog.find("#divEditFunctions").delegate(".a_delParameter", "click", function (event) {
+            var functionId = $(event.currentTarget).attr("data-id");
+            var typeId = $.CurrentDialog.find("#typeId").val().trim();
+            BJUI.alertmsg('confirm', '确定要删除选中的功能区域吗？', {
+                okCall: function () {
+                    BJUI.ajax('doajax', {
+                        url: path + '/web/houseType/v1/deteleFunction',
+                        loadingmask: false,
+                        data: JSON.stringify({"functionId": functionId,"typeId":typeId}),
+                        callback: function (json) {
+                            if(json.code == "00000"){
+                                $(event.currentTarget).parents(".divLabel").remove();
+                                BJUI.alertmsg('ok', "操作成功");
+                            }else{
+                                if(json.code == "G0009"){
+                                    BJUI.dialog('close', 'dialog_houseTypeEdit');  //当前弹窗
+                                    BJUI.navtab('refresh', 'houseTypeManage');    //刷新户型列表
+                                }
+                                successBack(json);
+                            }
+                        }
+                    })
+                }
+            })
+        });
+
+        //新增
+        $.CurrentDialog.find("#btn-edit-houseType").click(function () {
+            BJUI.ajax('ajaxform', {
+                url: path + '/web/houseType/v1/updateHouseTypeName',
+                form: $.CurrentDialog.find('form#TypeNameFrom'),
+                validate: true,     //是否验证
+                loadingmask: false,    // ajax请求时是否显示数据加载遮罩
+                callback: function (json) {
+                    if(json.code == "00000"){
+                        BJUI.dialog('close', 'dialog_houseTypeEdit');
+                        $.CurrentNavtab.find('#datagrid_typelist').datagrid('refresh', true)
+                        BJUI.alertmsg('ok', "操作成功");
+                    }else{
+                        if(json.code == "G0009"){
+                            BJUI.dialog('close', 'dialog_houseTypeEdit');
+                            $.CurrentNavtab.find('#datagrid_typelist').datagrid('refresh', true);
+                        }
+                        successBack(json);
+                    }
+                }
+            })
+        });
+
+    })
+</script>

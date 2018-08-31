@@ -1,0 +1,5 @@
+[
+  {"sex":true,"code":"标题一","opercode":"000514","operdate":"2014-01-01 08:02:30","seedate":"2014-01-01 08:15:31","regfee":2.00,"order":1,"see":true,"deptcode":"1031","regdate":"2014-01-01 08:02:30","name":"许**","age":"1953","fr":true,"regname":"普通号","deptname":"内科"},
+  {"sex":true,"code":"531213","opercode":"000514","operdate":"2014-01-01 08:03:46","seedate":"2014-01-02 08:24:11","regfee":2.00,"order":2,"see":true,"deptcode":"1011","regdate":"2014-01-01 08:03:46","name":"朱**","age":"1950","fr":true,"regname":"普通号","deptname":"心病科"},
+  {"sex":true,"code":"531214","opercode":"000514","operdate":"2014-01-01 08:04:24","seedate":"2014-01-01 08:26:49","regfee":0.00,"order":3,"see":true,"deptcode":"1002","regdate":"2014-01-01 08:04:24","name":"吴**","age":"1938","fr":true,"regname":"免挂号费","deptname":"脾胃病科"}
+]

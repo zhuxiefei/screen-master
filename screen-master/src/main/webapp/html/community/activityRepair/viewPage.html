@@ -1,0 +1,36 @@
+<div class="bjui-pageContent">
+    <form id="validate-user">
+        <div class="bjui-row">
+            <label class="row-label">标题:</label>
+            <div class="row-input">
+                <span id="title"></span>
+            </div>
+            <label class="row-label">时间:</label>
+            <div class="row-input">
+                <span id="time"></span>
+            </div>
+            <label class="row-label">内容:</label>
+            <div class="row-input">
+                <div  id="textarea" >
+                </div>
+                <!--<img  src="Koala.jpg" alt="" id="textImg" style="width: 100px;height: 100px;">-->
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+    </ul>
+</div>
+<script type="text/javascript">
+    var a = $(".title span").attr('spanTitle');
+    $("#title").text(a);
+    var b = $(".title span").attr('spanTime');
+    $("#time").text(b);
+    var c = $(".title span").attr('spanContent');
+    $("#textarea").html(c);
+    //var d = $(".title span").attr('spanPic');
+    //$("#textImg").attr("src",d);
+
+</script>

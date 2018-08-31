@@ -1,0 +1,15 @@
+[
+    {"name":"用户中心", "children":[
+        {"id":"base-user", "name":"用户管理", "target":"navtab", "url":"html/user/userList.html"}
+    ]},
+    {"name":"内容管理", "children":[
+        {"id":"base-community", "name":"社区帖子", "target":"navtab", "url":"html/community/community.html"},
+        {"id":"base-activity", "name":"首页活动", "target":"navtab", "url":"html/community/activity.html"},
+        {"id":"base-notice", "name":"公告维护", "target":"navtab", "url":"html/community/notice.html"}
+    ]},
+    {"name":"系统管理", "children":[
+        {"id":"base-administrator", "name":"管理员维护", "target":"navtab", "url":"html/system/administrator.html"},
+        {"id":"base-log", "name":"日志管理", "target":"navtab", "url":"html/system/log.html"},
+        {"id":"base-configuration", "name":"系统配置", "target":"navtab", "url":"html/system/configuration.html"}
+    ]}
+]

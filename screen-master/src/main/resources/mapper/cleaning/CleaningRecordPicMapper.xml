@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.cleaning.CleaningRecordPicMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPic" >
+    <id column="recordId" property="recordId" jdbcType="VARCHAR" />
+    <id column="pictureId" property="pictureId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    recordId, pictureId, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPicKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from cleaning_check_record_picture
+    where recordId = #{recordId,jdbcType=VARCHAR}
+      and pictureId = #{pictureId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPicKey" >
+    delete from cleaning_check_record_picture
+    where recordId = #{recordId,jdbcType=VARCHAR}
+      and pictureId = #{pictureId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPic" >
+    insert into cleaning_check_record_picture (recordId, pictureId, createTime)
+    values (#{recordId,jdbcType=VARCHAR}, #{pictureId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPic" >
+    insert into cleaning_check_record_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        recordId,
+      </if>
+      <if test="pictureId != null" >
+        pictureId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        #{recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureId != null" >
+        #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPic" >
+    update cleaning_check_record_picture
+    <set >
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where recordId = #{recordId,jdbcType=VARCHAR}
+      and pictureId = #{pictureId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecordPic" >
+    update cleaning_check_record_picture
+    set createTime = #{createTime,jdbcType=TIMESTAMP}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+      and pictureId = #{pictureId,jdbcType=VARCHAR}
+  </update>
+
+  <insert id="addPics" parameterType="java.util.List">
+    insert into cleaning_check_record_picture (recordId, pictureId, createTime)
+    values
+    <foreach collection="list" item="CleaningRecordPic"  separator="," index="index">
+      (
+      #{CleaningRecordPic.recordId},
+      #{CleaningRecordPic.pictureId},
+      #{CleaningRecordPic.createTime}
+      )
+    </foreach>
+  </insert>
+  <select id="findPictureByRecordId" parameterType="java.lang.String"
+          resultType="com.betel.estatemgmt.common.model.system.SystemPicture">
+    SELECT sp.pictureId,sp.pictureUrl FROM cleaning_check_record_picture ccrp,system_picture sp WHERE ccrp.pictureId=sp.pictureId AND ccrp.recordId=#{recordId}
+  </select>
+</mapper>

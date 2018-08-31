@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.expense.ExpenseItemMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.expense.ExpenseItem" >
+    <id column="itemId" property="itemId" jdbcType="BIGINT" />
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="itemType" property="itemType" jdbcType="BIT" />
+    <result column="itemPrice" property="itemPrice" jdbcType="DECIMAL" />
+    <result column="itemCycle" property="itemCycle" jdbcType="INTEGER" />
+    <result column="chargeType" property="chargeType" jdbcType="BIT" />
+    <result column="chargeCycle" property="chargeCycle" jdbcType="INTEGER" />
+    <result column="overdueFine" property="overdueFine" jdbcType="DOUBLE" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="billType" property="billType" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    itemId, itemName, itemType, itemPrice, itemCycle, chargeType, chargeCycle, overdueFine, 
+    startTime, createTime, updateTime,billType
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from expense_item
+    where itemId = #{itemId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from expense_item
+    where itemId = #{itemId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItem" >
+    insert into expense_item (itemId, itemName, itemType, 
+      itemPrice, itemCycle, chargeType, 
+      chargeCycle, overdueFine, startTime, 
+      createTime, updateTime, billType)
+    values (#{itemId,jdbcType=BIGINT}, #{itemName,jdbcType=VARCHAR}, #{itemType,jdbcType=BIT}, 
+      #{itemPrice,jdbcType=DECIMAL}, #{itemCycle,jdbcType=INTEGER}, #{chargeType,jdbcType=BIT}, 
+      #{chargeCycle,jdbcType=INTEGER}, #{overdueFine,jdbcType=DOUBLE}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{billType,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItem" keyProperty="itemId"
+          useGeneratedKeys="true">
+    insert into expense_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemId != null" >
+        itemId,
+      </if>
+      <if test="itemName != null" >
+        itemName,
+      </if>
+      <if test="itemType != null" >
+        itemType,
+      </if>
+      <if test="itemPrice != null" >
+        itemPrice,
+      </if>
+      <if test="itemCycle != null" >
+        itemCycle,
+      </if>
+      <if test="chargeType != null" >
+        chargeType,
+      </if>
+      <if test="chargeCycle != null" >
+        chargeCycle,
+      </if>
+      <if test="overdueFine != null" >
+        overdueFine,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+      <if test="billType != null" >
+        billType,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="itemName != null" >
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=BIT},
+      </if>
+      <if test="itemPrice != null" >
+        #{itemPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="itemCycle != null" >
+        #{itemCycle,jdbcType=INTEGER},
+      </if>
+      <if test="chargeType != null" >
+        #{chargeType,jdbcType=BIT},
+      </if>
+      <if test="chargeCycle != null" >
+        #{chargeCycle,jdbcType=INTEGER},
+      </if>
+      <if test="overdueFine != null" >
+        #{overdueFine,jdbcType=DOUBLE},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="billType != null" >
+        #{billType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItem" >
+    update expense_item
+    <set >
+      <if test="itemName != null" >
+        itemName = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        itemType = #{itemType,jdbcType=BIT},
+      </if>
+      <if test="itemPrice != null" >
+        itemPrice = #{itemPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="itemCycle != null" >
+        itemCycle = #{itemCycle,jdbcType=INTEGER},
+      </if>
+      <if test="chargeType != null" >
+        chargeType = #{chargeType,jdbcType=BIT},
+      </if>
+      <if test="chargeCycle != null" >
+        chargeCycle = #{chargeCycle,jdbcType=INTEGER},
+      </if>
+      <if test="overdueFine != null" >
+        overdueFine = #{overdueFine,jdbcType=DOUBLE},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="billType != null" >
+        billType = #{billType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where itemId = #{itemId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItem" >
+    update expense_item
+    set itemName = #{itemName,jdbcType=VARCHAR},
+      itemType = #{itemType,jdbcType=BIT},
+      itemPrice = #{itemPrice,jdbcType=DECIMAL},
+      itemCycle = #{itemCycle,jdbcType=INTEGER},
+      chargeType = #{chargeType,jdbcType=BIT},
+      chargeCycle = #{chargeCycle,jdbcType=INTEGER},
+      overdueFine = #{overdueFine,jdbcType=DOUBLE},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      billType = #{billType,jdbcType=INTEGER}
+    where itemId = #{itemId,jdbcType=BIGINT}
+  </update>
+  <!--============================收费项目设置=================开始==================================-->
+  <select id="findAllChargesItemSet" resultType="com.betel.estatemgmt.business.web.charges.model.ChargesItem">
+    SELECT * FROM  expense_item ei ORDER  BY createTime DESC
+  </select>
+  <select id="findBuildingsByItemId" resultType="com.betel.estatemgmt.common.model.house.Building" parameterType="java.lang.String">
+--    jian.z  通过收费项目id，查询关联的全部楼宇和别墅
+   SELECT
+	ei.itemId,
+	ei.itemName,
+	ei.itemType,
+	IFNULL(eibr.buildingId, '0') AS buildingId,
+  IFNULL(hb.buildingName, '其他') AS buildingName,
+	IFNULL(hb.buildingDesc, '别墅群') AS buildingDesc,
+  hb.createTime,
+	eibr.ibId
+FROM
+	expense_item ei INNER JOIN
+	expense_item_building_rela eibr
+ON
+	ei.itemId = eibr.itemId LEFT JOIN house_building hb ON eibr.buildingId=hb.buildingId WHERE  eibr.itemId=#{itemId}
+  </select>
+<select id="findChargesItemDatail" resultType="com.betel.estatemgmt.business.web.charges.model.ChargesItem">
+  SELECT  itemId, itemName, itemType, itemPrice, itemCycle, chargeType, chargeCycle, overdueFine,
+    startTime, createTime, updateTime
+  FROM  expense_item WHERE itemId=#{itemId}
+</select>
+  <select id="findBuildingsByItemIds" resultType="com.betel.estatemgmt.business.web.charges.model.ChargesItem">
+--     jians.z  修改，删除插入操作记录的时候查询收费项目是否存在
+    SELECT itemId, itemName, itemType, itemPrice, itemCycle, chargeType, chargeCycle, overdueFine,
+    startTime, createTime, updateTime
+    FROM expense_item WHERE  itemId IN
+    <foreach collection="list" index="index" item="itemId"  open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </select>
+  <delete id="deleteChargesItem" parameterType="java.lang.Long">
+    delete from expense_item
+    where itemId IN
+    <foreach collection="list" index="index" item="itemId"  open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </delete>
+  <select id="findChargesItemStandard" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.charges.model.ChargesItem">
+    SELECT confValue AS standardInfo FROM  property_config WHERE  confName='propertyChargeStandard' AND estateId = #{estateId}
+  </select>
+  <update id="updateChargesItemStandard" parameterType="com.betel.estatemgmt.business.web.charges.model.ChargesItemReq">
+    UPDATE property_config SET confValue=#{standard}
+     where confName = 'propertyChargeStandard' AND estateId = #{estateId}
+  </update>
+  <update id="updateItemJHtime" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseItem">
+    UPDATE  expense_item SET  startTime=#{startTime} WHERE itemId=#{itemId}
+  </update>
+  <select id="findItemByNameId" parameterType="com.betel.estatemgmt.business.web.charges.model.ChargesItemReq" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItem">
+    SELECT * FROM  expense_item ei WHERE  ei.itemName=#{itemName}
+    <if test="itemId != null and itemId != ''" >
+      itemId &lt;&gt; #{itemId},
+    </if>
+  </select>
+  <select id="findBillsByItemIds" parameterType="java.util.List" resultType="com.betel.estatemgmt.common.model.expense.ExpenseBill">
+    SELECT * FROM  expense_bill WHERE itemId IN
+    <foreach collection="list" index="index" item="itemId"  open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </select>
+  <!--============================收费项目设置=================结束==================================-->
+  <select id="findItems" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItem">
+    SELECT * FROM expense_item
+  </select>
+
+  <select id="findByItemType" parameterType="java.lang.Integer" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItem">
+    SELECT * FROM expense_item WHERE itemType = #{itemType}
+  </select>
+
+  <select id="findRemindItems" resultType="com.betel.estatemgmt.common.model.expense.ExpenseItem">
+    SELECT * FROM expense_item WHERE itemType = 1 OR itemType = 3 OR itemType = 4
+  </select>
+</mapper>

@@ -1,0 +1,29 @@
+    <div style="">
+        <h4>公告详情</h4>
+        <div class="row-input">
+            <input type="text" value="" style="width: 98%;">
+        </div>
+        <span>时间 : </span><span id="bjui-date" style="display: inline-block;width: 200px;height: 20px;line-height: 20px;margin: 10px 0;"> 0000/00/00 </span>
+        <div class="row-input" style="margin-top: 20px;">
+            <textarea name="content" id="j_form_content" class="j-content" style="width: 700px;" data-toggle="kindeditor" data-minheight="200">                <p><strong>HTML编辑器KindEditor：</strong></p>
+                <p><strong>已优化：</strong></p>
+                <ul>
+                    <li>深度清理html标记</li>
+                    <li>上传附件后，自动获取文件名（需要返回JSON属性"origin_name"）</li>
+                    <li>修改一键排版为段落前空两个全角空格，主要考虑到某些行需要顶格时直接删除空格即可。</li>
+                </ul>
+                <p><br>更多参数请参见：<a href="http://kindeditor.net/" target="_blank">http://kindeditor.net/</a></p>
+            </textarea>
+        </div>
+    </div>
+    <div style="padding:3px 5px; width:100%; min-height:28px; margin-top: 40px;" class="clearfix">
+        <ul  style="list-style: none;float: right">
+            <li style="float: left;margin-left: 5px;"><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        </ul>
+    </div>
+
+</div>
+<script type="text/javascript">
+    var today = new Date(), time = today.getTime()
+    $('#bjui-date').html(today.formatDate('yyyy/MM/dd'))
+</script>

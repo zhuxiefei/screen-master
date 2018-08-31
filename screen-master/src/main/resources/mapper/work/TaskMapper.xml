@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.work.TaskMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.work.Task">
+        <id column="taskId" property="taskId" jdbcType="VARCHAR"/>
+        <id column="taskNo" property="taskNo" jdbcType="VARCHAR"/>
+        <result column="taskType" property="taskType" jdbcType="VARCHAR"/>
+        <result column="createUser" property="createUser" jdbcType="VARCHAR"/>
+        <result column="createUserName" property="createUserName" jdbcType="VARCHAR"/>
+        <result column="lastModifyId" property="lastModifyId" jdbcType="VARCHAR"/>
+        <result column="lastModifyName" property="lastModifyName" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="isDelete" property="isDelete" jdbcType="BIT"/>
+        <result column="createUserPhone" property="createUserPhone" jdbcType="VARCHAR"/>
+        <result column="lastModifyPhone" property="lastModifyPhone" jdbcType="VARCHAR"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.betel.estatemgmt.common.model.work.Task" extends="BaseResultMap">
+        <result column="taskDesc" property="taskDesc" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    taskId, taskNo, taskType, createUser, createUserName, lastModifyId, lastModifyName, createTime,
+    updateTime,isDelete,createUserPhone,lastModifyPhone,estateId
+  </sql>
+    <sql id="Blob_Column_List">
+    taskDesc
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from work_task
+        where taskId = #{taskId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from work_task
+    where taskId = #{taskId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.work.Task">
+    insert into work_task (taskId, taskNo, taskType, createUser,
+      createUserName, lastModifyId, lastModifyName, 
+      createTime, updateTime, taskDesc, isDelete,createUserPhone,lastModifyPhone,estateId
+      )
+    values (#{taskId,jdbcType=VARCHAR}, #{taskNo,jdbcType=VARCHAR}, #{taskType,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
+      #{createUserName,jdbcType=VARCHAR}, #{lastModifyId,jdbcType=VARCHAR}, #{lastModifyName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{taskDesc,jdbcType=LONGVARCHAR},
+      #{isDelete,jdbcType=BIT}, #{createUserPhone,jdbcType=VARCHAR}, #{lastModifyPhone,jdbcType=VARCHAR}, #{estateId,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.work.Task">
+        <selectKey keyProperty="taskId" resultType="String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into work_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            taskId,
+            <if test="taskNo != null">
+                taskNo,
+            </if>
+            <if test="taskType != null">
+                taskType,
+            </if>
+            <if test="createUser != null">
+                createUser,
+            </if>
+            <if test="createUserName != null">
+                createUserName,
+            </if>
+            <if test="lastModifyId != null">
+                lastModifyId,
+            </if>
+            <if test="lastModifyName != null">
+                lastModifyName,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="taskDesc != null">
+                taskDesc,
+            </if>
+            <if test="isDelete != null">
+                isDelete,
+            </if>
+            <if test="createUserPhone != null">
+                createUserPhone,
+            </if>
+            <if test="lastModifyPhone != null">
+                lastModifyPhone,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{taskId},
+            <if test="taskNo != null">
+                #{taskNo,jdbcType=VARCHAR},
+            </if>
+            <if test="taskType != null">
+                #{taskType,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserName != null">
+                #{createUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyId != null">
+                #{lastModifyId,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyName != null">
+                #{lastModifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="taskDesc != null">
+                #{taskDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="createUserPhone != null">
+                #{createUserPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyPhone != null">
+                #{lastModifyPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.work.Task">
+        update work_task
+        <set>
+            <if test="taskNo != null">
+                taskNo = #{taskNo,jdbcType=VARCHAR},
+            </if>
+            <if test="taskType != null">
+                taskType = #{taskType,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                createUser = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserName != null">
+                createUserName = #{createUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyId != null">
+                lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyName != null">
+                lastModifyName = #{lastModifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="taskDesc != null">
+                taskDesc = #{taskDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="isDelete != null">
+                isDelete = #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="createUserPhone != null">
+                createUserPhone = #{createUserPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyPhone != null">
+                lastModifyPhone = #{lastModifyPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where taskId = #{taskId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.betel.estatemgmt.common.model.work.Task">
+    update work_task
+    set taskNo = #{taskNo,jdbcType=VARCHAR},
+      taskType = #{taskType,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      createUserName = #{createUserName,jdbcType=VARCHAR},
+      lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+      lastModifyName = #{lastModifyName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      taskDesc = #{taskDesc,jdbcType=LONGVARCHAR},
+      isDelete = #{isDelete,jdbcType=BIT},
+      createUserPhone = #{createUserPhone,jdbcType=VARCHAR},
+      lastModifyPhone = #{lastModifyPhone,jdbcType=VARCHAR},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where taskId = #{taskId,jdbcType=VARCHAR}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.work.Task">
+    update work_task
+    set taskNo = #{taskNo,jdbcType=VARCHAR},
+      taskType = #{taskType,jdbcType=VARCHAR},
+      createUser = #{createUser,jdbcType=VARCHAR},
+      createUserName = #{createUserName,jdbcType=VARCHAR},
+      lastModifyId = #{lastModifyId,jdbcType=VARCHAR},
+      lastModifyName = #{lastModifyName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      isDelete = #{isDelete,jdbcType=BIT},
+      createUserPhone = #{createUserPhone,jdbcType=VARCHAR},
+      lastModifyPhone = #{lastModifyPhone,jdbcType=VARCHAR},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where taskId = #{taskId,jdbcType=VARCHAR}
+  </update>
+
+
+    <select id="findAllTasks" resultType="com.betel.estatemgmt.business.web.task.model.FindAllTasksResp"
+            parameterType="com.betel.estatemgmt.business.web.task.model.FindAllTasksReq">
+        SELECT wt.estateId,wtr.closeTime,
+        wt.taskId AS taskId,
+        wtt.typeName AS taskType,
+        wtr.taskStatus AS taskStatus,
+        wtr.executorName AS executorName,
+        wt.createTime AS createTime,
+        wtr.updateTime AS updateTime,
+        wt.createUserName AS createUserName,
+        wtr.recordId AS recordId,
+        wt.taskDesc AS taskDesc,
+        wt.taskNo AS taskNo
+        FROM work_task wt
+        LEFT JOIN work_task_record wtr ON wtr.taskId = wt.taskId
+        LEFT JOIN work_task_type wtt ON wtt.typeId = wt.taskType
+        WHERE wt.isDelete != 1 AND wt.estateId=#{estateId}
+        <if test="startTime != null and startTime != ''">
+            AND wtr.updateTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND wtr.updateTime &lt;= #{endTime}
+        </if>
+        <if test="executorName != null and executorName != ''">
+            AND wtr.executorName LIKE concat("%",#{executorName},"%")
+        </if>
+        <if test="createUserName != null and createUserName != ''">
+            AND wt.createUserName LIKE concat("%",#{createUserName},"%")
+        </if>
+        <if test="departmentId!=null and departmentId!=''">
+            and wtr.depId LIKE concat(#{depId},"%")
+        </if>
+        <if test="taskType!=null and taskType!=''">
+            AND wt.taskType = #{taskType}
+        </if>
+        <if test="taskStatus!=null and taskStatus!='' and taskStatus ==1">
+            AND wtr.taskStatus = #{taskStatus}
+        </if>
+        <if test="taskStatus!=null and taskStatus!='' and taskStatus ==2 ">
+            AND wtr.taskStatus = #{taskStatus}
+        </if>
+        <if test="taskStatus!=null and taskStatus!='' and taskStatus ==3 ">
+            AND wtr.taskStatus = #{taskStatus}
+        </if>
+        <if test="taskStatus!=null and taskStatus!='' and taskStatus ==4 ">
+            AND wtr.taskStatus = #{taskStatus}
+        </if>
+        <if test="taskNo!=null and taskNo!=''">
+            AND wt.taskNo LIKE concat("%",#{taskNo},"%")
+        </if>
+        ORDER BY wtr.updateTime DESC
+    </select>
+</mapper>

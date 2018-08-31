@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.security.SecurityContentAreaSigninMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+        <id column="contSignId" property="contSignId" jdbcType="VARCHAR"/>
+        <result column="contentId" property="contentId" jdbcType="VARCHAR"/>
+        <result column="signinId" property="signinId" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    contSignId, contentId, signinId, createTime, updateTime
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from security_content_signin
+        where contSignId = #{contSignId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from security_content_signin
+    where contSignId = #{contSignId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+    insert into security_content_signin (contSignId, contentId, signinId, 
+      createTime, updateTime
+      )
+    values (#{contSignId,jdbcType=VARCHAR}, #{contentId,jdbcType=VARCHAR}, #{signinId,jdbcType=VARCHAR}, 
+       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+        insert into security_content_signin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="contSignId != null">
+                contSignId,
+            </if>
+            <if test="contentId != null">
+                contentId,
+            </if>
+            <if test="signinId != null">
+                signinId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="contSignId != null">
+                #{contSignId,jdbcType=VARCHAR},
+            </if>
+            <if test="contentId != null">
+                #{contentId,jdbcType=VARCHAR},
+            </if>
+            <if test="signinId != null">
+                #{signinId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+        update security_content_signin
+        <set>
+            <if test="contentId != null">
+                contentId = #{contentId,jdbcType=VARCHAR},
+            </if>
+            <if test="signinId != null">
+                signinId = #{signinId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where contSignId = #{contSignId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey"
+            parameterType="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+    update security_content_signin
+    set contentId = #{contentId,jdbcType=VARCHAR},
+      signinId = #{signinId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where contSignId = #{contSignId,jdbcType=VARCHAR}
+  </update>
+    <delete id="deleteByContentId" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq">
+     DELETE FROM security_content_signin WHERE contentId = #{contentId}
+   </delete>
+    <delete id="deleteBatchByContentId" parameterType="java.lang.String">
+        DELETE FROM security_content_signin WHERE contentId IN
+        <foreach collection="array" index="index" item="contentId" open="(" close=")" separator=",">
+            #{contentId}
+        </foreach>
+    </delete>
+    <select id="findBySigninId" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+    SELECT * FROM security_content_signin WHERE signinId = #{signinId}
+  </select>
+    <select id="findByContentId" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.common.model.security.SecurityContentAreaSignin">
+         SELECT * FROM security_content_signin WHERE contentId = #{contentId}
+    </select>
+</mapper>

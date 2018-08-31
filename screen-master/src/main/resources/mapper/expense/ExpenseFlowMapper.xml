@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.expense.ExpenseFlowMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.expense.ExpenseFlow" >
+    <id column="flowNo" property="flowNo" jdbcType="VARCHAR" />
+    <result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="chargeWay" property="chargeWay" jdbcType="BIT" />
+    <result column="flowStatus" property="flowStatus" jdbcType="BIT" />
+    <result column="isOnline" property="isOnline" jdbcType="BIT" />
+    <result column="billPayer" property="billPayer" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="payTime" property="payTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    flowNo, totalAmount, chargeWay, isOnline, flowStatus, billPayer, createTime,payTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from expense_flow
+    where flowNo = #{flowNo,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from expense_flow
+    where flowNo = #{flowNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseFlow" >
+    insert into expense_flow (flowNo, totalAmount, chargeWay, 
+      flowStatus, billPayer, createTime, isOnline,payTime
+      )
+    values (#{flowNo,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, #{chargeWay,jdbcType=BIT}, 
+      #{flowStatus,jdbcType=BIT}, #{billPayer,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      ,#{isOnline,jdbcType=BIT}, #{payTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseFlow" >
+    insert into expense_flow
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="flowNo != null" >
+        flowNo,
+      </if>
+      <if test="totalAmount != null" >
+        totalAmount,
+      </if>
+      <if test="chargeWay != null" >
+        chargeWay,
+      </if>
+      <if test="flowStatus != null" >
+        flowStatus,
+      </if>
+      <if test="billPayer != null" >
+        billPayer,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="isOnline != null" >
+        isOnline,
+      </if>
+      <if test="payTime != null" >
+        payTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="flowNo != null" >
+        #{flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalAmount != null" >
+        #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="chargeWay != null" >
+        #{chargeWay,jdbcType=BIT},
+      </if>
+      <if test="flowStatus != null" >
+        #{flowStatus,jdbcType=BIT},
+      </if>
+      <if test="billPayer != null" >
+        #{billPayer,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isOnline != null" >
+        #{isOnline,jdbcType=BIT},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseFlow" >
+    update expense_flow
+    <set >
+      <if test="totalAmount != null" >
+        totalAmount = #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="chargeWay != null" >
+        chargeWay = #{chargeWay,jdbcType=BIT},
+      </if>
+      <if test="flowStatus != null" >
+        flowStatus = #{flowStatus,jdbcType=BIT},
+      </if>
+      <if test="billPayer != null" >
+        billPayer = #{billPayer,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isOnline != null" >
+        isOnline = #{isOnline,jdbcType=BIT},
+      </if>
+      <if test="payTime != null" >
+        payTime = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where flowNo = #{flowNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.expense.ExpenseFlow" >
+    update expense_flow
+    set totalAmount = #{totalAmount,jdbcType=DECIMAL},
+      chargeWay = #{chargeWay,jdbcType=BIT},
+      flowStatus = #{flowStatus,jdbcType=BIT},
+      billPayer = #{billPayer,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      isOnline = #{isOnline,jdbcType=BIT},
+      payTime = #{payTime,jdbcType=TIMESTAMP}
+    where flowNo = #{flowNo,jdbcType=VARCHAR}
+  </update>
+
+  <!--修改状态为已支付  zy-->
+  <update id="surePay">
+     update expense_flow
+     set flowStatus = 3, payTime = #{payTime}
+     WHERE flowNo = #{flowNo}
+  </update>
+</mapper>

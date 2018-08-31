@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="estatemgmt:war">
+    <output-path>$PROJECT_DIR$/screen-master/target</output-path>
+    <root id="archive" name="estatemgmt.war">
+      <element id="artifact" artifact-name="estatemgmt:war exploded" />
+    </root>
+  </artifact>
+</component>

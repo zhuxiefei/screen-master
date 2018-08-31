@@ -1,0 +1,16 @@
+{
+    "code": "",
+    "message": "",
+    "data": {"rows": [
+        {"id":"one","department":"0","level":0,"name":"办公室"},
+        {"id":"two","department":"1","level":0,"name":"财务部"}
+
+    ],
+        "total": 20,
+        "curPage": 1,
+        "maxPage": 10,
+        "pageSize": 20,
+        "firstRow": 0,
+        "lastRow": 0}
+
+}

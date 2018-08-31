@@ -1,0 +1,162 @@
+<style>
+    #seeHouseForm .col-1 .row-label {
+        width: 20%;
+    }
+
+    #seeHouseForm .col-1 .row-span {
+        width: 80%;
+        font-size: 14px;
+    }
+
+    #seeHouseForm .col-2 .row-label {
+        width: 19%;
+    }
+
+    #seeHouseForm .col-2 .row-span {
+        width: 28%;
+        font-size: 14px;
+    }
+
+    #seeHouseForm .row-span {
+        display: inline-block;
+        vertical-align: bottom;
+        margin-bottom: 10px;
+    }
+
+    .detailTitle {
+        font-weight: bold;
+        background-color: #b0d3f7;
+    }
+</style>
+<div class="bjui-pageContent" style="overflow: auto;">
+    <table class="patrolDetail">
+        <tr>
+            <td colspan="4" align="center" class="detailTitle">
+                保洁内容信息
+            </td>
+        </tr>
+        <tr>
+            <td class="td_left">保洁编号:</td>
+            <td class="td_right" id="contentNo"></td>
+            <td class="td_left">保洁周期：</td>
+            <td class="td_right" id="cycle"></td>
+        </tr>
+        <tr>
+            <td class="td_left">保洁区域:</td>
+            <td class="td_right" id="areaName"></td>
+            <td class="td_left">保洁类型:</td>
+            <td class="td_right" id="typeName"></td>
+        </tr>
+        <tr>
+            <td class="td_left">保洁位置:</td>
+            <td class="td_right" id="location" colspan="3"></td>
+
+        </tr>
+        <tr>
+            <td class="td_left">保洁内容:</td>
+            <td class="td_right" id="content" colspan="3"></td>
+
+        </tr>
+
+
+        <tr>
+            <td colspan="4" align="center" class="detailTitle">
+                考核信息
+            </td>
+        </tr>
+        <tr >
+            <td class="td_left">考核人员:</td>
+            <td class="td_right" id="examiner"></td>
+            <td class="td_left">考核时间:</td>
+            <td class="td_right" id="createTime"></td>
+
+        </tr>
+
+        <tr style=" " >
+            <td class="td_left">是否达标:</td>
+            <td class="td_right" colspan="3" id="isStandard"></td>
+        </tr>
+        <tr style=" " height="70">
+            <td class="td_left">问题记录:</td>
+            <td class="td_right" colspan="3" id="problemRecord"></td>
+        </tr>
+
+        <tr style=" " height="200">
+            <td class="td_left">保洁考核图片:</td>
+            <td class="td_right" colspan="3" id="rentalPark">
+                <ul id="recordListpic" class="clearfix seePics" style="height: 180px">
+
+                </ul>
+            </td>
+        </tr>
+
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var recordData = $.CurrentNavtab.data("findRecord");
+    if(recordData.contentNo==undefined||recordData.contentNo==null||recordData.contentNo==""){
+        recordData.contentNo="<i>已被删除</i>"
+    }
+    if(recordData.areaName==undefined||recordData.areaName==null||recordData.areaName==""){
+        recordData.areaName="<i>已被删除</i>"
+    }
+    if(recordData.typeName==undefined||recordData.typeName==null||recordData.typeName==""){
+        recordData.typeName="<i>已被删除</i>"
+    }
+    if(recordData.location==undefined||recordData.location==null||recordData.location==""){
+        recordData.location="<i>已被删除</i>"
+    }
+    if(recordData.content==undefined||recordData.content==null||recordData.content==""){
+        recordData.content="<i>已被删除</i>"
+    }
+
+    $.CurrentDialog.find("#areaName").html(recordData.areaName);
+    $.CurrentDialog.find("#createTime").html(recordData.createTime);
+    $.CurrentDialog.find("#content").html(recordData.content);
+    $.CurrentDialog.find("#contentNo").html(recordData.contentNo);
+    $.CurrentDialog.find("#examiner").html(recordData.examiner);
+    $.CurrentDialog.find("#location").html(recordData.location);
+    $.CurrentDialog.find("#problemRecord").html(recordData.problemRecord);
+    $.CurrentDialog.find("#typeName").html(recordData.typeName);
+    if (recordData.isStandard == 1) {
+        recordData.isStandard = '是';
+    } else {
+        recordData.isStandard = '否';
+    }
+    $.CurrentDialog.find("#isStandard").html(recordData.isStandard);
+    if (recordData.cycle == 1) {
+        recordData.cycle = '每小时保洁';
+    } else if (recordData.cycle == 2) {
+        recordData.cycle = '每半天保洁';
+    } else if (recordData.cycle == 3) {
+        recordData.cycle = '每日保洁';
+    } else if (recordData.cycle == 4) {
+        recordData.cycle = '每周保洁';
+    }else{
+        recordData.cycle = '每月保洁';
+    }
+    $.CurrentDialog.find("#cycle").html(recordData.cycle);
+
+    var data= recordData.pictureUrls;
+    if (data&&data.length) {
+        $.CurrentDialog.find('#recordListpic').html("");
+        var html = "";
+        for (var i = 0; i < data.length; i++) {
+            html = html + '<li  style=" cursor:pointer;width: 20%;" ><a href="' + data[i] + '"><img src="' + data[i] + '" width="100%" height="100%"/></a></li>'
+            if (i == 4) {
+                html = html + '<div class="clear"></div>';
+            }
+        }
+        $.CurrentDialog.find('#recordListpic').append(html);
+    }
+    $.CurrentDialog.find("#recordListpic").each(function () {
+        $(this).find("a").touchTouch();
+    });
+</script>

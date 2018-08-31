@@ -1,0 +1,17 @@
+{
+  "code":"00000",
+  "message":"",
+  "data":
+    {
+      "userId":12,
+      "userName":"旋转木马",
+      "userStatus":"1",
+      "acctName":"15053522625",
+      "userGender":1,
+      "userHead":"http://123456",
+      "createTime":"2015-06-15 15:12:00"
+      "lastLoginTime":"2017-05-15 15:12:00",
+      "lastLoginIp":"129.125.102.111"
+
+    }
+}

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.system.FeedbackMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.system.Feedback" >
+    <id column="feedbackId" property="feedbackId" jdbcType="BIGINT" />
+    <result column="authorId" property="authorId" jdbcType="VARCHAR" />
+    <result column="feedbackStatus" property="feedbackStatus" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="appType" property="appType" jdbcType="BIT" />
+    <result column="authorName" property="authorName" jdbcType="VARCHAR" />
+    <result column="estateId" property="estateId" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.betel.estatemgmt.common.model.system.Feedback" extends="BaseResultMap" >
+    <result column="feedbackContent" property="feedbackContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    feedbackId, authorId, feedbackStatus, createTime, feedbackType,
+    clientModel, clientVersion, appVersion,appType,authorName,estateId
+  </sql>
+  <sql id="Blob_Column_List" >
+    feedbackContent
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_feedback
+    where feedbackId = #{feedbackId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user_feedback
+    where feedbackId = #{feedbackId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.system.Feedback" >
+    insert into user_feedback (feedbackId, authorId, feedbackStatus, 
+      createTime, feedbackContent, feedbackType,
+    clientModel, clientVersion, appVersion,appType,authorName,estateId)
+    values (#{feedbackId,jdbcType=BIGINT}, #{authorId,jdbcType=VARCHAR}, #{feedbackStatus,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{feedbackContent,jdbcType=LONGVARCHAR},
+      #{feedbackType,jdbcType=BIT}, #{clientModel,jdbcType=VARCHAR}, #{clientVersion,jdbcType=VARCHAR},
+      #{appVersion,jdbcType=VARCHAR},#{appType,jdbcType=BIT},#{authorName,jdbcType=VARCHAR}, #{estateId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.system.Feedback" >
+    insert into user_feedback
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="feedbackId != null" >
+        feedbackId,
+      </if>
+      <if test="authorId != null" >
+        authorId,
+      </if>
+      <if test="feedbackStatus != null" >
+        feedbackStatus,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="feedbackContent != null" >
+        feedbackContent,
+      </if>
+      <if test="feedbackType != null">
+        feedbackType,
+      </if>
+      <if test="clientModel != null">
+        clientModel,
+      </if>
+      <if test="clientVersion != null">
+        clientVersion,
+      </if>
+      <if test="appVersion != null">
+        appVersion,
+      </if>
+      <if test="appType != null">
+        appType,
+      </if>
+      <if test="authorName != null">
+        authorName,
+      </if>
+      <if test="estateId != null">
+        estateId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="feedbackId != null" >
+        #{feedbackId,jdbcType=BIGINT},
+      </if>
+      <if test="authorId != null" >
+        #{authorId,jdbcType=VARCHAR},
+      </if>
+      <if test="feedbackStatus != null" >
+        #{feedbackStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feedbackContent != null" >
+        #{feedbackContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="feedbackType != null">
+        #{feedbackType,jdbcType=BIT},
+      </if>
+      <if test="clientModel != null">
+        #{clientModel,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null">
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null">
+        #{appType,jdbcType=BIT},
+      </if>
+      <if test="authorName != null">
+        #{authorName,jdbcType=VARCHAR},
+      </if>
+      <if test="estateId != null">
+        #{estateId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.system.Feedback" >
+    update user_feedback
+    <set >
+      <if test="authorId != null" >
+        authorId = #{authorId,jdbcType=VARCHAR},
+      </if>
+      <if test="feedbackStatus != null" >
+        feedbackStatus = #{feedbackStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feedbackContent != null" >
+        feedbackContent = #{feedbackContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="feedbackType != null">
+        feedbackType = #{feedbackType,jdbcType=BIT},
+      </if>
+      <if test="clientModel != null">
+        clientModel = #{clientModel,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        clientVersion = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null">
+        appVersion = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null">
+        appType = #{appType,jdbcType=BIT},
+      </if>
+      <if test="authorName != null">
+        authorName = #{authorName,jdbcType=VARCHAR},
+      </if>
+      <if test="estateId != null">
+        estateId = #{estateId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where feedbackId = #{feedbackId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.betel.estatemgmt.common.model.system.Feedback" >
+    update user_feedback
+    set authorId = #{authorId,jdbcType=VARCHAR},
+      feedbackStatus = #{feedbackStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      feedbackContent = #{feedbackContent,jdbcType=LONGVARCHAR},
+      authorName = #{authorName,jdbcType=VARCHAR}
+    where feedbackId = #{feedbackId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.system.Feedback" >
+    update user_feedback
+    set authorId = #{authorId,jdbcType=VARCHAR},
+      feedbackStatus = #{feedbackStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      feedbackType = #{feedbackType,jdbcType=BIT},
+      clientModel = #{clientModel,jdbcType=VARCHAR},
+      clientVersion = #{clientVersion,jdbcType=VARCHAR},
+      appVersion = #{appVersion,jdbcType=VARCHAR},
+      appType = #{appType,jdbcType=BIT},
+      authorName = #{authorName,jdbcType=VARCHAR},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where feedbackId = #{feedbackId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findAllFeedback" parameterType="com.betel.estatemgmt.business.web.feedback.model.FeedbackPageReq"
+          resultType="com.betel.estatemgmt.business.web.feedback.model.Feedback">
+    SELECT
+    uf.feedbackId as feedbackId,
+    uf.feedbackType as feedbackType ,
+    uf.authorName AS feedbackName,
+    uf.appVersion as appVersion,
+    uf.createTime as createTime,
+    uf.appType AS appType
+    FROM user_feedback uf
+    <where>
+      <if test="feedbackName != null and feedbackName != ''">
+        AND uf.authorName like CONCAT('%',#{feedbackName},'%')
+      </if>
+      <if test="feedbackType == 1 or feedbackType == 2">
+        AND uf.feedbackType = #{feedbackType}
+      </if>
+      <if test="appVersion != null and appVersion != ''">
+        AND uf.appVersion like CONCAT('%',#{appVersion},'%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        AND uf.createTime &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        AND uf.createTime &lt;= #{endTime}
+      </if>
+      <if test="appType != null and appType != ''">
+        AND uf.appType = #{appType}
+      </if>
+      AND uf.estateId = #{estateId}
+    </where>
+    ORDER BY uf.createTime desc
+  </select>
+  <delete id="deleteByFeedbackIds" parameterType="java.lang.Long">
+    DELETE FROM user_feedback
+    WHERE feedbackId IN
+    <foreach collection="array" item="feedbackId" open="(" separator="," close=")">
+      #{feedbackId,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+  <select id="selectByFeedbackId" parameterType="java.lang.Long"
+          resultType="com.betel.estatemgmt.business.web.feedback.model.FeedbackInfo">
+    SELECT
+    authorName as feedbackName,
+    createTime,
+    feedbackType,
+    feedbackContent,
+    clientModel,
+    clientVersion,
+    appVersion,
+    appType
+    FROM user_feedback
+    WHERE feedbackId = #{feedbackId}
+  </select>
+
+  <select id="selectByFeedbackIds" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.business.web.feedback.model.FeedbackInfo">
+    SELECT
+    authorName as feedbackName,
+    createTime,
+    feedbackType,
+    feedbackContent,
+    clientModel,
+    clientVersion,
+    appVersion,
+    appType
+    FROM user_feedback
+    WHERE feedbackId IN
+    <foreach item="item"  collection="array" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    ORDER BY createTime desc
+  </select>
+
+  <select id="selectByKeywords" parameterType="com.betel.estatemgmt.business.web.feedback.model.ExportReq" resultType="com.betel.estatemgmt.business.web.feedback.model.FeedbackInfo">
+    SELECT
+    uf.authorName as feedbackName,
+    uf.createTime,
+    uf.feedbackType,
+    uf.feedbackContent,
+    uf.clientModel,
+    uf.clientVersion,
+    uf.appVersion,
+    uf.appType
+    FROM user_feedback uf
+    <where>
+      uf.estateId = #{estateId}
+      <if test="feedbackName != null and feedbackName != ''">
+        AND uf.authorName like CONCAT('%',#{feedbackName},'%')
+      </if>
+      <if test="feedbackType == 1 or feedbackType == 2">
+        AND uf.feedbackType = #{feedbackType}
+      </if>
+      <if test="appVersion != null and appVersion != ''">
+        AND uf.appVersion like CONCAT('%',#{appVersion},'%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        AND uf.createTime &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        AND uf.createTime &lt;= #{endTime}
+      </if>
+      <if test="appType != null and appType != ''">
+        AND uf.appType = #{appType}
+      </if>
+    </where>
+    ORDER BY createTime desc
+  </select>
+
+  <select id="selectFeedbackInfos" resultType="com.betel.estatemgmt.business.web.feedback.model.FeedbackInfo">
+    SELECT
+    authorName as feedbackName,
+    createTime,
+    feedbackType,
+    feedbackContent,
+    clientModel,
+    clientVersion,
+    appVersion,
+    appType
+    FROM user_feedback
+    WHERE estateId = #{estateId}
+    ORDER BY createTime desc
+  </select>
+</mapper>

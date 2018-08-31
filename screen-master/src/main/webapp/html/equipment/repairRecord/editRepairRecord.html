@@ -1,0 +1,180 @@
+<div class="bjui-pageContent" style="overflow-y: auto;">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <table class="patrolDetail">
+            <tr>
+                <td class="td_left">设备编号:</td>
+                <td class="td_right" id="equipmentNo"></td>
+                <td class="td_left">设备名称: </td>
+                <td class="td_right" id="equipmentName"></td>
+            </tr>
+            <tr>
+                <td class="td_left">设备类型: </td>
+                <td class="td_right" id="typeName"></td>
+                <td class="td_left">是否需要巡检: </td>
+                <td class="td_right" id="isCheck"></td>
+            </tr>
+            <tr>
+                <td class="td_left">所在位置: </td>
+                <td class="td_right" id="location"></td>
+                <td class="td_left">设备生产日期: </td>
+                <td class="td_right" id="equipmentCreateTime"></td>
+            </tr>
+            <tr>
+                <td class="td_left">质保期: </td>
+                <td class="td_right" id="equipQuality"></td>
+                <td class="td_left">保修截止日期: </td>
+                <td class="td_right" id="deadline"></td>
+            </tr>
+            <tr>
+                <td class="td_left">设备生产厂商: </td>
+                <td class="td_right" id="equipmentProducer"></td>
+                <td class="td_left">生产厂商电话: </td>
+                <td class="td_right" id="producerPhone"></td>
+            </tr>
+        </table>
+        <table class="patrolDetail patrolDetail_border">
+            <input type="hidden" id="recordId" name="recordId">
+            <input type="hidden" id="equipmentId" name="equipmentId">
+            <tr>
+                <td class="td_left">维修厂商: </td>
+                <td class="td_right required">
+                    <input type="text" id="equipmentOperator" name="equipmentOperator" data-rule="required,special,length(~15)"  >
+                </td>
+                <td class="td_left td_left2">维修厂商电话: </td>
+                <td class="td_right required">
+                    <input type="text" id="operatorPhone" name="operatorPhone" data-rule="required,special,length(~15)">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">维修时间: </td>
+                <td class="td_right required">
+                    <input type="text" id="repairTime" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd"  data-rule="required" name="repairTime">
+                </td>
+                <td class="td_left td_left2">维修费用: </td>
+                <td class="td_right required">
+                    <input type="text" id="repairExpense" name="repairExpense" data-rule="required,itemPriceBig" style=" width: 90%;">&nbsp;元
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">质保期: </td>
+                <td class="td_right required">
+                    <input type="text" id="qualityPeriod" name="qualityPeriod" data-rule="required,number1000" style=" width: 77%;">
+                    <select id="unit" name="unit" data-toggle="selectpicker"  data-width="20%" data-rule="required" >
+                        <option value="2">月</option>
+                        <option value="1">天</option>
+                        <option value="3">年</option>
+                    </select>
+                </td>
+                <td class="td_left"></td>
+                <td class="td_right">
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left">维修内容: </td>
+                <td class="td_right required" colspan="3">
+                    <textarea style="resize: none; height: 120px; " placeholder="请输入维修内容(最多500个字)" data-rule="required,length(~500)"
+                          id="repairDesc" name="repairDesc"></textarea>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" id="editRepairRecord" class="btn-default" data-icon="save">确认</button></li>
+    </ul>
+</div>
+<script>
+    var editRepairRecordDetail = $.CurrentNavtab.data("editRepairRecordDetail");
+    console.log(editRepairRecordDetail)
+    //维保记录id
+    $.CurrentDialog.find("#recordId").val(editRepairRecordDetail.recordId);
+    //设备id
+    $.CurrentDialog.find("#equipmentId").val(editRepairRecordDetail.equipmentId);
+    //设备编号
+    $.CurrentDialog.find("#equipmentNo").text(editRepairRecordDetail.equipmentNo);
+    //设备名称
+    $.CurrentDialog.find("#equipmentName").text(editRepairRecordDetail.equipmentName);
+    //设备类型
+    $.CurrentDialog.find("#typeName").text(editRepairRecordDetail.typeName);
+    //巡检周期
+    if (editRepairRecordDetail.isCheck == undefined || editRepairRecordDetail.isCheck == null || editRepairRecordDetail.isCheck == "") {
+        editRepairRecordDetail.isCheck = '';
+    }else if(editRepairRecordDetail.isCheck == 1) {
+        editRepairRecordDetail.isCheck = "是";
+    }else if(editRepairRecordDetail.isCheck == 2) {
+        editRepairRecordDetail.isCheck = "否";
+    }
+    $.CurrentDialog.find("#isCheck").text(editRepairRecordDetail.isCheck);
+    /*if (editRepairRecordDetail.checkCycle == undefined || editRepairRecordDetail.checkCycle == null || editRepairRecordDetail.checkCycle == "") {
+        editRepairRecordDetail.checkCycle = '<i>已被删除</i>';
+    }else if(editRepairRecordDetail.checkCycle == 1) {
+        editRepairRecordDetail.checkCycle = "每日巡检";
+    } else if(editRepairRecordDetail.checkCycle == 2) {
+        editRepairRecordDetail.checkCycle = "每周巡检";
+    } else if(editRepairRecordDetail.checkCycle == 3) {
+        editRepairRecordDetail.checkCycle = "月度巡检";
+    } else if(editRepairRecordDetail.checkCycle == 4) {
+        editRepairRecordDetail.checkCycle = "季度巡检";
+    } else if(editRepairRecordDetail.checkCycle == 3) {
+        editRepairRecordDetail.checkCycle = "年度巡检";
+    }
+    $.CurrentDialog.find("#checkCycle").text(editRepairRecordDetail.checkCycle);*/
+    //所在位置
+    $.CurrentDialog.find("#location").text(editRepairRecordDetail.location);
+    //设备生产日期
+    $.CurrentDialog.find("#equipmentCreateTime").text(editRepairRecordDetail.equipmentCreateTime.substring(0,10));
+    //质保期
+    if (editRepairRecordDetail.equipQuality == undefined || editRepairRecordDetail.equipQuality == null || editRepairRecordDetail.equipQuality == "") {
+        editRepairRecordDetail.equipQuality = '';
+    }
+
+    if (editRepairRecordDetail.equipUnit == undefined || editRepairRecordDetail.equipUnit == null || editRepairRecordDetail.equipUnit == "") {
+        editRepairRecordDetail.equipUnit = '';
+    }else if(editRepairRecordDetail.equipUnit == 1) {
+        editRepairRecordDetail.equipUnit = "天";
+    } else if(editRepairRecordDetail.equipUnit == 2) {
+        editRepairRecordDetail.equipUnit = "个月";
+    } else if(editRepairRecordDetail.equipUnit == 3) {
+        editRepairRecordDetail.equipUnit = "年";
+    }
+
+    $.CurrentDialog.find("#equipQuality").text(editRepairRecordDetail.equipQuality+editRepairRecordDetail.equipUnit);
+    //保修截止日期
+    $.CurrentDialog.find("#deadline").text(editRepairRecordDetail.deadline.substring(0,10));
+    //设备生产厂商
+    $.CurrentDialog.find("#equipmentProducer").text(editRepairRecordDetail.equipmentProducer);
+    //生产厂商电话
+    $.CurrentDialog.find("#producerPhone").text(editRepairRecordDetail.producerPhone);
+
+    //维修时间
+    $.CurrentDialog.find("#repairTime").val(editRepairRecordDetail.repairTime.substring(0,10));
+    //维修厂商
+    $.CurrentDialog.find("#equipmentOperator").val(editRepairRecordDetail.equipmentOperator);
+    //维修厂商电话
+    $.CurrentDialog.find("#operatorPhone").val(editRepairRecordDetail.operatorPhone);
+    //维修费用
+    $.CurrentDialog.find("#repairExpense").val(editRepairRecordDetail.repairExpense);
+    //维修质保期
+    $.CurrentDialog.find('#qualityPeriod').val(editRepairRecordDetail.recordQuality);
+    $.CurrentDialog.find('#unit').val(editRepairRecordDetail.recordUnit);
+    //维修内容
+    $.CurrentDialog.find("#repairDesc").val(editRepairRecordDetail.repairDesc);
+
+    //提交修改后的维保记录
+    $.CurrentDialog.find('#editRepairRecord').click(function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/maintenance/v1/updateRecord',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            okCallback: function (data) {
+                BJUI.alertmsg('ok','操作成功');
+                BJUI.dialog('closeCurrent');
+                $.CurrentNavtab.find("#j_datagrid_repairRecord").datagrid('filter');
+            }
+        })
+    })
+</script>

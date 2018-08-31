@@ -1,0 +1,651 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find('#q_datagrid').datagrid({
+        showToolbar: true,   //是否显示工具条
+        toolbarItem: 'add,del, |',   //显示工具条按钮  all显示所有按钮
+        dataUrl: path + '/web/house/v1/findAllHouse',
+        editMode: {
+            dialog: {
+                width: '470',
+                height: '400',
+                mask: true,
+                title: "添加房屋信息",
+                id: 'dialog_addHouse',
+                maxable: false,
+                resizable: false
+            }
+        },
+        editUrl: 'html/house/houseList/addHouse.html',
+        delUrl: path + '/web/house/v1/deleteHouse',
+        delPK: 'houseId',
+        delConfirm: "确定要删除选中的房屋吗？",  //删除前的确认
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                })
+                $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        },
+        delPKKey: 'houseIds',
+        importOption: {
+            type: "dialog",
+            options: {
+                url: "html/house/houseList/batchImport.html",
+                height: 280,
+                mask: true,
+                title: "批量导入房屋",
+                id: 'dialog_batchImport',
+                maxable: false,
+                resizable: false
+            }
+        },
+        paging: {pageSize: 10},
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        showCheckboxcol: true,  //是否显示行复选框
+        showLinenumber: true,
+        tableWidth: '98%',
+        height: '100%',
+        fieldSortable: false,  //点击页头字段快速排序。
+        columnResize: false,   //允许调整列宽。
+        columnMenu: false,    //表头字段列上显示菜单按钮
+        contextMenuH: false,   //在表头上右键点击时出现 ”显示/隐藏列“ 的快捷菜单。
+        menu: false,
+        noremove: false,
+        dialogFilterW: 0,
+        hScrollbar: false,  //允许出现横向滚动条。
+        loadingmask: true,
+        columns: [
+            {
+                name: 'buildingName', label: '楼宇名称', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'unitName', label: '单元名称', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'houseNum', label: '房号', width: 80, align: 'center', render: function (value, data) {
+                stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                return stateName;
+            }
+            },
+            {
+                name: 'displayOrder', label: '房屋排序', width: 80, align: 'center', render: function (value, data) {
+                stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                return stateName;
+            }
+            },
+            {
+                name: 'typeName', label: '户型名称', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'createTime',
+                label: '创建时间',
+                width: 170,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd HH:mm:ss',
+                render: function (value) {
+                    return value ? value.substr(0, 20) : value
+                }
+            },
+            {
+                name: 'deliverTime',
+                label: '交付时间',
+                width: 150,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM-dd HH:mm:ss',
+                render: function (value) {
+                    if (value == '' || value == null || value == undefined) {
+                        stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                        return stateName;
+                    } else {
+                        return value.substr(0, 10);
+                    }
+                }
+            },
+            {
+                name: 'userName', label: '户主', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'floorArea', label: '建筑面积', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "㎡" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'interFloorArea', label: '套内面积', width: 80, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "㎡" + "</div>";
+                    return stateName;
+                }
+            }
+            },
+            {
+                name: 'buyCounts', label: '停车位(购买)', width: 100, align: 'center', render: function (value) {
+                if (value == 0) {
+                    var statement = "<i>暂无信息</i>"
+                    return statement;
+                } else {
+                    return value;
+                }
+            }
+            },
+            {
+                name: 'rentCounts', label: '停车位(租赁)', width: 100, align: 'center', render: function (value) {
+                if (value == 0) {
+                    var statement = "<i>暂无信息</i>"
+                    return statement;
+                } else {
+                    return value;
+                }
+            }
+            },
+            {
+                name: 'houseId', label: '操作', width: 150, align: 'center', render: function (value, data) {
+                var buildingName = '';
+                var unitName = '';
+                var houseNum = '';
+                if (data.buildingName == undefined) {   //楼宇
+                    buildingName = "";
+                } else {
+                    buildingName = data.buildingName;
+                }
+                if (data.unitName == undefined) {   //单元
+                    unitName = "";
+                } else {
+                    unitName = data.unitName;
+                }
+                if (data.houseNum == undefined) {   //单元
+                    houseNum = "";
+                } else {
+                    houseNum = data.houseNum;
+                }
+
+                var html = '<button type="button" class="btn-blue btn-cad"  data-id="' + value + '" data-name="' + buildingName + unitName + houseNum + '" onclick="drawManage(this,\'' + value + '\')">图纸管理</button>'
+                        + '<button type="button" class="btn-blue btn-edit"  data-id="' + value + '" onclick="modifyHouseList(\'' + value + '\')">编辑</button>'
+                        + '<button type="button" class="btn-blue " onclick="deliverTime(\'' + value + '\')">交付时间</button>'
+                        + '<button type="button" class="btn-blue " onclick="seeHouseList(\'' + value + '\')">查看</button>'
+                        + '<button type="button" class="btn-blue " onclick="memberEdit(\'' + value + '\')">成员信息</button>'
+                        + '<button type="button" class="btn-red btn-detele" data-toggle="del.datagrid.tr">删除</button>'
+                return html;
+            }
+            }
+        ],
+    });
+
+    function memberEdit(houseId) {
+        var houseIds = {"houseId": houseId};
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/findHouse',
+            data: JSON.stringify(houseIds),
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data('memberEdit', houseId);
+                    $.CurrentNavtab.data('findHouseDetail',json.data);
+                    BJUI.dialog({
+                        id: 'memberEdit',
+                        url: 'html/house/houseList/memberEdit.html',
+                        title: '成员信息',
+                        width: 880,
+                        height: 650,
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+
+    }
+
+
+    //重置搜索条件--select
+    $.CurrentNavtab.find(".btnReset").click(function () {
+        $.CurrentNavtab.find("select#isBuy").selectpicker('val', "");
+        $.CurrentNavtab.find("select#isRent").selectpicker('val', "");
+    });
+
+    //出现滚动条
+    $.CurrentNavtab.find('.bjui-datagrid .datagrid-box-b').addClass('showScroll');
+
+    //交付时间
+    function deliverTime(id) {
+        $('body').data('deliverTimeId', id);
+        BJUI.dialog({
+            id: 'deliverTime',
+            url: 'html/house/houseList/houseDeliverTime.html',
+            title: '修改交付时间',
+            data: id,
+            width: 400,
+            height: 200,
+            mask: true,
+            maxable: false,
+            resizable: false
+        })
+    }
+
+    //批量编辑交付时间
+    $.CurrentNavtab.find('#batchDeliverTime_btn').click(function () {
+                var data = $.CurrentNavtab.find('#q_datagrid').data('selectedDatas');
+                if (!data || data.length == 0) {
+                    BJUI.alertmsg('info', '请先选择需要编辑的信息！', {
+                        okCall: function () {
+                        }
+                    })
+                } else {
+                    $("body").data("batchDeliverTime", data);
+                    BJUI.dialog({
+                        id: 'batchDeliverTime',
+                        url: 'html/house/houseList/batchDeliverTime.html',
+                        title: "批量编辑交付时间",
+                        width: '400',
+                        height: '200',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    });
+                }
+            }
+    )
+
+    //编辑
+    function modifyHouseList(houseId) {
+        var houseIds = {"houseId": houseId};
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/findHouse',
+            data: JSON.stringify(houseIds),
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("houseDetail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_editHouse',
+                        url: 'html/house/houseList/editHouse.html',
+                        title: "编辑房屋",
+                        width: 470,
+                        height: 400,
+                        mask: true,
+                        maxable: false,
+                        resizable: false,
+                        loadingmask: false,
+                    });
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+//        $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+    }
+
+    //查看
+    function seeHouseList(houseId) {
+        var houseIds = {"houseId": houseId};
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/findHouse',
+            data: JSON.stringify(houseIds),
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("houseDetail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeHouse',
+                        url: 'html/house/houseList/seeHouse.html',
+                        title: "查看房屋",
+                        width: 600,
+                        height: 700,
+                        mask: true,
+                        maxable: false,
+                        resizable: false,
+                        loadingmask: false,
+                    });
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+//        $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+    }
+
+    //图纸管理
+    function drawManage(obj, houseId) {
+        var houseIds = {"houseId": houseId};
+        var houseName = obj.getAttribute("data-name");
+        $("body").data("houseName", houseName);
+        BJUI.ajax('doajax', {
+            url: path + '/web/house/v1/findPicture',
+            data: JSON.stringify(houseIds),
+            loadingmask: false,
+            callback: function (json) {
+                console.log(json);
+                if (json.code == "00000") {
+                    $("body").data("houseListmk", json);
+                    $("body").data("houseListmkP", houseId);
+                    BJUI.navtab('refresh', 'navtab_drawManagement');
+                    BJUI.navtab({
+                        id: 'navtab_drawManagement',
+                        url: 'html/house/houseList/drawManagement.html',
+                        title: '房屋图纸',
+                    });
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+//        $.CurrentNavtab.find('#q_datagrid').datagrid('refresh', true);
+    }
+    //导入房屋
+    $.CurrentNavtab.find('#batchHouse_btn').click(function () {
+        BJUI.dialog({
+            url: "html/house/houseList/batchImport.html",
+            height: 280,
+            mask: true,
+            title: "批量导入房屋",
+            id: 'dialog_batchImport',
+            maxable: false,
+            resizable: false
+        });
+    })
+    //导入图纸
+    $.CurrentNavtab.find('#batchDrawing_btn').click(function () {
+        BJUI.dialog({
+            id: 'dialog_batchDrawing',
+            url: 'html/house/houseList/batchDrawingImport.html',
+            title: "批量导入图纸",
+            height: 280,
+            mask: true,
+            maxable: false,
+            resizable: false
+        });
+    })
+
+    //左边树
+    function ztree_returnjson() {
+        //  alert(11)
+        var dataJson = null;
+        BJUI.ajax('doajax', {
+            url: path + '/web/building/v1/findBuildingList',
+            //url:"json/datagrid/datagrid-tree3.json",
+            loadingmask: false,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+                var str = {'isParent': true};
+                $.each(dataJson, function (i, n) {
+                    for (var key in str) {
+                        n[key] = str[key];
+                    }
+                });
+                var allArr = {"buildingName": "其他", "buildingId": -1};
+//                dataJson.splice(0,allArr);  //指定位置
+
+
+                dataJson.push(allArr);
+
+                //console.log($.CurrentNavtab.find("#ztreeHouseList li").html());
+                // console.log($.CurrentNavtab.find("#ztreeHouseList li").find("a :last-child").html());
+
+                //$.CurrentNavtab.find("#ztreeHouseList li").find("a :last-child").css("color","red");
+
+                // dataJson.reverse();
+                /*  var title = $("#ztreeBuilding").children("li").find("a").find("span").eq(1).val();
+                 $("#ztreeBuilding").children("li").find("a").find("span").eq(1).attr("data",title);*/
+                //$("#ztreeHouseList").children("li").find("a").find("span").eq(1).css({"white-space":"nowrap","overflow":"hidden","text-overflow":"ellipsis"})
+                //$.CurrentNavtab.find("#ztreeHouseList").children("li").children("a").children("span").eq(1).css({"display":"inline-block","white-space":"nowrap","overflow":"hidden","text-overflow":"ellipsis"});
+
+            }
+
+        });
+        /*var allArr = {"buildingName":"其他","buildingDesc":"查看别墅"};
+         dataJson.splice(0, 0, allArr);  //指定位置
+         dataJson.push(allArr);*/
+
+
+        return dataJson;
+    }
+    var exportData = {};
+    function zTreeOnCheck_house(event, treeId, treeNode) {
+        var data = {};
+        var id;
+        var pId;
+        if (treeNode.checked) {  //勾选
+
+            var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList");
+            var nodes = treeObj.getCheckedNodes(true);
+            //var v="";
+            var isParent;
+            for (var i = 0; i < nodes.length; i++) {
+                //v+=nodes[i].name + ",";
+                //alert(nodes[i].id); //获取选中节点的值
+                id = nodes[i].buildingId;
+                isParent = nodes[i].isParent;
+                var houseNum = $.CurrentNavtab.find("#houseNum").val();
+                var typeName = $.CurrentNavtab.find("#typeName").val();
+                var ownerName = $.CurrentNavtab.find("#ownerName").val();
+                var isRent = $.CurrentNavtab.find("#isRent").val();
+                var isBuy = $.CurrentNavtab.find("#isBuy").val();
+                var cup={
+                    'houseNum':houseNum,
+                    'typeName':typeName,
+                    'ownerName':ownerName,
+                    'isRent':isRent,
+                    'isBuy':isBuy,
+                }
+                if (!isParent && id != -1) {
+                    pId = nodes[i].getParentNode().buildingId;
+
+//                    if (searchName == "") {
+                        data = {"buildingId": pId, "unitId": id};
+//                    } else {
+//                        data = {"buildingId": pId, "unitId": id, "keyWord": searchName};
+//                    }
+
+                } else if (isParent) {
+//                    if (searchName == "") {
+                        data = {"buildingId": id};
+//                    } else {
+//                        data = {"buildingId": id, "keyWord": searchName};
+//                    }
+
+                } else {
+//                    if (searchName == "") {
+                        data = {"isOthers": 1};
+//                    } else {
+//                        data = {"isOthers": 1, "keyWord": searchName};
+//                    }
+
+                }
+
+            }
+        }
+
+        //按类型查询房屋
+        data.clearOldPostData = true;
+        var obj = Object.assign(data,cup);
+        $.CurrentNavtab.find('#q_datagrid').datagrid('filter', obj)
+        exportData.unitId = data.unitId;
+    }
+
+    function zTreeOnClick(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList");
+        var nodes = treeObj.getSelectedNodes();
+        /* for (var i=0, l=nodes.length; i < l; i++) {
+         //treeObj.checkNode(nodes[i], true, true);   //点击节点选中
+
+         $.CurrentNavtab.data('houseListInfo', nodes[i].buildingDesc);
+         //点击节点查看详情
+         BJUI.dialog({
+         id:'dialog_houseListInfo',
+         url:'html/house/houseList/houseListInfo.html',
+         title:nodes[i].buildingName,   //用户id
+         height:260,
+         mask:true,
+         onClose:function(){
+         $("#"+treeNode.tId).find("a").removeClass("curSelectedNode");
+         }
+         })
+
+         }*/
+    }
+    //添加子节点
+    function filterS(treeId, parentNode, childNodes) {
+        if (childNodes.code == "00000") {
+            childNodes = childNodes.data;
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                //console.log(childNodes);
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    //childNodes[i].unitName = childNodes[i].unitName.replace(/\.n/g, '.');
+                    //console.log(childNodes[i].unitName)
+                    var obj = {
+                        buildingId: childNodes[i].unitId,
+                        //pId: childNodes[i].unitName,
+                        buildingName: childNodes[i].unitName
+                    };
+                    if (childNodes[i].unitId == exportData.unitId) {
+                        obj.checked = true;
+                    }
+                    nodes.push(obj);
+                }
+                //console.log(nodes)
+                //return childNodes;
+                return nodes;
+            }
+        } else {
+            successBack(childNodes)
+        }
+    }
+    //选中节点 -- 暂时用不到
+    function zTreeOnClicks(e, treeId, treeNode, clickFlag) {
+        var treeObj = $.fn.zTree.getZTreeObj("ztreeHouseList");
+        var nodes = treeObj.getSelectedNodes();
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            //treeObj.checkNode(nodes[i], true, true);   //点击节点选中
+            //console.log(nodes[i].id) ;  //点击节点选中
+        }
+    }
+    function addDiyDomS(treeId, treeNode) {
+    }
+
+    // $.CurrentNavtab.find("#ztreeHouseList li").find("a :last-child").css("color","red");
+    /* console.log($.CurrentNavtab.find("#ztreeHouseList li").html());
+     console.log($.CurrentNavtab.find("#ztreeHouseList li").find("a :last-child").html());*/
+
+    changeDivHeight();
+
+</script>
+<style>
+    .showScroll {
+        overflow-x: scroll !important;
+    }
+</style>
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#q_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">房号:</label>
+                <div class="row-input">
+                    <input type="text" id="houseNum" name="houseNum" value="" data-rule="special,length(~6)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">户型名称:</label>
+                <div class="row-input">
+                    <input type="text" id="typeName" name="typeName" value="" data-rule="special,length(~10)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">户主姓名:</label>
+                <div class="row-input">
+                    <input type="text" id="ownerName" name="ownerName" value="" data-rule="special,length(~10)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">是否购车位:</label>
+                <div class="row-input">
+                    <select id="isBuy" name="isBuy" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </div>
+                <label class="row-label">是否租车位:</label>
+                <div class="row-input">
+                    <select id="isRent" name="isRent" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </div>
+                <label class="row-label">&nbsp;</label>
+                <div class="btn-group">
+                    <button type="submit" class="btn-green" id="btn-searchH" data-icon="search">开始搜索！</button>
+                    <button type="reset" class="btn-orange btnReset" data-icon="times">重置</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="divHouseList" style="/*height: 568px;*/overflow-y: auto">
+    <ul id="ztreeHouseList" style="" class="ztree" data-toggle="ztree"
+        data-options="{nodes:ztree_returnjson,async:true,url:path+'/web/building/v1/findUnitList',contentType:'application/json; charset=UTF-8',dataType:'json',checkEnable:true,chkStyle:'radio',radioType:'all',onCheck:zTreeOnCheck_house,onClick:zTreeOnClick,showIcon: false,idKey:'buildingId',keyName:'buildingName',autoParam:['buildingId=buildingId'],filter:filterS,addDiyDom:addDiyDomS}"></ul>
+
+</div>
+<div class="bjui-pageContent mainHouseContent">
+    <button type="button" class="btn-blue btn-prohibit" data-icon="sign-in" style=" left: 129px;"
+            id="batchHouse_btn">导入房屋
+    </button>
+    <button type="button" class="btn-blue btn-prohibit" data-icon="edit" style=" left: 219px;"
+            id="batchDeliverTime_btn">编辑交付时间
+    </button>
+    <button type="button" class="btn-blue btn-prohibit" data-icon="sign-in" style=" left: 339px;"
+            id="batchDrawing_btn">导入图纸
+    </button>
+    <table id="q_datagrid" class="table table-bordered">
+    </table>
+</div>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HousePicShareMapper" >
+    <sql id="Base_Column_List" >
+      shareId,shareUrl,shareKey,expireTime,shareUser,createTime
+    </sql>
+    <select id="selectShareOutOfTime" resultType="com.betel.estatemgmt.business.userapp.house.model.ShareURL">
+      SELECT sp.pictureUrl, sp.pictureId from house_picture_share hps
+      join system_picture sp ON hps.shareUrl = sp.pictureId
+      where now()>=hps.expireTime
+    </select>
+    <select id="selectShareByShareId" resultType="com.betel.estatemgmt.business.userapp.house.model.ShareURL" parameterType="java.lang.String">
+      SELECT hps.expireTime expireTime,hps.shareKey randomPassWord,sp.pictureName,sp.pictureUrl
+      FROM house_picture_share hps left join system_picture sp ON hps.shareUrl = sp.pictureId
+      WHERE shareId = #{shareId}
+    </select>
+
+    <insert id="insertHousePicShare" parameterType="com.betel.estatemgmt.common.model.house.HousePictureShare" useGeneratedKeys="true" keyProperty="shareId">
+        insert into house_picture_share
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="shareUrl != null" >
+                shareUrl,
+            </if>
+            <if test="shareKey != null" >
+                shareKey,
+            </if>
+            <if test="expireTime != null" >
+                expireTime,
+            </if>
+            <if test="shareUser != null" >
+                shareUser,
+            </if>
+            <if test="createTime != null" >
+                createTime
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="shareUrl != null" >
+                #{shareUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="shareKey != null" >
+                #{shareKey,jdbcType=VARCHAR},
+            </if>
+            <if test="expireTime != null" >
+                #{expireTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shareUser != null" >
+                #{shareUser,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+</mapper>

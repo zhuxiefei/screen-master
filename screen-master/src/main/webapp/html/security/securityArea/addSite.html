@@ -1,0 +1,73 @@
+<style>
+    #addAreaForm .row-label {
+        width: 25%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="padding-top: 15px" data-toggle="ajaxform" id="addAreaForm">
+        <div class="bjui-row col-1">
+            <label class="row-label">巡逻区域 : </label>
+            <div class="row-input required">
+                <select name="areaId" id="areaId" data-toggle="selectpicker" data-width="100%" data-rule="required">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <label class="row-label">签到地点 : </label>
+            <div class="row-input required">
+                <input type="text" id="signinAddress" name="signinAddress" data-rule="required,special,length(~50)">
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addSiteBtn" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+<script>
+
+
+BJUI.ajax('doajax', {
+    url: path + '/web/securityArea/v1/findAreaList',
+    loadingmask: false,
+    callback: function (json) {
+        if (json.code == "00000") {
+            for(var i=0;i<json.data.length;i++){
+                var html='<option value="'+json.data[i].areaId+'">'+json.data[i].areaName+'</option>';
+                $.CurrentDialog.find('#areaId').append(html);
+            }
+            $.CurrentDialog.find('#areaId').selectpicker('refresh');
+        } else {
+            successBack(json);
+        }
+    }
+});
+$.CurrentDialog.find('button#addSiteBtn').bind("click", function () {
+    BJUI.ajax('ajaxform', {
+        url: path + '/web/securityArea/v1/addSignin',
+        form: $.CurrentDialog.find('form'),
+        validate: true,
+        loadingmask: true,
+        callback: function (json) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '新增成功！');
+                var areaName=$.CurrentDialog.find('#areaId option:selected').text();
+                BJUI.dialog('closeCurrent');
+                var that=$.CurrentNavtab.find('[title='+areaName+']').siblings('span.zdSwitchNode');
+                var boolean= that.hasClass('roots_close')||that.hasClass('bottom_close');
+                if(boolean){
+                    that.click();
+                }else{
+                    that.click();
+                    that.click();
+                }
+            } else {
+                successBack(json);
+            }
+        }
+    })
+})
+
+
+</script>

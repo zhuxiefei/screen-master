@@ -1,0 +1,380 @@
+/*活动维护详情页css*/
+#activity_detail_info {
+    /*width:600px;
+        height:300px;
+        list-style: none;
+        margin:3px auto;*/
+}
+
+#activity_detail_info li {
+    float: left;
+    width: 20%;
+    border: 1px solid #fff;
+}
+
+#activity_detail_info li img {
+    width: 95%;
+    height: 100%;
+}
+
+.seePics li {
+    float: left;
+    width: 20%;
+    height: 50%;
+    border: 1px solid #fff;
+}
+
+.seePics li img {
+    width: 95%;
+    height: 100%;
+}
+
+/*交易维护*/
+#goods_detail_info {
+    width: 100%;
+    /*width:600px;*/
+    height: 300px;
+    list-style: none;
+    margin: 3px auto;
+    overflow: hidden;
+}
+
+#goods_detail_info li {
+    float: left;
+    width: 20%;
+    border: 1px solid #fff;
+}
+
+#goods_detail_info li img {
+    width: 95%;
+}
+
+#activity_detail_item {
+    list-style: none;
+    padding: 0 50px;
+}
+
+#activity_detail_item li {
+    margin-top: 2px;
+}
+
+#activity_detail_item b {
+    /*font-weight: 400;*/
+    width: 130px;
+    display: inline-block;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: right;
+    color: #777;
+    font-weight: normal;
+}
+
+.illegal-btn-group {
+    margin-right: 50px;
+    display: inline-block;
+}
+
+.illegal-btn-group button {
+    margin-left: 5px;
+}
+
+/*反馈详情页*/
+#sg-ul {
+    margin: 30px 10px 10px 10px;
+    list-style: none;
+}
+
+#sg-ul li {
+    margin-bottom: 12px;
+}
+
+#sg-ul li b {
+    width: 130px;
+    font-weight: normal;
+    text-align: right;
+    display: inline-block;
+    margin-right: 18px;
+    vertical-align: top;
+}
+
+#sg-ul li span {
+    display: inline-block;
+    width: 188px;
+}
+
+#sg-footer {
+    /*osition: absolute;*/
+    /*bottom: 0;*/
+    padding: 3px 5px;
+    width: 100%;
+    min-height: 28px;
+    border-top: 1px #e1e1e1 solid;
+    background-color: #eaf1f6;
+}
+
+#sg-footer > ul {
+    margin: 0;
+    list-style: none;
+}
+
+#sg-footer > ul > li {
+    float: right;
+    margin-left: 5px;
+}
+
+/*审核详情*/
+.review-title {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    padding-bottom: 12px;
+}
+
+.review-user {
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.review-userInf {
+    color: #666;
+}
+
+.review-content {
+    font-size: 14px;
+    color: #3b3b3b;
+    margin-bottom: 12px;
+    margin-left: 10px;
+}
+
+.review-userInf {
+    color: #666;
+}
+
+.review-userInf {
+    color: #666;
+}
+
+.review-userInf {
+    color: #666;
+}
+
+.detail-info-all {
+    width: 420px;
+    display: inline-block;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+.detail-info-all-block {
+    width: 500px;
+    display: block;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+.detail-info-post {
+    width: 1100px;
+    display: block;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+.reportInfo.goods .row-input {
+    width: 500px !important;
+}
+
+.reportInfo.goods .row-label {
+    width: 14%;
+!important;
+}
+
+.row-css {
+    display: inline-block;
+    margin-bottom: 10px;
+    /* color: #000; */
+    font-size: 14px;
+    letter-spacing: 0;
+    /* vertical-align: top; */
+}
+
+.line-area {
+    width: 800px;
+    height: 300px;
+    display: inline-block;
+}
+
+.CJJ-Table th {
+    text-align: center;
+}
+
+.CJJ-Table input {
+    position: static !important;
+    margin-left: 0 !important;
+}
+
+/*.CJJ-Table td{*/
+/*overflow: hidden;*/
+/*text-overflow:ellipsis;*/
+/*white-space: nowrap;*/
+/*width: 90%;*/
+/*}*/
+#selectedArea {
+    width: 760px;
+    overflow: hidden;
+    list-style: none;
+}
+
+.selectedTip {
+    display: inline-block;
+    background-color: #D9E7F2;
+    height: 22px;
+    color: #16669E;
+    font-size: 13px;
+    line-height: 22px;
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 100%;
+}
+
+.selectedTip b {
+    display: inline-block;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    color: black;
+}
+
+.arrowTip {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-right: 10px solid #D9E7F2;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid transparent;
+    display: inline-block;
+    position: relative;
+    top: 4px;
+}
+
+.tipWrap {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.zdul {
+    max-height: 200px;
+    /*overflow: visible;*/
+    overflow-y: auto;
+    min-height: 100px;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    z-index: 9999;
+}
+
+.zdulli {
+    max-height: 200px;
+    /*overflow-y: auto;*/
+    min-height: 0px;
+    height: 24px;
+    font-size: 12px;
+    line-height: 24px;
+    min-width: 160px;
+    /*padding: 5px 0;*/
+    /*margin: 2px 0 0;*/
+    background-color: #fff;
+    cursor: pointer;
+    padding-left: 10px;
+    /*position: relative;*/
+}
+
+.zdliSelected {
+    background-color: #D9E7F2 !important;
+}
+
+.zdSelectRadio {
+    float: right;
+    margin-right: 5px !important;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.zdSelectRadioSelected {
+    color: #00b7ee;
+    opacity: 1 !important;
+}
+
+.zdSelectArea {
+    position: relative;
+}
+
+.detailTitle {
+    font-weight: bold;
+    background-color: #b0d3f7;
+}
+
+.divHouseList .zdTreeNodeName {
+    width: 64%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+.divHouseList .zdTree li span.button {
+    vertical-align: baseline;
+}
+
+.divHouseList .zdTree li a {
+    vertical-align: baseline;
+    width: 90%!important;
+}
+
+.textOverFlow {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.graySelect{
+    background: url('../../../images/graySelect.png') no-repeat  center;
+    width:16px;
+    height:16px;
+    background-size: 14px;
+    position: relative;
+    top: 4px;
+}
+
+.blueSelect{
+    background: url('../../../images/blueSelect.png') no-repeat  center;
+    width:16px;
+    height:16px;
+    background-size: 16px;
+    position: relative;
+    top: 4px;
+}
+
+.patrolDetail {
+    width: 100%;
+    border-top: #ddd 1px solid;
+    border-left: #ddd 1px solid;
+    table-layout: fixed;
+}
+
+.patrolDetail tr td {
+    width: 20%;
+    height:30px;
+    padding: 8px 5px;
+    box-sizing: border-box;
+    border-right: #ddd 1px solid;
+    border-bottom: #ddd 1px solid;
+    word-break: break-all;
+}

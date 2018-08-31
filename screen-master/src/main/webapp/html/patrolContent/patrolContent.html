@@ -1,0 +1,326 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#patrol_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '99%',
+        showToolbar: false,
+        /*showToolbar: true,
+         toolbarItem: 'del',*/
+        dataUrl: path + '/web/patrol/v1/findAllRecordList',
+        delUrl: path + '/web/patrol/v1/deleteRecord',
+        delPK: 'recordId',
+        delPKKey: 'recordIds',
+        delConfirm: '确定要删除选中的巡检内容吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#patrol_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'equipmentNo',
+                label: '设备编号',
+                width: 140,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'equipmentName',
+                label: '设备名称',
+                width: 140,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'equipmentLocation',
+                label: '设备位置',
+                width: 140,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = '<i>已被删除</i>'
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'checkCycle',
+                label: '巡检周期',
+                width: 80,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value) {
+                    var html = "";
+                    if (value == undefined || value == null || value == "") {
+                        html = '<i>已被删除</i>'
+                    } else if (value == 1) {
+                        html = "每日巡检";
+                    } else if (value == 2) {
+                        html = "每周巡检";
+                    } else if (value == 3) {
+                        html = "月度巡检";
+                    } else if (value == 4) {
+                        html = "季度巡检";
+                    } else if (value == 5) {
+                        html = "年度巡检";
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'recordStatus',
+                label: '是否正常',
+                width: 80,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value, data) {
+                    if (data.isPatrol == 2) {
+                        if (value == 1) {
+                            var html = '是';
+                        } else {
+                            var html = '否';
+                        }
+                    } else {
+                        var html = "";
+                    }
+
+                    return html;
+                }
+            },
+            {name: 'createTime', label: '发布时间', width: 140, align: 'center', nowrap: 'true', render: function (value) {
+                return value.substring(0,10);
+            }
+            },
+            {name: 'isPatrol', label: '完成状态', width: 90, align: 'center', nowrap: 'true', render: function (value) {
+                if (value == "1") {
+                    var html = '待巡检';
+                } else if (value == "2") {
+                    var html = '已巡检';
+                } else if (value == "3") {
+                    var html = '逾期未巡检';
+                }
+                return html;
+            }
+            },
+            {
+                name: 'employeeName',
+                label: '巡检人员',
+                width: 80,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value) {
+                    if (value == undefined || value == null || value == "") {
+                        var html = ''
+                    } else {
+                        var html = value
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'updateTime',
+                label: '巡检时间',
+                width: 160,
+                align: 'center',
+                nowrap: 'true',
+                render: function (value, data) {
+                    if (data.isPatrol == 2) {
+                        var html = value;
+                    } else {
+                        var html = "";
+                    }
+                    return html;
+                }
+            },
+            {
+                name: 'recordId', label: '操作', width: 200, align: 'center', render: function (value, data) {
+                if (data.equipmentNo == undefined || data.equipmentNo == null || data.equipmentNo == "") {
+                    var html = '<button type="button" class="btn-blue" onclick=seeRecord("' + value + '")>查看</button>'
+                            + '<button type="button" class="btn-blue" disabled onclick=seeRepairRecord("' + data.equipmentId + '")>维保记录</button>';
+                } else {
+                    var html = '<button type="button" class="btn-blue" onclick=seeRecord("' + value + '")>查看</button>'
+                            + '<button type="button" class="btn-blue" onclick=seeRepairRecord("' + data.equipmentId + '")>维保记录</button>';
+                }
+                return html;
+            }
+            }
+        ]
+    })
+    //重置搜索条件--select
+    $.CurrentNavtab.find("#resetBtn").click(function () {
+        $.CurrentNavtab.find("#recordStatus").selectpicker('val', "");
+        $.CurrentNavtab.find("#checkCycle").selectpicker('val', "");
+        $.CurrentNavtab.find("#isPatrol").selectpicker('val', "");
+    });
+
+    //查看
+    function seeRecord(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/patrol/v1/findRecordDetail',
+            data: {'recordId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findRecordDetail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seePatrol',
+                        url: 'html/patrolContent/patrol/seePatrol.html',
+                        title: '查看巡检纪录',
+                        width: '800',
+                        height: '560',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+    //维保记录 seeRepairRecord
+    function seeRepairRecord(e) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/patrol/v1/findAllRecordMaintenanceList',
+            data: {'equipmentId': e},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    var recordListData = json.data;
+                    $.CurrentNavtab.data('recordId', e);
+                    $.CurrentNavtab.data('recordListData', recordListData);
+                    BJUI.dialog({
+                        id: 'dialog_repairRecord',
+                        url: 'html/patrolContent/patrol/seeRepairRecord.html',
+                        title: '设备维保记录',
+                        width: '1000',
+                        height: '600',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+
+</script>
+
+<div class="bjui-pageHeader " style="background-color:#fefefe; border-bottom:none;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#patrol_datagrid')}">
+        <fieldset>
+            <legend style="font-weight:normal;">页头搜索：</legend>
+            <div class="bjui-row col-4">
+                <label class="row-label">巡检周期:</label>
+                <div class="row-input">
+                    <select id="checkCycle" name="checkCycle" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">每日巡检</option>
+                        <option value="2">每周巡检</option>
+                        <option value="3">月度巡检</option>
+                        <option value="4">季度巡检</option>
+                        <option value="5">年度巡检</option>
+                    </select>
+                </div>
+                <label class="row-label">是否正常:</label>
+                <div class="row-input">
+                    <select id="recordStatus" name="recordStatus" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">是</option>
+                        <option value="2">否</option>
+                    </select>
+                </div>
+                <label class="row-label">完成状态:</label>
+                <div class="row-input">
+                    <select id="isPatrol" name="isPatrol" data-toggle="selectpicker" data-width="100%">
+                        <option value="">全部</option>
+                        <option value="1">待巡检</option>
+                        <option value="2">已巡检</option>
+                        <option value="3">逾期未巡检</option>
+                    </select>
+                </div>
+                <label class="row-label">设备编号:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentNo" name="equipmentNo" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+
+                <label class="row-label">设备名称:</label>
+                <div class="row-input">
+                    <input type="text" id="equipmentName" name="equipmentName" value="" data-rule="special,length(~15)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">巡检人员:</label>
+                <div class="row-input">
+                    <input type="text" id="employeeName" name="employeeName" value="" data-rule="special,length(~10)"
+                           placeholder=""/>
+                </div>
+                <label class="row-label">巡检开始时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="startTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" data-rule="开始时间: matchE[lte, endTime, datetime]" name="startTime">
+                </div>
+
+                <label class="row-label">巡检结束时间:</label>
+                <div class="row-input" style="display: inline-block">
+                    <input type="text" id="endTime_search" placeholder="" readonly data-toggle="datepicker"
+                           data-pattern="yyyy-MM-dd" data-rule="结束时间: matchE[gte, startTime, datetime]" name="endTime">
+                </div>
+
+                <div style=" text-align: center; margin-bottom: 8px; padding-top: 4px;">
+                    <div class="btn-group">
+                        <button type="submit" class="btn-green" id="btn-search" data-icon="search">开始搜索！</button>
+                        <button type="reset" class="btn-orange btnReset" data-icon="times" id="resetBtn">重置</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="bjui-pageContent">
+    <table id="patrol_datagrid" class="table table-bordered">
+    </table>
+</div>

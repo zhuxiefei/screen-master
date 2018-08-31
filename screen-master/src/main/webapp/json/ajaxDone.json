@@ -1,0 +1,10 @@
+{
+	"code":"00000",
+	"data":[ {
+		"confName":"paymentRemindDays",
+		"confValue":"5"
+	},{
+		"confName":"overdueRemindDays",
+		"confValue":"3"
+	}]
+}

@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.repair.RepairOrderMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.repair.RepairOrder">
+        <id column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="userId" property="userId" jdbcType="VARCHAR"/>
+        <result column="orderContact" property="orderContact" jdbcType="VARCHAR"/>
+        <result column="contactPhone" property="contactPhone" jdbcType="VARCHAR"/>
+        <result column="orderArea" property="orderArea" jdbcType="BIT"/>
+        <result column="houseId" property="houseId" jdbcType="VARCHAR"/>
+        <result column="orderType" property="orderType" jdbcType="BIGINT"/>
+        <result column="orderDesc" property="orderDesc" jdbcType="VARCHAR"/>
+        <result column="orderStatus" property="orderStatus" jdbcType="BIT"/>
+        <result column="operatorId" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="orderPic" property="orderPic" jdbcType="VARCHAR"/>
+        <result column="appointTime" property="appointTime" jdbcType="TIMESTAMP"/>
+        <result column="acceptTime" property="acceptTime" jdbcType="TIMESTAMP"/>
+        <result column="finishTime" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="cancelTime" property="cancelTime" jdbcType="TIMESTAMP"/>
+        <result column="urgeCount" property="urgeCount" jdbcType="INTEGER"/>
+        <result column="lastUrgeTime" property="lastUrgeTime" jdbcType="TIMESTAMP"/>
+        <result column="isDelete" property="isDelete" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    orderNo, userId, orderContact, contactPhone, orderArea, houseId, orderType, orderDesc, 
+    orderStatus, urgeCount,lastUrgeTime,operatorId, orderPic, appointTime, acceptTime,
+    finishTime, createTime,cancelTime,isDelete,description,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from repair_order
+        where orderNo = #{orderNo,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from repair_order
+    where orderNo = #{orderNo,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrder">
+    insert into repair_order (orderNo, userId, orderContact, 
+      contactPhone, orderArea, houseId, 
+      orderType, orderDesc, orderStatus,
+      urgeCount,lastUrgeTime,
+      operatorId, orderPic, appointTime, 
+      acceptTime, finishTime, createTime,cancelTime,isDelete,description,estateId
+      )
+    values (#{orderNo,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{orderContact,jdbcType=VARCHAR}, 
+      #{contactPhone,jdbcType=VARCHAR}, #{orderArea,jdbcType=BIT}, #{houseId,jdbcType=VARCHAR},
+      #{orderType,jdbcType=BIGINT}, #{orderDesc,jdbcType=VARCHAR}, #{orderStatus,jdbcType=BIT},
+      #{urgeCount,jdbcType=INTEGER},#{lastUrgeTime,jdbcType=TIMESTAMP}
+      #{operatorId,jdbcType=VARCHAR}, #{orderPic,jdbcType=VARCHAR}, #{appointTime,jdbcType=TIMESTAMP},
+      #{acceptTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},
+      #{cancelTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}
+      , #{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrder">
+        insert into repair_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                orderNo,
+            </if>
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="orderContact != null">
+                orderContact,
+            </if>
+            <if test="contactPhone != null">
+                contactPhone,
+            </if>
+            <if test="orderArea != null and orderArea != 0">
+                orderArea,
+            </if>
+            <if test="houseId != null and houseId != ''">
+                houseId,
+            </if>
+            <if test="orderType != null and orderType != 0">
+                orderType,
+            </if>
+            <if test="orderDesc != null">
+                orderDesc,
+            </if>
+            <if test="orderStatus != null">
+                orderStatus,
+            </if>
+            <if test="urgeCount !=null">
+                urgeCount,
+            </if>
+            <if test="lastUrgeTime !=null">
+                lastUrgeTime,
+            </if>
+            <if test="operatorId != null">
+                operatorId,
+            </if>
+            <if test="orderPic != null">
+                orderPic,
+            </if>
+            <if test="appointTime != null">
+                appointTime,
+            </if>
+            <if test="acceptTime != null">
+                acceptTime,
+            </if>
+            <if test="finishTime != null">
+                finishTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="cancelTime != null">
+                cancelTime,
+            </if>
+            <if test="isDelete != null">
+                isDelete,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderContact != null">
+                #{orderContact,jdbcType=VARCHAR},
+            </if>
+            <if test="contactPhone != null">
+                #{contactPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="orderArea != null and orderArea != 0">
+                #{orderArea,jdbcType=BIT},
+            </if>
+            <if test="houseId != null and houseId != ''">
+                #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderType != null and orderType != 0">
+                #{orderType,jdbcType=BIGINT},
+            </if>
+            <if test="orderDesc != null">
+                #{orderDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=BIT},
+            </if>
+            <if test="urgeCount !=null">
+                #{urgeCount,jdbcType=INTEGER},
+            </if>
+            <if test="lastUrgeTime !=null">
+                #{lastUrgeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operatorId != null">
+                #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderPic != null">
+                #{orderPic,jdbcType=VARCHAR},
+            </if>
+            <if test="appointTime != null">
+                #{appointTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="acceptTime != null">
+                #{acceptTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="finishTime != null">
+                #{finishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cancelTime != null">
+                #{cancelTime},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="estateId != null">
+                #{estateId},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrder">
+        update repair_order
+        <set>
+            <if test="userId != null">
+                userId = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderContact != null">
+                orderContact = #{orderContact,jdbcType=VARCHAR},
+            </if>
+            <if test="contactPhone != null">
+                contactPhone = #{contactPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="orderArea != null">
+                orderArea = #{orderArea,jdbcType=BIT},
+            </if>
+            <if test="houseId != null">
+                houseId = #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderType != null">
+                orderType = #{orderType,jdbcType=BIGINT},
+            </if>
+            <if test="orderDesc != null">
+                orderDesc = #{orderDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null">
+                orderStatus = #{orderStatus,jdbcType=BIT},
+            </if>
+            <if test="urgeCount !=null">
+                urgeCount = #{urgeCount,jdbcType=BIGINT},
+            </if>
+            <if test="lastUrgeTime !=null">
+                lastUrgeTime = #{lastUrgeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operatorId != null">
+                operatorId = #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderPic != null">
+                orderPic = #{orderPic,jdbcType=VARCHAR},
+            </if>
+            <if test="appointTime != null">
+                appointTime = #{appointTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="acceptTime != null">
+                acceptTime = #{acceptTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="finishTime != null">
+                finishTime = #{finishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cancelTime != null">
+                cancelTime = #{cancelTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                isDelete = #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where orderNo = #{orderNo,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.repair.RepairOrder">
+    update repair_order
+    set userId = #{userId,jdbcType=VARCHAR},
+      orderContact = #{orderContact,jdbcType=VARCHAR},
+      contactPhone = #{contactPhone,jdbcType=VARCHAR},
+      orderArea = #{orderArea,jdbcType=BIT},
+      houseId = #{houseId,jdbcType=VARCHAR},
+      orderType = #{orderType,jdbcType=BIGINT},
+      orderDesc = #{orderDesc,jdbcType=VARCHAR},
+      orderStatus = #{orderStatus,jdbcType=BIT},
+      urgeCount = #{urgeCount,jdbcType=BIGINT},
+      lastUrgeTime = #{lastUrgeTime,jdbcType=TIMESTAMP},
+      operatorId = #{operatorId,jdbcType=VARCHAR},
+      orderPic = #{orderPic,jdbcType=VARCHAR},
+      appointTime = #{appointTime,jdbcType=TIMESTAMP},
+      acceptTime = #{acceptTime,jdbcType=TIMESTAMP},
+      finishTime = #{finishTime,jdbcType=TIMESTAMP},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      cancelTime = #{cancelTime,jdbcType=TIMESTAMP},
+      isDelete = #{isDelete,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where orderNo = #{orderNo,jdbcType=VARCHAR}
+  </update>
+
+    <select id="findByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.repair.RepairOrder">
+    SELECT * FROM repair_order
+    WHERE houseId = #{houseId}
+  </select>
+
+    <delete id="deleteOrderList" parameterType="java.util.List">
+        DELETE FROM repair_order
+        WHERE orderNo IN
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="findAllHouseOrders" parameterType="com.betel.estatemgmt.business.web.repair.model.RepairPageReq"
+            resultType="com.betel.estatemgmt.business.web.repair.model.OrderInfo">
+        SELECT
+        ro.orderNo,
+        hh.houseId AS houseNo,
+        ro.orderContact AS userName,
+        ro.contactPhone AS userPhone,
+        ro.orderStatus,
+        ro.createTime,
+        ro.orderArea,
+        rot.typeName AS orderType,
+        ro.orderDesc,
+        ro.appointTime,
+        ro.urgeCount,
+        (SELECT CONCAT_WS("-",rar.receiverDepartment,rar.receiverName) FROM repair_history rar WHERE ro.orderNo=rar.orderNo AND rar.historyType = 3 ORDER BY rar.createTime DESC limit 1) AS operatorName
+        FROM repair_order ro
+        LEFT JOIN house_house hh ON hh.houseId = ro.houseId
+        LEFT JOIN repair_order_type rot ON rot.typeId = ro.orderType
+        <where>
+            <if test=" buildingId!= null and buildingId != ''">
+                hh.buildingId = #{buildingId}
+            </if>
+            <if test="orderArea == 1 or orderArea == 2">
+                AND ro.orderArea = #{orderArea}
+            </if>
+            <if test="orderStatus == 1 or orderStatus == 2 or orderStatus == 3 or orderStatus == 4">
+                AND ro.orderStatus = #{orderStatus}
+            </if>
+            <if test="unitId != null and unitId != ''">
+                AND hh.unitId = #{unitId}
+            </if>
+            <if test="isOthers == 1">
+                AND hh.buildingId is NULL and unitId is NULL
+            </if>
+            <if test="houseNum != null and houseNum != ''">
+                AND hh.houseNum LIKE CONCAT('%',#{houseNum},'%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND ro.orderContact LIKE CONCAT('%',#{userName},'%')
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND ro.orderNo LIKE CONCAT('%',#{orderNo},'%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND ro.createTime &gt;= #{startTime}
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                AND ro.createTime &lt;= #{endTime}
+            </if>
+            AND ro.estateId = #{estateId}
+        </where>
+        ORDER BY
+        <if test="isUrge == 1">
+            urgeCount DESC ,
+        </if>
+        ro.createTime DESC
+    </select>
+
+    <select id="findAllOfficeOrders" parameterType="com.betel.estatemgmt.business.web.repair.model.RepairPageReq"
+            resultType="com.betel.estatemgmt.business.web.repair.model.OrderInfo">
+        SELECT
+        ro.orderNo,
+        hh.houseId AS houseNo,
+        ro.orderContact AS userName,
+        ro.contactPhone AS userPhone,
+        ro.orderStatus,
+        ro.createTime,
+        ro.orderArea,
+        rot.typeName AS orderType,
+        ro.orderDesc,
+        ro.appointTime,
+        ro.urgeCount,
+        (SELECT CONCAT_WS("-",rar.receiverDepartment,rar.receiverName) FROM repair_history rar WHERE ro.orderNo=rar.orderNo AND rar.historyType = 3 ORDER BY rar.createTime DESC limit 1) AS operatorName
+        FROM repair_order ro
+        LEFT JOIN house_office_house hh ON hh.houseId = ro.houseId
+        LEFT JOIN repair_order_type rot ON rot.typeId = ro.orderType
+        <where>
+            <if test=" buildingId!= null and buildingId != ''">
+                hh.buildingId = #{buildingId}
+            </if>
+            <if test="orderArea == 1 or orderArea == 2">
+                AND ro.orderArea = #{orderArea}
+            </if>
+            <if test="orderStatus == 1 or orderStatus == 2 or orderStatus == 3 or orderStatus == 4">
+                AND ro.orderStatus = #{orderStatus}
+            </if>
+            <if test="unitId != null and unitId != ''">
+                AND hh.unitId = #{unitId}
+            </if>
+            <if test="isOthers == 1">
+                AND hh.buildingId is NULL and unitId is NULL
+            </if>
+            <if test="houseNum != null and houseNum != ''">
+                AND hh.houseNum LIKE CONCAT('%',#{houseNum},'%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND ro.orderContact LIKE CONCAT('%',#{userName},'%')
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND ro.orderNo LIKE CONCAT('%',#{orderNo},'%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND ro.createTime &gt;= #{startTime}
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                AND ro.createTime &lt;= #{endTime}
+            </if>
+            AND ro.estateId = #{estateId}
+        </where>
+        ORDER BY
+        <if test="isUrge == 1">
+            urgeCount DESC ,
+        </if>
+        ro.createTime DESC
+    </select>
+
+    <select id="selectPicByOrderNo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.repair.model.OrderPic">
+    SELECT
+    sp.pictureId AS picId,
+    sp.pictureUrl AS picUrl,
+    ro.description AS description,
+    ror.serviceOnTime,
+    ror.serviceAttitude,
+    ror.serviceQuality,
+    ror.serviceDesc
+    FROM repair_order ro
+    LEFT JOIN system_picture sp ON ro.orderPic = sp.pictureId
+    LEFT JOIN repair_order_reply ror ON ror.orderNo = ro.orderNo
+    WHERE ro.orderNo = #{orderNo}
+  </select>
+
+
+    <!--zy 条件查询报修订单-->
+    <select id="findAllRepair" parameterType="com.betel.estatemgmt.business.userapp.repair.model.RepairPage"
+            resultType="com.betel.estatemgmt.business.userapp.repair.model.AppRepairOrder">
+        SELECT orderNo,orderArea,orderType,orderStatus FROM repair_order
+        WHERE userId = #{userId} AND isDelete != 1
+        <if test="orderStatus != 0">
+            AND orderStatus = #{orderStatus}
+        </if>
+        AND estateId = #{estateId}
+        ORDER BY createTime DESC
+    </select>
+
+    <select id="selectDetailByOrderNo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.repair.model.OrderDetail">
+    SELECT
+    ro.orderNo,
+    ro.houseId AS houseNo,
+    ro.orderContact,
+    ro.contactPhone,
+    ro.orderArea,
+    (SELECT rot.typeName FROM repair_order_type rot WHERE rot.typeId = ro.orderType) AS orderType,
+    ro.orderDesc,
+    ro.appointTime,
+    (SELECT rar.receiverName FROM repair_history rar WHERE ro.orderNo=rar.orderNo AND rar.historyType = 3 ORDER BY rar.createTime DESC limit 1) AS receiverName,
+    (SELECT rar.receiverDepartment FROM repair_history rar WHERE ro.orderNo=rar.orderNo AND rar.historyType = 3 ORDER BY rar.createTime DESC limit 1) AS receiverDepartment,
+    (SELECT rar.receiverPhone FROM repair_history rar WHERE ro.orderNo=rar.orderNo AND rar.historyType = 3 ORDER BY rar.createTime DESC limit 1) AS receiverPhone,
+    (SELECT rar.receiverHead FROM repair_history rar WHERE ro.orderNo=rar.orderNo AND rar.historyType = 3 ORDER BY rar.createTime DESC limit 1) AS receiverHead,
+    ro.operatorId AS receiver
+    FROM repair_order ro
+    WHERE ro.orderNo = #{orderNo}
+  </select>
+
+    <select id="selectInfoByOrderNo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.repair.model.OrderInfo">
+    SELECT
+    ro.orderNo,
+    ro.houseId AS houseNo,
+    ro.orderContact AS userName,
+    ro.contactPhone AS userPhone,
+    ro.orderStatus,
+    ro.createTime,
+    ro.orderArea,
+    rot.typeName AS orderType,
+    ro.orderDesc,
+    ro.appointTime,
+    rar.receiverName AS operatorName
+    FROM repair_order ro
+    LEFT JOIN repair_order_type rot ON rot.typeId = ro.orderType
+    LEFT JOIN repair_history rar ON rar.orderNo = ro.orderNo
+    WHERE ro.orderNo = #{orderNo}
+    ORDER BY rar.createTime
+    limit 1
+  </select>
+
+    <select id="countOrders" parameterType="java.lang.String" resultType="java.lang.Long">
+        SELECT count(*) FROM repair_order
+        WHERE
+        DATE_FORMAT(createTime,'%Y-%m') = #{date}
+        <if test="status == 1">
+            AND orderStatus != 3 AND orderStatus != 4
+        </if>
+        <if test="status ==2">
+            AND orderStatus = 3
+        </if>
+    </select>
+    <!--jians.z 待维修app-->
+    <select id="countWaitRepair" resultType="java.lang.Integer">
+        SELECT count(*) FROM repair_order WHERE orderStatus = 1 AND estateId = #{estateId}
+    </select>
+    <!--jians.z 待处理app-->
+    <select id="countPendingRepair" resultType="java.lang.Integer">
+        SELECT count(*) FROM repair_order WHERE orderStatus = 2 and operatorId = #{assigner}
+        AND estateId = #{estateId}
+    </select>
+
+    <select id="findAllUnassignList" resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairListResp">
+                select ro.orderNo,ro.orderArea,ro.createTime,ro.orderStatus,ro.contactPhone,
+        (select houseNum from house_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_house hh on hb.buildingId = hh.buildingId where hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_house hh on hbu.unitId = hh.unitId where hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where rot.typeId = ro.orderType))as parentName
+        from repair_order ro
+        where ro.operatorId is null and ro.estateId = #{estateId} order by ro.orderStatus ASC ,ro.createTime ASC
+    </select>
+
+    <select id="findAllOfficeUnassignList" resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairListResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderStatus,ro.contactPhone,
+        (select houseNum from house_office_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_office_house hh on hb.buildingId = hh.buildingId where hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_office_house hh on hbu.unitId = hh.unitId where hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where rot.typeId = ro.orderType))as parentName
+        from repair_order ro
+        where ro.operatorId is null and ro.estateId = #{estateId} order by ro.orderStatus ASC ,ro.createTime ASC
+    </select>
+
+    <select id="findAllAssignedList" resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairListResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderStatus,ro.contactPhone,
+        (select houseNum from house_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_house hh on hb.buildingId = hh.buildingId where hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_house hh on hbu.unitId = hh.unitId where hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where rot.typeId = ro.orderType))as parentName
+        from repair_order ro
+        where ro.operatorId is not null and ro.estateId = #{estateId} order by ro.orderStatus ASC,ro.createTime desc
+    </select>
+
+    <select id="findAllOfficeAssignedList" resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairListResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderStatus,ro.contactPhone,
+        (select houseNum from house_office_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_office_house hh on hb.buildingId = hh.buildingId where hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_office_house hh on hbu.unitId = hh.unitId where hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where rot.typeId = ro.orderType))as parentName
+        from repair_order ro
+        where ro.operatorId is not null and ro.estateId = #{estateId} order by ro.orderStatus ASC,ro.createTime desc
+    </select>
+
+    <select id="findRepairInfo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairInfoResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderDesc,ro.orderContact,ro.contactPhone,ro.appointTime,ro.urgeCount,ro.cancelTime,ro.operatorId,orderPic,ro.description,
+        (select houseNum from house_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_house hh on hb.buildingId = hh.buildingId where hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_house hh on hbu.unitId = hh.unitId where hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where rot.typeId = ro.orderType))as parentName,
+        ror.serviceOnTime,
+        ror.serviceAttitude,
+        ror.serviceQuality,
+        ror.serviceDesc
+        FROM repair_order ro
+        LEFT JOIN repair_order_reply ror ON ror.orderNo = ro.orderNo
+        where ro.orderNo = #{orderNo}
+    </select>
+
+    <select id="findOfficeRepairInfo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairInfoResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderDesc,ro.orderContact,ro.contactPhone,ro.appointTime,ro.urgeCount,ro.cancelTime,ro.operatorId,orderPic,ro.description,
+        (select houseNum from house_office_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_office_house hh on hb.buildingId = hh.buildingId where hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_office_house hh on hbu.unitId = hh.unitId where hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where rot.typeId = ro.orderType))as parentName,
+        ror.serviceOnTime,
+        ror.serviceAttitude,
+        ror.serviceQuality,
+        ror.serviceDesc
+        FROM repair_order ro
+        LEFT JOIN repair_order_reply ror ON ror.orderNo = ro.orderNo
+        where ro.orderNo = #{orderNo}
+    </select>
+
+    <select id="findAllRepairListByStatus" resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairListResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderStatus,ro.contactPhone,
+        (select houseNum from house_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_house hh on hb.buildingId = hh.buildingId where
+        hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_house hh on hbu.unitId = hh.unitId where
+        hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where
+        rot.typeId = ro.orderType))as parentName
+        from repair_order ro
+        WHERE ro.operatorId = #{userId} and ro.estateId = #{estateId} and ro.orderStatus = #{status} and isDelete != 2
+        <if test="status == 2">
+            order by ro.createTime
+        </if>
+        <if test="status == 3">
+            order by ro.createTime desc
+        </if>
+        <if test="status == 4">
+            order by ro.createTime desc
+        </if>
+    </select>
+
+    <select id="findAllOfficeRepairListByStatus" resultType="com.betel.estatemgmt.business.propertyapp.assign.model.FindRepairListResp">
+        select ro.orderNo,ro.orderArea,ro.createTime,ro.orderStatus,ro.contactPhone,
+        (select houseNum from house_office_house where houseId = ro.houseId)as houseNum,
+        (select buildingName from house_building hb left join house_office_house hh on hb.buildingId = hh.buildingId where
+        hh.houseId=ro.houseId)as buildingName,
+        (select unitName from house_building_unit hbu left join house_office_house hh on hbu.unitId = hh.unitId where
+        hh.houseId=ro.houseId)as unitName,
+        (select typeName from repair_order_type where typeId = ro.orderType)as childName,
+        (select typeName from repair_order_type where typeId =(select rot.parentId from repair_order_type rot where
+        rot.typeId = ro.orderType))as parentName
+        from repair_order ro
+        WHERE ro.operatorId = #{userId} and ro.estateId = #{estateId} and ro.orderStatus = #{status} and isDelete != 2
+        <if test="status == 2">
+            order by ro.createTime
+        </if>
+        <if test="status == 3">
+            order by ro.createTime desc
+        </if>
+        <if test="status == 4">
+            order by ro.createTime desc
+        </if>
+    </select>
+    <!--jians.z 今天待维修数量，全部-->
+    <select id="queryTodayReapirNum" resultType="java.lang.Integer"
+            parameterType="com.betel.estatemgmt.business.propertyapp.home.model.HomeReq">
+        select COUNT(*) AS todayReapirNum  from repair_order ro where  ro.orderStatus &lt;&gt;'4'AND ro.createTime BETWEEN #{startTime} AND #{endTime}
+    </select>
+    <!--今日已指派-->
+    <select id="queryAllassignNum" resultType="java.lang.Integer"
+            parameterType="com.betel.estatemgmt.business.propertyapp.home.model.HomeReq">
+        select COUNT(*)  AS queryAllassignNum from repair_order ro where ro.operatorId is NOT null AND ro.orderStatus &lt;&gt; '4' AND ro.AcceptTime BETWEEN #{startTime} AND #{endTime}
+    </select>
+    <!--所有未指派的数量-->
+    <select id="queryAllUnassignNum" resultType="java.lang.Integer">
+        select COUNT(*)  as allUnassignNum from repair_order ro where ro.operatorId is null AND ro.orderStatus='1'
+    </select>
+    <!--指派给我前期维修的数量-->
+    <select id="assignMeNumNow" resultType="java.lang.Integer">
+        select COUNT(*)  as assignMeNumNow
+        from repair_order ro
+        WHERE ro.operatorId = #{userId} and ro.orderStatus = '2'
+    </select>
+    <!--今日已完成的报修数量，全部-->
+    <select id="finishRepairNum" resultType="java.lang.Integer"
+            parameterType="com.betel.estatemgmt.business.propertyapp.home.model.HomeReq">
+        select COUNT(*)  as finishRepairNum
+        from repair_order ro
+        WHERE ro.orderStatus = '3' AND ro.finishTime BETWEEN #{startTime} AND #{endTime}
+    </select>
+    <!--今日已完成的报修数量，报修处理模块-->
+    <select id="finishRepairNumOfMySelf" resultType="java.lang.Integer"
+            parameterType="com.betel.estatemgmt.business.propertyapp.home.model.HomeReq">
+        select COUNT(*)  as finishRepairNumOfMySelf
+        from repair_order ro
+        WHERE ro.operatorId = #{userId} and ro.orderStatus = '3'AND ro.finishTime BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <select id="findRepairData" resultType="com.betel.estatemgmt.business.web.screen.model.RepairData">
+        SELECT
+            (SELECT count(*) FROM repair_order WHERE (orderStatus=2 AND TO_DAYS(acceptTime)=TO_DAYS(NOW()))
+                OR (orderStatus=3 AND TO_DAYS(finishTime)=TO_DAYS(NOW())) OR (orderStatus=4 AND TO_DAYS(cancelTime)=TO_DAYS(NOW())) ) AS todayWorkedRepairs,
+            (SELECT count(*) FROM repair_order WHERE TO_DAYS(createTime)=TO_DAYS(NOW())) AS todayRepairs,
+            (SELECT count(*) FROM repair_order WHERE orderStatus = 1) AS allUntreatedRepairs,
+            (SELECT count(*) FROM repair_order WHERE orderStatus = 2 AND TO_DAYS(createTime)=TO_DAYS(NOW())) AS todayAcceptRepairs,
+            (SELECT count(*) FROM repair_order WHERE orderStatus = 1 AND TO_DAYS(createTime)=TO_DAYS(NOW())) AS todayWaitRepairs,
+            (SELECT count(*) FROM repair_order WHERE orderStatus = 3 AND TO_DAYS(createTime)=TO_DAYS(NOW())) AS todayFinishRepairs
+        FROM repair_order LIMIT 1
+    </select>
+    <select id="findHomePageNew" resultType="java.util.Map">
+      SELECT COUNT(orderNo) AS maintainToAudit from repair_order WHERE orderStatus=1
+    </select>
+
+    <select id="findRepairs" parameterType="com.betel.estatemgmt.business.web.task.model.TaskCountReq"
+            resultType="com.betel.estatemgmt.common.model.repair.RepairOrder">
+        SELECT * FROM repair_order WHERE estateId = #{estateId}
+        <if test="startTime != null and startTime != ''">
+            and createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and createTime &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

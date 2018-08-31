@@ -1,0 +1,286 @@
+<div class="bjui-pageHeader" style="background-color:#fefefe; border-bottom:none;">
+</div>
+<div class="bjui-pageContent">
+    <button type="button" class="btn-blue btn-prohibit" data-icon="edit" style=" left: 129px;"
+            id="findAllOperationLogs_btn">操作纪录
+    </button>
+    <button type="button" class="btn-green btn-prohibit" data-icon="edit" style=" left: 222px;"
+            id="ChargesItemStandard-btn">收费标准编辑
+    </button>
+
+    <table class="table table-bordered" id="datagrid-ChargesItem">
+    </table>
+</div>
+<script>
+    $.CurrentNavtab.find("#datagrid-ChargesItem").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add,del,',
+        paging: {pageSize: 10},
+        dataUrl: path + '/web/charges/v1/findAllChargesItemSet',
+        delUrl: path + '/web/charges/v1/deleteChargesItem',
+        delPK: 'itemId',
+        delPKKey: 'itemIds',
+        delConfirm: '确定要删除选中的收费项目吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#datagrid-ChargesItem').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        },
+        editMode: {
+            dialog: {
+                width: '600',
+                height: '300',
+                mask: true,
+                title: "新增收费项目",
+                id: 'dialog_addCharge',
+                maxable: false,
+                resizable: false
+            }
+        },
+        editUrl: 'html/property/itemSetting/addCharge.html',
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        columns: [
+            {
+                name: 'itemName', label: '项目名称',width:130, nowrap: true, align: 'center', render: function (value) {
+                return parse(value);
+            }
+            },
+            {
+                name: 'chargeType', label: '计费方式', width: 100, align: 'center', render: function (value, data) {
+                if (value == 1) {
+                    var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + "建面计费" + "" + "" + "</div>";
+                    return stateName;
+                }
+            }
+            }, {
+                name: 'itemType', label: '收费项目', width: 100, align: 'center', render: function (value, data) {
+                    var stateName = ""
+                    if (value == 1) {
+                        stateName = "物业费";
+                    } else if (value == 2) {
+                        stateName = "公摊水电费";
+                    } else if (value == 3) {
+                        stateName = "停车费(购买)";
+                    } else if (value == 4) {
+                        stateName = "停车费(租赁)";
+                    } else if (value == 5) {
+                        stateName = "能耗费";
+                    }
+                    return stateName
+                }
+            },
+            {
+                name: 'itemPrice', label: '价格(元)', width: 120, nowrap: true, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else if (data.itemType == 2 || data.itemType == 5) {
+                    return value + "(总额)";
+                } else {
+                    return value + "(单价)";
+                }
+            }
+            },
+
+            {
+                name: 'buildings', label: '应用楼宇', width: 100, align: 'center', render: function (value, data) {
+                if (value == '' || value == null || value == undefined) {
+                    var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                    return stateName;
+                } else {
+                    if (data.itemType == 2 || data.itemType == 5) {
+                        var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>全部楼宇</i></div>";
+
+                    } else {
+                        var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'>" + "" + value + "" + "</div>";
+
+                    }
+                    return stateName;
+                }
+            }
+            },
+            {name: 'itemCycle', label: '计费周期(月)', align: 'center', width: 100},
+            {name: 'chargeCycle', label: '缴费周期(天)', align: 'center', width: 100},
+            {
+                name: 'overdueFine', label: '滞纳金率',width: 100,nowrap:true, align: 'center', render: function (value) {
+                return value + '%';
+            }
+            },
+            {
+                name: 'startTime',
+                label: '开始计费时间',
+                width: 170,
+                align: 'center',
+                type: 'date',
+                pattern: 'yyyy-MM',
+                render: function (value) {
+                    if (value == '' || value == null || value == undefined) {
+                        var stateName = "<div style='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + value + "'><i>暂无信息</i></div>";
+                        return stateName;
+                    } else {
+                        return value ? value.substr(0, 7) : value
+                    }
+                }
+            },
+            {
+                name: 'itemId', label: '操作', align: 'center',width: 170, render: function (value, data) {
+                var itemType = data.itemType;
+                if (itemType == 1 || itemType == 3 || itemType == 4) {
+                    if (!data.buildings) {
+                        var html = '<button type="button" class="btn-blue" onclick=modify_itemCharge(' + value + ')>修改</button>'
+                                + '<button type="button" class="btn-blue"  onclick=actionChargesItem_btn(' + value + ',' + itemType + ')>激活</button>'
+                                + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                        return html;
+                    } else {
+                        var html = '<button type="button" class="btn-blue" onclick=modify_itemCharge(' + value + ')>修改</button>'
+                                + '<button type="button" class="btn-blue"  disabled onclick=actionChargesItem_btn(' + value + ',' + itemType + ')>激活</button>'
+                                + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                        return html;
+                    }
+
+                } else {
+                    var html = '<button type="button" class="btn-blue" onclick=modify_itemCharge(' + value + ')>修改</button>'
+                            + '<button type="button" class="btn-blue"  onclick=actionChargesItem_btn(' + value + ',' + itemType + ')>出账</button>'
+                            + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+                    return html;
+                }
+            }
+            }
+        ]
+    })
+
+
+    //查看操作纪录
+    $.CurrentNavtab.find("#findAllOperationLogs_btn").click(function () {
+        BJUI.dialog({
+            id: 'dialog_findAllOperationLogs',
+            url: 'html/property/itemSetting/findAllOperationLogs.html',
+            title: "操作纪录",
+            width: 1000,
+            height: 465,
+            mask: true,
+            maxable: false,
+            resizable: false
+        });
+    })
+
+    //激活与出账
+    function actionChargesItem_btn(e, a) {
+        $('body').data('actionChargeId', e);
+        $.CurrentNavtab.data('actionItemType', a);
+        if (a == 1 || a == 3 || a == 4) {
+            BJUI.dialog({
+                id: 'dialog_actionChargesItem',
+                url: 'html/property/itemSetting/actionChargesItem.html',
+                title: "激活收费项目",
+                width: 600,
+                height: 300,
+                mask: true,
+                maxable: false,
+                resizable: false,
+                fresh: true,
+                onClose: function () {
+                    $('body').data('actionBuildingIds', null);
+                }
+            });
+        } else {
+            //先青丘街口
+            BJUI.ajax('doajax', {
+                url: path + '/web/charges/v1/countBillTime',
+                data: {'itemId': e},
+                loadingmask: true,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        $.CurrentNavtab.data("timeSpan", json.data);
+                        BJUI.dialog({
+                            id: 'dialog_bill',
+                            url: 'html/property/itemSetting/bill.html',
+                            title: "出账",
+                            width: 450,
+                            height: 250,
+                            mask: true,
+                            maxable: false,
+                            resizable: false,
+                            fresh: true,
+                        });
+
+                    } else {
+                        successBack(json);
+                    }
+                }
+            })
+
+        }
+
+    }
+
+    //修改收费项目
+    function modify_itemCharge(e) {
+        var itemId = {"itemId": e};
+        $('body').data('itemId', e);
+        BJUI.ajax('doajax', {
+            url: path + '/web/charges/v1/findChargesItemDatail',
+            data: itemId,
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $("body").data("findChargesItemDatail", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_findPostAuditDetail',
+                        url: 'html/property/itemSetting/findChargesItemDatail.html',
+                        title: "修改收费项目",
+                        width: 600,
+                        height: 300,
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    });
+
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    }
+
+    //标准编写
+    $.CurrentNavtab.find('#ChargesItemStandard-btn').click(function () {
+        BJUI.ajax('doajax', {
+            url: path + '/web/charges/v1/findChargesItemStandard',
+            loadingmask: false,
+            data: '',
+            okCallback: function (data) {
+                $('body').data('findChargesItemStandard', data)
+                BJUI.dialog({
+                    id: 'dialog_findChargesItemStandard',
+                    url: 'html/property/itemSetting/findChargesItemStandard.html',
+                    title: '编辑收费标准',
+                    width: '850',
+                    height: '500',
+                    minable: false,
+                    mask: true,
+                    maxable: false,
+                    resizable: false
+                })
+            }
+        });
+    })
+</script>

@@ -1,0 +1,124 @@
+<div class="bjui-pageContent" style="overflow: visible">
+    <form class="datagrid-edit-form" style="overflow-x: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">保洁区域: </label>
+            <div class="row-input required" style="width: 75%;">
+                <select id="areaId" name="areaId" data-toggle="selectpicker"  data-width="100%" data-rule="required"  onchange="getType_clean(this.value)">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">保洁类型: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <select id="typeId" name="typeId" data-toggle="selectpicker"  data-width="100%" data-rule="required">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">所在位置: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <input type="text" id="location"  name="location" data-rule="required,special,length(~50)">
+            </div>
+            <label class="row-label" style="width: 25%;">保洁周期: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <select id="cycle" name="cycle" data-toggle="selectpicker"  data-width="100%" data-rule="required" >
+                    <option value="1">每小时保洁</option>
+                    <option value="2">每半天保洁</option>
+                    <option value="3">每日保洁</option>
+                    <option value="4">每周保洁</option>
+                    <option value="5">每月保洁</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">保洁内容: </label>
+            <div class="row-input required"  style="width: 75%;">
+                <textarea id="content" name="content" data-width="100%" data-rule="required,length(~500)" >
+                </textarea>
+            </div>
+
+        </div>
+        <input type="hidden" id="contentId" name="contentId">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addCleaningContent" class="btn-default" data-icon="save">编辑</button></li>
+    </ul>
+</div>
+<script>
+    var condition=$.CurrentNavtab.data("findContent");
+    $.CurrentDialog.find('#cycle').val(condition.cycle).selectpicker('refresh');
+    $.CurrentDialog.find('#location').val(condition.location);
+    $.CurrentDialog.find('#content').val(condition.content);
+    $.CurrentDialog.find('#contentId').val(condition.contentId);
+    //    查询所有区域
+    BJUI.ajax('doajax', {
+        url: path + '/web/cleaning/v1/findCleaningAreas',
+        loadingmask: false,
+        async:false,   //false:同步
+        callback: function (json) {
+            if(json.code == "00000"){
+                var obj = $.CurrentDialog.find("#areaId");
+                if(json.data.length>0){
+                    $.each(json.data, function(i, n) {
+                        obj.append('<option value="'+n.areaId+'">'+n.areaName+'</option>');
+                    })
+                }
+                obj.val(condition.areaId).selectpicker('refresh');
+                getType_clean(condition.areaId,'init');
+            }else{
+                successBack(json);
+            }
+        }
+    });
+
+    //获得某区域下的类型
+    function getType_clean(id,a) {
+        if (id == "") {
+            $.CurrentDialog.find('#typeId option').not(':eq(0)').remove();
+            $.CurrentDialog.find('#typeId').selectpicker('refresh');
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/cleaning/v1/findCleaningTypes',
+            data: {'areaId': id},
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    var data = json.data;
+                    $.CurrentDialog.find('#typeId option').not(':eq(0)').remove();
+                    var html = ""
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<option value="' + data[i].typeId + '">' + data[i].typeName + '</option>';
+                    }
+                    $.CurrentDialog.find('#typeId').append(html);
+                    $.CurrentDialog.find('#typeId').selectpicker('refresh');
+                    if(a){
+                        $.CurrentDialog.find('#typeId').val(condition.typeId).selectpicker('refresh');
+                    }
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    }
+
+
+    $.CurrentDialog.find('button#addCleaningContent').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/cleaning/v1/updateContent',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.dialog('closeCurrent');
+                    BJUI.alertmsg('ok','修改成功');
+                    $.CurrentNavtab.find("#cleaningContent_datagrid").datagrid('filter');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+
+
+
+</script>

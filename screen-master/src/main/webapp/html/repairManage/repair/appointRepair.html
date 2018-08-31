@@ -1,0 +1,380 @@
+<style>
+    .label_title {
+        width: 110px;
+        display: inline-block;
+        text-align: right;
+    }
+
+    .label_title_short {
+        width: 50px;
+        display: inline-block;
+        text-align: right;
+    }
+
+    .span_width {
+        width: 120px;
+        display: inline-block;
+    }
+
+    #repair_detail_item {
+        list-style: none;
+        width: 500px;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+
+    #repair_detail_item li {
+        margin-top: 2px;
+    }
+
+    #repair_detail_item b {
+        /*font-weight: 400;*/
+        width: 135px;
+        display: inline-block;
+        padding-left: 8px;
+        padding-right: 8px;
+        text-align: right;
+        color: #777;
+        font-weight: normal;
+    }
+
+    .repair_content {
+        width: 311px;
+        display: inline-block;
+        vertical-align: top;
+        word-wrap: break-word;
+    }
+
+</style>
+<div class="bjui-pageContent" style="overflow-y: auto;">
+    <div style="margin-left: 15px;">
+        <form action="" data-toggle="ajaxform">
+            <input type="text" id="orderNo_form" name="orderNo" style="display: none">
+            <table class="patrolDetail">
+                <tr>
+                    <td class="td_left">报修单编号:</td>
+                    <td class="td_right" id="orderNo"></td>
+                    <td class="td_left">房屋信息:</td>
+                    <td class="td_right" id="houseNo"></td>
+                </tr>
+                <tr>
+                    <td class="td_left">报修人姓名:</td>
+                    <td class="td_right" id="orderContact"></td>
+                    <td class="td_left">报修人联系电话:</td>
+                    <td class="td_right" id="contactPhone"></td>
+                </tr>
+                <tr>
+                    <td class="td_left">维修区域:</td>
+                    <td class="td_right" id="orderArea"></td>
+                    <td class="td_left">维修类型:</td>
+                    <td class="td_right" id="orderType"></td>
+                </tr>
+                <tr >
+                    <td class="td_left">报修内容:</td>
+                    <td class="td_right" id="orderDesc" colspan="3" style="height: 100px"><i>暂无信息</i></td>
+                </tr>
+                <tr >
+                    <td class="td_left">预约上门维修时间:</td>
+                    <td class="td_right" colspan="3" id="appointTime"><i>暂无信息</i></td>
+
+                </tr>
+                <tr style=" ">
+                    <td class="td_left">报修图片:</td>
+                    <td class="td_right" colspan="3" id="">
+                        <ul id="activity_detail_info" class="clearfix" style="height: 150px"></ul>
+                    </td>
+                </tr>
+            </table>
+            <!--//维修人信息-->
+            <div style="margin-top: 20px;text-align: center">
+                <div style="display: inline-block;margin-right: 13px;position: relative;right: 20px;">
+                    <span class="label_title">指派维修人员</span>
+                    <div style="cursor: pointer; display: inline-block" id="appointBtn">
+                        <img src="images/plus.png" alt="" width="50px">
+                    </div>
+                    <div id="executerListEdit_appoint"
+                         style="display: inline-block;position: relative;top: 12px;height:30px"></div>
+
+                </div>
+                <div style="display: inline-block;margin-right: 13px;">
+                    <span class="label_title" style="width: 120px">维修人联系电话</span>&nbsp;
+                    <span id="operatorPhone"></span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="okBtn" class="btn-default" data-icon="save">确认</button>
+        </li>
+    </ul>
+</div>
+<style>
+    .operatorList {
+        position: absolute;
+        top: 22px;
+        left: 105px;
+        list-style: none;
+        /*border: 1px solid #000;*/
+        border: 1px solid rgb(170, 170, 170);
+        border-bottom-color: rgba(170, 170, 170, 0.3);
+        width: 120px;
+        text-align: right;
+        color: rgba(0, 0, 0, 0.7);
+        padding-right: 5px;
+        z-index: 9999;
+        background-color: #fff;
+        max-height: 250px;
+        overflow-y: hidden;
+    }
+
+    .operatorList li {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .deleteIcon {
+        cursor: pointer;
+        text-align: left;
+        position: absolute;
+        left: 3px;
+        display: inline-block;
+        margin: 1px;
+    }
+
+    .visibleList {
+        overflow-y: auto !important;
+    }
+</style>
+<script>
+    //指派人列表窗口
+    $.CurrentDialog.find('#appointBtn').click(function () {
+//        $('#executerList').html("");
+        var html=$('#executerListEdit_appoint').html();
+        $.CurrentNavtab.data('selectedPeopleEdit',html);
+        BJUI.dialog({
+            id: "appointTask",
+            title: "指派人员",
+            width: '800',
+            height: '650',
+            mask: true,
+            url: 'html/repairManage/repair/appointTask.html',
+            maxable: false,
+            resizable: false
+        })
+    });
+    appointRepairInit()
+    var findHouseData = {
+        'buildingId': '',
+        'unitId': '',
+    }
+    function appointRepairInit() {
+        var pageData = $("body").data("appointRepairData");
+        $.CurrentDialog.find('#orderContact').text(pageData.orderContact);
+        $.CurrentDialog.find('#contactPhone').text(pageData.contactPhone);
+        $.CurrentDialog.find('#orderNo').text(pageData.orderNo);
+        if (pageData.orderArea == 1) {
+            $.CurrentDialog.find('#orderArea').text('个人区域');
+        } else {
+            $.CurrentDialog.find('#orderArea').text('公共区域');
+        }
+        $.CurrentDialog.find('#orderType').text(pageData.orderType);
+        if (pageData.orderDesc && pageData.orderDesc != "" && pageData.orderDesc != null) {
+            $.CurrentDialog.find('#orderDesc').text(pageData.orderDesc);
+        }
+        if (pageData.appointTime && pageData.appointTime != "" && pageData.appointTime != null) {
+            $.CurrentDialog.find('#appointTime').text(pageData.appointTime);
+        }
+//        $.CurrentDialog.find('#appointTime').text(pageData.appointTime);
+        $.CurrentDialog.find('#houseNo').text(pageData.houseNo);
+
+        if(pageData.receiverName){
+            var html = '<li class="tipWrap" id="' + pageData.receiver + '"  phone="' + pageData.receiverPhone + '" head="' + pageData.receiverHead + '" depName="' + pageData.receiverDepartment + '">'
+                    + '<div class="arrowTip"></div>'
+                    + '<div class="selectedTip">' + pageData.receiverName + '<b>×</b></div>'
+                    + '</li>';
+            $('#executerListEdit_appoint').html(html);
+            var phone = $('#executerListEdit_appoint li').attr('phone');
+            if(phone==null||phone=='undefined'){
+                phone="";
+            }
+            $('#operatorPhone').html(phone);
+        }
+
+        // 图片
+        if (pageData.pictureUrl.length) {
+            $.CurrentDialog.find('#activity_detail_info').html("");
+            var html = "";
+            for (var i = 0; i < pageData.pictureUrl.length; i++) {
+                html = html + '<li  style=" cursor:pointer;width: 20%;height:49%" ><a href="' + pageData.pictureUrl[i] + '" ><img src="' + pageData.pictureUrl[i] + '" /></a></li>'
+                if (i == 4) {
+                    html = html + '<div class="clear"></div>';
+                }
+            }
+            $.CurrentDialog.find('#activity_detail_info').append(html);
+        } else {
+            $.CurrentDialog.find('#activity_detail_info').hide();
+            $.CurrentDialog.find('#activity_detail_info').parent().html('<i>暂无图片</i>');
+        }
+    }
+
+    $.CurrentDialog.find("#activity_detail_info").each(function () {
+        $(this).find("a").touchTouch();
+    });
+
+    //查找维修人员
+    function findOperator(e) {
+        var data = $.CurrentDialog.find('#operatorName').val();
+        var operatorName = {
+            'operatorName': data,
+        }
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/findOperators',
+            data: operatorName,
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentDialog.find(".operatorList").show();
+                    $.CurrentDialog.find(".operatorList").empty();
+                    json.data = json.data.slice(0, 20);
+                    $.each(json.data, function (i, n) {
+                        if (n.operatorName.length > 4) {
+                            var longname = n.operatorName.slice(0, 4) + "..."
+                        }
+                        if (longname) {
+                            $.CurrentDialog.find(".operatorList").append('<li class="operatorClass" title ="' + n.operatorName + '" data-phone="' + n.operatorPhone + '" id="' + n.operatorId + '"><span class="deleteIcon" >×</span>' + longname + '</li>');
+                        } else {
+                            $.CurrentDialog.find(".operatorList").append('<li class="operatorClass" title ="' + n.operatorName + '" data-phone="' + n.operatorPhone + '" id="' + n.operatorId + '"><span class="deleteIcon" >×</span>' + n.operatorName + '</li>');
+                        }
+                    })
+                    var ulHeight = $.CurrentDialog.find(".operatorList").height();
+                    if (ulHeight > 247) {
+                        $.CurrentDialog.find(".operatorList").css('overflow-y', 'scroll');
+                    } else {
+                        $.CurrentDialog.find(".operatorList").css('overflow-y', 'hidden');
+                    }
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+    }
+
+
+    //关联电话号码,维修人员
+    $.CurrentDialog.find('.bjui-pageContent').addClass('visibleList')
+    $('body').on('click', '.operatorClass', function () {
+        $.CurrentDialog.find('#operatorName').val($(this).attr('title'));
+        $.CurrentDialog.find('#operatorPhone').val($(this).attr('data-phone'));
+        $.CurrentDialog.find(".operatorList").hide();
+        $.CurrentDialog.find("#operatorName").click();
+        $.CurrentDialog.find("#operatorName").blur();
+    })
+
+    //填写维修人员电话号
+    $.CurrentDialog.find('#operatorPhone').click(function () {
+        $.CurrentDialog.find('.operatorList').hide();
+    })
+
+    //删除维修人员
+    $('body').on('click', '.deleteIcon', function () {
+        var data = $(this).parent().attr('id');
+        var operatorId = {
+            'operatorId': data
+        }
+        BJUI.alertmsg('confirm', '确定要删除该维修人员吗?', {
+            okCall: function () {
+                BJUI.ajax('doajax', {
+                    url: path + '/web/repair/v1/deleteOperator',
+                    data: operatorId,
+                    loadingmask: false,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+//                            $.CurrentDialog.find('#'+data).remove();
+                            $.CurrentDialog.find(".operatorList").hide();
+                            $.CurrentDialog.find('#operatorPhone').val('');
+                            $.CurrentDialog.find('#operatorName').val('');
+                            BJUI.alertmsg('ok', '操作成功')
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                });
+            }
+        })
+        return false
+    })
+
+    //确认提交
+    $.CurrentDialog.find("#okBtn").click(function () {
+        if ($.CurrentDialog.find('#executerListEdit_appoint .selectedTip').text() == undefined || $.CurrentDialog.find('#executerListEdit_appoint .selectedTip').text() == "") {
+            BJUI.alertmsg('error', '请选择指派人员')
+            return;
+        }
+        $.CurrentDialog.find("#okBtn").attr('disabled',true);
+        var data = {
+            'orderNo': $.CurrentDialog.find('#orderNo').text(),
+        };
+        var excuteName = $.CurrentDialog.find('#executerListEdit_appoint .selectedTip').text();
+        data.operatorName = excuteName.substr(0,excuteName.length-1);
+        data.operatorPhone = $.CurrentDialog.find('#operatorPhone').text();
+        data.operatorId = $.CurrentDialog.find('#executerListEdit_appoint li').attr('id');
+        data.operatorHead = $.CurrentDialog.find('#executerListEdit_appoint li').attr('head');
+        data.operatorDepartment = $.CurrentDialog.find('#executerListEdit_appoint li').attr('depName');
+
+
+        BJUI.ajax('doajax', {
+            url: path + '/web/repair/v1/updateOrder',
+            data: data,
+            validate: true,
+            form: $.CurrentDialog.find('form'),
+            loadingmask: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.dialog('closeCurrent', true);
+//                    BJUI.navtab('refresh', 'repairManage');
+                    //刷新表单
+                    $.CurrentNavtab.find('#repair_datagrid').datagrid('refresh', true)
+                    BJUI.alertmsg('ok', '操作成功')
+                } else {
+                    successBack(json);
+                }
+            }
+        });
+
+
+//        $.CurrentDialog.find('#orderNo_form').val($.CurrentDialog.find('#orderNo').text());
+//
+//        $.CurrentDialog.find('form').isValid(function (v) {
+//            if (!v) {
+//                return;
+//            } else {
+//
+//            }
+//        });
+    });
+
+    function showListEdit() {
+        var html = $.CurrentNavtab.data('executorsHtml');
+        $('#executerListEdit_appoint').empty();
+        $('#executerListEdit_appoint').html(html);
+        var phone = $('#executerListEdit_appoint li').attr('phone');
+        $('#operatorPhone').html(phone);
+        $('#operatorPhone').css('height','31px')
+//        $('#executerListEdit_appoint .selectedTip b').remove();
+    }
+
+    //取消勾选事件
+    $('.bjui-pageContent ').on('click', 'b', function () {
+        var cup = $(this).parents('li').attr('id');
+        $(this).parents('li').remove();
+        $.CurrentDialog.find('input#' + cup).attr('checked', false).iCheck('uncheck');
+        $.CurrentDialog.find('#operatorPhone').empty();
+    })
+</script>

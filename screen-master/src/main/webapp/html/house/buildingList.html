@@ -1,0 +1,276 @@
+<script type="text/javascript">
+    //初始化zTree
+    var dataJson = null;
+    function ztree_returnjson() {
+        BJUI.ajax('doajax', {
+            url: path + "/web/building/v1/findBuildingList",
+            loadingmask: true,
+            async: false,     //同步
+            okCallback: function (json) {
+                dataJson = json;
+            },
+            errCallback: function (json, options) {
+                $(".bjui-pageContent").append('<span>暂无数据</span>');
+            }
+        });
+        //console.log(dataJson);
+        var str = {'isParent': true};
+        $.each(dataJson, function (i, n) {
+            for (var key in str) {
+                n[key] = str[key];
+            }
+        });
+        return dataJson;
+    }
+
+    //添加子节点
+    function filter(treeId, parentNode, childNodes) {
+        //console.log(childNodes);
+        if (dataJson.length == 0) {
+            $.CurrentNavtab.find("#ztreeBuilding").html("<span style='padding-left: 22px;'>没有数据！</span>");
+            return;
+        }
+
+        if (childNodes.code == "00000") {
+            childNodes = childNodes.data;
+            //console.log(data);
+            if (childNodes.length == 0) {
+                BJUI.alertmsg('warn', '暂无数据！');
+            } else {
+                var nodes = [];
+                //console.log(childNodes);
+                if (!childNodes) return null;
+                for (var i = 0, l = childNodes.length; i < l; i++) {
+                    //childNodes[i].unitName = childNodes[i].unitName.replace(/\.n/g, '.');
+                    //console.log(childNodes[i].unitName)
+                    var obj = {
+                        buildingId: childNodes[i].unitId,
+                        displayOrder: childNodes[i].displayOrder,
+                        buildingName: childNodes[i].unitName
+                    };
+                    nodes.push(obj);
+                }
+                //console.log(nodes)
+                //return childNodes;
+                return nodes;
+            }
+        } else {
+            successBack(childNodes);
+        }
+
+    }
+
+    function addDiyDom(treeId, treeNode) {
+        var aObj = $("#" + treeNode.tId + "_a");
+        if (treeNode.pId != 0) {
+            // 顺序
+            var btnArea="<div class='' style=' width: 46px;height: 24px; float: right;'></div>";
+            if(treeNode.displayOrder==undefined||treeNode.displayOrder==null||treeNode.displayOrder==""){
+                treeNode.displayOrder="<i>暂无信息</i>";
+            }
+            var descStr = "<div class='divBuildingDescZi' style=' width:51%;margin-right: 10%;float: right' title=''>"+treeNode.displayOrder+"</div>";
+
+            //编辑
+            var editStr = "<div class='divBuildingEditZi' style='float: right;'><span id='diyBtn_space_" + treeNode.buildingId + "' class='unitA' spanid='" + treeNode.buildingId + "' > </span>"
+                    + "<button type='button' class='diyBtn1 btn-blue btn' id='editBtn_" + treeNode.buildingId
+                    + "'  orderData='" + treeNode.displayOrder
+                    +"' title=''>编辑</button></div>";
+            //删除
+            var delStr = "<div class='divBuildingDelZi' style='float: right;'><span id='diyBtn_space_" + treeNode.buildingId + "'  class='unitB'> </span>"
+                    + "<button type='button' data-toggle='alertmsg'  class='diyBtn1 btn-red btn'  id='diyBtn_" + treeNode.buildingId
+                    + "' title='' >删除</button></div>";
+
+            aObj.append(delStr + editStr + btnArea+descStr);
+
+            //编辑
+            var editBuilding = $(".divBuildingEditZi #editBtn_" + treeNode.buildingId);
+            if (editBuilding) editBuilding.bind("click", function (t) {
+                var tagId = $(t.currentTarget).parents("li").children("a").children("span").eq(1).attr("id");
+                var orderCup=$.CurrentNavtab.find('#editBtn_'+treeNode.buildingId).attr('orderdata');
+                BJUI.dialog('refresh', 'dialog_unitName');
+                BJUI.dialog({
+                    id: 'dialog_unitName',
+                    title: "编辑单元/楼座<span spanPid='" + treeNode.pId + "' displayOrder='" + orderCup + "' spanId='" + treeNode.buildingId + "'  spanName='" + treeNode.buildingName + "' spanTag='" + tagId + "'></span>",
+                    width: '400',
+                    height: '205',
+                    mask: true,
+                    url: 'html/house/building/editUnitName.html',
+                    maxable: false,
+                    resizable: false
+                })
+            });
+            var delBuilding = $(".divBuildingDelZi #diyBtn_" + treeNode.buildingId);
+            if (delBuilding) delBuilding.bind("click", function (t) {
+                //删除
+                var tagUrl = $(t.currentTarget).parents("ul").attr("id");
+                var liLength = $(t.currentTarget).parents("ul").children("li").length;
+                BJUI.alertmsg('confirm', '确定要删除该单元/楼座吗?', {
+                    okCall: function () {
+                        var delUnit = {"unitId": treeNode.buildingId, "buildingId": treeNode.pId};
+                        BJUI.ajax('doajax', {
+                            url: path + '/web/building/v1/deleteUnit',
+                            data: JSON.stringify(delUnit),
+                            loadingmask: true,
+                            callback: function (json) {
+                                console.log($(this));
+                                if (json.code == "00000") {
+                                    BJUI.alertmsg('ok', '删除成功！');
+                                    BJUI.dialog('closeCurrent');
+                                    var buildingNameSelect = treeNode.getParentNode().buildingName;
+                                    var treeObj = $.fn.zTree.getZTreeObj("ztreeBuilding");
+                                    var nodes = treeObj.getNodes();
+                                    for (var i = 0; i < nodes.length; i++) {
+                                        if (buildingNameSelect == nodes[i].buildingName) {
+                                            var ExpandNode = treeObj.getNodeByTId(nodes[i].tId);
+                                            if (ExpandNode.children .length== 1||ExpandNode.children .length== 0) {
+                                                BJUI.navtab('refresh', 'buildingManage');
+                                                return;
+                                            } else {
+                                                treeObj.expandNode(nodes[i], true, true);
+                                                return
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    successBack(json);
+                                }
+                            }
+                        })
+                    }
+                });
+            });
+            return;
+        }
+        //描述
+        if ((treeNode.buildingDesc) == '' || (treeNode.buildingDesc) == undefined || (treeNode.buildingDesc) == null) {
+            var descStr = "<div class='' title='' style='float: right; width: 25%;margin-right:5%;margin-top:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'><i>暂无信息</i></div>";
+        } else {
+            var descStr = "<div class='' title='' style='float: right; width: 25%;margin-right:5%;margin-top:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' title='" + htmlEncode(treeNode.buildingDesc) + "'>" + htmlEncode(treeNode.buildingDesc) + "</div>";
+        }
+
+        //顺序
+        if ((treeNode.displayOrder) == '' || (treeNode.displayOrder) == undefined || (treeNode.displayOrder) == null) {
+            var displayOrder = "<div titl='' style='float: right; width: 25%;margin-right:5%;margin-top:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'><i>暂无信息</i></div>";
+        } else {
+            var displayOrder = "<div  title='' style='float: right; width: 25%;margin-right:5%;margin-top:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' >" + treeNode.displayOrder + "</div>";
+        }
+        //添加
+        var addStr = "<div class='divBuildingAdd' style='float: right;'><span id='diyBtn_space_" + treeNode.buildingId + "' > </span>"
+                + "<button type='button' class='diyBtn1 btn-blue btn' id='diyBtn_" + treeNode.buildingId
+                + "' title='' >添加</button></div>";
+        //编辑
+        var editStr = "<div class='divBuildingEdit' style='float: right;'><span id='diyBtn_space_" + treeNode.buildingId + "' > </span>"
+                + "<button type='button' class='diyBtn1 btn-blue btn' id='diyBtn_" + treeNode.buildingId
+                + "' title='' >编辑</button></div>";
+        //删除
+        var delStr = "<div class='divBuildingDel' style='float: right;'><span id='diyBtn_space_" + treeNode.buildingId + "' > </span>"
+                + "<button type='button' class='diyBtn1 btn-red btn' id='diyBtn_" + treeNode.buildingId
+                + "' title='' >删除</button></div>";
+
+        aObj.append(delStr + editStr + addStr + descStr+displayOrder);
+
+        var addBuilding = $(".divBuildingAdd #diyBtn_" + treeNode.buildingId);
+        if (addBuilding) addBuilding.bind("click", function () {
+            //添加
+            BJUI.dialog({
+                title: "添加单元/楼座<span spanId='" + treeNode.buildingId + "'   displayOrder='" + treeNode.displayOrder + "' spanName='" + treeNode.buildingName + "' ></span>",
+                width: '400',
+                height: '200',
+                mask: true,
+                url: 'html/house/building/lineAddUnit.html',
+                maxable: false,
+                resizable: false
+            })
+        });
+
+        var editBuilding = $(".divBuildingEdit #diyBtn_" + treeNode.buildingId);
+        var descL;
+        if (editBuilding) editBuilding.bind("click", function () {
+            //编辑
+            if ((treeNode.buildingDesc) == '' || (treeNode.buildingDesc) == undefined || (treeNode.buildingDesc) == null) {
+                descL = '';
+            } else {
+                descL = treeNode.buildingDesc;
+            }
+            BJUI.dialog({
+                title: "编辑楼宇<span spanId='" + treeNode.buildingId + "'  displayOrder='" + treeNode.displayOrder + "' spanName='" + treeNode.buildingName + "' spanDesc='" + htmlEncode(descL) + "' ></span>",
+                width: '500',
+                height: '250',
+                mask: true,
+                url: 'html/house/building/editBuilding.html',
+                maxable: false,
+                resizable: false
+            })
+        });
+
+        var delBuilding = $(".divBuildingDel #diyBtn_" + treeNode.buildingId);
+        if (delBuilding) delBuilding.bind("click", function () {
+            //删除
+            BJUI.alertmsg('confirm', '确定要删除该楼宇吗?', {
+                okCall: function () {
+                    var delBuild = {"buildingId": treeNode.buildingId};
+                    BJUI.ajax('doajax', {
+                        url: path + '/web/building/v1/deleteBuilding',
+                        data: JSON.stringify(delBuild),
+                        loadingmask: true,
+                        callback: function (json) {
+                            if (json.code == "00000") {
+                                BJUI.alertmsg('ok', '删除成功！');
+                                BJUI.navtab('refresh', 'buildingManage');
+                            } else {
+                                successBack(json);
+                            }
+                        }
+                    })
+                }
+            });
+        });
+    }
+    $("#addBuild").click(function () {
+        BJUI.dialog({
+            title: "添加楼宇",
+            width: '500',
+            height: '250',
+            mask: true,
+            url: 'html/house/building/addBuilding.html',
+            maxable: false,
+            resizable: false,
+            loadingmask: false,
+        })
+    });
+    $("#addunit").click(function () {
+        BJUI.dialog({
+            title: "添加单元/楼座",
+            width: '450',
+            height: '240',
+            mask: true,
+            url: 'html/house/building/addUnit.html',
+            maxable: false,
+            resizable: false,
+            loadingmask: false,
+        })
+    });
+
+</script>
+
+<div class="bjui-pageHeader" style="background-color:#fefefe; padding-bottom: 10px;">
+    <form data-toggle="ajaxsearch" data-options="{searchDatagrid:$.CurrentNavtab.find('#ztreeBuilding')}">
+        <div>
+            <button type="button" class="btn-blue" data-icon="plus" id="addBuild">添加楼宇</button>
+            <button type="button" class="btn-blue" data-icon="plus" id="addunit">添加单元/楼座</button>
+        </div>
+        <div style="padding-left: 22px; padding-top:16px; width: 98%;font-size: 14px;font-weight: bold; overflow: hidden;">
+            <span>楼宇名称</span>
+            <span style="display: inline-block; float: right; text-align: center; width: 144px;">操作</span>
+            <span style="display: inline-block; float: right;  width: 25% !important; margin-right: 5%;">楼宇描述</span>
+            <span style="display: inline-block; float: right;  width: 25% !important; margin-right: 5%;">展示排序</span>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageContent" style="margin-top: 5px;">
+    <ul id="ztreeBuilding" class="ztree" data-toggle="ztree"
+        data-options="{nodes:ztree_returnjson,checkEnable:false,showIcon: false,idKey:'buildingId',keyName:'buildingName',async:true,url:path+'/web/building/v1/findUnitList',contentType:'application/json; charset=UTF-8',dataType:'json',autoParam:['buildingId=buildingId'],filter:filter,addDiyDom:addDiyDom}"></ul>
+    <!--<table id="b_datagrid" class="table table-bordered">
+    </table>-->
+
+</div>

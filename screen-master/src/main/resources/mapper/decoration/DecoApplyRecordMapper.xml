@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betel.estatemgmt.common.mapper.decoration.DecoApplyRecordMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+        <id column="recordId" jdbcType="VARCHAR" property="recordId"/>
+        <result column="houseId" jdbcType="BIGINT" property="houseId"/>
+        <result column="decorationCompany" jdbcType="VARCHAR" property="decorationCompany"/>
+        <result column="startTime" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="decorationCycle" jdbcType="INTEGER" property="decorationCycle"/>
+        <result column="decorationDesc" jdbcType="VARCHAR" property="decorationDesc"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="printStatus" jdbcType="BIT" property="printStatus"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="cancelTime" jdbcType="TIMESTAMP" property="cancelTime"/>
+        <result column="cancelReason" jdbcType="VARCHAR" property="cancelReason"/>
+        <result column="operator" jdbcType="VARCHAR" property="operator"/>
+        <result column="isDelete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recordId, houseId, decorationCompany, startTime, endTime, decorationCycle, decorationDesc, 
+    status, reason, description, printStatus, createTime, updateTime, cancelTime, cancelReason, 
+    operator,isDelete
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from decoration_apply_record
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findOwnerByRecordId" parameterType="java.lang.String" resultType="java.lang.String">
+    select ho.userId from decoration_apply_record dar
+    left join house_owner_rela hor on hor.houseId = dar.houseId
+    left join house_owner ho on hor.ownerId = ho.ownerId
+    where dar.recordId = #{recordId} and ho.ownerStatus = 2
+  </select>
+
+    <select id="findMembersByRecordId" parameterType="java.lang.String" resultType="java.lang.String">
+    select hm.userId from decoration_apply_record dar
+    left join house_member_rela hmr on dar.houseId = hmr.houseId
+    left join house_member hm on hmr.memberId = hm.memberId
+    where dar.recordId = #{recordId} and hm.memberStatus = 2
+  </select>
+
+
+    <select id="findMyDecorationList" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+    select DISTINCT dar.status,dar.recordId,
+    hb.buildingName,
+    hbu.unitName,
+    hh.houseNum as houseName
+    from decoration_apply_record dar
+    left join house_member_rela hmr on dar.houseId = hmr.houseId
+    left join house_member hm on hmr.memberId = hm.memberId
+    left join house_owner_rela hor on hor.houseId = dar.houseId
+    left join house_owner ho on hor.ownerId = ho.ownerId
+    left join house_house hh on dar.houseId = hh.houseId
+    left join house_building hb on hh.buildingId = hb.buildingId
+    left join house_building_unit hbu on hh.unitId = hbu.unitId
+    where ((hm.memberStatus = 2 and hm.userId = #{userId}) or (ho.ownerStatus = 2 and ho.userId = #{userId})) and dar.isDelete = 0 and hh.estateId = #{estateId}
+    ORDER by dar.createTime DESC 
+  </select>
+
+    <select id="findAllDecorationList"
+            parameterType="com.betel.estatemgmt.business.propertyapp.decoration.model.QueryDecorationReq"
+            resultType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+        select
+        dar.decorationCompany,dar.startTime,dar.endTime,dar.status,dar.recordId,dar.decorationCycle,dar.printStatus,dar.createTime,dar.houseId
+        from decoration_apply_record dar
+        left join house_house hh on dar.houseId = hh.houseId
+        left join house_building hb on hh.buildingId = hb.buildingId
+        left join house_building_unit hbu on hh.unitId = hbu.unitId
+        WHERE hh.estateId = #{estateId}
+        <if test="type != null and type == 1">
+            and dar.status = 1
+        </if>
+        <if test="type != null and type == 2">
+            and (dar.status = 2 or dar.status = 3)
+        </if>
+        <if test="type != null and type == 3">
+            and dar.status = 4
+        </if>
+        <if test="status != null and status != ''">
+            and dar.status = #{status}
+        </if>
+        <if test="buildingId != null and buildingId != ''">
+            and hb.buildingId = #{buildingId}
+        </if>
+        <if test="unitId != null and unitId != ''">
+            and hbu.unitId = #{unitId}
+        </if>
+        <if test="houseId != null and houseId != ''">
+            AND hh.houseId = #{houseId}
+        </if>
+        <if test="isOthers == 1">
+            AND hh.buildingId is NULL and hh.unitId is NULL
+        </if>
+        <if test="printStatus != null and printStatus != ''">
+            AND dar.printStatus = #{printStatus}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND dar.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND dar.createTime &lt;= #{endTime}
+        </if>
+        <if test="houseNum != null and houseNum != ''">
+            AND hh.houseNum LIKE concat("%",#{houseNum},"%")
+        </if>
+        ORDER BY dar.createTime DESC
+    </select>
+
+    <select id="findAllOfficeDecorationList"
+            parameterType="com.betel.estatemgmt.business.propertyapp.decoration.model.QueryDecorationReq"
+            resultType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+        select
+        dar.decorationCompany,dar.startTime,dar.endTime,dar.status,dar.recordId,dar.decorationCycle,dar.printStatus,dar.createTime,dar.houseId
+        from decoration_apply_record dar
+        left join house_office_house hh on dar.houseId = hh.houseId
+        left join house_building hb on hh.buildingId = hb.buildingId
+        left join house_building_unit hbu on hh.unitId = hbu.unitId
+        WHERE hh.estateId = #{estateId}
+        <if test="type != null and type == 1">
+            and dar.status = 1
+        </if>
+        <if test="type != null and type == 2">
+            and (dar.status = 2 or dar.status = 3)
+        </if>
+        <if test="type != null and type == 3">
+            and dar.status = 4
+        </if>
+        <if test="status != null and status != ''">
+            and dar.status = #{status}
+        </if>
+        <if test="buildingId != null and buildingId != ''">
+            and hb.buildingId = #{buildingId}
+        </if>
+        <if test="unitId != null and unitId != ''">
+            and hbu.unitId = #{unitId}
+        </if>
+        <if test="houseId != null and houseId != ''">
+            AND hh.houseId = #{houseId}
+        </if>
+        <if test="isOthers == 1">
+            AND hh.buildingId is NULL and hh.unitId is NULL
+        </if>
+        <if test="printStatus != null and printStatus != ''">
+            AND dar.printStatus = #{printStatus}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND dar.createTime &gt;= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND dar.createTime &lt;= #{endTime}
+        </if>
+        <if test="houseNum != null and houseNum != ''">
+            AND hh.houseNum LIKE concat("%",#{houseNum},"%")
+        </if>
+        ORDER BY dar.createTime DESC
+    </select>
+
+    <select id="findDecorationInfo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+    select dar.`*`,hb.buildingName,hbu.unitName,hh.houseNum as houseName from decoration_apply_record dar
+    left join house_house hh on dar.houseId = hh.houseId
+    left join house_building hb on hh.buildingId = hb.buildingId
+    left join house_building_unit hbu on hh.unitId = hbu.unitId
+    where dar.recordId = #{recordId}
+  </select>
+
+    <select id="findOfficeDecorationInfo" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+    select dar.`*`,hb.buildingName,hbu.unitName,hh.houseNum as houseName from decoration_apply_record dar
+    left join house_office_house hh on dar.houseId = hh.houseId
+    left join house_building hb on hh.buildingId = hb.buildingId
+    left join house_building_unit hbu on hh.unitId = hbu.unitId
+    where dar.recordId = #{recordId}
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from decoration_apply_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+    insert into decoration_apply_record (recordId, houseId, decorationCompany, 
+      startTime, endTime, decorationCycle, 
+      decorationDesc, status, reason, 
+      description, printStatus, createTime, 
+      updateTime, cancelTime, cancelReason, 
+      operator,isDelete)
+    values (#{recordId,jdbcType=VARCHAR}, #{houseId,jdbcType=VARCHAR}, #{decorationCompany,jdbcType=VARCHAR},
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{decorationCycle,jdbcType=INTEGER}, 
+      #{decorationDesc,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{reason,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{printStatus,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{cancelTime,jdbcType=TIMESTAMP}, #{cancelReason,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR},#{isDelete,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+        <selectKey keyProperty="recordId" resultType="String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into decoration_apply_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            recordId,
+            <if test="houseId != null">
+                houseId,
+            </if>
+            <if test="decorationCompany != null">
+                decorationCompany,
+            </if>
+            <if test="startTime != null">
+                startTime,
+            </if>
+            <if test="endTime != null">
+                endTime,
+            </if>
+            <if test="decorationCycle != null">
+                decorationCycle,
+            </if>
+            <if test="decorationDesc != null">
+                decorationDesc,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="printStatus != null">
+                printStatus,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="cancelTime != null">
+                cancelTime,
+            </if>
+            <if test="cancelReason != null">
+                cancelReason,
+            </if>
+            <if test="operator != null">
+                operator,
+            </if>
+            <if test="isDelete != null">
+                isDelete,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{recordId,jdbcType=VARCHAR},
+            <if test="houseId != null">
+                #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="decorationCompany != null">
+                #{decorationCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="decorationCycle != null">
+                #{decorationCycle,jdbcType=INTEGER},
+            </if>
+            <if test="decorationDesc != null">
+                #{decorationDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="printStatus != null">
+                #{printStatus,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cancelTime != null">
+                #{cancelTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cancelReason != null">
+                #{cancelReason,jdbcType=VARCHAR},
+            </if>
+            <if test="operator != null">
+                #{operator,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+        update decoration_apply_record
+        <set>
+            <if test="houseId != null">
+                houseId = #{houseId,jdbcType=VARCHAR},
+            </if>
+            <if test="decorationCompany != null">
+                decorationCompany = #{decorationCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                startTime = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                endTime = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="decorationCycle != null">
+                decorationCycle = #{decorationCycle,jdbcType=INTEGER},
+            </if>
+            <if test="decorationDesc != null">
+                decorationDesc = #{decorationDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="printStatus != null">
+                printStatus = #{printStatus,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cancelTime != null">
+                cancelTime = #{cancelTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cancelReason != null">
+                cancelReason = #{cancelReason,jdbcType=VARCHAR},
+            </if>
+            <if test="operator != null">
+                operator = #{operator,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                isDelete = #{isDelete},
+            </if>
+        </set>
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.decoration.DecoApplyRecord">
+    update decoration_apply_record
+    set houseId = #{houseId,jdbcType=VARCHAR},
+      decorationCompany = #{decorationCompany,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      decorationCycle = #{decorationCycle,jdbcType=INTEGER},
+      decorationDesc = #{decorationDesc,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT},
+      reason = #{reason,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      printStatus = #{printStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      cancelTime = #{cancelTime,jdbcType=TIMESTAMP},
+      cancelReason = #{cancelReason,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      isDelete = #{isDelete}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+
+    <update id="submitDecorationAgain"
+            parameterType="com.betel.estatemgmt.business.userapp.decoration.model.AddDecorationReq">
+        update decoration_apply_record
+        set houseId = #{houseId,jdbcType=VARCHAR},
+        decorationCompany = #{decorationCompany,jdbcType=VARCHAR},
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+        decorationCycle = #{decorationCycle,jdbcType=INTEGER},
+        <if test="decorationDesc != null">
+            decorationDesc = #{decorationDesc,jdbcType=VARCHAR},
+        </if>
+        status = 1,
+        reason = null,
+        description = null,
+        printStatus = 1,
+        createTime = now(),
+        updateTime = null,
+        cancelTime = null,
+        cancelReason = null,
+        operator = null,
+        isDelete = 0
+        where recordId = #{recordId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findByHouseId" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.house.model.DecorationApply">
+    SELECT
+	  decorationCompany,decorationCycle,createTime,startTime,endTime
+    FROM decoration_apply_record WHERE houseId = #{houseId} AND  status=2
+  </select>
+
+    <select id="findPropertyApplyOnline" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.house.model.DecorationApply">
+        SELECT r.decorationCompany,r.decorationCycle,r.createTime,r.startTime,r.endTime FROM decoration_apply_record r
+        LEFT JOIN house_house h ON h.houseId = r.houseId
+        WHERE r.status=1 AND h.estateId = #{estateId}
+    </select>
+
+    <select id="findBusinessApplyOnline" parameterType="java.lang.String"
+            resultType="com.betel.estatemgmt.business.web.house.model.DecorationApply">
+        SELECT r.decorationCompany,r.decorationCycle,r.createTime,r.startTime,r.endTime FROM decoration_apply_record r
+        LEFT JOIN house_office_house h ON h.houseId = r.houseId
+        WHERE r.status=1 AND h.estateId = #{estateId}
+    </select>
+
+    <delete id="deleteByHouseIds">
+        DELETE FROM decoration_apply_record WHERE houseId IN
+        <foreach collection="array" item="houseId" open="(" separator="," close=")">
+            #{houseId}
+        </foreach>
+    </delete>
+</mapper>

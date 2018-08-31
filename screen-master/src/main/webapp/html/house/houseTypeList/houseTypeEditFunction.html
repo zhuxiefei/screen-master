@@ -1,0 +1,54 @@
+<div class="bjui-pageContent">
+    <form>
+        <div class="bjui-row">
+            <input type="hidden" id="typeId" name="typeId">
+            <input type="hidden" id="functionId" name="functionId">
+            <label class="row-label">功能区域名称:</label>
+            <div class="row-input">
+                <input type="text" id="functionName" name="functionName" value="" data-rule="required,titleVerify4,length(~10)" placeholder="请输入功能区域名称" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-editFunction" >确认修改</button></li>
+    </ul>
+</div>
+<script>
+    var functionId = $.CurrentNavtab.data('houseTypeFunctionId');
+    var functionName = $.CurrentNavtab.data('houseTypeFunctionName');
+    var jsonData=$.CurrentNavtab.data('houseTypeInfo');
+    $.CurrentDialog.find("#typeId").val(jsonData.typeId);
+    $.CurrentDialog.find("#functionId").val(functionId);
+    $.CurrentDialog.find("#functionName").val(functionName);
+
+    $.CurrentDialog.find("#btn-editFunction").click(function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/houseType/v1/updateFunctionName',
+            form: $.CurrentDialog.find('form'),
+            validate: true,     //是否验证
+            loadingmask: false,    // ajax请求时是否显示数据加载遮罩
+            callback:function (json) {
+                if(json.code=="00000"){
+                    BJUI.dialog('close', 'dialog_houseTypeEditFunction');
+                    $("#divEditFunctions .divLabel #functionNames"+functionId).text($.CurrentDialog.find("#functionName").val().trim());
+                    $("#divEditFunctions .divLabel #functionNames"+functionId).next("a.a_editParameter").attr("data-name",$.CurrentDialog.find("#functionName").val().trim());
+                    BJUI.alertmsg('ok',"操作成功");
+                }else{
+                    if(json.code=="G0009"){
+                        BJUI.dialog('close', 'dialog_houseTypeEditFunction');
+                        BJUI.dialog('close', 'dialog_houseTypeEdit');
+                        $.CurrentNavtab.find('#j_datagrid').datagrid('refresh', true)
+                    }else if(json.code=="G0021"){
+                        BJUI.dialog('close', 'dialog_houseTypeEditFunction');
+                        BJUI.dialog('close', 'dialog_houseTypeEdit');
+                        $.CurrentNavtab.find('#j_datagrid').datagrid('refresh', true)
+                    }
+                    successBack(json)
+                }
+            }
+        })
+    })
+</script>

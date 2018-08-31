@@ -1,0 +1,145 @@
+<div class="bjui-pageContent">
+    <form>
+        <div class="bjui-row col-1">
+            <label class="row-label">下载模板：</label>
+            <div class="row-input">
+                <a href="" class="btn btn-blue" data-toggle="ajaxdownload" id="downloadDemo">模板文件下载</a>
+            </div>
+            <div class="row-input" style=" width: 100%; padding-right: 0; "><div id="upload"></div></div>
+            <!-- <label class="row-label">上传文件：</label>
+            <div class="row-input required"><input type="file" id="fileuploade" name="file" accept="aplication/zip" onchange="checkfile()"></div>-->
+        </div>
+
+        <div class="row-input" id="divErrorList" style=" display: none; width: 100%; padding-right: 0; text-align: center;">
+            <span class="span-success" style=" display: inline-block; line-height: 24px; width: 60%;"></span>
+            <button type="button" onclick="exportExcel('customers','房屋图纸错误信息表格')" class="btn btn-blue">
+                <a id="dlink" href="" style="display: none;"></a>下载</button>
+            <table id="customers" style="display:none;">
+                <tr>
+                    <th>楼宇名称</th>
+                    <th>单元名称</th>
+                    <th>房号</th>
+                    <th>图纸类型</th>
+                    <th>预览图片名</th>
+                    <th>cad图片名</td>
+                    <th>错误备注</th>
+                </tr>
+                <tbody id="fileUserInfos">
+                </tbody>
+            </table>
+        </div>
+    </form>
+    <div class="bjui-pageFooter">
+        <!--<ul>
+            <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+            <li><button type="button" class="btn-default" data-icon="check" id="btn-addBatch-fitment" >确认导入</button></li>
+        </ul>-->
+    </div>
+</div>
+
+<script>
+    var templateFlag = {"templateFlag":"2"};
+    BJUI.ajax('doajax', {
+        url: path + '/web/house/v1/downloadTemplate',
+        data: JSON.stringify(templateFlag),
+        loadingmask: false,
+        callback: function (json) {
+            console.log(json);
+            if (json.code == "00000") {
+                $.CurrentDialog.find('#downloadDemo').attr("href",json.data.templateUrl);
+            }else {
+                successBack(json);
+            }
+        }
+    });
+
+    $.CurrentDialog.find('#upload').Huploadify({
+        auto:false,       //是否自动上传
+        fileTypeExts:'*.zip',
+        multi:false,    //是否允许选择多个文件
+        //formData:{key:123456,key2:'vvvv'},
+        fileObjName:'zipFileUrl',
+        fileSizeLimit:500*1024,
+        showUploadedPercent:true,//是否实时显示上传的百分比，如20%
+        showUploadedSize:true,
+        removeTimeout:9999999,
+        uploader:path + '/web/house/v1/importHousePic',
+        onUploadStart:function(){
+            //alert('开始上传');
+        },
+        onInit:function(){
+            //alert('初始化');
+        },
+        onUploadComplete:function(file,json){  //上传完成  //json:接口返回的数据
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .uploadbtn").hide();  //移除上传的按钮
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index+" .delfilebtn").hide(); //移除删除的按钮
+            var data = JSON.parse(json);
+            if(data.code=="00000"){
+                //console.log(data);
+                if(data.data =='' || data.data==undefined){
+                    BJUI.alertmsg('ok',"导入成功！");
+                }else{
+                    var filenum = data.data.length;
+                    if(filenum >0){
+                        $.CurrentDialog.find(".span-success").html('&nbsp;<B>'+filenum+'</B>&nbsp;个图纸没有成功导入,请下载失败文件').show();
+                        console.log(data.data);
+                        //画出表格
+                        var html = '';
+                        var infos = data.data;
+                        for(var i=0;i<filenum;i++){
+                            if(!infos[i].buildingName){
+                                infos[i].buildingName = '';
+                            }
+                            if(!infos[i].unitName){
+                                infos[i].unitName = '';
+                            }
+                            if(!infos[i].houseNum){
+                                infos[i].houseNum = '';
+                            }
+                            if(!infos[i].housePicType){
+                                infos[i].housePicType = '';
+                            }
+                            if(!infos[i].pictureName){
+                                infos[i].pictureName = '';
+                            }
+                            if(!infos[i].cadName){
+                                infos[i].cadName = '';
+                            }
+                            if(!infos[i].failureMsg){
+                                infos[i].failureMsg = '';
+                            }
+                            html += '<tr><td style="mso-number-format:\'\@\';">'+infos[i].buildingName+'</td><td>'+infos[i].unitName+'</td><td>'
+                                    +infos[i].houseNum+'</td><td style="mso-number-format:\'\@\';">'+infos[i].housePicType+'</td><td style="mso-number-format:\'\@\';">'+infos[i].pictureName+
+                                    '</td><td style="mso-number-format:\'\@\';">'+infos[i].cadName+'</td><td>'+infos[i].failureMsg+'</td></tr>';
+                        }
+                        $.CurrentDialog.find("#fileUserInfos").html(html);
+                        $.CurrentDialog.find("#divErrorList").css("display","block");
+                        /*$.CurrentDialog.find("#downBtnFail").css("display","inline-block");*/
+                    }
+                }
+                $.CurrentNavtab.find('#j_datagrid').datagrid('reload')
+            }else if(data.code=="11111"){
+                window.location.href=path+'/login.html'
+            }else{
+                successBack(data);
+            }
+        },onSelect:function(file){  //选择文件后的回调函数
+            //console.log(file.index)
+            $.CurrentDialog.find("#file_upload_1-queue").find("#fileupload_1_"+file.index).siblings('div').remove();
+
+            $.CurrentDialog.find("#divErrorList").css("display","none");
+           /* $.CurrentDialog.find("#downBtnFail").css("display","none");*/
+        },
+        onDelete:function(file){
+            console.log('删除的文件：'+file);
+            console.log(file);
+        }
+    });
+
+    //下载excel
+    /*$("#downBtnFail").click(function(){
+        method5('customers',"name","资金管理.xls");
+    });*/
+
+
+</script>

@@ -1,0 +1,100 @@
+<style>
+    #addUnitForm .row-label{
+        width: 30%;
+    }
+</style>
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;padding-top: 18px" data-toggle="ajaxform" id="addUnitForm">
+        <div class="bjui-row col-1">
+            <label class="row-label">单元/楼座名称 : </label>
+            <div class="row-input required">
+                <input type="text" id="addUnit_search" name="unitName"  data-rule="required,special,length(~3)" >
+            </div>
+            <label class="row-label">展示顺序 : </label>
+            <div class="row-input required">
+                <input type="text" id="displayOrder" name="displayOrder"  data-rule="required,number10000" >
+            </div>
+            <span class="row-label">所属楼宇 : </span>
+            <div class="row-input" >
+                <select id="addUnitSelect" name="addUnitSelect" data-toggle="selectpicker" data-width="100%"
+                        data-rule="required">
+                </select>
+            </div>
+        </div>
+        <input type="text" id="buildingId" name="buildingId" style="display: none">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addUnitq" class="btn-default" data-icon="save">保存</button>
+        </li>
+    </ul>
+</div>
+<script>
+    addUnit()
+    function addUnit() {
+        BJUI.ajax('doajax', {
+            url: path + '/web/building/v1/findBuildingList',
+            data: JSON.stringify(''),
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.each(json.data, function (i, n) {
+                        $.CurrentDialog.find("#addUnitSelect").append('<option value="' + n.buildingId + '" optionId="' + n.buildingId + '" title="' + n.buildingName + '">' + n.buildingName + '</option>');
+                    })
+
+                    $.CurrentDialog.find("#addUnitSelect").selectpicker('refresh');
+                } else {
+                    successBack(json);
+                }
+            }
+        })
+    }
+    $.CurrentDialog.find("#addUnitq").click(function () {
+        var buildingIdL = $.CurrentDialog.find("#addUnitSelect option:selected ").attr('optionId');
+        var buildingNameL = $.CurrentDialog.find("#addUnit_search").val().trim();
+        $.CurrentDialog.find('#buildingId').val(buildingIdL);
+//        if (buildingNameL == '' || buildingNameL == null || buildingNameL == undefined) {
+//            BJUI.alertmsg('warn', '单元/楼座名称不能为空！');
+//        } else {
+//            var vkeyWords = /['"<>%\\]+/;
+//            if (buildingNameL.length > 20) {
+//                BJUI.alertmsg('warn', '单元/楼座名称不能输入\'\"<>%\\且长度不超过20位');
+//            } else if (vkeyWords.test(buildingNameL)) {
+//                BJUI.alertmsg('warn', '单元/楼座名称不能输入\'\"<>%\\且长度不超过20位');
+//            } else {
+//                var addUnitP = {"buildingId": buildingIdL, "unitName": buildingNameL};
+                BJUI.ajax('ajaxform', {
+                    url: path + '/web/building/v1/addUnit',
+//                    data: JSON.stringify(addUnitP),
+                    form: $.CurrentDialog.find('form'),
+                    validate: true,
+                    loadingmask: true,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            BJUI.alertmsg('ok', '新增成功！');
+                            BJUI.dialog('closeCurrent');
+                            var treeObj = $.fn.zTree.getZTreeObj("ztreeBuilding");
+                            var nodes = treeObj.getNodes();
+                            var selectedBuild = $.CurrentDialog.find('#addUnitSelect option:selected').text();
+                            for (var i = 0; i < nodes.length; i++) {
+                                if (selectedBuild == nodes[i].buildingName) {
+                                    treeObj.expandNode(nodes[i], true, true);
+                                    return
+                                }
+                            }
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+//            }
+//        }
+
+    });
+
+</script>

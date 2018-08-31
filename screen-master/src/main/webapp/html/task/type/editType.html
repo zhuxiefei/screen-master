@@ -1,0 +1,43 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">任务类型: </label>
+            <div class="row-input required" style="width: 75%;">
+                <input name="typeName" id="typeName"   data-rule="required,special,length(~50)">
+            </div>
+        </div>
+        <input name="typeId" id="typeId" style="display: none">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addAccount" class="btn-default" data-icon="save">修改</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var editData= $.CurrentNavtab.data("findTaskType");
+    $.CurrentDialog.find('#typeName').val(editData.typeName);
+    $.CurrentDialog.find('#typeId').val(editData.typeId);
+    $.CurrentDialog.find('button#addAccount').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/task/v1/updateTaskType',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','操作成功');
+                    BJUI.dialog('closeCurrent');
+                    $.CurrentNavtab.find("#taskType_datagrid").datagrid('filter');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+</script>

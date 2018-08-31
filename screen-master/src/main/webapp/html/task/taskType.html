@@ -1,0 +1,98 @@
+<script type="text/javascript">
+    $.CurrentNavtab.find("#taskType_datagrid").datagrid({
+        height: '100%',
+        tableWidth: '98%',
+        showToolbar: true,
+        toolbarItem: 'add,del',
+        editMode: {
+            dialog: {
+                width: '370',
+                height: '150',
+                mask: true,
+                title: "添加任务类型",
+                id: 'dialog_addTaskType',
+                maxable: false,
+                resizable: false
+            }
+        },
+        editUrl: 'html/task/type/addType.html',
+        dataUrl: path + '/web/task/v1/findAllTaskTypes',
+        delUrl: path + '/web/task/v1/deleteTaskType',
+        delPK: 'typeId',
+        delPKKey: 'typeIds',
+        delConfirm: '确定要删除选中的任务类型吗?',
+        delCallback: function (json, option) {
+            if (json.code == "00000") {
+                BJUI.alertmsg('ok', '删除成功', {
+                    displayPosition: 'middlecenter'
+                });
+                $.CurrentNavtab.find('#taskType_datagrid').datagrid('refresh', true)
+            } else {
+                successBack(json);
+            }
+        }
+        ,
+        linenumberAll: false,  //行号范围，true = 为所有数据编号，false = 为当前页数据编号。
+        paging: {
+            pageSize: 10
+        }
+        ,
+        showCheckboxcol: true,
+        fieldSortable: false,
+        filterThead: false,
+        showLinenumber: true,
+        columnMenu: false,
+        columnShowhide: false,
+        columnFilter: false,
+        columnLock: false,
+        contextMenuH: false,
+        loadingmask: true,
+        columnResize: false,
+        columns: [
+            {
+                name: 'typeName', label: '任务类型', align: 'center', nowrap: 'true'
+            },
+
+            {name: 'createTime', label: '创建时间', align: 'center', nowrap: 'true'},
+//            {name: 'updateTime', label: '更新时间', align: 'center', nowrap: 'true'},
+            {
+                name: 'typeId', label: '操作', align: 'center', render: function (value, data) {
+                    var html = '<button type="button" class="btn-blue" onclick=seeTaskType("' + value + '")>编辑</button>'
+                            + '<button type="button" class="btn-red" data-toggle="del.datagrid.tr">删除</button>';
+
+                return html;
+            }
+            }
+        ]
+    })
+    //查看
+    function seeTaskType(val) {
+        BJUI.ajax('doajax', {
+            url: path + '/web/task/v1/findTaskType',
+            data: {'typeId': val},
+            loadingmask: true,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    $.CurrentNavtab.data("findTaskType", json.data);
+                    BJUI.dialog({
+                        id: 'dialog_seeTaskType',
+                        url: 'html/task/type/editType.html',
+                        title: '编辑任务类型',
+                        width: '370',
+                        height: '150',
+                        mask: true,
+                        maxable: false,
+                        resizable: false
+                    })
+                } else {
+                    successBack(json)
+                }
+            }
+        })
+    }
+</script>
+
+<div class="bjui-pageContent">
+    <table id="taskType_datagrid" class="table table-bordered">
+    </table>
+</div>

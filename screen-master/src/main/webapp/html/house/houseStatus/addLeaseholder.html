@@ -1,0 +1,67 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <input type="hidden" name="houseId" id="houseId" />
+            <input type="hidden" name="houseStatus" id="houseStatus" />
+            <label class="row-label">租客姓名: </label>
+            <div class="row-input required">
+                <input type="text" id="tenantName" name="tenantName"  data-rule="required,uName,length(~10)" >
+            </div>
+            <label class="row-label">手机号码: </label>
+            <div class="row-input required">
+                <input type="text" id="phoneNum" name="phoneNum"  data-rule="required,mobile" >
+            </div>
+            <label class="row-label">籍    贯: </label>
+            <div class="row-input">
+                <input type="text" id="tenantResidency" name="tenantResidency"  data-rule="special,length(~50)" >
+            </div>
+            <label class="row-label">民    族: </label>
+            <div class="row-input">
+                <input type="text" id="tenantEthnic" name="tenantEthnic"  data-rule="chinese,length(~5)" >
+            </div>
+            <label class="row-label">宗教信仰: </label>
+            <div class="row-input">
+                <select id="tenantReligion" name="tenantReligion" data-toggle="selectpicker"  data-width="100%">
+                    <option value="">--请选择--</option>
+                    <option value="2">佛教</option>
+                    <option value="3">基督教</option>
+                    <option value="4">伊斯兰教</option>
+                    <option value="5">其他</option>
+                    <option value="1">无</option>
+                </select>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li><button type="button" id="addHolder" class="btn-default" data-icon="save">保存</button></li>
+    </ul>
+</div>
+
+<script>
+    var houseId = $.CurrentDialog.find(".dialogHeader .title span").attr("spanId");
+    $.CurrentDialog.find('#houseId').val(houseId);
+    var statusId = $.CurrentDialog.find(".dialogHeader .title span").attr("statusId");
+    $.CurrentDialog.find('#houseStatus').val(statusId);
+
+    $.CurrentDialog.find('button#addHolder').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/houseStatus/v1/addHouseTenant',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','添加成功！');
+                    BJUI.dialog('closeCurrent');
+                    $('#datagrid-leaseholder-list').datagrid("reload");  //重新加载户主表格
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+</script>

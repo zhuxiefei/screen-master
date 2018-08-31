@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HousePicMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HousePic" >
+    <id column="hpId" property="hpId" jdbcType="BIGINT" />
+    <result column="houseId" property="houseId" jdbcType="VARCHAR" />
+    <result column="pictureId" property="pictureId" jdbcType="VARCHAR" />
+    <result column="cadId" property="cadId" jdbcType="VARCHAR" />
+    <result column="pictureType" property="pictureType" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    hpId, houseId, pictureId, cadId, pictureType, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_picture
+    where hpId = #{hpId,jdbcType=BIGINT}
+  </select>
+
+<!--查房屋图纸信息-->
+  <select id="findPictureByHouseId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.business.web.house.model.PictureInfo">
+    select hp.hpId,hp.houseId,hp.cadId,hp.pictureType typeName,p.pictureId,p.pictureUrl,p.pictureName cadName
+    FROM house_picture hp
+    LEFT JOIN system_picture p on hp.pictureId=p.pictureId
+    where hp.houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_picture
+    where hpId = #{hpId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HousePic" >
+    insert into house_picture (hpId, houseId, pictureId, 
+      cadId, pictureType, createTime
+      )
+    values (#{hpId,jdbcType=BIGINT}, #{houseId,jdbcType=VARCHAR}, #{pictureId,jdbcType=VARCHAR},
+      #{cadId,jdbcType=VARCHAR}, #{pictureType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HousePic" >
+    insert into house_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hpId != null" >
+        hpId,
+      </if>
+      <if test="houseId != null" >
+        houseId,
+      </if>
+      <if test="pictureId != null" >
+        pictureId,
+      </if>
+      <if test="cadId != null" >
+        cadId,
+      </if>
+      <if test="pictureType != null" >
+        pictureType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hpId != null" >
+        #{hpId,jdbcType=BIGINT},
+      </if>
+      <if test="houseId != null" >
+        #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureId != null" >
+        #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="cadId != null" >
+        #{cadId,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureType != null" >
+        #{pictureType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HousePic" >
+    update house_picture
+    <set >
+      <if test="houseId != null" >
+        houseId = #{houseId,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureId != null" >
+        pictureId = #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="cadId != null" >
+        cadId = #{cadId,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureType != null" >
+        pictureType = #{pictureType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where hpId = #{hpId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HousePic" >
+    update house_picture
+    set houseId = #{houseId,jdbcType=VARCHAR},
+      pictureId = #{pictureId,jdbcType=VARCHAR},
+      cadId = #{cadId,jdbcType=VARCHAR},
+      pictureType = #{pictureType,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where hpId = #{hpId,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateHousePic" parameterType="com.betel.estatemgmt.business.web.house.model.PicReq" >
+    update house_picture
+    <set >
+      <if test="pictureFlag == 0" >
+        pictureId = null,
+      </if>
+      <if test="pictureFlag == 1" >
+        cadId = null,
+      </if>
+    </set>
+    where hpId = #{hpId}
+  </update>
+<!--根据房屋id查询房屋图纸 -->
+  <select id="selectHousePicByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.userapp.house.model.HousePicture">
+    SELECT hp.hpId,sp.pictureUrl,hp.pictureType from house_picture hp join system_picture sp on hp.pictureId = sp.pictureId
+     where hp.houseId = #{houseId}
+  </select>
+
+  <!--根据图纸id 查询房屋图纸的路径和cad路径 -->
+  <select id="selectHouseCadPicByhousePicId"  parameterType="java.lang.Long" resultType="com.betel.estatemgmt.business.userapp.house.model.HousePicture">
+    select
+    houseId,
+    hp.pictureType,
+    (SELECT sp.pictureUrl From system_picture sp where hp.pictureId = sp.pictureId) pictureUrl,
+    (SELECT sp.pictureUrl From system_picture sp where hp.cadId = sp.pictureId) cadUrl
+     from house_picture hp
+     where hp.hpId = #{hpId}
+  </select>
+
+    <!--根据房屋id和图纸类型查房屋图纸-->
+    <select id="findHousePicByHouseIdAndPictureType" parameterType="com.betel.estatemgmt.business.web.house.model.UploadPictureReq" resultType="com.betel.estatemgmt.common.model.house.HousePic">
+        select hpId,houseId,cadId,pictureId,pictureType,createTime
+        FROM house_picture
+        where houseId = #{houseId,jdbcType=VARCHAR} AND pictureType = #{pictureType,jdbcType=VARCHAR}
+    </select>
+
+  <!--根据房屋id和图纸类型查房屋图-->
+  <select id="findByHouseIdAndTypeName" resultType="com.betel.estatemgmt.business.web.house.model.PictureInfo">
+    select
+    hpId,
+    pictureType as typeName,
+    pictureId,
+    (select pictureUrl from system_picture s where s.pictureId = hp.pictureId) as pictureUrl,
+    cadId,
+    (select pictureName from system_picture s where s.pictureId = hp.cadId) as cadName
+    from house_picture hp
+    where houseId = #{houseId,jdbcType=VARCHAR} AND pictureType = #{typeName,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByHouseIds" parameterType="java.lang.String" >
+    delete from house_picture
+    where houseId in
+    <foreach collection="array" item="houseId" open="(" separator="," close=")">
+      #{houseId,jdbcType=VARCHAR}
+    </foreach>
+  </delete>
+
+  <select id="selectByHouseId" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.house.HousePic">
+    select * from house_picture
+    where houseId = #{houseId,jdbcType=VARCHAR}
+  </select>
+
+  <insert id="insertPicList" parameterType="java.util.List">
+    insert INTO house_picture (houseId, pictureId, cadId,
+    pictureType, createTime)
+    values
+    <foreach collection="list" item="housePic" index="index" separator=",">
+      (
+      #{housePic.houseId},#{housePic.pictureId},
+      #{housePic.cadId},#{housePic.pictureType},
+      #{housePic.createTime}
+      )
+    </foreach>
+  </insert>
+
+  <update id="updatePicList" parameterType="java.util.List">
+    <foreach collection="list" item="housePic" index="index" separator=";">
+      UPDATE house_picture
+      <set >
+        <if test="housePic.pictureId != null" >
+          pictureId = #{housePic.pictureId},
+        </if>
+        <if test="housePic.cadId != null" >
+          cadId = #{housePic.cadId},
+        </if>
+      </set>
+      where houseId = #{housePic.houseId} AND pictureType = #{housePic.pictureType}
+    </foreach>
+  </update>
+</mapper>

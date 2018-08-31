@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.cleaning.CleaningRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.cleaning.CleaningRecord" >
+    <id column="recordId" property="recordId" jdbcType="VARCHAR" />
+    <result column="contentId" property="contentId" jdbcType="VARCHAR" />
+    <result column="cleaner" property="cleaner" jdbcType="VARCHAR" />
+    <result column="signRecord" property="signRecord" jdbcType="VARCHAR" />
+    <result column="isStandard" property="isStandard" jdbcType="BIT" />
+    <result column="problemRecord" property="problemRecord" jdbcType="VARCHAR" />
+    <result column="examiner" property="examiner" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="estateId" property="estateId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    recordId, contentId, cleaner, signRecord, isStandard, problemRecord, examiner, createTime,estateId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cleaning_check_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cleaning_check_record
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecord" >
+    insert into cleaning_check_record (recordId, contentId, cleaner, 
+      signRecord, isStandard, problemRecord, 
+      examiner, createTime,estateId)
+    values (#{recordId,jdbcType=VARCHAR}, #{contentId,jdbcType=VARCHAR}, #{cleaner,jdbcType=VARCHAR}, 
+      #{signRecord,jdbcType=VARCHAR}, #{isStandard,jdbcType=BIT}, #{problemRecord,jdbcType=VARCHAR}, 
+      #{examiner,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{estateId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecord" >
+    <selectKey keyProperty="recordId" resultType="String" order="BEFORE">
+      select uuid()
+    </selectKey>
+    insert into cleaning_check_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        recordId,
+      <if test="contentId != null" >
+        contentId,
+      </if>
+      <if test="cleaner != null" >
+        cleaner,
+      </if>
+      <if test="signRecord != null" >
+        signRecord,
+      </if>
+      <if test="isStandard != null" >
+        isStandard,
+      </if>
+      <if test="problemRecord != null" >
+        problemRecord,
+      </if>
+      <if test="examiner != null" >
+        examiner,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="estateId != null" >
+        estateId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        #{recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="contentId != null" >
+        #{contentId,jdbcType=VARCHAR},
+      </if>
+      <if test="cleaner != null" >
+        #{cleaner,jdbcType=VARCHAR},
+      </if>
+      <if test="signRecord != null" >
+        #{signRecord,jdbcType=VARCHAR},
+      </if>
+      <if test="isStandard != null" >
+        #{isStandard,jdbcType=BIT},
+      </if>
+      <if test="problemRecord != null" >
+        #{problemRecord,jdbcType=VARCHAR},
+      </if>
+      <if test="examiner != null" >
+        #{examiner,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        #{estateId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecord" >
+    update cleaning_check_record
+    <set >
+      <if test="contentId != null" >
+        contentId = #{contentId,jdbcType=VARCHAR},
+      </if>
+      <if test="cleaner != null" >
+        cleaner = #{cleaner,jdbcType=VARCHAR},
+      </if>
+      <if test="signRecord != null" >
+        signRecord = #{signRecord,jdbcType=VARCHAR},
+      </if>
+      <if test="isStandard != null" >
+        isStandard = #{isStandard,jdbcType=BIT},
+      </if>
+      <if test="problemRecord != null" >
+        problemRecord = #{problemRecord,jdbcType=VARCHAR},
+      </if>
+      <if test="examiner != null" >
+        examiner = #{examiner,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estateId != null" >
+        estateId = #{estateId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.cleaning.CleaningRecord" >
+    update cleaning_check_record
+    set contentId = #{contentId,jdbcType=VARCHAR},
+      cleaner = #{cleaner,jdbcType=VARCHAR},
+      signRecord = #{signRecord,jdbcType=VARCHAR},
+      isStandard = #{isStandard,jdbcType=BIT},
+      problemRecord = #{problemRecord,jdbcType=VARCHAR},
+      examiner = #{examiner,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      estateId = #{estateId,jdbcType=VARCHAR}
+    where recordId = #{recordId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findAllAssessmentList" resultType="com.betel.estatemgmt.business.propertyapp.cleaning.model.CleaningRecordInfo" parameterType="com.betel.estatemgmt.business.propertyapp.cleaning.model.FindAssessmentListReq" >
+    select ccr.isStandard,ccr.problemRecord,ccr.examiner,ccr.createTime,ccr.recordId from cleaning_check_record ccr
+    where ccr.contentId = #{contentId} AND ccr.estateId = #{estateId}
+    <if test="isStandard != null" >
+      and ccr.isStandard = #{isStandard}
+    </if>
+    ORDER by ccr.createTime desc
+  </select>
+
+  <select id="findAllContentRecords" resultType="com.betel.estatemgmt.business.web.cleaning.model.ContentRecordInfo">
+    SELECT
+    recordId,
+    createTime,
+    examiner,
+    isStandard,
+    problemRecord
+    FROM cleaning_check_record
+    WHERE contentId = #{contentId} AND estateId = #{estateId}
+    <if test="isStandard != null and isStandard != ''" >
+      and isStandard = #{isStandard}
+    </if>
+    <if test="startTime != null and startTime != ''">
+      AND DATE_FORMAT(createTime,'%Y-%m-%d %T') &gt;= DATE_FORMAT(#{startTime},'%Y-%m-%d %T')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      AND DATE_FORMAT(createTime,'%Y-%m-%d %T') &lt;= DATE_FORMAT(#{endTime},'%Y-%m-%d %T')
+    </if>
+    ORDER BY createTime DESC
+  </select>
+
+  <select id="findAllRecords" resultType="com.betel.estatemgmt.business.web.cleaning.model.FindAllRecordsResp">
+    SELECT
+    cr.recordId,
+    cc.contentNo,
+    ca.areaName,
+    ct.typeName,
+    cc.location,
+    cc.cycle,
+    cr.isStandard,
+    cr.createTime,
+    cc.content
+    FROM cleaning_check_record cr
+    LEFT JOIN cleaning_content cc ON cr.contentId = cc.contentId
+    LEFT JOIN cleaning_area ca ON ca.areaId = cc.areaId
+    LEFT JOIN cleaning_type ct ON ct.typeId = cc.typeId
+    WHERE cr.estateId = #{estateId}
+    <if test="areaId != null and areaId != ''" >
+      and cc.areaId = #{areaId}
+    </if>
+    <if test="typeId != null and typeId != ''" >
+      and cc.typeId = #{typeId}
+    </if>
+    <if test="cycle != null and cycle != ''" >
+      and cc.cycle = #{cycle}
+    </if>
+    <if test="isStandard != null and isStandard != ''" >
+      and cr.isStandard = #{isStandard}
+    </if>
+    <if test="startTime != null and startTime != ''">
+      AND DATE_FORMAT(cr.createTime,'%Y-%m-%d %T') &gt;= DATE_FORMAT(#{startTime},'%Y-%m-%d %T')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      AND DATE_FORMAT(cr.createTime,'%Y-%m-%d %T') &lt;= DATE_FORMAT(#{endTime},'%Y-%m-%d %T')
+    </if>
+    <if test="contentNo != null and contentNo != ''" >
+      AND cc.contentNo like CONCAT('%',#{contentNo},'%')
+    </if>
+    <if test="location != null and location != ''" >
+      AND cc.location like CONCAT('%',#{location},'%')
+    </if>
+    ORDER BY cr.createTime DESC
+  </select>
+
+  <select id="findRecord" parameterType="java.lang.String" resultType="com.betel.estatemgmt.business.web.cleaning.model.FindRecordResp">
+    SELECT
+    cr.recordId,
+    cc.contentNo,
+    ca.areaName,
+    ct.typeName,
+    cc.location,
+    cc.cycle,
+    cc.content,
+    cr.examiner,
+    cr.isStandard,
+    cr.problemRecord,
+    cr.createTime
+    FROM cleaning_check_record cr
+    LEFT JOIN cleaning_content cc ON cr.contentId = cc.contentId
+    LEFT JOIN cleaning_area ca ON ca.areaId = cc.areaId
+    LEFT JOIN cleaning_type ct ON ct.typeId = cc.typeId
+    WHERE recordId = #{recordId}
+  </select>
+
+  <select id="findByRecordIds" resultType="com.betel.estatemgmt.business.web.cleaning.model.FindAllRecordsResp">
+    SELECT
+    cr.recordId,
+    cc.contentNo,
+    ca.areaName,
+    ct.typeName,
+    cc.location,
+    cc.cycle,
+    cr.isStandard,
+    cr.createTime,
+    cc.content
+    FROM cleaning_check_record cr
+    LEFT JOIN cleaning_content cc ON cr.contentId = cc.contentId
+    LEFT JOIN cleaning_area ca ON ca.areaId = cc.areaId
+    LEFT JOIN cleaning_type ct ON ct.typeId = cc.typeId
+    WHERE
+    cr.recordId IN
+    <foreach close=")" collection="array" index="index" item="recordId" open="(" separator=",">
+      #{recordId}
+    </foreach>
+    ORDER BY cr.createTime DESC
+  </select>
+
+  <select id="findByParams" resultType="com.betel.estatemgmt.business.web.cleaning.model.FindAllRecordsResp">
+    SELECT
+    cr.recordId,
+    cc.contentNo,
+    ca.areaName,
+    ct.typeName,
+    cc.location,
+    cc.cycle,
+    cr.isStandard,
+    cr.createTime,
+    cc.content
+    FROM cleaning_check_record cr
+    LEFT JOIN cleaning_content cc ON cr.contentId = cc.contentId
+    LEFT JOIN cleaning_area ca ON ca.areaId = cc.areaId
+    LEFT JOIN cleaning_type ct ON ct.typeId = cc.typeId
+    WHERE cr.estateId = #{estateId}
+    <if test="areaId != null and areaId != ''" >
+      and cc.areaId = #{areaId}
+    </if>
+    <if test="typeId != null and typeId != ''" >
+      and cc.typeId = #{typeId}
+    </if>
+    <if test="cycle != null and cycle != ''" >
+      and cc.cycle = #{cycle}
+    </if>
+    <if test="isStandard != null and isStandard != ''" >
+      and cr.isStandard = #{isStandard}
+    </if>
+    <if test="startTime != null and startTime != ''">
+      AND DATE_FORMAT(cr.createTime,'%Y-%m-%d %T') &gt;= DATE_FORMAT(#{startTime},'%Y-%m-%d %T')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      AND DATE_FORMAT(cr.createTime,'%Y-%m-%d %T') &lt;= DATE_FORMAT(#{endTime},'%Y-%m-%d %T')
+    </if>
+    <if test="contentNo != null and contentNo != ''" >
+      AND cc.contentNo like CONCAT('%',#{contentNo},'%')
+    </if>
+    <if test="location != null and location != ''" >
+      AND cc.location like CONCAT('%',#{location},'%')
+    </if>
+    ORDER BY cr.createTime DESC
+  </select>
+
+  <select id="findRecords" parameterType="com.betel.estatemgmt.business.web.task.model.TaskCountReq"
+          resultType="com.betel.estatemgmt.common.model.cleaning.CleaningRecord">
+    SELECT cr.*
+    FROM cleaning_check_record cr
+    LEFT JOIN cleaning_content cc ON cr.contentId = cc.contentId
+    WHERE cr.estateId = #{estateId}
+    <if test="startTime != null and startTime != ''">
+      and cr.createTime &gt;= #{startTime}
+    </if>
+    <if test="endTime != null and endTime != ''">
+      and cr.createTime &lt;= #{endTime}
+    </if>
+    <if test="areaId != null and areaId != ''" >
+      AND cc.areaId = #{areaId}
+    </if>
+  </select>
+</mapper>

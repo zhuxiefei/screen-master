@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.security.SecurityAreaMapper">
+    <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.security.SecurityArea">
+        <id column="areaId" property="areaId" jdbcType="VARCHAR"/>
+        <result column="areaName" property="areaName" jdbcType="VARCHAR"/>
+        <result column="areaDesc" property="areaDesc" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="estateId" property="estateId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    areaId, areaName, areaDesc, createTime, updateTime,estateId
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from security_area
+        where areaId = #{areaId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from security_area
+    where areaId = #{areaId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.betel.estatemgmt.common.model.security.SecurityArea">
+    insert into security_area (areaId, areaName, areaDesc, 
+      createTime, updateTime,estateId)
+    values (#{areaId,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{areaDesc,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},#{estateId,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityArea">
+        insert into security_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="areaId != null">
+                areaId,
+            </if>
+            <if test="areaName != null">
+                areaName,
+            </if>
+            <if test="areaDesc != null">
+                areaDesc,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="estateId != null">
+                estateId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaId != null">
+                #{areaId,jdbcType=VARCHAR},
+            </if>
+            <if test="areaName != null">
+                #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="areaDesc != null">
+                #{areaDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                #{estateId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.security.SecurityArea">
+        update security_area
+        <set>
+            <if test="areaName != null">
+                areaName = #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="areaDesc != null">
+                areaDesc = #{areaDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estateId != null">
+                estateId = #{estateId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where areaId = #{areaId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.security.SecurityArea">
+    update security_area
+    set areaName = #{areaName,jdbcType=VARCHAR},
+      areaDesc = #{areaDesc,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      estateId = #{estateId,jdbcType=VARCHAR},
+    where areaId = #{areaId,jdbcType=VARCHAR}
+  </update>
+    <select id="findAreaList" parameterType="java.lang.String" resultType="com.betel.estatemgmt.common.model.security.SecurityArea">
+    SELECT areaId, areaName, createTime,estateId FROM security_area WHERE  estateId = #{estateId} ORDER by createTime DESC
+  </select>
+    <select id="findAreaByName" parameterType="com.betel.estatemgmt.business.web.security.model.SecurityReq"
+            resultType="com.betel.estatemgmt.common.model.security.SecurityArea">
+        SELECT areaId, areaName, createTime FROM security_area WHERE
+        areaName = #{areaName}
+        <if test="areaId != null and areaId != ''">
+            AND areaId != #{areaId}
+        </if>
+    </select>
+</mapper>

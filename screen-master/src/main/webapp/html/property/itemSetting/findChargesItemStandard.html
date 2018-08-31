@@ -1,0 +1,50 @@
+
+<div class="bjui-pageContent"  >
+    <textarea name="content" id="y_form_content" class="j-content" style="width:100%;" data-toggle="kindeditor" data-picType="2" data-minheight="200" ></textarea>
+    <!--<p>
+        最多支持3000字，您当前输入了 <span id="createDescnum" style="color: #f00;">0</span> 个字。（字数统计包含文字、图片，一张图片算一个字。）
+    </p>-->
+</div>
+<div  class="clearfix bjui-pageFooter">
+    <ul  >
+        <li ><button type="button" class="btn-close" data-icon="close">取消</button></li>
+        <li ><button type="button" class="btn-default btn" data-icon="save" id="save"><i class="fa fa-save"></i> 确认</button></li>
+    </ul>
+</div>
+<script>
+    reparirStandardInit();
+    function reparirStandardInit(){
+        var data= $('body').data('findChargesItemStandard');
+        $.CurrentDialog.find('textarea').html(data.standardInfo);
+    }
+
+
+
+    $.CurrentDialog.find('#save').click(function () {
+        /*if($.CurrentDialog.find("#createDescnum").text() > 3000){
+            BJUI.alertmsg('error','最多只能输入3000个字！');
+            event.returnValue = false;
+        }else {*/
+            var contentStr1 = $.CurrentDialog.find("#y_form_content").val();
+            var data={
+                'standard': contentStr1.toString().trim(),
+            }
+            BJUI.ajax('doajax', {
+                url: path+'/web/charges/v1/updateChargesItemStandard',
+                data:data,
+                loadingmask: true,
+                callback:function (json) {
+                    if(json.code=="00000"){
+                        BJUI.alertmsg('ok','操作成功！');
+                        BJUI.dialog('closeCurrent')
+//                        $.CurrentNavtab.find('#y_datagrid').datagrid('refresh', true)
+                        BJUI.navtab('refresh', 'itemSetting');
+
+                    }else {
+                        successBack(json);
+                    }
+                }
+            })
+        //}
+    })
+</script>

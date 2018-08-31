@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>四合院社区管理系统</title>
+    <meta name="renderer" content="webkit">
+    <script src="scripts/js/jquery-1.11.3.min.js"></script>
+    <script src="scripts/js/jquery.cookie.js"></script>
+    <link href="scripts/themes/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="assets/ico/logo.png">
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: "Verdana", "Tahoma", "Lucida Grande", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+            background: url(images/loginbg_01.jpg) no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .form-control {
+            height: 37px;
+        }
+
+        .main_box {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            margin: -180px 0 0 -180px;
+            padding: 15px 20px;
+            width: 360px;
+            /*height: 360px;*/
+            min-width: 320px;
+            background: #FAFAFA;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 1px 5px 8px #888888;
+            border-radius: 6px;
+        }
+
+        .login_msg {
+            height: 30px;
+        }
+
+        .input-group > .input-group-addon.code {
+            padding: 0;
+        }
+
+        #captcha_img {
+            cursor: pointer;
+        }
+
+        .main_box .logo img {
+            height: 35px;
+        }
+
+        @media (min-width: 768px) {
+            .main_box {
+                margin-left: -240px;
+                padding: 15px 55px;
+                width: 480px;
+            }
+
+            .main_box .logo img {
+                height: 40px;
+            }
+        }
+        #login_form .text_changePWD{ font-size: 26px;}
+        .divLoginError{  display: none; background-color: #f00; color: #fff; padding: 10px; opacity:0.7;}
+        .divLoginBtn{ margin:40px 0 30px 0;}
+    </style>
+
+    <script src="scripts/js/common/common.js"></script>
+</head>
+<body>
+<!--[if lte IE 7]>
+<style type="text/css">
+    #errorie {
+        position: fixed;
+        top: 0;
+        z-index: 100000;
+        height: 30px;
+        background: #FCF8E3;
+    }
+
+    #errorie div {
+        width: 900px;
+        margin: 0 auto;
+        line-height: 30px;
+        color: orange;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    #errorie div a {
+        color: #459f79;
+        font-size: 14px;
+    }
+
+    #errorie div a:hover {
+        text-decoration: underline;
+    }
+</style>
+<div id="errorie">
+    <div>您还在使用老掉牙的IE，请升级您的浏览器到 IE8以上版本 <a target="_blank"
+                                          href="http://windows.microsoft.com/zh-cn/internet-explorer/ie-8-worldwide-languages">点击升级</a>&nbsp;&nbsp;强烈建议您更改换浏览器：<a
+            href="http://down.tech.sina.com.cn/content/40975.html" target="_blank">谷歌 Chrome</a></div>
+</div>
+<![endif]-->
+<div class="container">
+    <div class="main_box">
+        <form id="login_form">
+            <p class="text-center text_changePWD">重置密码</p>
+            <div class="login_msg text-center"><font color="red"></font></div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon-password"><span class="glyphicon glyphicon-lock"></span></span>
+                    <input type="password" class="form-control" id="j_password_old" name="passwordOld" value="" placeholder="旧密码" aria-describedby="sizing-addon-user">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon-password"><span class="glyphicon glyphicon-lock"></span></span>
+                    <input type="password" class="form-control" id="j_password_news" name="passwordNews" placeholder="新密码" aria-describedby="sizing-addon-password">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon-password"><span class="glyphicon glyphicon-lock"></span></span>
+                    <input type="password" class="form-control" id="j_password_again" name="passwordAgain" placeholder="再次输入新密码" aria-describedby="sizing-addon-password">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    密码格式为:6-20位的大写字母、小写字母和数字的组合，不能使用特殊字符（可使用字符,./!@#$%^&）
+                </div>
+            </div>
+            <div class="divLoginError"></div>
+            <div class="text-center divLoginBtn">
+                <button type="button" id="login_ok" class="btn btn-primary btn-lg">&nbsp;确&nbsp;认&nbsp;</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        /*登录*/
+        $("#login_ok").click(function () {
+            var passwordOld = $("#j_password_old").val();
+            var passwordNews = $("#j_password_news").val();
+            var passwordAgain= $("#j_password_again").val();
+            if (passwordOld == "" || passwordOld == null) {
+                $("#j_password_old").css("border", "1px solid rgb(255, 0, 0)");
+                $(".divLoginError").text("旧密码不能为空!").show().delay(2000).fadeOut(1500);
+                return;
+            } else {
+                $("#j_password_old").removeAttr("style");
+            }
+            //var reg = /^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*).([A-Z]|[a-z]|[0-9]|[,./!@#$%^&]){5,19}$/;
+            var pwdReg = new RegExp(/^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*).([A-Z]|[a-z]|[0-9]|[,./!@#$%^&]){5,19}$/);
+            if (passwordNews == "" || passwordNews == null) {
+                $("#j_password_news").css("border", "1px solid rgb(255, 0, 0)");
+                $(".divLoginError").text("新密码不能为空!").show().delay(2000).fadeOut(1500);
+                return;
+            } else if(!pwdReg.test(passwordNews)){
+                $("#j_password_news").css("border", "1px solid rgb(255, 0, 0)");
+                //$(".divLoginError").text("请填写6-20位的大写字母、小写字母和数字的组合，不能使用特殊字符（可使用字符,./!@#$%^&）").show().delay(2000).fadeOut(1500);
+                $(".divLoginError").text("新密码格式有误！").show().delay(2000).fadeOut(1500);
+                return;
+            }else {
+                $("#j_password_news").removeAttr("style");
+            }
+            if (passwordAgain == "" || passwordAgain == null) {
+                $("#j_password_again").css("border", "1px solid rgb(255, 0, 0)");
+                $(".divLoginError").text("两次输入的密码不一致").show().delay(2000).fadeOut(1500);
+                return;
+            } else if(passwordNews!=passwordAgain) {
+                $("#j_password_again").css("border", "1px solid rgb(255, 0, 0)");
+                $(".divLoginError").text("两次输入的密码不一致").show().delay(2000).fadeOut(1500);
+                return;
+            }else{
+                $("#j_password_again").removeAttr("style");
+            }
+
+            var data = {"oldPwd": passwordOld, "newPwd": passwordNews};
+            var path = window.location.href.substring(0,window.location.href.indexOf('/changePWD.html'));
+            $.ajax({
+                type: "POST",
+                url: path+"/web/admin/v1/updatePassword",
+                data: JSON.stringify(data),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                cache: false,
+                headers: {"userId": $.cookie("l_userId"), "token": $.cookie("l_token")},
+                success: function (json) {
+                    var httpUrl=window.location.href;
+                    var httpEx = httpUrl.substring(0,httpUrl.lastIndexOf(httpUrl.split(":")[2])-1);
+                     if(json.code=="00000"){
+                        window.location.href=httpEx;
+                    }else if(json.code=="11111"){
+                        window.location.href=httpEx;
+                    }else if(json.code=="M0006"){
+                        $("#j_password_old").css("border", "1px solid rgb(255, 0, 0)");
+                        $("#j_password_news").css("border", "1px solid rgb(255, 0, 0)");
+                        $(".divLoginError").text("密码为空").show().delay(2000).fadeOut(1500);
+                        return;
+                    }else if(json.code=="M0007"){
+                        $("#j_password_news").css("border", "1px solid rgb(255, 0, 0)");
+                        $(".divLoginError").text("新密码格式错误").show().delay(2000).fadeOut(1500);
+                        return;
+                    }else if(json.code=="M0009"){
+                        $("#j_password_old").css("border", "1px solid rgb(255, 0, 0)");
+                        $(".divLoginError").text("旧密码错误").show().delay(2000).fadeOut(1500);
+                        return;
+                    }else{
+                        $(".divLoginError").text("操作失败").show().delay(2000).fadeOut(1500);
+                        return;
+                    }
+                },
+                error: function (json) {
+                }
+            });
+        });
+
+        //所需单据绑定回车键
+        $("#j_password_again").keydown(function(event){
+            if(event.keyCode==13){
+                $("#login_ok").click();
+            }
+        });
+    });
+</script>
+</html>

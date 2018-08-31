@@ -1,0 +1,43 @@
+<div class="bjui-pageContent">
+    <form class="datagrid-edit-form" style="overflow: visible;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">设备类型: </label>
+            <div class="row-input required" style="width: 75%;">
+                <input name="equipmentType" id="equipmentType"   data-rule="required,special,length(~15)">
+            </div>
+        </div>
+        <input name="typeId" id="typeId" style="display: none">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addAccount" class="btn-default" data-icon="save">修改</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var editData= $.CurrentNavtab.data("findequipmentType");
+    $.CurrentDialog.find('#equipmentType').val(editData.typeName);
+    $.CurrentDialog.find('#typeId').val(editData.typeId);
+    $.CurrentDialog.find('button#addAccount').bind("click", function(){
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/equipment/v1/updateType',
+            form: $.CurrentDialog.find('form'),
+            validate: true,
+            loadingmask: true,
+            callback: function (json) {
+                if(json.code=="00000"){
+                    BJUI.alertmsg('ok','操作成功');
+                    BJUI.dialog('closeCurrent');
+                    $.CurrentNavtab.find("#equipmentType_datagrid").datagrid('filter');
+                }else {
+                    successBack(json);
+                }
+            }
+        })
+    })
+</script>

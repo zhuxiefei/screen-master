@@ -1,0 +1,3 @@
+INSERT INTO `system_config` VALUES ('home.project.url', 'http://192.168.199.188:8100/', NULL, 'smartHome项目地址');
+INSERT INTO `admin_privilege` (`privilegeId`, `privilegeName`, `privilegeDesc`, `parentId`, `privilegeType`, `createTime`) VALUES ('471', 'home', '智能家居系统', '0', '4', '2017-08-08 15:40:25');
+INSERT INTO `admin_role_privilege_rela` ( `roleId`, `privilegeId`, `createTime`) VALUES ( '1', '471', '2017-11-13 11:29:52');

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.admin.AdminRolePriRelaMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.admin.AdminRolePriRela" >
+    <id column="rpRela" property="rpRela" jdbcType="BIGINT" />
+    <result column="roleId" property="roleId" jdbcType="BIGINT" />
+    <result column="privilegeId" property="privilegeId" jdbcType="BIGINT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    rpRela, roleId, privilegeId, createTime
+  </sql>
+
+  <delete id="deteleByRoleId" parameterType="java.lang.Long">
+    delete from admin_role_privilege_rela
+    where roleId = #{roleId,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertRolePrivileges">
+    insert into admin_role_privilege_rela (roleId, privilegeId,
+    createTime)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.roleId,jdbcType=BIGINT}, #{item.privilegeId,jdbcType=BIGINT}
+      ,#{item.createTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_role_privilege_rela
+    where rpRela = #{rpRela,jdbcType=BIGINT}
+  </select>
+
+  <select id="findMenuListByRoleIdAndParentId" resultType="com.betel.estatemgmt.business.web.login.model.Menu" >
+    select
+    ap.privilegeId as menuId,ap.privilegeName as menuName,ap.parentId
+    from admin_privilege ap
+    LEFT JOIN admin_role_privilege_rela  arp ON ap.privilegeId = arp.privilegeId
+    where arp.roleId = #{roleId} and ap.privilegeType = 1 AND ap.parentId = #{parentId}
+  </select>
+
+  <select id="findPermissionListByUserId" resultType="com.betel.estatemgmt.common.model.admin.AdminPrivilege" parameterType="java.lang.String" >
+    SELECT ap.* FROM admin_privilege ap
+    LEFT JOIN admin_role_privilege_rela arp on ap.privilegeId = arp.privilegeId
+    LEFT JOIN admin_estate_rela a on arp.roleId = a.roleId
+    WHERE a.adminId = #{userId} and a.estateId = #{estateId}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from admin_role_privilege_rela
+    where rpRela = #{rpRela,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.admin.AdminRolePriRela" >
+    insert into admin_role_privilege_rela (rpRela, roleId, privilegeId, 
+      createTime)
+    values (#{rpRela,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, #{privilegeId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminRolePriRela" >
+    insert into admin_role_privilege_rela
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rpRela != null" >
+        rpRela,
+      </if>
+      <if test="roleId != null" >
+        roleId,
+      </if>
+      <if test="privilegeId != null" >
+        privilegeId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rpRela != null" >
+        #{rpRela,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="privilegeId != null" >
+        #{privilegeId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.admin.AdminRolePriRela" >
+    update admin_role_privilege_rela
+    <set >
+      <if test="roleId != null" >
+        roleId = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="privilegeId != null" >
+        privilegeId = #{privilegeId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where rpRela = #{rpRela,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.admin.AdminRolePriRela" >
+    update admin_role_privilege_rela
+    set roleId = #{roleId,jdbcType=BIGINT},
+      privilegeId = #{privilegeId,jdbcType=BIGINT},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where rpRela = #{rpRela,jdbcType=BIGINT}
+  </update>
+
+  <select id="findSystemByRoleId" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.common.model.admin.AdminPrivilege">
+    SELECT p.*
+    FROM admin_role_privilege_rela r
+    LEFT JOIN admin_privilege p ON p.privilegeId = r.privilegeId
+    WHERE r.roleId = #{roleId} AND p.privilegeType = 4
+  </select>
+
+  <select id="findChildMenu" resultType="com.betel.estatemgmt.business.web.login.model.Menu">
+    select
+    ap.privilegeId as menuId,ap.privilegeName as menuName,ap.parentId
+    from admin_privilege ap
+    LEFT JOIN admin_role_privilege_rela arp ON ap.privilegeId = arp.privilegeId
+    where ap.privilegeType = 1 AND ap.parentId IN
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item.menuId}
+    </foreach>
+    AND arp.roleId IN
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item.roleId}
+    </foreach>
+  </select>
+
+  <select id="findCommon" parameterType="java.lang.Long" resultType="com.betel.estatemgmt.business.web.login.model.Menu">
+    select
+    ap.privilegeId as menuId,ap.privilegeName as menuName,ap.parentId
+    from admin_privilege ap
+    LEFT JOIN admin_role_privilege_rela arp ON ap.privilegeId = arp.privilegeId
+    where ap.parentId IS NULL AND arp.roleId = #{roleId}
+  </select>
+</mapper>

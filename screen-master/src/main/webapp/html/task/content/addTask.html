@@ -1,0 +1,143 @@
+<div class="bjui-pageContent" style="overflow-y: auto!important;">
+    <form class="datagrid-edit-form" style="overflow-x: hidden;" data-toggle="ajaxform">
+        <div class="bjui-row col-1">
+            <label class="row-label" style="width: 25%;">任务类型: </label>
+            <div class="row-input required" style="width: 75%;">
+                <select id="typeId" name="typeId" data-toggle="selectpicker" data-width="100%" data-rule="required">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <label class="row-label" style="width: 25%;">截止时间: </label>
+            <div class="row-input required" style="width: 75%;">
+                <input type="text" id="closeTime" placeholder="" readonly
+                       data-toggle="datepicker"
+                       data-pattern="yyyy-MM-dd HH:mm:ss" data-width="100%"
+                       data-rule="截止时间: required,matchE[datetime]" name="closeTime">
+            </div>
+            <label class="row-label" style="width: 25%;">任务概述: </label>
+            <div class="row-input required" style="width: 75%;">
+                <textarea name="taskDesc" id="taskDesc" data-rule="required,length(~5000)"
+                          style="height: 120px"></textarea>
+            </div>
+            <label class="row-label" style="width: 25%;position: relative;top: 10px;">接受人: </label>
+            <div class="row-input required" style="width: 75%;">
+                <div style="cursor: pointer" id="appointBtn">
+                    <img src="images/plus.png" alt="" width="50px">
+                </div>
+            </div>
+        </div>
+    </form>
+    <ul style="list-style: none;overflow: hidden" id="executerList"></ul>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="addExecuter" class="btn-default" data-icon="save">新增</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    function showList() {
+        var html = $.CurrentNavtab.data('executorsHtml');
+        $('#executerList').html(html);
+    }
+    //查询所有的类型
+    BJUI.ajax('doajax', {
+        url: path + '/web/task/v1/findTaskTypes',
+        loadingmask: false,
+        callback: function (json) {
+            if (json.code == "00000") {
+                var data = json.data;
+                var html = ""
+                for (var i = 0; i < data.length; i++) {
+                    html += '<option value="' + data[i].typeId + '">' + data[i].typeName + '</option>';
+                }
+                $.CurrentDialog.find('#typeId').append(html);
+                $.CurrentDialog.find('#typeId').selectpicker('refresh');
+            } else {
+                successBack(json);
+            }
+        }
+    })
+
+    //指派人列表窗口
+    $.CurrentDialog.find('#appointBtn').click(function () {
+//        var selectedPeopleList=[];
+//        $('#executerList li').each(function () {
+//            selectedPeopleList.push($(this).attr('id'))
+//        });
+        var html=$('#executerList').html();
+        $.CurrentNavtab.data('selectedPeople',html);
+//        $('#executerList').html("");
+        BJUI.dialog({
+            id: "appointTask",
+            title: "指派人员",
+            width: '800',
+            height: '650',
+            mask: true,
+            url: 'html/task/content/appointTask.html',
+            maxable: false,
+            resizable: false
+        })
+    })
+
+    //新增确认
+    $.CurrentDialog.find('#addExecuter').click(function () {
+        $.CurrentDialog.find('form').isValid(function (v) {
+            if (!v) {
+                return;
+            } else {
+                var now=new Date().getTime();
+                var closeTime = $.CurrentDialog.find('#closeTime').val();
+                var closeTimeGetTime=new Date(Date.parse(closeTime.replace(/-/g, "/"))).getTime()
+                if(closeTimeGetTime<now){
+                    BJUI.alertmsg('error', "截止时间不能小于当前时间");
+                    return;
+                }
+                var executorsList = [],
+                        executorNamesList = [];
+                $('#executerList li').each(function () {
+                    var id = $(this).attr('id');
+                    var inf = $(this).attr('inf');
+                    executorsList.push(id);
+                    executorNamesList.push(inf);
+                })
+                var typeId = $.CurrentDialog.find('#typeId').val();
+                var taskDesc = $.CurrentDialog.find('#taskDesc').val();
+                var executors = executorsList.join(',');
+                var executorNames = executorNamesList.join(',');
+                var data = {
+                    'typeId': typeId,
+                    'closeTime':closeTime,
+                    'taskDesc': taskDesc,
+                    'executors': executors,
+                    'executorNames': executorNames,
+                };
+                if (executorNames == "") {
+                    BJUI.alertmsg('error', '指派人员不能为空');
+                    return;
+                }
+                $.CurrentDialog.find('#addExecuter').attr('disabled',true);
+                BJUI.ajax('doajax', {
+                    url: path + '/web/task/v1/addTask',
+                    data: data,
+                    loadingmask: false,
+                    callback: function (json) {
+                        if (json.code == "00000") {
+                            var data = json.data;
+                            BJUI.alertmsg('ok', '操作成功');
+                            BJUI.dialog('closeCurrent');
+                            $.CurrentNavtab.find("#taskContent_datagrid").datagrid('filter');
+                        } else {
+                            successBack(json);
+                        }
+                    }
+                })
+            }
+        })
+    });
+</script>

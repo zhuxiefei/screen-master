@@ -1,0 +1,244 @@
+<div class="bjui-pageContent clearfix actionChargePart">
+    <div class="action_top">
+        <label class="row-label">选择开始计费时间:</label>
+        <div class="row-input" style=" padding-right: 0;display: inline-block">
+            <!--<input type="text" id="startTime" name="startTime"-->
+            <!--value="" data-toggle="datepicker" data-pattern="yyyy-MM-dd " placeholder="点击选择开始时间"-->
+            <!--readonly="readonly">-->
+            <select name="action_year" id="action_year" data-toggle="selectpicker" data-width="60px"
+                    onchange="selectMonth()"></select>年
+            <select name="action_month" id="action_month" data-toggle="selectpicker" data-width="60px"></select>月
+        </div>
+        <button id="useless" style="display: none"> </button>
+    </div>
+    <div class="action_bottom clearfix">
+        <div class="action_area">
+            <input type="radio" name="radio" id="action_all" value="1" checked data-toggle="icheck"
+                   data-label="应用到所有楼宇">
+        </div>
+        <div class="action_area">
+            <input type="radio" name="radio" id="action_part" value="2" data-toggle="icheck"
+                   data-label="应用到指定楼宇">
+            <ul class="operatorList" style="display: none">
+                <li>张三</li>
+            </ul>
+        </div>
+    </div>
+
+
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">关闭</button>
+        </li>
+        <li>
+            <button type="button" class="btn-default" data-icon="check" id="btn-action">确认激活</button>
+        </li>
+    </ul>
+</div>
+<style>
+    .actionChargePart {
+        overflow-y: visible !important;
+    }
+
+    .action_top {
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        margin-top: 25px;
+    }
+
+    .action_area {
+        display: inline-block;
+        width: 47%;
+        padding: 20px;
+        border: 1px solid #d4d4d4;
+        border-radius: 5px;
+        position: relative;
+        box-sizing: border-box;
+        float: left;
+        margin: 10px 5px;
+    }
+
+    .action_bottom {
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        margin-top: 25px;
+    }
+
+    .operatorList {
+        position: absolute;
+        top: 62px;
+        left: 0px;
+        list-style: none;
+        /* border: 1px solid #000; */
+        border: 1px solid rgb(170, 170, 170);
+        border-bottom-color: rgba(170, 170, 170, 0.3);
+        width: 160px;
+        text-align: right;
+        color: rgba(0, 0, 0, 0.7);
+        padding-right: 5px;
+        z-index: 9999;
+        background-color: #fff;
+        max-height: 180px;
+        overflow: auto;
+    }
+
+    .operatorList li {
+        /*position: relative;*/
+        cursor: pointer;
+    }
+</style>
+<script>
+    var currentyear = new Date().getFullYear();
+    var currentmonth = parseInt(new Date().getMonth()) + 1;
+    var itemType=$.CurrentNavtab.data('actionItemType');
+    setTimeout(function () {
+        action_init();
+    }, 100)
+    function action_init() {
+        if(itemType==1||itemType==3||itemType==4){
+            for (var i = 0; i < 10; i++) {
+                var e = currentyear + i;
+                var html = '<option>' + e + '</option>';
+                $.CurrentDialog.find('#action_year').append(html);
+            }
+            $.CurrentDialog.find('#action_year').selectpicker('refresh');
+            selectMonth()
+        }else{
+            $.CurrentDialog.find('.action_top').html('<b>计费立即生效</b>')
+        }
+
+    }
+
+    function selectMonth() {
+        var chooseyear = $.CurrentDialog.find('#action_year').val();
+//        $.CurrentDialog.find('#action_month').empty();
+        $.CurrentDialog.find('#action_month').html("");
+        if (chooseyear == currentyear) {
+            if (currentmonth == 12) {
+                for (var i = 0; i < 12; i++) {
+                    var e = 1 + i;
+                    var html = '<option>' + e + '</option>';
+                    $.CurrentDialog.find('#action_month').append(html);
+                    if (e > 11) {
+                        break;
+                    }
+                }
+                $.CurrentDialog.find('#action_year').children().first().remove();
+                var lastYear = parseInt($.CurrentDialog.find('#action_year').children().last().text())+1;
+                $.CurrentDialog.find('#action_year').append('<option>' + lastYear + '</option>>')
+                $.CurrentDialog.find('#action_year').selectpicker('refresh');
+            } else {
+                for (var i = 0; i < 12; i++) {
+                    var e = currentmonth + 1 + i;
+                    var html = '<option>' + e + '</option>';
+                    $.CurrentDialog.find('#action_month').append(html);
+                    if (e > 11) {
+                        break;
+                    }
+                }
+            }
+
+            $.CurrentDialog.find('#action_month').selectpicker('refresh');
+        } else {
+            for (var i = 1; i < 13; i++) {
+                var html = '<option>' + i + '</option>';
+                $.CurrentDialog.find('#action_month').append(html);
+            }
+        }
+        $.CurrentDialog.find('#action_month').selectpicker('refresh');
+    }
+
+    var actionChargeId = $('body').data('actionChargeId');
+    var itemId = {
+        'itemId': actionChargeId,
+    }
+
+    //判断核准状态显示意见框
+    var checkType_action=1;
+    $.CurrentDialog.find('#action_all').on('ifChecked', function () {
+        checkType_action = 1;
+        $.CurrentDialog.find('#useless').click();
+    })
+    $.CurrentDialog.find('#action_part').on('ifChecked', function () {
+        checkType_action = 2;
+        $.CurrentDialog.find('#useless').click();
+        BJUI.dialog({
+            id: 'dialog_filtrateBuilding',
+            url: 'html/property/itemSetting/filtrateBuilding.html',
+            title: "指定楼宇",
+            width: 500,
+            height: 600,
+            mask: true,
+            maxable: false,
+            resizable: false
+        });
+
+
+    })
+
+    //    var tempIds = $('body').data('actionBuildingIds');
+    //确认
+    $.CurrentDialog.find('#btn-action').click(function () {
+        var year = $.CurrentDialog.find('#action_year').val().toString();
+        var month_no = $.CurrentDialog.find('#action_month').val();
+        var month = month_no < 10 ? "0" + month_no.toString() : month_no.toString();
+        var itenActivateTime = year + '-' + month;
+        var tempIds = $('body').data('actionBuildingIds');
+        if (checkType_action == 2) {
+            if(tempIds==undefined||tempIds==null||tempIds==""){
+                BJUI.alertmsg('error', '请选择激活楼宇');
+                return;
+            }
+            var data = {
+                'itemId': actionChargeId,
+                'buildingIds': tempIds.join(','),
+                'itemActionTime': itenActivateTime,
+            };
+            BJUI.ajax('doajax', {
+                url: path + '/web/charges/v1/actionChargesItemToPartBuildings',
+                data: JSON.stringify(data),
+                loadingmask: true,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        $('body').data('actionBuildingIds', null);
+                        BJUI.dialog('closeCurrent', true);
+                        BJUI.navtab('refresh', 'itemSetting');
+                        BJUI.alertmsg('ok', '操作成功');
+                        $('body').data('actionBuildingIds', null);
+                    } else {
+                        successBack(json);
+                    }
+                },
+            })
+        } else {
+            var data = {
+                'itemId': actionChargeId,
+                'itemActionTime': itenActivateTime,
+            }
+            BJUI.ajax('doajax', {
+                url: path + '/web/charges/v1/actionChargesItemToAllBuildings',
+                data: JSON.stringify(data),
+                loadingmask: true,
+                callback: function (json) {
+                    if (json.code == "00000") {
+                        BJUI.dialog('closeCurrent', true);
+                        BJUI.navtab('refresh', 'itemSetting');
+                        BJUI.alertmsg('ok', '操作成功')
+                        $('body').data('actionBuildingIds', null);
+
+                    } else {
+                        successBack(json);
+
+                    }
+                },
+
+            })
+        }
+    })
+
+
+</script>

@@ -1,0 +1,173 @@
+<div class="bjui-pageContent">
+    <form>
+        <div class="bjui-row col-1">
+            <label class="row-label">类别:</label>
+            <div class="row-input required">
+                <select id="fitmentType" name="materialType" data-toggle="selectpicker" data-rule="required" data-width="100%">
+                    <option value="">--请选择--</option>
+                    <option value="灯具灯饰">灯具灯饰</option>
+                    <option value="厨房用品">厨房用品</option>
+                    <option value="卫浴用品">卫浴用品</option>
+                    <option value="电子五金">电子五金</option>
+                    <option value="墙地面">墙地面</option>
+                    <option value="全屋定制">全屋定制</option>
+                </select>
+            </div>
+            <label class="row-label divUserName">材料名称:</label>
+            <div class="row-input required">
+                <input type="text" id="materialName" name="materialName" value="" data-rule="required,special,length(~20)" />
+            </div>
+            <label class="row-label">图片:</label>
+            <div class="row-input divUserUploadImage">
+                <input type="file" data-name="materialPicUrl" data-id="materialPicId" data-toggle="webuploader" data-options="
+                {
+                    pick: {label: '点击选择图片'},
+                    server:path+ '/web/material/v1/uploadBuildMaterialPicture',
+                    fileNumLimit: 1,
+                    formData: {dir:'pictureUrl'},
+                    required: false,
+                    uploaded: '',
+                    basePath: '',
+                    fileVal:'pictureUrl',
+                    accept: {
+                        title: '图片',
+                        extensions: 'jpg,png,bmp,jpeg',
+                        mimeTypes: '.jpg,.png,.bmp,.jpeg'
+                    }
+                }" />
+            </div>
+            <label class="row-label">品牌:</label>
+            <div class="row-input">
+                <input type="text" id="materialBrand" name="materialBrand" value="" data-rule="special,length(~20)" />
+            </div>
+            <label class="row-label">型号:</label>
+            <div class="row-input">
+                <input type="text" id="materialModel" name="materialModel" value="" data-rule="special,length(~20)" />
+            </div>
+            <label class="row-label">规格:</label>
+            <div class="row-input">
+                <input type="text" id="materialSpecification" name="materialSpecification" value="" data-rule="special,length(~20)" />
+            </div>
+            <label class="row-label">产地:</label>
+            <div class="row-input">
+                <input type="text" id="materialOrigin" name="materialOrigin" value="" data-rule="special,length(~50)" />
+            </div>
+            <label class="row-label">生产日期:</label>
+            <div class="row-input">
+                <input type="text" id="materialProduceDate" name="materialProduceDate" data-rule="date" value="" data-toggle="datepicker" placeholder="点击选择日期">
+            </div>
+            <label class="row-label">截止日期:</label>
+            <div class="row-input">
+                <input type="text" id="materialWarrantyDate" name="materialWarrantyDate" data-rule="date"  value="" data-toggle="datepicker" placeholder="点击选择日期">
+            </div>
+            <div id="divAddParameter"></div>
+            <label class="row-label"></label>
+            <div class="row-input" style=" text-align: right;">
+                <a href="javascript:void(0);" class="btn btn-blue" id="a_addParameter">添加自定义参数</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li><button type="button" class="btn-close" data-icon="close">关闭</button></li>
+        <li><button type="button" class="btn-default" data-icon="check" id="btn-add-fitment" >确认新建</button></li>
+    </ul>
+</div>
+<script>
+    $(function() {
+        //添加自定义参数
+        var num = 0;
+        $.CurrentDialog.find("#a_addParameter").click(function(){
+            num++;
+            var inputSize = $.CurrentDialog.find("#divAddParameter input").size();
+            if(inputSize==0){
+                var html = '<div class="divLabel"><label class="row-label"><input type="text" id="parmName'+num+'" name="parmNames" value="" data-rule="required,special,length(~20)" style=" width: 70%;" placeholder="请输入参数名"  />:</label><div class="row-input"><input type="text" id="parmContent'+num+'" name="parmContents" value="" data-rule="required,special,length(~100)"  style=" width: 100%;"  placeholder="请输入参数值" /></div><a href="javascript:void(0);" class="btn btn-red a_delParameter"><b>X</b></a></div>';
+                $.CurrentDialog.find("#divAddParameter").append(html);
+            }else{
+                var a = 0;
+                var b = 0;
+                $.CurrentDialog.find("#divAddParameter input").each(function(){
+                    if($(this).val().trim()==""){
+                        a++;
+                    }else{
+                        b++;
+                    }
+                })
+                if(b==inputSize){
+                    var html = '<div class="divLabel"><label class="row-label required"><input type="text" id="parmName'+num+'" name="parmNames" value="" data-rule="required,special,length(~20)" style=" width: 70%;"  placeholder="请输入参数名"  />:</label><div class="row-input"><input type="text" id="parmContent'+num+'" name="parmContents" value="" data-rule="required,special,length(~100)"  style=" width: 100%;"  placeholder="请输入参数值" /></div><a href="javascript:void(0);" class="btn btn-red  a_delParameter"><b>X</b></a></div>';
+                    $.CurrentDialog.find("#divAddParameter").append(html);
+                }else{
+                    addFitment();   //调用验证
+                }
+            }
+        });
+
+        //删除自定义参数
+        $.CurrentDialog.find("#divAddParameter").delegate(".a_delParameter", "click", function (event) {
+            $(event.currentTarget).parents(".divLabel").remove();
+        });
+
+        //新增
+        $.CurrentDialog.find("#btn-add-fitment").click(function () {
+            var inputSize = $.CurrentDialog.find("#divAddParameter input[name='ParmNames']").size();
+            if(inputSize==0){
+                addFitment();
+            }else{
+                var ary = [];
+                $.CurrentDialog.find("#divAddParameter input[name='ParmNames']").each(function(){
+                    ary.push($(this).val().trim());
+                });
+                var nary=ary.sort();
+                for(var i=0;i<ary.length;i++){
+                    if (nary[i]==nary[i+1]){
+                        //alert("数组重复内容："+nary[i]);
+                        BJUI.alertmsg('error', "参数名不能和已有的参数名重复");
+                        return;
+                    }else if(nary[i] == "类别" || nary[i] == "材料名称" || nary[i] == "图片" || nary[i] == "品牌" || nary[i] == "型号" ||nary[i] == "规格" || nary[i] == "产地" || nary[i] == "生产日期" || nary[i] == "截止日期"){
+                        BJUI.alertmsg('error', "参数名不能和已有的参数名重复");
+                        return;
+                    }else{
+                        addFitment();
+                    }
+                }
+            }
+        });
+        function addFitment(){
+            var materialProduceDate = $.CurrentDialog.find("#materialProduceDate").val().trim();
+            var materialWarrantyDate = $.CurrentDialog.find("#materialWarrantyDate").val().trim();
+
+            if(materialProduceDate != "" && materialWarrantyDate != "" && materialProduceDate>materialWarrantyDate){
+                BJUI.alertmsg('error', "生产日期不能大于截止日期");
+                return;
+            }
+            if($.CurrentDialog.find("#uploader .btns .state-ready").index()>0){
+                BJUI.alertmsg('confirm', '建材图片没有上传，是否确认新建？', {
+                    okCall: function() {
+                        //不上传
+                        ajaxAddFitment();
+                    }
+                })
+            }else{
+                ajaxAddFitment();
+            }
+
+        }
+        
+        function ajaxAddFitment() {
+            BJUI.ajax('ajaxform', {
+                url: path + '/web/material/v1/addBuildMaterial',
+                form: $.CurrentDialog.find('form'),
+                validate: true,     //是否验证
+                loadingmask: true,    // ajax请求时是否显示数据加载遮罩
+                okCallback: function(json, options) {
+                    BJUI.alertmsg('ok', "操作成功！");
+                    BJUI.dialog('close', 'dialog_fitmentAdd');
+                    $.CurrentNavtab.find('#j_datagrid').datagrid('refresh', true)
+                }
+            })
+        }
+        
+    });
+
+</script>

@@ -1,0 +1,139 @@
+<div class="bjui-pageContent" style="overflow-y: hidden;">
+    <form action="" data-toggle="ajaxform" enctype="multipart/form-data">
+        <table style="width: 100%">
+            <tr>
+                <td align="center" class="detailTitle">
+                    确认单描述
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea style="width: 100%;height:80px;resize:none" data-rule="length(~500)" placeholder="请填写确认单描述(最多填写500个字)" name="description"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="detailTitle">
+                    确认单图片
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="width: 100%;height: 200px;position: relative;text-align: center;border: 1px solid #999"
+                         id="picArea">
+                        <div id="uploadPhoto_repair"
+                             style="position: absolute;bottom:0;left:0;width: 100%;border-radius: 2px;background-color: #00b7ee;color: #fff;height: 30px;line-height: 30px;z-index: 10;cursor: pointer">
+                            上传照片
+                        </div>
+                        <img src="" alt="" id="photoImg_repair" style="max-width:90%;max-height: 90%">
+                        <input type="file" name="multipartfile" id="picture_repair" style="display: none">
+                    </div>
+
+                </td>
+            </tr>
+        </table>
+
+        <input type="hidden" id="orderNo" name="orderNo">
+    </form>
+</div>
+<div class="bjui-pageFooter">
+    <ul>
+        <li>
+            <button type="button" class="btn-close" data-icon="close">取消</button>
+        </li>
+        <li>
+            <button type="button" id="okBtn" class="btn-default" data-icon="save">确认</button>
+        </li>
+    </ul>
+</div>
+<script>
+    var orderNo = $.CurrentNavtab.data('uploadRepairNo');
+    $.CurrentDialog.find('#orderNo').val(orderNo);
+    $.CurrentDialog.find('#uploadPhoto_repair').click(function () {
+        $.CurrentDialog.find('#picture_repair').click();
+    })
+
+    // 获取input的dom元素
+    var inputObj = document.getElementById('picture_repair');
+    // 获取img的dom元素
+    var imgObj = document.getElementById('photoImg_repair');
+    // 监听input发生改变
+    inputObj.onchange = function () {
+        // 获取上传的文件信息
+        var pic = inputObj.files[0];
+        var index = pic.name.lastIndexOf('.');
+        var type = pic.name.substr(index + 1).toLocaleLowerCase();
+        if (type != 'png' && type != 'jpg' && type != 'jpeg' && type != 'bmp') {
+            BJUI.alertmsg('error', "文件格式必须是jpg，jpeg，bmp，png");
+            $.CurrentDialog.find('#picture_repair').val('');
+            return
+        }
+        if (pic.name.length > 120) {
+            BJUI.alertmsg('error', "文件名称不能超过120个字");
+            $.CurrentDialog.find('#picture_repair').val('');
+            return
+        }
+        if (pic.size > 20 * 1048576) {
+            BJUI.alertmsg('error', "文件大小不能大于20M");
+            $.CurrentDialog.find('#picture_repair').val('');
+            return
+        }
+
+        // 创建FileReader对象
+        var reader = new FileReader();
+
+        // 编码成Data URL (这一步最为关键)
+        reader.readAsDataURL(pic);
+
+        // 监听上传完成
+        reader.onload = function () {
+            // 拿到base64的路径
+            var src = reader.result;
+            // 改变img的src属性值
+            imgObj.src = src;
+            $.CurrentDialog.find('#uploadPhoto_repair').text('修改图片')
+            var html = '<img src="images/delete.png"   style="position: absolute;top: 0;right: 0;opacity:0.7;width: 50px;cursor: pointer;" id="deletePhoto">'
+            $.CurrentDialog.find('#deletePhoto').remove();
+            $.CurrentDialog.find("#picArea").append(html);
+            $.CurrentDialog.find('#picArea').hover(function () {
+                $.CurrentDialog.find('#deletePhoto').show()
+            }).mouseleave(function () {
+                $.CurrentDialog.find('#deletePhoto').hide()
+            })
+            $("#deletePhoto").on('click', function () {
+                $.CurrentDialog.find('#photoImg_repair').attr('src', '');
+                $.CurrentDialog.find('#uploadPhoto_repair').text('上传图片');
+                $.CurrentDialog.find('#picture_repair').val('');
+                $.CurrentDialog.find('#deletePhoto').remove();
+            })
+        }
+    };
+
+    $.CurrentDialog.find('#okBtn').click(function () {
+        var orderPic = $.CurrentDialog.find('#picture_repair').val();
+        if (orderPic == "") {
+            BJUI.alertmsg('error', '请上传确认单图片');
+            return;
+        }
+        ;
+        BJUI.ajax('ajaxform', {
+            url: path + '/web/repair/v1/uploadOrderPic',
+            form: $.CurrentDialog.find("form"),
+            validate: true,
+            loadingmask: false,
+            dataType: "multipart/form-data",
+            contentType: true,
+            processData: false,
+            callback: function (json) {
+                if (json.code == "00000") {
+                    BJUI.dialog('closeCurrent', true);
+                    BJUI.alertmsg('ok', '操作成功');
+                    $.CurrentNavtab.find("#repair_datagrid").datagrid('filter');
+                } else {
+                    successBack(json);
+                }
+            },
+            errCallback: function (json) {
+            }
+        })
+    })
+</script>

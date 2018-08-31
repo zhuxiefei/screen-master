@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betel.estatemgmt.common.mapper.house.HouseAuthNoticeMapper" >
+  <resultMap id="BaseResultMap" type="com.betel.estatemgmt.common.model.house.HouseAuthNotice" >
+    <id column="noticeId" property="noticeId" jdbcType="BIGINT" />
+    <result column="authId" property="authId" jdbcType="BIGINT" />
+    <result column="noticeUserId" property="noticeUserId" jdbcType="VARCHAR" />
+    <result column="noticeContent" property="noticeContent" jdbcType="VARCHAR" />
+    <result column="noticeStatus" property="noticeStatus" jdbcType="BIT" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    noticeId, authId, noticeUserId, noticeContent, noticeStatus, createTime
+  </sql>
+
+  <select id="findAuthNoticeNumber" resultType="java.lang.Integer" parameterType="java.lang.String">
+  SELECT
+	count(1)
+  FROM
+      house_auth_notice n
+  LEFT JOIN house_member_auth a ON n.authId = a.authId
+  WHERE
+      n.noticeUserId = #{userId,jdbcType=VARCHAR}
+  AND n.noticeStatus = 1
+  AND a.authStatus = 1
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house_auth_notice
+    where noticeId = #{noticeId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house_auth_notice
+    where noticeId = #{noticeId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.betel.estatemgmt.common.model.house.HouseAuthNotice" >
+    insert into house_auth_notice (noticeId, authId, noticeUserId, 
+      noticeContent, noticeStatus, createTime
+      )
+    values (#{noticeId,jdbcType=BIGINT}, #{authId,jdbcType=BIGINT}, #{noticeUserId,jdbcType=VARCHAR}, 
+      #{noticeContent,jdbcType=VARCHAR}, #{noticeStatus,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.betel.estatemgmt.common.model.house.HouseAuthNotice" useGeneratedKeys="true" keyProperty="noticeId">
+    insert into house_auth_notice
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="noticeId != null" >
+        noticeId,
+      </if>
+      <if test="authId != null" >
+        authId,
+      </if>
+      <if test="noticeUserId != null" >
+        noticeUserId,
+      </if>
+      <if test="noticeContent != null" >
+        noticeContent,
+      </if>
+      <if test="noticeStatus != null" >
+        noticeStatus,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="noticeId != null" >
+        #{noticeId,jdbcType=BIGINT},
+      </if>
+      <if test="authId != null" >
+        #{authId,jdbcType=BIGINT},
+      </if>
+      <if test="noticeUserId != null" >
+        #{noticeUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeContent != null" >
+        #{noticeContent,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeStatus != null" >
+        #{noticeStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.betel.estatemgmt.common.model.house.HouseAuthNotice" >
+    update house_auth_notice
+    <set >
+      <if test="authId != null" >
+        authId = #{authId,jdbcType=BIGINT},
+      </if>
+      <if test="noticeUserId != null" >
+        noticeUserId = #{noticeUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeContent != null" >
+        noticeContent = #{noticeContent,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeStatus != null" >
+        noticeStatus = #{noticeStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where noticeId = #{noticeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.betel.estatemgmt.common.model.house.HouseAuthNotice" >
+    update house_auth_notice
+    set authId = #{authId,jdbcType=BIGINT},
+      noticeUserId = #{noticeUserId,jdbcType=VARCHAR},
+      noticeContent = #{noticeContent,jdbcType=VARCHAR},
+      noticeStatus = #{noticeStatus,jdbcType=BIT},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where noticeId = #{noticeId,jdbcType=BIGINT}
+  </update>
+  <delete id="deleteByAuthId" parameterType="java.lang.Long">
+    delete
+    FROM house_auth_notice
+    where authId = #{authId,jdbcType=BIGINT}
+  </delete>
+
+  <select id="findAllAuthNotice" resultType="com.betel.estatemgmt.business.userapp.auth.model.AppMemberAuth">
+  SELECT
+	n.noticeId noticeId,
+	n.noticeStatus noticeStatus,
+    a.reviewStatus reviewStatus,
+	a.authStatus authStatus,
+	n.createTime createTime
+  FROM
+	house_auth_notice n
+  LEFT JOIN house_member_auth a ON n.authId = a.authId
+  WHERE
+	n.noticeUserId = #{noticeUserId,jdbcType=VARCHAR}
+    AND n.noticeStatus != 3
+  AND
+    a.houseId IN
+    <foreach collection="houses" item="item" index="index" open="(" close=")" separator=",">
+      #{item.houseId,jdbcType=VARCHAR}
+    </foreach>
+  AND (
+	a.authStatus = 1
+  )
+  ORDER BY
+	n.createTime DESC
+  </select>
+
+  <update id="deleteNoticeList" parameterType="java.util.List">
+    UPDATE house_auth_notice SET noticeStatus = 3
+    where authId IN
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+</mapper>

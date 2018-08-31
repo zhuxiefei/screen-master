@@ -1,0 +1,123 @@
+<!doctype html>
+<head>  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0" />
+<title>四合院社区</title>
+<script src="scripts/js/jquery-1.11.3.min.js"></script>
+<style type="text/css">
+	.divBtn{ text-align: center; }
+	.btn{ position:absolute; left: 50%; top:50%; margin-left: -91px;  margin-top: -30px; display: inline-block; font-size: 20px; text-decoration:none; border:#ccc 1px solid; padding: 15px 30px; border-radius: 4px; color: #333; }
+
+	.divWeixin{ text-align: right; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background:rgba(0,0,0,.78);}
+	.divWeixin img{ max-width: 100%;}
+
+</style> 
+</head>  
+  
+<body>
+	<div class="divBtn">
+  		<a href=""  id="test" class="btn">启动应用程序</a>
+  	</div>
+
+	<div class="divWeixin" id="divWeixin"><img src="img.png" /></div>
+</body>  
+<script type="text/javascript">
+	document.getElementById("divWeixin").onclick = function(e){
+		document.getElementById("divWeixin").style.display="none";
+	};
+
+	function getQueryString(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) return unescape(r[2]); return null;
+	}
+
+	var linkUrl = window.location.href.substring(window.location.href.indexOf('://'),window.location.href.length);
+	var path = window.location.href.substring(window.location.href.indexOf('://')+3);
+	/*path.substring(0,path.indexOf(':'))
+	console.log(path.substring(0,path.indexOf(':')));*/
+
+	//判断访问终端
+	var browser={
+		versions:function(){
+			var u = navigator.userAgent, app = navigator.appVersion;
+			return {
+				trident: u.indexOf('Trident') > -1, //IE内核
+				presto: u.indexOf('Presto') > -1, //opera内核
+				webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+				gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1,//火狐内核
+				mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+				ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+				android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
+				iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
+				iPad: u.indexOf('iPad') > -1, //是否iPad
+				webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+				weixin: u.indexOf('micromessenger') > -1, //是否微信 （2015-01-22新增）
+				weibo: u.indexOf('WeiBo') > -1, //是否新浪微博
+				qq: u.match(/\sQQ/i) == " qq" //是否QQ
+			};
+		}(),
+		language:(navigator.browserLanguage || navigator.language).toLowerCase()
+	}
+
+	//判断是否移动端
+	if(browser.versions.android){  //判断是否是安卓
+		var ua = window.navigator.userAgent.toLowerCase();
+		if(ua.match(/MicroMessenger/i) == 'micromessenger' || ua.match(/WeiBo/i) == "weibo"){   //在微信中、在新浪微博中
+			document.getElementById("divWeixin").style.display="block";
+		}else{
+			document.getElementById("divWeixin").style.display="none";
+		}
+
+		if(getQueryString("topicId")){
+			document.getElementById("test").href = "smartre://app/invitation?topicId="+getQueryString("topicId");
+		}else if(getQueryString("activityId")){
+			document.getElementById("test").href = "smartre://app/activite?activityId="+getQueryString("activityId");
+		}else if(getQueryString("goodsId")){
+			document.getElementById("test").href = "smartre://app/transaction?goodsId="+getQueryString("goodsId");
+		}
+
+		$.ajax({
+			type: "GET",
+			url: "https://"+path.substring(0,path.indexOf('/enablement.html'))+"/app/version/v1/findAppVersion",
+			contentType:'application/json;charset=UTF-8',
+			dataType:'json',
+			cache: false,
+			success: function (json){
+				if(json.code=="00000"){
+					document.getElementById("test").onclick=applink(json.data.versionUrl);
+				}
+			}
+		});
+
+	}else if(browser.versions.ios){   //判断是否是ios
+		var ua = window.navigator.userAgent.toLowerCase();
+		if(ua.match(/MicroMessenger/i) == 'micromessenger' || ua.match(/WeiBo/i) == "weibo"){    //在微信中、在新浪微博中
+			document.getElementById("divWeixin").style.display="block";
+		}else{
+			document.getElementById("divWeixin").style.display="none";
+		}
+		document.getElementById("test").href = "smartre"+linkUrl;
+		document.getElementById("test").onclick=applink('https://itunes.apple.com/cn/app/%E5%9B%9B%E5%90%88%E9%99%A2%E7%A4%BE%E5%8C%BA/id1277397144?mt=8');
+
+	}else{   //pc端
+		document.getElementById("divWeixin").style.display="none";
+		document.getElementById("test").innerHTML = '<span style="color:#FF0000;">请在移动端打开</span>';
+
+	}
+
+	function applink(link){
+		return function(){  
+	    	var clickedAt = +new Date;  
+	     	setTimeout(function(){
+	         !window.document.webkitHidden && setTimeout(function(){ 
+	               if (+new Date - clickedAt < 3000){  
+	                   window.location = link;  /*超过3秒跳转下载*/
+	               }  
+	         }, 500);       
+	     }, 500)   
+		};  
+	}
+
+</script> 
+</html>  
